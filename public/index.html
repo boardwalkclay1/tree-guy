@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- SOCIAL PREVIEW -->
+  <meta property="og:title" content="Real Tree Guy">
+  <meta property="og:description" content="The all‑in‑one operating system for real tree guys, climbers, groundsmen, salesmen, and clients.">
+  <meta property="og:image" content="public/assets/icons/rtg-192.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://your-cloudflare-domain.pages.dev">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Real Tree Guy">
+  <meta name="twitter:description" content="Tree work. Organized. Connected. Paid.">
+  <meta name="twitter:image" content="public/assets/icons/rtg-192.png">
+
+  <title>Real Tree Guy</title>
+
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="public/assets/icons/rtg-192.png">
+
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CINEMATIC BACKGROUND -->
+  <style>
+    body {
+      background:
+        url("public/assets/icons/rtg-192.png")
+        center center / 70% no-repeat fixed,
+        #0d0f0d;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <header class="landing-hero" style="padding:70px 20px;">
+    <h1 style="font-size:3.4rem;font-weight:900;line-height:1.1;">
+      REAL TREE GUY
+    </h1>
+
+    <p style="font-size:1.6rem;margin-top:15px;max-width:700px;margin-inline:auto;">
+      The all‑in‑one operating system for real tree guys, climbers, groundsmen, salesmen, and clients.
+    </p>
+
+    <a id="enterOS"
+       class="btn-primary"
+       style="margin-top:30px;font-size:1.6rem;padding:18px 28px;display:inline-block;cursor:pointer;">
+      Enter Real Tree Guy OS
+    </a>
+
+    <div id="loginStatus" style="margin-top:20px;font-size:1rem;opacity:0.9;">
+      Welcome to Real Tree Guy.
+    </div>
+  </header>
+
+  <!-- CLIENT + TREE GUY SECTIONS -->
+  <main class="landing-grid">
+
+    <section class="card">
+      <h2 style="font-size:2rem;margin-bottom:10px;">Clients</h2>
+      <p style="font-size:1.2rem;">
+        Create a job profile, upload photos, and let real tree guys compete for your business.
+      </p>
+
+      <ul style="margin:15px 0 20px 20px;line-height:1.6;font-size:1.1rem;">
+        <li>Create a client account</li>
+        <li>Upload photos using our measurement engine</li>
+        <li>Receive bids from up to 5 tree guys</li>
+        <li>Choose the best price or best crew</li>
+      </ul>
+
+      <a class="btn-primary" href="client/create-account.html">Create Client Account</a>
+      <a class="btn-ghost" href="client/job-post.html" style="margin-top:10px;display:block;">Post a Job</a>
+    </section>
+
+    <section class="card">
+      <h2 style="font-size:2rem;margin-bottom:10px;">Tree Guys</h2>
+      <p style="font-size:1.2rem;">
+        Unlock the full Real Tree Guy OS and access clients, tools, contracts, and crew connections.
+      </p>
+
+      <ul style="margin:15px 0 20px 20px;line-height:1.6;font-size:1.1rem;">
+        <li>Create your Tree Guy account</li>
+        <li>Choose your role: Climber, Groundsman, or Salesman</li>
+        <li>Access contracts, flyers, calendar, and map tools</li>
+        <li>Bid on client jobs</li>
+        <li>Connect with climbers, groundsmen, and salesmen</li>
+      </ul>
+
+      <a class="btn-primary" href="treeguy/paywall.html">Unlock Tree Guy OS – $30 One‑Time</a>
+      <a class="btn-ghost" href="treeguy/login.html" style="margin-top:10px;display:block;">Already Have an Account</a>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Real Tree Guy • Built for the Ones Who Really Do the Work</p>
+  </footer>
+
+  <!-- INDEX JS -->
+  <script type="module" src="index.js"></script>
+
+</body>
+</html>
