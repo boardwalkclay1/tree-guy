@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tree Measurement – Real Tree Guy OS</title>
+  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #0d0f0d; color: #e8ffe8; font-family: Arial, sans-serif; margin: 0; padding: 0 0 40px; }
+    header { text-align: center; padding: 20px; border-bottom: 2px solid #2e6b33; background: rgba(0,0,0,0.4); }
+    header h1 { font-size: 2rem; color: #caffca; margin: 0; }
+    .back-link { display: inline-block; margin-top: 8px; color: #a8ffa8; text-decoration: none; font-size: 0.9rem; }
+    .card { max-width: 700px; margin: 30px auto; padding: 24px; background: rgba(20,35,20,0.85); border-radius: 16px; border: 1px solid #2e6b33; }
+    h2 { color: #caffca; margin-top: 0; }
+    label { display: block; margin-top: 14px; font-size: 0.95rem; color: #a8ffa8; font-weight: bold; }
+    input, select { width: 100%; padding: 10px 14px; margin-top: 6px; border-radius: 8px; border: 1px solid #2e6b33; background: rgba(15,30,15,0.9); color: #e8ffe8; font-size: 0.95rem; }
+    input:focus, select:focus { outline: none; border-color: #6aff6a; }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    button { padding: 12px 20px; border: none; border-radius: 999px; background: #2e6b33; color: #e8ffe8; cursor: pointer; font-size: 0.95rem; font-weight: bold; }
+    button:hover { background: #3fa63f; }
+    .result-box { margin-top: 20px; padding: 16px; background: rgba(0,0,0,0.4); border-radius: 10px; border: 1px solid #2e6b33; min-height: 80px; font-size: 1rem; }
+    .result-box .result-line { margin: 8px 0; font-size: 1.05rem; }
+    .result-box .label { color: #a8ffa8; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th { background: rgba(46,107,51,0.5); padding: 8px; text-align: left; font-size: 0.9rem; color: #caffca; }
+    td { padding: 8px; border-bottom: 1px solid rgba(46,107,51,0.3); font-size: 0.9rem; }
+    #savedList { list-style: none; padding: 0; margin-top: 10px; }
+    #savedList li { padding: 8px 12px; background: rgba(46,107,51,0.15); border-radius: 8px; margin-bottom: 6px; font-size: 0.9rem; }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>📐 Tree Measurement Tool</h1>
+    <a class="back-link" href="../../treeguy/dashboard.html">← Back to Dashboard</a>
+  </header>
+
+  <!-- HEIGHT ESTIMATE -->
+  <div class="card">
+    <h2>🌲 Tree Height Estimator</h2>
+    <p style="opacity:0.85;">Use shadow or phone-tilt method to estimate tree height.</p>
+
+    <label>Your Distance from Tree Base (ft)</label>
+    <input type="number" id="distFt" placeholder="e.g. 50" min="1">
+
+    <label>Angle to Treetop (degrees from horizontal)</label>
+    <input type="number" id="angleDeg" placeholder="e.g. 45" min="1" max="89">
+
+    <label>Your Eye Height (ft, default 5.5)</label>
+    <input type="number" id="eyeHt" placeholder="5.5" value="5.5" step="0.1">
+
+    <div class="btn-row">
+      <button id="calcHeight">Calculate Height</button>
+      <button id="saveHeight">Save Measurement</button>
+    </div>
+
+    <div class="result-box" id="heightResult">
+      <p style="opacity:0.6;">Enter values above and click Calculate.</p>
+    </div>
+  </div>
+
+  <!-- DBH (DIAMETER AT BREAST HEIGHT) -->
+  <div class="card">
+    <h2>📏 Diameter at Breast Height (DBH)</h2>
+    <p style="opacity:0.85;">Measure trunk circumference at 4.5 ft above ground, then convert to diameter.</p>
+
+    <label>Trunk Circumference (inches)</label>
+    <input type="number" id="circumference" placeholder="e.g. 62" min="1">
+
+    <div class="btn-row">
+      <button id="calcDBH">Calculate DBH</button>
+    </div>
+
+    <div class="result-box" id="dbhResult">
+      <p style="opacity:0.6;">Enter circumference above and click Calculate.</p>
+    </div>
+  </div>
+
+  <!-- SAVED MEASUREMENTS -->
+  <div class="card">
+    <h2>💾 Saved Measurements</h2>
+    <ul id="savedList"><li style="opacity:0.5;">No saved measurements yet.</li></ul>
+    <div class="btn-row">
+      <button id="clearSaved" style="background:rgba(255,80,80,0.3);">Clear All</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "rtg_measurements";
+    let measurements = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+    function renderSaved() {
+      const ul = document.getElementById("savedList");
+      if (measurements.length === 0) {
+        ul.innerHTML = '<li style="opacity:0.5;">No saved measurements yet.</li>';
+        return;
+      }
+      ul.innerHTML = measurements.map((m, i) =>
+        `<li>${i + 1}. ${m.label} — <strong>${m.value}</strong> <span style="opacity:0.6;">(${m.date})</span></li>`
+      ).join("");
+    }
+
+    function saveMeasurement(label, value) {
+      measurements.push({ label, value, date: new Date().toLocaleDateString() });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(measurements));
+      renderSaved();
+    }
+
+    // HEIGHT CALCULATOR
+    document.getElementById("calcHeight").onclick = () => {
+      const dist = parseFloat(document.getElementById("distFt").value);
+      const angle = parseFloat(document.getElementById("angleDeg").value);
+      const eye = parseFloat(document.getElementById("eyeHt").value) || 5.5;
+
+      if (!dist || !angle || angle >= 90) {
+        document.getElementById("heightResult").innerHTML = '<p style="color:#ff8f8f;">Please enter valid distance and angle (1–89°).</p>';
+        return;
+      }
+
+      const radians = (angle * Math.PI) / 180;
+      const treeTop = dist * Math.tan(radians);
+      const totalHeight = treeTop + eye;
+
+      document.getElementById("heightResult").innerHTML = `
+        <div class="result-line"><span class="label">Estimated Tree Height:</span> <strong>${totalHeight.toFixed(1)} ft</strong></div>
+        <div class="result-line" style="opacity:0.75;font-size:0.9rem;">Distance: ${dist} ft · Angle: ${angle}° · Eye height: ${eye} ft</div>
+      `;
+      document.getElementById("heightResult")._height = `${totalHeight.toFixed(1)} ft`;
+    };
+
+    document.getElementById("saveHeight").onclick = () => {
+      const result = document.getElementById("heightResult")._height;
+      if (!result) { alert("Calculate height first."); return; }
+      saveMeasurement("Tree Height", result);
+    };
+
+    // DBH CALCULATOR
+    document.getElementById("calcDBH").onclick = () => {
+      const circ = parseFloat(document.getElementById("circumference").value);
+      if (!circ) {
+        document.getElementById("dbhResult").innerHTML = '<p style="color:#ff8f8f;">Please enter circumference.</p>';
+        return;
+      }
+      const dbh = (circ / Math.PI).toFixed(2);
+      document.getElementById("dbhResult").innerHTML = `
+        <div class="result-line"><span class="label">DBH (Diameter):</span> <strong>${dbh} inches</strong></div>
+        <div class="result-line" style="opacity:0.75;font-size:0.9rem;">Circumference: ${circ} inches ÷ π</div>
+      `;
+    };
+
+    document.getElementById("clearSaved").onclick = () => {
+      if (confirm("Clear all saved measurements?")) {
+        measurements = [];
+        localStorage.removeItem(STORAGE_KEY);
+        renderSaved();
+      }
+    };
+
+    renderSaved();
+  </script>
+
+</body>
+</html>
