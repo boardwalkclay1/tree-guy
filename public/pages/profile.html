@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Business Profile</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CORRECT FAVICON (fixes 502) -->
+  <link rel="icon" href="/favicon.ico">
+
+  <!-- CORRECT OG URL -->
+  <meta property="og:url" content="https://realtreeguy-production.up.railway.app/modules/profile/business-profile.html">
+
+  <style>
+    body { 
+      font-family: Inter, sans-serif; 
+      padding: 20px; 
+      background: linear-gradient(180deg, #14522a, #0d3a1d, #0a2d16);
+      color: #e8ffe8;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.35);
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 20px;
+      border: 2px solid #2e6b33;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    .card h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #caffca;
+      text-shadow: 0 0 12px #1f5f2b;
+      text-align: center;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+      color: #d8ffd8;
+      text-shadow: 0 0 6px #1f5f2b;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #3f8b44;
+      background: rgba(15, 35, 17, 0.9);
+      color: #d8ffd8;
+      margin-bottom: 18px;
+      box-shadow: inset 0 0 8px rgba(0, 50, 0, 0.5);
+      font-size: 1rem;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #6aff6a;
+      box-shadow: 0 0 10px #6aff6a;
+    }
+
+    #logoPreview, #insurancePreview {
+      width: 140px;
+      height: 140px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.1);
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 15px;
+      border: 3px solid #3f8b44;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+
+    button {
+      padding: 16px 20px;
+      background: #3f8b44;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      width: 100%;
+      font-weight: 700;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      background: #55c85a;
+      transform: scale(1.03);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.7);
+    }
+
+    .tree-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #2e6b33;
+    }
+
+    .tree-header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #caffca;
+      text-shadow: 0 0 14px #1f5f2b;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="tree-header">
+    <h1>REAL TREE GUY — Business Profile</h1>
+  </div>
+
+  <section class="card">
+    <h2>Your Business Information</h2>
+
+    <label>Business Logo</label>
+    <div id="logoPreview"></div>
+    <input type="file" id="logoFile">
+
+    <label>Business Name</label>
+    <input id="bizName">
+
+    <label>Owner Name</label>
+    <input id="owner">
+
+    <label>Phone</label>
+    <input id="phone">
+
+    <label>Email</label>
+    <input id="email">
+
+    <label>Address</label>
+    <input id="address">
+
+    <label>License Number</label>
+    <input id="license">
+
+    <label>Insurance Info</label>
+    <textarea id="insurance" style="height:100px;"></textarea>
+
+    <label>Upload Insurance Photo</label>
+    <div id="insurancePreview"></div>
+    <input type="file" id="insuranceFile">
+
+    <button id="save">Save Profile</button>
+  </section>
+
+  <script>window.API_URL = "";</script>
+  <script type="module" src="profile.js"></script>
+
+  <script>
+    document.getElementById("logoFile").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("logoPreview").style.backgroundImage = `url('${reader.result}')`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("insuranceFile").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("insurancePreview").style.backgroundImage = `url('${reader.result}')`;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
+</html>
