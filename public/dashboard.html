@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>REAL TREE GUY – Dashboard</title>
+
+  <!-- FIXED FAVICON -->
+  <link rel="icon" type="image/png" href="assets/icons/rtg-192.png">
+
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    /* HAMBURGER + SIDE MENU */
+    .rtg-topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(0,0,0,0.55);
+      border-bottom: 2px solid #2e6b33;
+      backdrop-filter: blur(10px);
+    }
+
+    .rtg-topbar-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #caffca;
+    }
+
+    .rtg-topbar-link {
+      font-size: 0.95rem;
+      color: #a8f5a8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .rtg-burger {
+      width: 32px;
+      height: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .rtg-burger span {
+      display: block;
+      height: 3px;
+      border-radius: 999px;
+      background: #caffca;
+    }
+
+    .rtg-sidemenu {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 240px;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      border-right: 2px solid #2e6b33;
+      padding: 60px 16px 20px;
+      box-shadow: 4px 0 18px rgba(0,0,0,0.7);
+      transition: left 0.25s ease;
+      z-index: 9999;
+    }
+
+    .rtg-sidemenu.open {
+      left: 0;
+    }
+
+    .rtg-sidemenu a {
+      display: block;
+      margin-bottom: 14px;
+      color: #d8ffd8;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .rtg-sidemenu a:hover {
+      color: #6aff6a;
+    }
+
+    .rtg-header {
+      margin-top: 60px;
+    }
+
+    .rtg-map-card {
+      max-width: 1100px;
+      margin: 40px auto 60px;
+      padding: 20px;
+    }
+
+    .rtg-map-frame-wrap {
+      width: 100%;
+      height: 60vh;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid #2e6b33;
+      box-shadow: 0 0 18px rgba(0,0,0,0.5);
+    }
+
+    #rtgMap {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .rtg-radius {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #c8f5c8;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .tree {
+        transform: scale(0.8);
+        transform-origin: top center;
+        height: 600px;
+      }
+
+      .rtg-map-frame-wrap {
+        height: 70vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+  <div class="rtg-topbar">
+    <div class="rtg-burger" id="rtgBurger">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="rtg-topbar-title">REAL TREE GUY OS</div>
+
+    <!-- FIXED -->
+    <a href="index.html" class="rtg-topbar-link">RTG Online</a>
+  </div>
+
+  <!-- SIDE MENU -->
+  <nav class="rtg-sidemenu" id="rtgSidemenu">
+    <a href="index.html">🏠 RTG Online Home</a>
+    <a href="treeguy/dashboard.html">🌳 Tree Guy Dashboard</a>
+    <a href="client/dashboard.html">👤 Client Dashboard</a>
+    <a href="modules/profile/profile.html">Profile</a>
+    <a href="modules/customers/customers.html">Customers & Jobs</a>
+    <a href="modules/measurement/measurement.html">Tree Measurement</a>
+    <a href="modules/contracts/contracts.html">Contracts</a>
+    <a href="modules/calendar/calendar.html">Calendar</a>
+    <a href="modules/flyers/flyers.html">Cards & Flyers</a>
+    <a href="modules/map/real-tree-map.html">Real Tree Map (Full Screen)</a>
+  </nav>
+
+  <header class="rtg-header">
+    <h1 class="rtg-title">REAL TREE GUY</h1>
+    <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
+  </header>
+
+  <!-- TREE UI -->
+  <main class="tree-menu">
+    <div class="tree">
+      <div class="canopy"></div>
+      <div class="trunk"></div>
+
+      <div class="branch b1"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/profile/profile.html" class="branch-btn">Profile</a></div>
+      <div class="branch b2"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/customers/customers.html" class="branch-btn">Customers & Jobs</a></div>
+      <div class="branch b3"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a></div>
+      <div class="branch b4"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/contracts/contracts.html" class="branch-btn">Contracts</a></div>
+      <div class="branch b5"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/calendar/calendar.html" class="branch-btn">Calendar</a></div>
+      <div class="branch b6"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a></div>
+      <div class="branch b7"><div class="branch-bar"></div><div class="branch-bush"></div><a href="modules/map/real-tree-map.html" class="branch-btn">Real Tree Map</a></div>
+    </div>
+  </main>
+
+  <!-- MAP SECTION -->
+  <section class="card rtg-map-card">
+    <h2 style="font-size:1.8rem;margin-bottom:10px;color:#caffca;">Real Tree Map</h2>
+
+    <p style="margin-bottom:10px;font-size:0.98rem;">
+      Pick a filter. We’ll ask for your location and search right around you.
+    </p>
+
+    <div id="rtg-filters" style="margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn-ghost" data-type="tree service supplies">Tree Service Supplies</button>
+      <button class="btn-ghost" data-type="Home Depot">Home Depot</button>
+      <button class="btn-ghost" data-type="Lowe's">Lowe’s</button>
+      <button class="btn-ghost" data-type="Ace Hardware">Ace Hardware</button>
+      <button class="btn-ghost" data-type="sawmill">Sawmills</button>
+      <button class="btn-ghost" data-type="wood dump site">Wood Dumps</button>
+      <button class="btn-ghost" data-type="chainsaw repair shop">Chainsaw Repair</button>
+      <button class="btn-ghost" data-type="woodworking supply store">Woodworking Stores</button>
+      <button class="btn-ghost" data-type="gas station">Gas Stations</button>
+    </div>
+
+    <div class="rtg-map-frame-wrap">
+      <iframe id="rtgMap" loading="lazy"></iframe>
+    </div>
+
+    <div class="rtg-radius" id="rtgRadius">
+      Searching within ~5 miles of your location.
+    </div>
+
+    <a href="modules/map/real-tree-map.html"
+       class="btn-primary"
+       style="margin-top:20px;display:inline-block;">
+      Open Full Screen Real Tree Map
+    </a>
+  </section>
+
+  <footer class="rtg-footer">
+    <p>Real Tree Guy • Modular Static App</p>
+  </footer>
+
+  <script>window.API_URL = "";</script>
+  <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>
