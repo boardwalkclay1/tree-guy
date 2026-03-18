@@ -1,0 +1,95 @@
+{
+  "name": "Real Tree Guy OS",
+  "short_name": "RTG OS",
+  "description": "A modular static operating system for tree work: measurement tools, customer management, contracts, maps, and more.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d3a1d",
+  "theme_color": "#14522a",
+
+  "icons": [
+    {
+      "src": "/assets/icons/rtg-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+
+    {
+      "src": "/assets/icons/rtg-logo-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-logo-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-logo-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-logo-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-logo-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-logo-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/rtg-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+
+  "categories": [
+    "productivity",
+    "utilities",
+    "business",
+    "work"
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Measurement Hub",
+      "short_name": "Measure",
+      "url": "/modules/measurement/measurement.html",
+      "icons": [{ "src": "/assets/icons/measure.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Photo Mode",
+      "short_name": "Photo",
+      "url": "/modules/measurement-photo/photo.html",
+      "icons": [{ "src": "/assets/icons/photo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Angle Mode",
+      "short_name": "Angle",
+      "url": "/modules/measurement-angle/angle.html",
+      "icons": [{ "src": "/assets/icons/angle.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Manual Mode",
+      "short_name": "Manual",
+      "url": "/modules/measurement-manual/manual.html",
+      "icons": [{ "src": "/assets/icons/manual.png", "sizes": "96x96" }]
+    }
+  ]
+}
