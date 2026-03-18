@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
 
-  <!-- SOCIAL PREVIEW -->
   <meta property="og:title" content="Real Tree Guy">
   <meta property="og:description" content="The all‑in‑one operating system for real tree guys, climbers, groundsmen, and salesmen.">
   <meta property="og:image" content="public/assets/icons/rtg-192.png">
@@ -25,34 +24,37 @@
     body {
       background:
         url("public/assets/icons/rtg-192.png")
-        center center / 65% no-repeat fixed,
+        center center / 55% no-repeat fixed,
         #0d0f0d;
-      text-align: center;
       color: white;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, sans-serif;
+      text-align: center;
     }
 
-    .hero-container {
+    .hero {
+      padding: 100px 20px 60px;
       max-width: 900px;
-      margin: 0 auto;
-      padding: 80px 20px;
+      margin: auto;
     }
 
-    .hero-container h1 {
-      font-size: 3.8rem;
+    .hero h1 {
+      font-size: 4rem;
       font-weight: 900;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
-    .hero-container p {
-      font-size: 1.5rem;
-      line-height: 1.5;
-      max-width: 700px;
+    .hero p {
+      font-size: 1.45rem;
+      line-height: 1.55;
+      max-width: 750px;
       margin: 0 auto;
       opacity: 0.95;
     }
 
     .btn-primary {
-      margin-top: 35px;
+      margin-top: 40px;
       font-size: 1.6rem;
       padding: 18px 32px;
       display: inline-block;
@@ -60,28 +62,47 @@
     }
 
     .btn-secondary {
-      margin-top: 20px;
+      margin-top: 25px;
       display: inline-block;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       opacity: 0.9;
       text-decoration: underline;
       cursor: pointer;
     }
 
-    .section {
-      max-width: 900px;
-      margin: 60px auto;
+    .panel-container {
+      max-width: 1100px;
+      margin: 80px auto;
       padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
     }
 
-    .section h2 {
-      font-size: 2.4rem;
+    .panel {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 25px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .panel img {
+      width: 100%;
+      border-radius: 10px;
       margin-bottom: 15px;
+      background: #222;
     }
 
-    .section p {
-      font-size: 1.2rem;
-      line-height: 1.6;
+    .panel h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .panel p {
+      font-size: 1.1rem;
+      line-height: 1.55;
       opacity: 0.9;
     }
 
@@ -89,7 +110,7 @@
       margin-top: 80px;
       padding: 20px;
       opacity: 0.7;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
   </style>
 </head>
@@ -97,39 +118,82 @@
 <body>
 
   <!-- HERO -->
-  <header class="hero-container">
+  <header class="hero">
     <h1>REAL TREE GUY</h1>
 
     <p>
       The all‑in‑one operating system built for real tree guys — climbers, groundsmen, and salesmen.
-      Organize your work. Connect with crews. Measure trees. Build contracts. Run your business.
+      Organize your work. Measure trees. Build contracts. Create flyers. Set appointments.  
+      Real Tree Guy OS is your entire business in your pocket.
     </p>
 
-    <a class="btn-primary" href="treeguy/paywall.html">
+    <a class="btn-primary" href="pages/paywall.html">
       Unlock Real Tree Guy OS – $30 One‑Time
     </a>
 
-    <a class="btn-secondary" href="why.html">
-      Why Real Tree Guy? (See Features, Photos, and How It Works)
+    <a class="btn-secondary" href="pages/why.html">
+      Why Real Tree Guy? (Features, Photos, How It Works)
     </a>
   </header>
 
-  <!-- TREE GUY SECTION -->
-  <main class="section">
-    <h2>Everything You Need to Run Tree Work</h2>
+  <!-- PANELS -->
+  <section class="panel-container">
 
-    <p>
-      Real Tree Guy OS gives you tools built specifically for the tree industry — not generic apps.
-      Inside the OS, you’ll find a full dashboard, measurement tools, contracts, flyers, a real tree map,
-      calendar, reminders, client tools, and crew connections.
-    </p>
+    <!-- PANEL 1 -->
+    <div class="panel">
+      <img src="public/panels/panel1.png" alt="Contracts Page Preview">
+      <h3>Contracts Module</h3>
+      <p>
+        Build, edit, and save professional tree‑service contracts right from your phone.
+        Auto‑fill client info, job details, pricing, and signatures.  
+        Every contract is stored locally and ready to send or show on‑site.
+      </p>
+    </div>
 
-    <p style="margin-top:20px;">
-      Want to see the inside of the app before you unlock it?  
-      Visit <a href="why.html" style="text-decoration:underline;">Why Real Tree Guy</a> to see screenshots,
-      feature breakdowns, and a full explanation of how the OS works.
+    <!-- PANEL 2 -->
+    <div class="panel">
+      <img src="public/panels/panel2.png" alt="Calendar Page Preview">
+      <h3>Calendar & Job Reminders</h3>
+      <p>
+        Set appointments, schedule jobs, and create reminders for estimates, callbacks,
+        and upcoming work.  
+        Your entire week is organized in one clean, offline‑first calendar built for tree work.
+      </p>
+    </div>
+
+    <!-- PANEL 3 -->
+    <div class="panel">
+      <img src="public/panels/panel3.png" alt="Tree Measurement Tool Preview">
+      <h3>Tree Measurement Tool</h3>
+      <p>
+        Take a photo and instantly estimate tree height and trunk width.
+        Perfect for quoting jobs, planning cuts, and communicating with clients.
+        Built specifically for real tree guys — not generic measurement apps.
+      </p>
+    </div>
+
+    <!-- PANEL 4 -->
+    <div class="panel">
+      <img src="public/panels/panel4.png" alt="Flyers and Cards Page Preview">
+      <h3>Flyers, Cards & Door Hangers</h3>
+      <p>
+        Fully edit your business cards, flyers, and door hangers inside the OS.
+        Add your logo, change colors, swap photos, and export clean designs ready to print.
+        Real marketing tools for real tree guys.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- FUTURE SECTION -->
+  <section class="hero" style="padding-top:20px;">
+    <h2 style="font-size:2.6rem;font-weight:800;margin-bottom:15px;">Real Tree Guy Online — Coming Soon</h2>
+    <p style="font-size:1.25rem;max-width:750px;margin:auto;opacity:0.9;">
+      Real Tree Guy OS is going online soon — connecting tree guys with each other and with clients.
+      Post jobs, bid on work, find climbers, find groundsmen, and build real crews.
+      The offline OS is just the beginning.
     </p>
-  </main>
+  </section>
 
   <footer>
     Real Tree Guy • Built for the Ones Who Really Do the Work
