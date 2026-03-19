@@ -19,13 +19,11 @@ body {
   min-height: 100vh;
   line-height: 1.5;
 
-  /* GLOBAL BACKGROUND USING FAVICON */
   background: #0d0f0d url("/public/assets/icons/rtg-192.png")
     center center / cover no-repeat;
   background-attachment: fixed;
 }
 
-/* MOBILE BACKGROUND FIX */
 @media (max-width: 768px) {
   body {
     background: #0d0f0d url("/public/assets/icons/rtg-192.png")
@@ -102,7 +100,7 @@ body {
 }
 
 /* ============================================================
-   HERO SECTIONS (Landing + Modules)
+   HERO SECTIONS
    ============================================================ */
 
 .hero,
@@ -146,7 +144,7 @@ body {
 }
 
 /* ============================================================
-   PANEL SYSTEM (For Why Page + Index Panels)
+   PANEL SYSTEM
    ============================================================ */
 
 .panel-container {
@@ -198,3 +196,95 @@ footer {
   color: #c8f5c8;
   opacity: 0.85;
 }
+
+/* ============================================================
+   TREE UI — CANOPY, TRUNK, BRANCHES, BUSHES, BUTTONS
+   ============================================================ */
+
+.tree-menu {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.tree {
+  position: relative;
+  width: 360px;
+  height: 900px;
+}
+
+/* CANOPY */
+.canopy {
+  width: 300px;
+  height: 300px;
+  background: #2e6b33;
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+/* TRUNK */
+.trunk {
+  width: 80px;
+  height: 380px;
+  background: #5a3b1e;
+  margin: 0 auto;
+  border-radius: 30px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+/* BRANCH BASE */
+.branch {
+  position: absolute;
+  width: 300px;
+  height: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* BRANCH WOOD BAR */
+.branch-bar {
+  width: 100%;
+  height: 14px;
+  background: #5a3b1e;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.5);
+}
+
+/* BUSH BEHIND BUTTON */
+.branch-bush {
+  width: 90px;
+  height: 90px;
+  background: #2e6b33;
+  border-radius: 50%;
+  position: absolute;
+  top: -40px;
+  right: -25px;
+  box-shadow: 0 0 14px rgba(0,0,0,0.5);
+}
+
+/* BUTTON ON BRANCH */
+.branch-btn {
+  position: absolute;
+  top: -6px;
+  left: 12px;
+  padding: 10px 20px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 999px;
+  color: #caffca;
+  text-decoration: none;
+  font-weight: 800;
+  border: 2px solid #2e6b33;
+  backdrop-filter: blur(4px);
+}
+
+.branch-btn:hover {
+  background: rgba(0,0,0,0.75);
+}
+
+/* BRANCH POSITIONS DOWN THE TREE */
+.b1 { top: 200px; }
+.b2 { top: 300px; }
+.b3 { top: 400px; }
+.b4 { top: 500px; }
+.b5 { top: 600px; }
