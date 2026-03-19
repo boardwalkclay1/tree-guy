@@ -1,206 +1,8 @@
 /* ============================================================
-   REAL TREE GUY OS — GLOBAL CINEMATIC THEME (FULL REBUILD)
+   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (FULL REBUILD)
    ============================================================ */
 
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ============================================================
-   GLOBAL BODY — FAVICON BACKGROUND (DESKTOP + MOBILE)
-   ============================================================ */
-
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-  color: #e8ffe8;
-  min-height: 100vh;
-  line-height: 1.5;
-
-  background: #0d0f0d url("/public/assets/icons/rtg-192.png")
-    center center / cover no-repeat;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  body {
-    background: #0d0f0d url("/public/assets/icons/rtg-192.png")
-      center top / contain no-repeat;
-    background-attachment: scroll;
-  }
-}
-
-/* ============================================================
-   GLOBAL BUTTONS
-   ============================================================ */
-
-.btn-primary,
-.btn-ghost {
-  display: inline-block;
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: 0.2s ease;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: #3f8b44;
-  border: 3px solid #6aff6a;
-  color: #e8ffe8;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-
-.btn-primary:hover {
-  background: #55c85a;
-  transform: scale(1.05);
-}
-
-.btn-ghost {
-  background: rgba(0,0,0,0.25);
-  border: 2px solid #3f8b44;
-  color: #d8ffd8;
-}
-
-.btn-ghost:hover {
-  background: rgba(63,139,68,0.4);
-  transform: scale(1.05);
-}
-
-/* ============================================================
-   GLOBAL CARDS
-   ============================================================ */
-
-.card {
-  background: rgba(0,0,0,0.35);
-  border: 2px solid #2e6b33;
-  border-radius: 18px;
-  padding: 20px;
-  color: #e8ffe8;
-  box-shadow: 0 0 18px rgba(0,0,0,0.4);
-}
-
-/* ============================================================
-   GRID SYSTEM
-   ============================================================ */
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-/* ============================================================
-   HERO SECTIONS
-   ============================================================ */
-
-.hero,
-.landing-hero,
-.module-hero {
-  text-align: center;
-  padding: 70px 20px;
-  background: rgba(0,0,0,0.35);
-  border-bottom: 2px solid #2e6b33;
-  backdrop-filter: blur(10px);
-}
-
-.hero h1,
-.landing-hero h1,
-.module-hero h1 {
-  font-size: 3.4rem;
-  font-weight: 900;
-  color: #caffca;
-  text-shadow: 0 0 14px #1f5f2b;
-}
-
-.hero p,
-.landing-hero p,
-.module-hero p {
-  font-size: 1.35rem;
-  color: #d8ffd8;
-  margin-top: 10px;
-}
-
-/* ============================================================
-   LANDING GRID
-   ============================================================ */
-
-.landing-grid {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-/* ============================================================
-   PANEL SYSTEM
-   ============================================================ */
-
-.panel-container {
-  max-width: 1100px;
-  margin: 60px auto;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 35px;
-}
-
-.panel {
-  background: rgba(0,0,0,0.35);
-  border: 2px solid #2e6b33;
-  border-radius: 18px;
-  padding: 20px;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 0 18px rgba(0,0,0,0.4);
-}
-
-.panel img {
-  width: 100%;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  background: #222;
-}
-
-.panel h3 {
-  font-size: 1.8rem;
-  margin-bottom: 10px;
-  font-weight: 800;
-  color: #caffca;
-}
-
-.panel p {
-  font-size: 1.15rem;
-  line-height: 1.55;
-  opacity: 0.9;
-}
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-
-footer {
-  text-align: center;
-  padding: 20px;
-  font-size: 1rem;
-  color: #c8f5c8;
-  opacity: 0.85;
-}
-
-/* ============================================================
-   TREE UI — CANOPY, TRUNK, BRANCHES, BUSHES, BUTTONS
-   ============================================================ */
-
+/* TREE WRAPPER */
 .tree-menu {
   display: flex;
   justify-content: center;
@@ -209,82 +11,151 @@ footer {
 
 .tree {
   position: relative;
-  width: 360px;
-  height: 900px;
+  width: 480px;
+  height: 1400px;
+  margin-bottom: 120px;
 }
 
-/* CANOPY */
+/* ============================================================
+   3× FULL CANOPY — LAYERED ORGANIC BLOBS
+   ============================================================ */
+
 .canopy {
-  width: 300px;
-  height: 300px;
+  position: relative;
+  width: 420px;
+  height: 420px;
+  margin: 0 auto;
   background: #2e6b33;
   border-radius: 50%;
-  margin: 0 auto;
-  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
 }
 
-/* TRUNK */
+.canopy::before,
+.canopy::after {
+  content: "";
+  position: absolute;
+  background: #2e6b33;
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+}
+
+/* Left canopy blob */
+.canopy::before {
+  width: 320px;
+  height: 320px;
+  left: -60px;
+  top: 80px;
+}
+
+/* Right canopy blob */
+.canopy::after {
+  width: 320px;
+  height: 320px;
+  right: -60px;
+  top: 80px;
+}
+
+/* ============================================================
+   TRUNK — THICK, CENTERED, CINEMATIC
+   ============================================================ */
+
 .trunk {
-  width: 80px;
-  height: 380px;
+  width: 140px;
+  height: 650px;
   background: #5a3b1e;
   margin: 0 auto;
-  border-radius: 30px;
-  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  border-radius: 50px;
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.6),
+    0 0 35px rgba(0,0,0,0.7);
 }
 
-/* BRANCH BASE */
+/* ============================================================
+   BRANCH SYSTEM — ALTERNATING LEFT/RIGHT
+   ============================================================ */
+
 .branch {
   position: absolute;
-  width: 300px;
-  height: 70px;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 420px;
+  height: 120px;
 }
 
-/* BRANCH WOOD BAR */
+/* WOOD BAR */
 .branch-bar {
+  position: absolute;
+  top: 50px;
   width: 100%;
-  height: 14px;
+  height: 22px;
   background: #5a3b1e;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.5);
+  border-radius: 14px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.6);
 }
 
 /* BUSH BEHIND BUTTON */
 .branch-bush {
-  width: 90px;
-  height: 90px;
+  position: absolute;
+  width: 150px;
+  height: 150px;
   background: #2e6b33;
   border-radius: 50%;
-  position: absolute;
-  top: -40px;
-  right: -25px;
-  box-shadow: 0 0 14px rgba(0,0,0,0.5);
+  top: -10px;
+  box-shadow: 0 0 22px rgba(0,0,0,0.6);
 }
 
 /* BUTTON ON BRANCH */
 .branch-btn {
   position: absolute;
-  top: -6px;
-  left: 12px;
-  padding: 10px 20px;
+  top: 22px;
+  padding: 14px 32px;
   background: rgba(0,0,0,0.55);
   border-radius: 999px;
   color: #caffca;
   text-decoration: none;
-  font-weight: 800;
-  border: 2px solid #2e6b33;
-  backdrop-filter: blur(4px);
+  font-weight: 900;
+  font-size: 1.15rem;
+  border: 3px solid #2e6b33;
+  backdrop-filter: blur(6px);
+  z-index: 10;
 }
 
 .branch-btn:hover {
   background: rgba(0,0,0,0.75);
 }
 
-/* BRANCH POSITIONS DOWN THE TREE */
-.b1 { top: 200px; }
-.b2 { top: 300px; }
-.b3 { top: 400px; }
-.b4 { top: 500px; }
-.b5 { top: 600px; }
+/* ============================================================
+   ALTERNATING LEFT / RIGHT LOGIC
+   ============================================================ */
+
+/* LEFT BRANCHES */
+.branch.left .branch-bar {
+  transform: rotate(-10deg);
+}
+.branch.left .branch-bush {
+  left: -20px;
+}
+.branch.left .branch-btn {
+  left: 60px;
+}
+
+/* RIGHT BRANCHES */
+.branch.right .branch-bar {
+  transform: rotate(10deg);
+}
+.branch.right .branch-bush {
+  right: -20px;
+}
+.branch.right .branch-btn {
+  right: 60px;
+}
+
+/* ============================================================
+   BRANCH SPACING DOWN THE TREE
+   ============================================================ */
+
+.b1 { top: 360px; }
+.b2 { top: 480px; }
+.b3 { top: 600px; }
+.b4 { top: 720px; }
+.b5 { top: 840px; }
+.b6 { top: 960px; }
+.b7 { top: 1080px; }
