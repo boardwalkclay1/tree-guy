@@ -159,3 +159,12 @@
 .b5 { top: 840px; }
 .b6 { top: 960px; }
 .b7 { top: 1080px; }
+summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #ff7a00; /* chainsaw orange */
+}
+
+summary:hover {
+  color: #ff9d42; /* lighter orange on hover */
+}
