@@ -7,6 +7,12 @@
   <link rel="icon" type="image/png" href="../assets/icons/rtg-192.png">
   <link rel="stylesheet" href="../styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background:#0d0f0d url("../assets/icons/rtg-192.png") center center/cover no-repeat fixed;
+    }
+  </style>
 </head>
 
 <body class="rtg-dashboard">
@@ -33,46 +39,40 @@
 
   <main class="tree-menu">
     <div class="tree">
-      <!-- CANOPY -->
-      <div class="canopy"></div>
 
-      <!-- TRUNK -->
+      <div class="canopy"></div>
       <div class="trunk"></div>
 
-      <!-- BRANCH 1 – LEFT – PROFILE -->
-      <div class="branch b1">
+      <div class="branch b1 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/profile/profile.html" class="branch-btn">Profile</a>
       </div>
 
-      <!-- BRANCH 2 – RIGHT – CUSTOMERS & JOBS -->
-      <div class="branch b2">
+      <div class="branch b2 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/customers/customers.html" class="branch-btn">Customers & Jobs</a>
       </div>
 
-      <!-- BRANCH 3 – LEFT – CARDS & FLYERS -->
-      <div class="branch b3">
+      <div class="branch b3 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a>
       </div>
 
-      <!-- BRANCH 4 – RIGHT – CONTRACTS -->
-      <div class="branch b4">
+      <div class="branch b4 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/contracts/contracts.html" class="branch-btn">Contracts</a>
       </div>
 
-      <!-- BRANCH 5 – LEFT – TREE MEASUREMENT -->
-      <div class="branch b5">
+      <div class="branch b5 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a>
       </div>
+
     </div>
   </main>
 
@@ -80,7 +80,6 @@
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <script>window.API_URL = "";</script>
   <script type="module" src="assets/js/dashboard.js"></script>
 
 </body>
