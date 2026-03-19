@@ -2,13 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Customers &amp; Jobs – Real Tree Guy OS</title>
+  <title>Customers & Jobs – Real Tree Guy OS</title>
   <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    body {
+      background: #0d0f0d url("../../public/assets/icons/rtg-customers.png")
+        center center / cover no-repeat;
+      background-attachment: fixed;
+      color: #e8ffe8;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0 0 40px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        background: #0d0f0d url("../../public/assets/icons/rtg-customers.png")
+          center top / contain no-repeat;
+        background-attachment: scroll;
+      }
+    }
+
     *, *::before, *::after { box-sizing: border-box; }
-    body { background: #0d0f0d; color: #e8ffe8; font-family: Arial, sans-serif; margin: 0; padding: 0 0 40px; }
     header { text-align: center; padding: 20px; border-bottom: 2px solid #2e6b33; background: rgba(0,0,0,0.4); }
     header h1 { font-size: 2rem; color: #caffca; margin: 0; }
     .back-link { display: inline-block; margin-top: 8px; color: #a8ffa8; text-decoration: none; font-size: 0.9rem; }
@@ -41,17 +58,15 @@
 <body>
 
   <header>
-    <h1>🌳 Customers &amp; Jobs</h1>
+    <h1>🌳 Customers & Jobs</h1>
     <a class="back-link" href="../../treeguy/dashboard.html">← Back to Dashboard</a>
   </header>
 
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" data-tab="customers">Customers</button>
     <button class="tab-btn" data-tab="jobs">Jobs</button>
   </div>
 
-  <!-- CUSTOMERS TAB -->
   <div class="tab-panel active" id="tab-customers">
     <div class="card">
       <h2>Add Customer</h2>
@@ -72,7 +87,6 @@
     </div>
   </div>
 
-  <!-- JOBS TAB -->
   <div class="tab-panel" id="tab-jobs">
     <div class="card">
       <h2>Add Job</h2>
@@ -96,7 +110,6 @@
   </div>
 
   <script>
-    // ── TAB LOGIC ──────────────────────────────────────────
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -106,7 +119,6 @@
       });
     });
 
-    // ── CUSTOMERS ──────────────────────────────────────────
     const CUST_KEY = "rtg_customers";
     let customers = JSON.parse(localStorage.getItem(CUST_KEY) || "[]");
 
@@ -152,7 +164,6 @@
       ["custName","custPhone","custAddress","custNotes"].forEach(id => document.getElementById(id).value = "");
     };
 
-    // ── JOBS ───────────────────────────────────────────────
     const JOBS_KEY = "rtg_jobs";
     let jobs = JSON.parse(localStorage.getItem(JOBS_KEY) || "[]");
 
@@ -177,12 +188,6 @@
         });
       });
     }
-
-    window.deleteJob = (i) => {
-      jobs.splice(i, 1);
-      localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
-      renderJobs();
-    };
 
     document.getElementById("addJob").onclick = () => {
       const title = document.getElementById("jobTitle").value.trim();
