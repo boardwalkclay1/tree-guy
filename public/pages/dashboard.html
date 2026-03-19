@@ -11,8 +11,12 @@
   <style>
     body {
       background:#0d0f0d url("../assets/icons/rtg-192.png") center center/cover no-repeat fixed;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, sans-serif;
     }
 
+    /* TOP BAR */
     .rtg-topbar {
       position: fixed;
       top: 0;
@@ -28,13 +32,7 @@
       backdrop-filter: blur(10px);
     }
 
-    .rtg-topbar-title {
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: #caffca;
-      letter-spacing: 1px;
-    }
-
+    /* BURGER */
     .rtg-burger {
       width: 36px;
       height: 26px;
@@ -43,7 +41,6 @@
       justify-content: space-between;
       cursor: pointer;
     }
-
     .rtg-burger span {
       display: block;
       height: 4px;
@@ -51,6 +48,26 @@
       background: #caffca;
     }
 
+    /* RTG ONLINE BUTTON */
+    #rtgOnlineLink {
+      cursor: pointer;
+      color: #caffca;
+      font-weight: 900;
+      font-size: 1.25rem;
+      padding: 6px 14px;
+      border: 2px solid #ff7a00;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+      transition: 0.2s ease;
+    }
+    #rtgOnlineLink:hover {
+      background: rgba(0,0,0,0.75);
+      border-color: #ffa75f;
+      color: #e6ffe6;
+    }
+
+    /* SIDEMENU */
     .rtg-sidemenu {
       position: fixed;
       top: 0;
@@ -65,11 +82,9 @@
       z-index: 9999;
       overflow-y: auto;
     }
-
     .rtg-sidemenu.open {
       left: 0;
     }
-
     .rtg-sidemenu a {
       display: block;
       margin-bottom: 16px;
@@ -78,7 +93,6 @@
       font-weight: 700;
       font-size: 1.05rem;
     }
-
     .rtg-sidemenu a:hover {
       color: #6aff6a;
     }
@@ -102,25 +116,27 @@
     summary {
       cursor: pointer;
       font-weight: 700;
-      color: #a8ffa8;
+      color: #ff7a00;
+      text-shadow: 0 0 6px rgba(255,122,0,0.4);
     }
-
     summary:hover {
-      color: #6aff6a;
+      color: #ff9d42;
+    }
+    details p {
+      color: #ffb56b;
     }
 
+    /* HEADER */
     .rtg-header {
       margin-top: 90px;
       text-align: center;
     }
-
     .rtg-title {
       font-size: 3rem;
       font-weight: 900;
       color: #caffca;
       text-shadow: 0 0 14px #1f5f2b;
     }
-
     .rtg-subtitle {
       font-size: 1.2rem;
       color: #d8ffd8;
@@ -135,13 +151,11 @@
       font-size: 1rem;
       opacity: 0.9;
     }
-
     footer a {
       color: #a8ffa8;
       font-weight: 700;
       text-decoration: none;
     }
-
     footer a:hover {
       color: #6aff6a;
     }
@@ -150,13 +164,16 @@
 
 <body class="rtg-dashboard">
 
+  <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-burger" id="rtgBurger">
       <span></span><span></span><span></span>
     </div>
-    <div class="rtg-topbar-title">REAL TREE GUY OS</div>
+
+    <div id="rtgOnlineLink">RTG ONLINE</div>
   </div>
 
+  <!-- SIDEMENU -->
   <nav class="rtg-sidemenu" id="rtgSidemenu">
 
     <a href="../pages/profile.html">Profile</a>
@@ -169,36 +186,38 @@
 
     <details>
       <summary>Saving Customers</summary>
-      <p>Use the Customers module to store names, addresses, notes, and job history.</p>
+      <p>Store names, addresses, notes, and job history.</p>
     </details>
 
     <details>
       <summary>Creating Jobs</summary>
-      <p>Add job titles, dates, prices, and notes. Jobs stay saved in your browser.</p>
+      <p>Add job titles, dates, prices, and notes.</p>
     </details>
 
     <details>
       <summary>Using Tree Measurement</summary>
-      <p>Measure tree height using your phone’s camera and angle estimation.</p>
+      <p>Measure tree height using your phone’s camera.</p>
     </details>
 
     <details>
       <summary>Making Flyers</summary>
-      <p>Auto-generate printable cards and flyers for door-to-door marketing.</p>
+      <p>Create printable cards and flyers for marketing.</p>
     </details>
 
     <details>
       <summary>Contracts</summary>
-      <p>Fill out, save, and export simple work agreements for customers.</p>
+      <p>Fill out, save, and export simple work agreements.</p>
     </details>
 
   </nav>
 
+  <!-- HEADER -->
   <header class="rtg-header">
     <h1 class="rtg-title">REAL TREE GUY</h1>
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
   </header>
 
+  <!-- TREE SYSTEM -->
   <main class="tree-menu">
     <div class="tree">
 
@@ -208,31 +227,31 @@
       <div class="branch b1 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../modules/profile/profile.html" class="branch-btn">Profile</a>
+        <a href="../pages/profile.html" class="branch-btn">Profile</a>
       </div>
 
       <div class="branch b2 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../modules/customers/customers.html" class="branch-btn">Customers & Jobs</a>
+        <a href="../pages/customers.html" class="branch-btn">Customers & Jobs</a>
       </div>
 
       <div class="branch b3 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a>
+        <a href="../pages/flyers.html" class="branch-btn">Cards & Flyers</a>
       </div>
 
       <div class="branch b4 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../modules/contracts/contracts.html" class="branch-btn">Contracts</a>
+        <a href="../pages/contracts.html" class="branch-btn">Contracts</a>
       </div>
 
       <div class="branch b5 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a>
+        <a href="../pages/measurement.html" class="branch-btn">Tree Measurement</a>
       </div>
 
     </div>
@@ -243,7 +262,7 @@
     © Real Tree Guy OS — All Rights Reserved
   </footer>
 
-  <script type="module" src="assets/js/dashboard.js"></script>
+  <script type="module" src="../assets/js/dashboard.js"></script>
 
 </body>
 </html>
