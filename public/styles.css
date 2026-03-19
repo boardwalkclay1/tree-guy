@@ -126,7 +126,6 @@
    ALTERNATING LEFT / RIGHT LOGIC
    ============================================================ */
 
-/* LEFT BRANCHES */
 .branch.left .branch-bar {
   transform: rotate(-10deg);
 }
@@ -137,7 +136,6 @@
   left: 60px;
 }
 
-/* RIGHT BRANCHES */
 .branch.right .branch-bar {
   transform: rotate(10deg);
 }
@@ -159,12 +157,26 @@
 .b5 { top: 840px; }
 .b6 { top: 960px; }
 .b7 { top: 1080px; }
+
+/* ============================================================
+   BURGER MENU DROPDOWNS — CHAINSAW ORANGE
+   ============================================================ */
+
 summary {
   cursor: pointer;
   font-weight: 700;
   color: #ff7a00; /* chainsaw orange */
+  text-shadow: 0 0 6px rgba(255,122,0,0.4);
 }
 
 summary:hover {
-  color: #ff9d42; /* lighter orange on hover */
+  color: #ff9d42; /* lighter orange */
+}
+
+details p {
+  color: #ffb56b; /* softer orange for body text */
+}
+
+summary::-webkit-details-marker {
+  color: #ff7a00;
 }
