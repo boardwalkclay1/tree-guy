@@ -12,6 +12,139 @@
     body {
       background:#0d0f0d url("../assets/icons/rtg-192.png") center center/cover no-repeat fixed;
     }
+
+    .rtg-topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(0,0,0,0.55);
+      border-bottom: 2px solid #2e6b33;
+      backdrop-filter: blur(10px);
+    }
+
+    .rtg-topbar-title {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #caffca;
+      letter-spacing: 1px;
+    }
+
+    .rtg-burger {
+      width: 36px;
+      height: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .rtg-burger span {
+      display: block;
+      height: 4px;
+      border-radius: 999px;
+      background: #caffca;
+    }
+
+    .rtg-sidemenu {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 260px;
+      height: 100vh;
+      background: rgba(0,0,0,0.92);
+      border-right: 2px solid #2e6b33;
+      padding: 70px 20px 20px;
+      box-shadow: 4px 0 18px rgba(0,0,0,0.7);
+      transition: left 0.25s ease;
+      z-index: 9999;
+      overflow-y: auto;
+    }
+
+    .rtg-sidemenu.open {
+      left: 0;
+    }
+
+    .rtg-sidemenu a {
+      display: block;
+      margin-bottom: 16px;
+      color: #d8ffd8;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .rtg-sidemenu a:hover {
+      color: #6aff6a;
+    }
+
+    .menu-section-title {
+      margin-top: 25px;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #caffca;
+    }
+
+    details {
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #2e6b33;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #a8ffa8;
+    }
+
+    summary:hover {
+      color: #6aff6a;
+    }
+
+    .rtg-header {
+      margin-top: 90px;
+      text-align: center;
+    }
+
+    .rtg-title {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #caffca;
+      text-shadow: 0 0 14px #1f5f2b;
+    }
+
+    .rtg-subtitle {
+      font-size: 1.2rem;
+      color: #d8ffd8;
+      margin-top: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 10px;
+      margin-top: 60px;
+      color: #c8f5c8;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    footer a {
+      color: #a8ffa8;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #6aff6a;
+    }
   </style>
 </head>
 
@@ -25,11 +158,40 @@
   </div>
 
   <nav class="rtg-sidemenu" id="rtgSidemenu">
+
     <a href="../modules/profile/profile.html">Profile</a>
     <a href="../modules/customers/customers.html">Customers & Jobs</a>
     <a href="../modules/flyers/flyers.html">Cards & Flyers</a>
     <a href="../modules/contracts/contracts.html">Contracts</a>
     <a href="../modules/measurement/measurement.html">Tree Measurement</a>
+
+    <div class="menu-section-title">How to Use This App</div>
+
+    <details>
+      <summary>Saving Customers</summary>
+      <p>Use the Customers module to store names, addresses, notes, and job history.</p>
+    </details>
+
+    <details>
+      <summary>Creating Jobs</summary>
+      <p>Add job titles, dates, prices, and notes. Jobs stay saved in your browser.</p>
+    </details>
+
+    <details>
+      <summary>Using Tree Measurement</summary>
+      <p>Measure tree height using your phone’s camera and angle estimation.</p>
+    </details>
+
+    <details>
+      <summary>Making Flyers</summary>
+      <p>Auto-generate printable cards and flyers for door-to-door marketing.</p>
+    </details>
+
+    <details>
+      <summary>Contracts</summary>
+      <p>Fill out, save, and export simple work agreements for customers.</p>
+    </details>
+
   </nav>
 
   <header class="rtg-header">
@@ -38,36 +200,36 @@
   </header>
 
   <main class="tree-menu">
-    <div class="tree" style="width:560px;height:1500px;">
+    <div class="tree">
 
-      <div class="canopy" style="width:480px;height:480px;"></div>
-      <div class="trunk" style="width:160px;height:720px;"></div>
+      <div class="canopy"></div>
+      <div class="trunk"></div>
 
-      <div class="branch b1 left" style="top:380px;width:480px;">
+      <div class="branch b1 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/profile/profile.html" class="branch-btn">Profile</a>
       </div>
 
-      <div class="branch b2 right" style="top:520px;width:480px;">
+      <div class="branch b2 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/customers/customers.html" class="branch-btn">Customers & Jobs</a>
       </div>
 
-      <div class="branch b3 left" style="top:660px;width:480px;">
+      <div class="branch b3 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a>
       </div>
 
-      <div class="branch b4 right" style="top:800px;width:480px;">
+      <div class="branch b4 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/contracts/contracts.html" class="branch-btn">Contracts</a>
       </div>
 
-      <div class="branch b5 left" style="top:940px;width:480px;">
+      <div class="branch b5 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
         <a href="../modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a>
@@ -76,8 +238,9 @@
     </div>
   </main>
 
-  <footer class="rtg-footer">
-    <p>Real Tree Guy • Modular Static App</p>
+  <footer>
+    <a href="../index.html">RTG Online</a><br><br>
+    © Real Tree Guy OS — All Rights Reserved
   </footer>
 
   <script type="module" src="assets/js/dashboard.js"></script>
