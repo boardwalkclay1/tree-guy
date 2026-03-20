@@ -39,7 +39,6 @@
   box-shadow: 0 0 40px rgba(0,0,0,0.7);
 }
 
-/* Left canopy blob */
 .canopy::before {
   width: 320px;
   height: 320px;
@@ -47,7 +46,6 @@
   top: 80px;
 }
 
-/* Right canopy blob */
 .canopy::after {
   width: 320px;
   height: 320px;
@@ -165,16 +163,16 @@
 summary {
   cursor: pointer;
   font-weight: 700;
-  color: #ff7a00; /* chainsaw orange */
+  color: #ff7a00;
   text-shadow: 0 0 6px rgba(255,122,0,0.4);
 }
 
 summary:hover {
-  color: #ff9d42; /* lighter orange */
+  color: #ff9d42;
 }
 
 details p {
-  color: #ffb56b; /* softer orange for body text */
+  color: #ffb56b;
 }
 
 summary::-webkit-details-marker {
