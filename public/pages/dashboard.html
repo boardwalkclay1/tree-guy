@@ -25,11 +25,12 @@
       z-index: 10000;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 14px 20px;
       background: rgba(0,0,0,0.55);
       border-bottom: 2px solid #2e6b33;
       backdrop-filter: blur(10px);
+      gap: 20px;
     }
 
     /* BURGER */
@@ -46,25 +47,6 @@
       height: 4px;
       border-radius: 999px;
       background: #caffca;
-    }
-
-    /* RTG ONLINE BUTTON */
-    #rtgOnlineLink {
-      cursor: pointer;
-      color: #caffca;
-      font-weight: 900;
-      font-size: 1.25rem;
-      padding: 6px 14px;
-      border: 2px solid #ff7a00;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(6px);
-      transition: 0.2s ease;
-    }
-    #rtgOnlineLink:hover {
-      background: rgba(0,0,0,0.75);
-      border-color: #ffa75f;
-      color: #e6ffe6;
     }
 
     /* SIDEMENU */
@@ -143,21 +125,39 @@
       margin-top: 8px;
     }
 
+    /* RTG ONLINE BUTTON AT BOTTOM */
+    .rtg-online-bottom {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .rtg-online-btn {
+      display: inline-block;
+      padding: 14px 28px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #caffca;
+      text-decoration: none;
+      background: rgba(0,0,0,0.55);
+      border: 3px solid #ff7a00;
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      transition: 0.2s ease;
+    }
+
+    .rtg-online-btn:hover {
+      background: rgba(0,0,0,0.75);
+      border-color: #ffa75f;
+      color: #e6ffe6;
+    }
+
     footer {
       text-align: center;
       padding: 30px 10px;
-      margin-top: 60px;
+      margin-top: 40px;
       color: #c8f5c8;
       font-size: 1rem;
       opacity: 0.9;
-    }
-    footer a {
-      color: #a8ffa8;
-      font-weight: 700;
-      text-decoration: none;
-    }
-    footer a:hover {
-      color: #6aff6a;
     }
   </style>
 </head>
@@ -169,8 +169,6 @@
     <div class="rtg-burger" id="rtgBurger">
       <span></span><span></span><span></span>
     </div>
-
-    <div id="rtgOnlineLink">RTG ONLINE</div>
   </div>
 
   <!-- SIDEMENU -->
@@ -257,12 +255,27 @@
     </div>
   </main>
 
+  <!-- RTG ONLINE BUTTON AT BOTTOM -->
+  <div class="rtg-online-bottom">
+    <a class="rtg-online-btn" id="rtgOnlineBottom">RTG ONLINE</a>
+  </div>
+
   <footer>
-    <a href="../index.html">RTG Online</a><br><br>
     © Real Tree Guy OS — All Rights Reserved
   </footer>
 
-  <script type="module" src="../pages/assets/js/dashboard.js"></script>
+  <script type="module">
+    // Burger menu
+    const burger = document.getElementById("rtgBurger");
+    const sidemenu = document.getElementById("rtgSidemenu");
+    burger.onclick = () => sidemenu.classList.toggle("open");
+
+    // RTG ONLINE — Coming Soon
+    const rtgOnlineBottom = document.getElementById("rtgOnlineBottom");
+    rtgOnlineBottom.onclick = () => {
+      alert("RTG Online is coming soon.");
+    };
+  </script>
 
 </body>
 </html>
