@@ -3,36 +3,23 @@
 <head>
   <meta charset="UTF-8">
 
-  <meta property="og:title" content="Real Tree Guy">
-  <meta property="og:description" content="The all‑in‑one operating system for real tree guys, climbers, groundsmen, and salesmen.">
-  <meta property="og:image" content="public/assets/icons/rtg-192.png">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://realtreeguy.pages.dev/">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Real Tree Guy">
-  <meta name="twitter:description" content="Tree work. Organized. Connected. Paid.">
-  <meta name="twitter:image" content="assets/icons/rtg-192.png">
-
   <title>Real Tree Guy</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="assets/icons/rtg-192.png">
   <link rel="stylesheet" href="styles.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      background:
-        url("assets/icons/rtg-192.png")
-        center center / 55% no-repeat fixed,
-        #0d0f0d;
-      color: white;
+      background: #0d0f0d url("assets/icons/rtg-192.png") center center/55% no-repeat fixed;
       margin: 0;
       padding: 0;
       font-family: system-ui, sans-serif;
       text-align: center;
+      color: #caffca;
     }
 
+    /* HERO */
     .hero {
       padding: 100px 20px 60px;
       max-width: 900px;
@@ -43,6 +30,8 @@
       font-size: 4rem;
       font-weight: 900;
       margin-bottom: 20px;
+      color: #caffca;
+      text-shadow: 0 0 18px #1f5f2b;
     }
 
     .hero p {
@@ -51,25 +40,32 @@
       max-width: 750px;
       margin: 0 auto;
       opacity: 0.95;
+      color: #d8ffd8;
     }
 
-    .btn-primary {
-      margin-top: 40px;
-      font-size: 1.6rem;
+    /* BUTTONS */
+    .rtg-btn {
+      display: inline-block;
       padding: 18px 32px;
-      display: inline-block;
-      cursor: pointer;
+      margin-top: 35px;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #caffca;
+      text-decoration: none;
+      background: rgba(0,0,0,0.55);
+      border: 3px solid #ff7a00;
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      transition: 0.2s ease;
     }
 
-    .btn-secondary {
-      margin-top: 25px;
-      display: inline-block;
-      font-size: 1.25rem;
-      opacity: 0.9;
-      text-decoration: underline;
-      cursor: pointer;
+    .rtg-btn:hover {
+      background: rgba(0,0,0,0.75);
+      border-color: #ffa75f;
+      color: #e6ffe6;
     }
 
+    /* PANELS */
     .panel-container {
       max-width: 1100px;
       margin: 80px auto;
@@ -80,37 +76,73 @@
     }
 
     .panel {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
+      background: rgba(0,0,0,0.45);
+      border-radius: 14px;
       padding: 25px;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 3px solid #ff7a00;
+      box-shadow: 0 0 18px rgba(0,0,0,0.7);
     }
 
     .panel img {
       width: 100%;
       border-radius: 10px;
       margin-bottom: 15px;
+      border: 3px solid #ff7a00;
       background: #222;
     }
 
     .panel h3 {
       font-size: 1.8rem;
       margin-bottom: 10px;
-      font-weight: 800;
+      font-weight: 900;
+      color: #caffca;
+      text-shadow: 0 0 10px #1f5f2b;
     }
 
     .panel p {
       font-size: 1.1rem;
       line-height: 1.55;
       opacity: 0.9;
+      color: #d8ffd8;
     }
 
+    /* BOTTOM BUTTONS */
+    .rtg-bottom-links {
+      margin-top: 60px;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .rtg-bottom-btn {
+      display: inline-block;
+      padding: 14px 28px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #caffca;
+      text-decoration: none;
+      background: rgba(0,0,0,0.55);
+      border: 3px solid #ff7a00;
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      transition: 0.2s ease;
+    }
+
+    .rtg-bottom-btn:hover {
+      background: rgba(0,0,0,0.75);
+      border-color: #ffa75f;
+      color: #e6ffe6;
+    }
+
+    /* FOOTER */
     footer {
       margin-top: 80px;
       padding: 20px;
-      opacity: 0.7;
+      opacity: 0.8;
       font-size: 0.95rem;
+      color: #caffca;
     }
   </style>
 </head>
@@ -127,73 +159,45 @@
       Real Tree Guy OS is your entire business in your pocket.
     </p>
 
-    <a class="btn-primary" href="pages/paywall.html">
+    <a class="rtg-btn" href="pages/paywall.html">
       Unlock Real Tree Guy OS – $30 One‑Time
-    </a>
-
-    <a class="btn-secondary" href="pages/why.html">
-      Why Real Tree Guy? (Features, Photos, How It Works)
     </a>
   </header>
 
   <!-- PANELS -->
   <section class="panel-container">
 
-    <!-- PANEL 1 -->
     <div class="panel">
       <img src="panels/panel1.png" alt="Contracts Page Preview">
       <h3>Contracts Module</h3>
-      <p>
-        Build, edit, and save professional tree‑service contracts right from your phone.
-        Auto‑fill client info, job details, pricing, and signatures.  
-        Every contract is stored locally and ready to send or show on‑site.
-      </p>
+      <p>Build, edit, and save professional tree‑service contracts right from your phone.</p>
     </div>
 
-    <!-- PANEL 2 -->
     <div class="panel">
       <img src="panels/panel2.png" alt="Calendar Page Preview">
       <h3>Calendar & Job Reminders</h3>
-      <p>
-        Set appointments, schedule jobs, and create reminders for estimates, callbacks,
-        and upcoming work.  
-        Your entire week is organized in one clean, offline‑first calendar built for tree work.
-      </p>
+      <p>Schedule jobs, set reminders, and organize your entire week.</p>
     </div>
 
-    <!-- PANEL 3 -->
     <div class="panel">
       <img src="panels/panel3.png" alt="Tree Measurement Tool Preview">
       <h3>Tree Measurement Tool</h3>
-      <p>
-        Take a photo and instantly estimate tree height and trunk width.
-        Perfect for quoting jobs, planning cuts, and communicating with clients.
-        Built specifically for real tree guys — not generic measurement apps.
-      </p>
+      <p>Take a photo and instantly estimate tree height and trunk width.</p>
     </div>
 
-    <!-- PANEL 4 -->
     <div class="panel">
       <img src="public/panels/panel4.png" alt="Flyers and Cards Page Preview">
       <h3>Flyers, Cards & Door Hangers</h3>
-      <p>
-        Fully edit your business cards, flyers, and door hangers inside the OS.
-        Add your logo, change colors, swap photos, and export clean designs ready to print.
-        Real marketing tools for real tree guys.
-      </p>
+      <p>Edit your business cards, flyers, and door hangers inside the OS.</p>
     </div>
 
   </section>
 
-  <!-- FUTURE SECTION -->
-  <section class="hero" style="padding-top:20px;">
-    <h2 style="font-size:2.6rem;font-weight:800;margin-bottom:15px;">Real Tree Guy Online — Coming Soon</h2>
-    <p style="font-size:1.25rem;max-width:750px;margin:auto;opacity:0.9;">
-      Real Tree Guy OS is going online soon — connecting tree guys with each other and with clients.
-      Post jobs, bid on work, find climbers, find groundsmen, and build real crews.
-      The offline OS is just the beginning.
-    </p>
-  </section>
+  <!-- BOTTOM BUTTONS -->
+  <div class="rtg-bottom-links">
+    <a class="rtg-bottom-btn" href="pages/login.html">Already have an account?</a>
+    <a class="rtg-bottom-btn" href="pages/why.html">Why Real Tree Guy?</a>
+  </div>
 
   <footer>
     Real Tree Guy • Built for the Ones Who Really Do the Work
