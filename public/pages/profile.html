@@ -2,211 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Customers & Jobs – Real Tree Guy OS</title>
+  <title>Profile – Real Tree Guy OS</title>
   <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      background: #0d0f0d url("../../public/assets/icons/rtg-profile.png")
-        center center / cover no-repeat;
-      background-attachment: fixed;
-      color: #e8ffe8;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0 0 40px;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        background: #0d0f0d url("../../public/assets/icons/rtg-profile.png")
-          center top / contain no-repeat;
-        background-attachment: scroll;
-      }
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-    header { text-align: center; padding: 20px; border-bottom: 2px solid #2e6b33; background: rgba(0,0,0,0.4); }
-    header h1 { font-size: 2rem; color: #caffca; margin: 0; }
-    .back-link { display: inline-block; margin-top: 8px; color: #a8ffa8; text-decoration: none; font-size: 0.9rem; }
-    .tabs { display: flex; gap: 0; max-width: 700px; margin: 20px auto 0; padding: 0 16px; border-bottom: 2px solid #2e6b33; }
-    .tab-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #a8ffa8; font-size: 1rem; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.15s; }
-    .tab-btn.active { color: #caffca; border-bottom-color: #6aff6a; font-weight: bold; }
-    .tab-panel { display: none; max-width: 700px; margin: 20px auto; padding: 0 16px; }
-    .tab-panel.active { display: block; }
-    .card { background: rgba(20,35,20,0.85); border-radius: 16px; padding: 20px; border: 1px solid #2e6b33; margin-bottom: 16px; }
-    h2 { color: #caffca; margin-top: 0; }
-    label { display: block; margin-top: 12px; font-size: 0.9rem; color: #a8ffa8; font-weight: bold; }
-    input, textarea, select { width: 100%; padding: 10px 14px; margin-top: 6px; border-radius: 8px; border: 1px solid #2e6b33; background: rgba(15,30,15,0.9); color: #e8ffe8; font-size: 0.95rem; }
-    textarea { height: 80px; }
-    input:focus, textarea:focus, select:focus { outline: none; border-color: #6aff6a; }
-    button { padding: 10px 20px; border: none; border-radius: 999px; background: #2e6b33; color: #e8ffe8; cursor: pointer; font-size: 0.9rem; font-weight: bold; margin-top: 14px; }
-    button:hover { background: #3fa63f; }
-    .customer-list, .job-list { list-style: none; padding: 0; margin: 0; }
-    .customer-list li, .job-list li { padding: 12px; background: rgba(46,107,51,0.15); border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(46,107,51,0.3); }
-    .cust-name, .job-title { font-weight: bold; color: #caffca; font-size: 1rem; }
-    .cust-details, .job-details { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: bold; margin-left: 8px; }
-    .badge-open { background: rgba(46,107,51,0.5); color: #caffca; }
-    .badge-done { background: rgba(100,100,100,0.4); color: #aaa; }
-    .del-btn { float: right; background: transparent; border: 1px solid rgba(255,80,80,0.4); color: #ff8f8f; padding: 4px 10px; font-size: 0.8rem; margin-top: 0; border-radius: 999px; }
-    .del-btn:hover { background: rgba(255,80,80,0.15); }
-    .empty-note { opacity: 0.5; font-size: 0.95rem; text-align: center; padding: 20px; }
-  </style>
+  <link rel="stylesheet" href="profile.css">
 </head>
 
 <body>
 
-  <header>
-    <h1>🌳 Customers & Jobs</h1>
-    <a class="back-link" href="../../treeguy/dashboard.html">← Back to Dashboard</a>
+  <header class="rtg-header">
+    <h1>👤 Profile</h1>
+    <a class="rtg-back" href="../../treeguy/dashboard.html">← Back to Dashboard</a>
   </header>
 
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="customers">Customers</button>
-    <button class="tab-btn" data-tab="jobs">Jobs</button>
-  </div>
+  <main class="profile-shell">
 
-  <div class="tab-panel active" id="tab-customers">
-    <div class="card">
-      <h2>Add Customer</h2>
-      <label>Name</label>
-      <input id="custName" placeholder="Full name">
+    <section class="profile-card">
+
+      <h2>Your Information</h2>
+
+      <label>Full Name</label>
+      <input id="profName" placeholder="Your full name">
+
+      <label>Business Name</label>
+      <input id="profBiz" placeholder="Company name">
+
       <label>Phone</label>
-      <input id="custPhone" placeholder="(555) 000-0000">
+      <input id="profPhone" placeholder="(555) 000-0000">
+
+      <label>Email</label>
+      <input id="profEmail" placeholder="you@email.com">
+
       <label>Address</label>
-      <input id="custAddress" placeholder="123 Main St, City, State">
-      <label>Notes</label>
-      <textarea id="custNotes" placeholder="Optional notes…"></textarea>
-      <button id="addCust">Save Customer</button>
-    </div>
+      <input id="profAddress" placeholder="123 Main St, City, State">
 
-    <div class="card">
-      <h2>Customer List</h2>
-      <ul class="customer-list" id="custList"><li class="empty-note">No customers saved yet.</li></ul>
-    </div>
-  </div>
+      <label>About / Bio</label>
+      <textarea id="profBio" placeholder="Short description…"></textarea>
 
-  <div class="tab-panel" id="tab-jobs">
-    <div class="card">
-      <h2>Add Job</h2>
-      <label>Job Title</label>
-      <input id="jobTitle" placeholder="e.g. Oak removal – 123 Elm St">
-      <label>Customer Name</label>
-      <input id="jobCust" placeholder="Customer's name">
-      <label>Date</label>
-      <input id="jobDate" type="date">
-      <label>Price</label>
-      <input id="jobPrice" placeholder="e.g. $850.00">
-      <label>Notes</label>
-      <textarea id="jobNotes" placeholder="Scope, access info, etc."></textarea>
-      <button id="addJob">Save Job</button>
-    </div>
+      <label>Logo Upload</label>
+      <input type="file" id="profLogo" accept="image/*">
 
-    <div class="card">
-      <h2>Job List</h2>
-      <ul class="job-list" id="jobList"><li class="empty-note">No jobs saved yet.</li></ul>
-    </div>
-  </div>
+      <div class="logo-preview" id="logoPreview"></div>
 
-  <script>
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
-      });
-    });
+      <button id="saveProfile" class="rtg-btn-green">💾 Save Profile</button>
 
-    const CUST_KEY = "rtg_customers";
-    let customers = JSON.parse(localStorage.getItem(CUST_KEY) || "[]");
+    </section>
 
-    function escapeHtml(str) {
-      const div = document.createElement("div");
-      div.textContent = str || "";
-      return div.innerHTML;
-    }
+  </main>
 
-    function renderCustomers() {
-      const ul = document.getElementById("custList");
-      if (customers.length === 0) {
-        ul.innerHTML = '<li class="empty-note">No customers saved yet.</li>';
-        return;
-      }
-      ul.innerHTML = customers.map((c, i) => `
-        <li>
-          <button class="del-btn" data-idx="${i}" data-type="cust">✕</button>
-          <div class="cust-name">${escapeHtml(c.name)}</div>
-          <div class="cust-details">${escapeHtml(c.phone || "")}${c.address ? " · " + escapeHtml(c.address) : ""}${c.notes ? "<br>" + escapeHtml(c.notes) : ""}</div>
-        </li>
-      `).join("");
-      ul.querySelectorAll(".del-btn[data-type='cust']").forEach(btn => {
-        btn.addEventListener("click", () => {
-          customers.splice(Number(btn.dataset.idx), 1);
-          localStorage.setItem(CUST_KEY, JSON.stringify(customers));
-          renderCustomers();
-        });
-      });
-    }
-
-    document.getElementById("addCust").onclick = () => {
-      const name = document.getElementById("custName").value.trim();
-      if (!name) { alert("Customer name is required."); return; }
-      customers.push({
-        name,
-        phone: document.getElementById("custPhone").value.trim(),
-        address: document.getElementById("custAddress").value.trim(),
-        notes: document.getElementById("custNotes").value.trim()
-      });
-      localStorage.setItem(CUST_KEY, JSON.stringify(customers));
-      renderCustomers();
-      ["custName","custPhone","custAddress","custNotes"].forEach(id => document.getElementById(id).value = "");
-    };
-
-    const JOBS_KEY = "rtg_jobs";
-    let jobs = JSON.parse(localStorage.getItem(JOBS_KEY) || "[]");
-
-    function renderJobs() {
-      const ul = document.getElementById("jobList");
-      if (jobs.length === 0) {
-        ul.innerHTML = '<li class="empty-note">No jobs saved yet.</li>';
-        return;
-      }
-      ul.innerHTML = jobs.map((j, i) => `
-        <li>
-          <button class="del-btn" data-idx="${i}" data-type="job">✕</button>
-          <div class="job-title">${escapeHtml(j.title)} <span class="badge badge-open">Open</span></div>
-          <div class="job-details">${j.customer ? "Customer: " + escapeHtml(j.customer) + " · " : ""}${escapeHtml(j.date || "")}${j.price ? " · " + escapeHtml(j.price) : ""}${j.notes ? "<br>" + escapeHtml(j.notes) : ""}</div>
-        </li>
-      `).join("");
-      ul.querySelectorAll(".del-btn[data-type='job']").forEach(btn => {
-        btn.addEventListener("click", () => {
-          jobs.splice(Number(btn.dataset.idx), 1);
-          localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
-          renderJobs();
-        });
-      });
-    }
-
-    document.getElementById("addJob").onclick = () => {
-      const title = document.getElementById("jobTitle").value.trim();
-      if (!title) { alert("Job title is required."); return; }
-      jobs.push({
-        title,
-        customer: document.getElementById("jobCust").value.trim(),
-        date: document.getElementById("jobDate").value,
-        price: document.getElementById("jobPrice").value.trim(),
-        notes: document.getElementById("jobNotes").value.trim()
-      });
-      localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
-      renderJobs();
-      ["jobTitle","jobCust","jobDate","jobPrice","jobNotes"].forEach(id => document.getElementById(id).value = "");
-    };
-
-    renderCustomers();
-    renderJobs();
-  </script>
-
+  <script src="profile.js"></script>
 </body>
 </html>
