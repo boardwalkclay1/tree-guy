@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Tree Guy Login</title>
-  <link rel="stylesheet" href="../styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../assets/icons/rtg-192.png">
+  <link rel="stylesheet" href="login.css">
 </head>
 
 <body class="auth-page">
 
-  <h1>Tree Guy Login</h1>
+  <header class="auth-header">
+    <h1>Tree Guy Login</h1>
+  </header>
 
   <div class="auth-card">
     <input id="email" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
 
-    <button id="loginBtn" class="btn-primary">Login</button>
+    <button id="loginBtn" class="bubble-btn">Login</button>
 
-    <p style="margin-top:15px;">
+    <p class="small-link">
       Don’t have an account?
       <a href="paywall.html">Unlock OS</a>
     </p>
@@ -26,8 +30,8 @@
     import { loginTreeGuy } from "../api/auth.js";
 
     document.getElementById("loginBtn").onclick = async () => {
-      const email = email.value.trim();
-      const password = password.value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
       const ok = await loginTreeGuy(email, password);
       if (ok) window.location.href = "../dashboard/index.html";
