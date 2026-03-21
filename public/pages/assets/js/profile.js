@@ -1,5 +1,12 @@
-const KEY = "rtg_profile_v1";
+// profile.js — Real Tree Guy OS (IndexedDB Version)
 
+import { initDB, save, getAll, get, remove } from "../../../assets/js/db.js";
+
+await initDB();
+
+/* ============================================================
+   DOM ELEMENTS
+   ============================================================ */
 const nameInput = document.getElementById("profName");
 const bizInput = document.getElementById("profBiz");
 const phoneInput = document.getElementById("profPhone");
@@ -9,10 +16,14 @@ const bioInput = document.getElementById("profBio");
 const logoInput = document.getElementById("profLogo");
 const logoPreview = document.getElementById("logoPreview");
 
-/* LOAD PROFILE */
-(function loadProfile() {
-  const saved = JSON.parse(localStorage.getItem(KEY));
-  if (!saved) return;
+/* ============================================================
+   LOAD PROFILE (IndexedDB)
+   ============================================================ */
+(async function loadProfile() {
+  const all = await getAll("profile");
+  if (!all || all.length === 0) return;
+
+  const saved = all[0]; // only one profile stored
 
   nameInput.value = saved.name || "";
   bizInput.value = saved.biz || "";
@@ -26,7 +37,9 @@ const logoPreview = document.getElementById("logoPreview");
   }
 })();
 
-/* LOGO UPLOAD */
+/* ============================================================
+   LOGO UPLOAD
+   ============================================================ */
 logoInput.onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -38,9 +51,12 @@ logoInput.onchange = e => {
   reader.readAsDataURL(file);
 };
 
-/* SAVE PROFILE */
-document.getElementById("saveProfile").onclick = () => {
+/* ============================================================
+   SAVE PROFILE (IndexedDB)
+   ============================================================ */
+document.getElementById("saveProfile").onclick = async () => {
   const data = {
+    id: "PROFILE",
     name: nameInput.value.trim(),
     biz: bizInput.value.trim(),
     phone: phoneInput.value.trim(),
@@ -50,6 +66,7 @@ document.getElementById("saveProfile").onclick = () => {
     logo: logoPreview.style.backgroundImage || ""
   };
 
-  localStorage.setItem(KEY, JSON.stringify(data));
+  await save("profile", data);
+
   alert("Profile saved.");
 };
