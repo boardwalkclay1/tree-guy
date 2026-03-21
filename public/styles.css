@@ -1,5 +1,5 @@
 /* ============================================================
-   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (ULTIMATE BUILD)
+   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (STABLE BUILD)
    ============================================================ */
 
 /* ROOT VARIABLES — SEASON MODES */
@@ -7,21 +7,21 @@
   --leaf-green: #2e6b33;
   --leaf-dark: #1f4d24;
   --wood: #5a3b1e;
-  --glow: rgba(0,255,0,0.25);
+  --glow: rgba(0,255,0,0.18);
 }
 
 /* FALL MODE */
 body.fall {
   --leaf-green: #c96f1a;
   --leaf-dark: #8a4b0f;
-  --glow: rgba(255,140,0,0.25);
+  --glow: rgba(255,140,0,0.18);
 }
 
 /* WINTER MODE */
 body.winter {
   --leaf-green: #bcd7e6;
   --leaf-dark: #8aa8b8;
-  --glow: rgba(180,220,255,0.25);
+  --glow: rgba(180,220,255,0.18);
 }
 
 /* ============================================================
@@ -32,23 +32,17 @@ body.winter {
   display: flex;
   justify-content: center;
   margin-top: 40px;
-  padding-bottom: 260px;
+  padding-bottom: 220px;
   position: relative;
   overflow: visible;
+  z-index: 1; /* stays behind UI like burger, etc. */
 }
 
 .tree {
   position: relative;
   width: 480px;
-  min-height: 1250px;
+  min-height: 1200px;
   margin: 0 auto;
-  animation: tree-breathe 6s ease-in-out infinite;
-}
-
-/* CANOPY — BREATHING EFFECT */
-@keyframes tree-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.015); }
 }
 
 /* ============================================================
@@ -62,13 +56,7 @@ body.winter {
   margin: 0 auto;
   background: var(--leaf-green);
   border-radius: 50%;
-  box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 60px var(--glow);
-  animation: canopy-sway 5s ease-in-out infinite alternate;
-}
-
-@keyframes canopy-sway {
-  from { transform: rotate(-1deg); }
-  to { transform: rotate(1deg); }
+  box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 50px var(--glow);
 }
 
 .canopy::before,
@@ -95,7 +83,7 @@ body.winter {
 }
 
 /* ============================================================
-   TRUNK — CENTERED + ROOT GLOW
+   TRUNK — CENTERED
    ============================================================ */
 
 .trunk {
@@ -107,11 +95,11 @@ body.winter {
   box-shadow:
     inset 0 0 30px rgba(0,0,0,0.6),
     0 0 35px rgba(0,0,0,0.7),
-    0 0 60px var(--glow);
+    0 0 40px var(--glow);
 }
 
 /* ============================================================
-   BRANCH SYSTEM — SWAY + ALIGNMENT
+   BRANCH SYSTEM — ALIGNMENT
    ============================================================ */
 
 .branch {
@@ -120,12 +108,6 @@ body.winter {
   height: 130px;
   left: 50%;
   transform: translateX(-50%);
-  animation: branch-sway 4s ease-in-out infinite alternate;
-}
-
-@keyframes branch-sway {
-  from { transform: translateX(-50%) rotate(-1deg); }
-  to { transform: translateX(-50%) rotate(1deg); }
 }
 
 /* WOOD BAR */
@@ -164,12 +146,11 @@ body.winter {
   border: 3px solid var(--leaf-green);
   backdrop-filter: blur(6px);
   z-index: 10;
-  transition: 0.2s;
+  transition: 0.15s;
 }
 
 .branch-btn:hover {
   background: rgba(0,0,0,0.75);
-  transform: scale(1.05);
 }
 
 /* LEFT / RIGHT LOGIC */
@@ -189,25 +170,3 @@ body.winter {
 .b5 { top: 900px; }
 .b6 { top: 1030px; }
 .b7 { top: 1160px; }
-
-/* ============================================================
-   FALLING LEAVES — CINEMATIC PARTICLES
-   ============================================================ */
-
-@keyframes leaf-fall {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
-}
-
-.leaf {
-  position: fixed;
-  top: -20px;
-  width: 14px;
-  height: 14px;
-  background: var(--leaf-green);
-  border-radius: 50%;
-  box-shadow: 0 0 10px var(--glow);
-  animation: leaf-fall linear infinite;
-  opacity: 0.8;
-  z-index: 1;
-}
