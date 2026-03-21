@@ -25,8 +25,8 @@
   </div>
 
   <script type="module">
-    // CORRECT JS PATH
-    import { loginUser } from "../assets/js/auth.js";
+    // CORRECT JS PATH FOR YOUR STRUCTURE
+    import { loginUser } from "./assets/js/auth.js";
 
     document.getElementById("loginBtn").onclick = async () => {
       const email = document.getElementById("email").value.trim();
@@ -35,7 +35,7 @@
       const ok = await loginUser(email, password);
 
       if (ok) {
-        window.location.href = "../pages/dashboard.html";
+        window.location.href = "dashboard.html";
       } else {
         alert("Invalid login. If you haven't paid, unlock the OS first.");
       }
