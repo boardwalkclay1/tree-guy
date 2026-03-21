@@ -1,6 +1,12 @@
-// ===============================
-// MODE SWITCHING
-// ===============================
+// flyers.js — Real Tree Guy OS (IndexedDB Version)
+
+import { initDB, save, get, getAll, remove } from "../../assets/js/db.js";
+
+await initDB();
+
+/* ============================================================
+   MODE SWITCHING
+   ============================================================ */
 const modeCard = document.getElementById("modeCard");
 const modeFlyer = document.getElementById("modeFlyer");
 const modeDoor = document.getElementById("modeDoorHanger");
@@ -23,9 +29,9 @@ modeCard.onclick = () => setMode("card");
 modeFlyer.onclick = () => setMode("flyer");
 modeDoor.onclick = () => setMode("door");
 
-// ===============================
-// LIVE PREVIEW ELEMENTS
-// ===============================
+/* ============================================================
+   LIVE PREVIEW ELEMENTS
+   ============================================================ */
 const headlineInput = document.getElementById("headline");
 const bodyInput = document.getElementById("body");
 const offerInput = document.getElementById("offer");
@@ -46,16 +52,16 @@ const bgColor = document.getElementById("bgColor");
 const textColor = document.getElementById("textColor");
 const accentColor = document.getElementById("accentColor");
 
-// ===============================
-// TEXT UPDATES
-// ===============================
+/* ============================================================
+   TEXT UPDATES
+   ============================================================ */
 headlineInput.oninput = () => previewHeadline.textContent = headlineInput.value;
 bodyInput.oninput = () => previewBody.textContent = bodyInput.value;
 offerInput.oninput = () => previewOffer.textContent = offerInput.value;
 
-// ===============================
-// BACKGROUND IMAGE
-// ===============================
+/* ============================================================
+   BACKGROUND IMAGE
+   ============================================================ */
 bgUpload.onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -71,9 +77,9 @@ bgStrength.oninput = () => {
   previewBg.style.opacity = bgStrength.value / 100;
 };
 
-// ===============================
-// LOGO UPLOAD
-// ===============================
+/* ============================================================
+   LOGO UPLOAD
+   ============================================================ */
 logoUpload.onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -85,21 +91,24 @@ logoUpload.onchange = e => {
   reader.readAsDataURL(file);
 };
 
-// ===============================
-// COLORS
-// ===============================
+/* ============================================================
+   COLORS
+   ============================================================ */
 bgColor.oninput = () => preview.style.backgroundColor = bgColor.value;
+
 textColor.oninput = () => {
   previewHeadline.style.color = textColor.value;
   previewBody.style.color = textColor.value;
 };
+
 accentColor.oninput = () => previewOffer.style.color = accentColor.value;
 
-// ===============================
-// SAVE DESIGN (localStorage)
-// ===============================
-document.getElementById("saveDesign").onclick = () => {
+/* ============================================================
+   SAVE DESIGN (IndexedDB)
+   ============================================================ */
+document.getElementById("saveDesign").onclick = async () => {
   const design = {
+    id: "FLY-" + Date.now(),
     mode: preview.className,
     headline: headlineInput.value,
     body: bodyInput.value,
@@ -112,15 +121,20 @@ document.getElementById("saveDesign").onclick = () => {
     logoImage: previewLogo.style.backgroundImage
   };
 
-  localStorage.setItem("rtg_flyer_design", JSON.stringify(design));
+  await save("documents", design);
+
   alert("Design saved.");
 };
 
-// ===============================
-// LOAD DESIGN (auto-load on page open)
-// ===============================
-(function loadDesign() {
-  const saved = JSON.parse(localStorage.getItem("rtg_flyer_design"));
+/* ============================================================
+   LOAD DESIGN (auto-load latest)
+   ============================================================ */
+(async function loadDesign() {
+  const all = await getAll("documents");
+  if (!all || all.length === 0) return;
+
+  // Load the most recent flyer design
+  const saved = all.reverse().find(d => d.id.startsWith("FLY-"));
   if (!saved) return;
 
   headlineInput.value = saved.headline;
@@ -150,23 +164,23 @@ document.getElementById("saveDesign").onclick = () => {
   preview.className = saved.mode;
 })();
 
-// ===============================
-// PRINT
-// ===============================
+/* ============================================================
+   PRINT
+   ============================================================ */
 document.getElementById("printFlyer").onclick = () => window.print();
 
-// ===============================
-// EMAIL (opens user's email app)
-// ===============================
+/* ============================================================
+   EMAIL
+   ============================================================ */
 document.getElementById("emailFlyer").onclick = () => {
   const subject = encodeURIComponent("My Tree Service Flyer");
   const body = encodeURIComponent("Attached is my flyer design.");
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 };
 
-// ===============================
-// SHARE (mobile share sheet)
-// ===============================
+/* ============================================================
+   SHARE
+   ============================================================ */
 document.getElementById("shareFlyer").onclick = async () => {
   if (navigator.share) {
     navigator.share({
@@ -178,9 +192,9 @@ document.getElementById("shareFlyer").onclick = async () => {
   }
 };
 
-// ===============================
-// FULLSCREEN
-// ===============================
+/* ============================================================
+   FULLSCREEN
+   ============================================================ */
 document.getElementById("fullscreenFlyer").onclick = () => {
   preview.requestFullscreen();
 };
