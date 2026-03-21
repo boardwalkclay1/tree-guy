@@ -1,5 +1,5 @@
 /* ============================================================
-   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (FULL REBUILD)
+   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (FINAL FIXED BUILD)
    ============================================================ */
 
 /* TREE WRAPPER */
@@ -7,23 +7,24 @@
   display: flex;
   justify-content: center;
   margin-top: 40px;
-  padding-bottom: 200px; /* ensures bottom branches never get cut off */
+  padding-bottom: 240px; /* ensures bottom branches never get cut off */
 }
 
 .tree {
   position: relative;
   width: 480px;
-  min-height: 1200px; /* FIX: allows natural growth instead of forcing 1400px */
+  min-height: 1250px; /* balanced height */
+  margin: 0 auto;
 }
 
 /* ============================================================
-   3× FULL CANOPY — LAYERED ORGANIC BLOBS
+   3× FULL CANOPY — ORGANIC, CENTERED, BALANCED
    ============================================================ */
 
 .canopy {
   position: relative;
-  width: 420px;
-  height: 420px;
+  width: 440px;
+  height: 440px;
   margin: 0 auto;
   background: #2e6b33;
   border-radius: 50%;
@@ -40,29 +41,29 @@
 }
 
 .canopy::before {
-  width: 320px;
-  height: 320px;
-  left: -60px;
-  top: 80px;
+  width: 330px;
+  height: 330px;
+  left: -70px;
+  top: 90px;
 }
 
 .canopy::after {
-  width: 320px;
-  height: 320px;
-  right: -60px;
-  top: 80px;
+  width: 330px;
+  height: 330px;
+  right: -70px;
+  top: 90px;
 }
 
 /* ============================================================
-   TRUNK — THICK, CENTERED, CINEMATIC
+   TRUNK — CENTERED, STRAIGHT, CINEMATIC
    ============================================================ */
 
 .trunk {
-  width: 140px;
-  height: 650px;
+  width: 150px;
+  height: 680px;
   background: #5a3b1e;
   margin: 0 auto;
-  border-radius: 50px;
+  border-radius: 55px;
   box-shadow:
     inset 0 0 30px rgba(0,0,0,0.6),
     0 0 35px rgba(0,0,0,0.7);
@@ -74,16 +75,18 @@
 
 .branch {
   position: absolute;
-  width: 420px;
-  height: 120px;
+  width: 440px;
+  height: 130px;
+  left: 50%;
+  transform: translateX(-50%); /* ensures perfect centering */
 }
 
 /* WOOD BAR */
 .branch-bar {
   position: absolute;
-  top: 50px;
+  top: 55px;
   width: 100%;
-  height: 22px;
+  height: 24px;
   background: #5a3b1e;
   border-radius: 14px;
   box-shadow: 0 0 18px rgba(0,0,0,0.6);
@@ -92,25 +95,25 @@
 /* BUSH BEHIND BUTTON */
 .branch-bush {
   position: absolute;
-  width: 150px;
-  height: 150px;
+  width: 160px;
+  height: 160px;
   background: #2e6b33;
   border-radius: 50%;
-  top: -10px;
+  top: -12px;
   box-shadow: 0 0 22px rgba(0,0,0,0.6);
 }
 
 /* BUTTON ON BRANCH */
 .branch-btn {
   position: absolute;
-  top: 22px;
-  padding: 14px 32px;
+  top: 26px;
+  padding: 15px 34px;
   background: rgba(0,0,0,0.55);
   border-radius: 999px;
   color: #caffca;
   text-decoration: none;
   font-weight: 900;
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   border: 3px solid #2e6b33;
   backdrop-filter: blur(6px);
   z-index: 10;
@@ -121,40 +124,40 @@
 }
 
 /* ============================================================
-   ALTERNATING LEFT / RIGHT LOGIC
+   ALTERNATING LEFT / RIGHT LOGIC (FIXED ALIGNMENT)
    ============================================================ */
 
 .branch.left .branch-bar {
-  transform: rotate(-10deg);
+  transform: rotate(-9deg);
 }
 .branch.left .branch-bush {
-  left: -20px;
+  left: -25px;
 }
 .branch.left .branch-btn {
-  left: 60px;
+  left: 70px;
 }
 
 .branch.right .branch-bar {
-  transform: rotate(10deg);
+  transform: rotate(9deg);
 }
 .branch.right .branch-bush {
-  right: -20px;
+  right: -25px;
 }
 .branch.right .branch-btn {
-  right: 60px;
+  right: 70px;
 }
 
 /* ============================================================
-   BRANCH SPACING DOWN THE TREE
+   BRANCH SPACING — EVEN, BALANCED, CINEMATIC
    ============================================================ */
 
-.b1 { top: 360px; }
-.b2 { top: 480px; }
-.b3 { top: 600px; }
-.b4 { top: 720px; }
-.b5 { top: 840px; }
-.b6 { top: 960px; }
-.b7 { top: 1080px; }
+.b1 { top: 380px; }
+.b2 { top: 510px; }
+.b3 { top: 640px; }
+.b4 { top: 770px; }
+.b5 { top: 900px; }
+.b6 { top: 1030px; }
+.b7 { top: 1160px; }
 
 /* ============================================================
    BURGER MENU DROPDOWNS — CHAINSAW ORANGE
