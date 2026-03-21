@@ -1,6 +1,6 @@
 // contracts.js — Real Tree Guy OS (IndexedDB Version)
 
-import { initDB, save, getAll, remove } from "../../assets/js/db.js";
+import { initDB, save, getAll, remove } from "../../../assets/js/db.js";
 
 await initDB();
 
