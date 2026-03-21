@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Customers & Jobs – Real Tree Guy OS</title>
+
   <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="/assets/css/customers.css">
+  <link rel="stylesheet" href="../../assets/css/customers.css">
 </head>
 
 <body>
@@ -90,6 +91,11 @@
     </div>
   </div>
 
-  <script src="/pages/assets/js/customers.js"></script>
+  <!-- DB ENGINE FIRST -->
+  <script type="module" src="../../assets/js/db.js"></script>
+
+  <!-- CUSTOMERS/JOBS LOGIC SECOND -->
+  <script type="module" src="../../assets/js/customers.js"></script>
+
 </body>
 </html>
