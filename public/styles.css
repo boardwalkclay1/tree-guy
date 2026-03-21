@@ -9,6 +9,8 @@ body.rtg-dashboard {
   padding: 0;
   font-family: system-ui, sans-serif;
   color: #caffca;
+  position: relative;
+  z-index: 0;
 }
 
 /* ============================================================
@@ -19,7 +21,7 @@ body.rtg-dashboard {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10000;
+  z-index: 9999;
   display: flex;
   align-items: center;
   padding: 14px 20px;
@@ -59,7 +61,7 @@ body.rtg-dashboard {
   padding: 70px 20px 20px;
   box-shadow: 4px 0 18px rgba(0,0,0,0.7);
   transition: left 0.25s ease;
-  z-index: 9999;
+  z-index: 9998;
   overflow-y: auto;
 }
 .rtg-sidemenu.open {
@@ -108,18 +110,22 @@ details p {
 }
 
 /* ============================================================
-   HEADER
+   HEADER — ALWAYS ABOVE TREE
    ============================================================ */
 .rtg-header {
-  margin-top: 40px;
+  margin-top: 120px;
   text-align: center;
+  position: relative;
+  z-index: 9997; /* ABOVE TREE */
 }
+
 .rtg-title {
-  font-size: 3rem;
+  font-size: 3.4rem;
   font-weight: 900;
   color: #caffca;
   text-shadow: 0 0 14px #1f5f2b;
 }
+
 .rtg-subtitle {
   font-size: 1.2rem;
   color: #d8ffd8;
@@ -142,7 +148,7 @@ details p {
 .tree-menu {
   display: flex;
   justify-content: center;
-  margin-top: -140px; /* LIFT TREE UP */
+  margin-top: -80px; /* LIFT TREE UP BUT KEEP TITLE ABOVE */
   padding-bottom: 220px;
   position: relative;
   overflow: visible;
@@ -154,6 +160,7 @@ details p {
   width: 480px;
   min-height: 1100px;
   margin: 0 auto;
+  z-index: 1;
 }
 
 /* CANOPY */
@@ -165,6 +172,7 @@ details p {
   background: var(--leaf-green);
   border-radius: 50%;
   box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 50px var(--glow);
+  z-index: 1;
 }
 .canopy::before,
 .canopy::after {
@@ -207,6 +215,7 @@ details p {
   height: 130px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 2;
 }
 
 .branch-bar {
@@ -264,32 +273,6 @@ details p {
 .b5 { top: 900px; }
 .b6 { top: 1030px; }
 .b7 { top: 1160px; }
-
-/* ============================================================
-   RTG ONLINE BUTTON
-   ============================================================ */
-.rtg-online-bottom {
-  margin-top: 40px;
-  text-align: center;
-}
-.rtg-online-btn {
-  display: inline-block;
-  padding: 14px 28px;
-  font-size: 1.3rem;
-  font-weight: 900;
-  color: #caffca;
-  text-decoration: none;
-  background: rgba(0,0,0,0.55);
-  border: 3px solid #ff7a00;
-  border-radius: 14px;
-  backdrop-filter: blur(6px);
-  transition: 0.2s ease;
-}
-.rtg-online-btn:hover {
-  background: rgba(0,0,0,0.75);
-  border-color: #ffa75f;
-  color: #e6ffe6;
-}
 
 /* ============================================================
    FOOTER
