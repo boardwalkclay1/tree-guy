@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual Measurement – Real Tree Guy OS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
+  <link rel="stylesheet" href="manual.css">
+</head>
+
+<body>
+
+  <header class="rtg-header">
+    <h1>📐 Manual Tree Measurement</h1>
+    <a class="back-link" href="measurement.html">← Back</a>
+  </header>
+
+  <main class="shell">
+
+    <div class="card">
+      <h2>Tree Height</h2>
+
+      <label>Distance from Tree (ft)</label>
+      <input type="number" id="dist" placeholder="e.g. 50">
+
+      <label>Angle to Top (degrees)</label>
+      <input type="number" id="angle" placeholder="e.g. 45">
+
+      <label>Your Eye Height (ft)</label>
+      <input type="number" id="eye" value="5.5">
+
+      <button class="rtg-btn" id="calcHeight">Calculate Height</button>
+
+      <div class="result" id="heightResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>DBH (Diameter)</h2>
+
+      <label>Trunk Circumference (inches)</label>
+      <input type="number" id="circ" placeholder="e.g. 62">
+
+      <button class="rtg-btn" id="calcDBH">Calculate DBH</button>
+
+      <div class="result" id="dbhResult"></div>
+    </div>
+
+  </main>
+
+  <script src="manual.js"></script>
+</body>
+</html>
