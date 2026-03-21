@@ -4,8 +4,91 @@
   <meta charset="UTF-8">
   <title>Login – Real Tree Guy OS</title>
 
-  <!-- CSS IS IN /public/assets/css/login.css -->
-  <link rel="stylesheet" href="../assets/css/login.css">
+  <style>
+    /* ============================
+       REAL TREE GUY OS – LOGIN UI
+       ============================ */
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d0d0d;
+      font-family: Arial, sans-serif;
+      color: #caffca;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-top: 60px;
+      font-size: 2rem;
+      color: #2e6b33;
+      text-shadow: 0 0 12px rgba(46,107,51,0.6);
+    }
+
+    .card {
+      margin-top: 40px;
+      background: rgba(0,0,0,0.55);
+      padding: 30px;
+      border-radius: 18px;
+      width: 320px;
+      box-shadow: 0 0 22px rgba(0,0,0,0.7);
+      border: 2px solid #2e6b33;
+      backdrop-filter: blur(6px);
+    }
+
+    .card input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      border: 2px solid #2e6b33;
+      background: rgba(0,0,0,0.55);
+      color: #caffca;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .card input::placeholder {
+      color: #8fbf8f;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 999px;
+      border: 2px solid #2e6b33;
+      background: #2e6b33;
+      color: #caffca;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #3c8a44;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 18px;
+      color: #8fbf8f;
+    }
+
+    a {
+      color: #ff7a00;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #ff9d42;
+    }
+  </style>
 </head>
 
 <body>
@@ -25,7 +108,6 @@
   </div>
 
   <script type="module">
-    /* JS IS NOW IN /public/assets/js/auth.js */
     import { loginUser } from "../assets/js/auth.js";
 
     document.getElementById("loginBtn").onclick = async () => {
