@@ -1,0 +1,127 @@
+/* ============================================================
+   Real Tree Guy OS — Map Module Styles
+   ============================================================ */
+
+body {
+  background: #0d0f0d url("../../assets/icons/rtg-192.png")
+    center center / cover no-repeat;
+  background-attachment: scroll;
+  min-height: 100vh;
+  color: #e8ffe8;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  body { background-attachment: fixed; }
+}
+
+.shell {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PHONE LAYOUT */
+@media (max-width: 900px) {
+  .shell {
+    flex-direction: column;
+  }
+}
+
+.left-panel {
+  background: rgba(0,0,0,0.45);
+  border: 2px solid #2e6b33;
+  border-radius: 14px;
+  padding: 20px;
+  width: 320px;
+}
+
+@media (max-width: 900px) {
+  .left-panel {
+    width: 100%;
+  }
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.pill {
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.35);
+  border: 2px solid #3f8b44;
+  color: #d8ffd8;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.pill:hover {
+  background: #3f8b44;
+  transform: scale(1.05);
+}
+
+.map-wrap {
+  flex: 1;
+  background: rgba(0,0,0,0.35);
+  border: 2px solid #2e6b33;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 75vh;
+  box-shadow: 0 0 18px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 900px) {
+  .map-wrap {
+    height: 70vh;
+  }
+}
+
+#mapFrame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.map-footer {
+  padding: 10px;
+  text-align: center;
+  background: rgba(0,0,0,0.4);
+  border-top: 2px solid #2e6b33;
+}
+
+.btn-primary,
+.btn-ghost {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #3f8b44;
+  border: 3px solid #6aff6a;
+  color: #e8ffe8;
+}
+
+.btn-ghost {
+  background: rgba(0,0,0,0.25);
+  border: 2px solid #3f8b44;
+  color: #d8ffd8;
+}
