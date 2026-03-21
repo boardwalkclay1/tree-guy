@@ -1,8 +1,7 @@
 // ============================================================
-// Real Tree Guy OS — Map Module (Local-First Version)
+// Real Tree Guy OS — Interactive Map (Leaflet Version)
 // ============================================================
 
-const mapFrame = document.getElementById("mapFrame");
 const locationStatus = document.getElementById("locationStatus");
 const filterRow = document.getElementById("filterRow");
 const activeFilterLabel = document.getElementById("activeFilterLabel");
@@ -14,40 +13,22 @@ const openInMaps = document.getElementById("openInMaps");
 let userLat = null;
 let userLng = null;
 
-const DEFAULT_ZOOM = 14;
+// ============================================================
+// INIT MAP
+// ============================================================
+const map = L.map("map").setView([0, 0], 13);
 
-/* ============================================================
-   MAP UPDATE
-   ============================================================ */
-function updateMap(type, lat, lng) {
-  const q = `${type} near ${lat},${lng}`;
-  const encoded = encodeURIComponent(q);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+}).addTo(map);
 
-  mapFrame.src =
-    `https://www.google.com/maps?q=${encoded}&z=${DEFAULT_ZOOM}&output=embed`;
+let userMarker = null;
+let supplyMarkers = [];
 
-  openInMaps.href =
-    `https://www.google.com/maps/search/?api=1&query=${encoded}`;
-}
-
-function fallbackMap(type) {
-  const q = `${type} near me`;
-  const encoded = encodeURIComponent(q);
-
-  mapFrame.src =
-    `https://www.google.com/maps?q=${encoded}&z=13&output=embed`;
-
-  openInMaps.href =
-    `https://www.google.com/maps/search/?api=1&query=${encoded}`;
-
-  locationStatus.textContent =
-    "Location denied. Showing results near your device region.";
-}
-
-/* ============================================================
-   REQUEST LOCATION
-   ============================================================ */
-function requestLocation(type, cb) {
+// ============================================================
+// GET USER LOCATION
+// ============================================================
+function getLocation(cb) {
   navigator.geolocation.getCurrentPosition(
     pos => {
       userLat = pos.coords.latitude;
@@ -56,51 +37,90 @@ function requestLocation(type, cb) {
       locationStatus.textContent =
         `Location: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
 
+      if (!userMarker) {
+        userMarker = L.marker([userLat, userLng]).addTo(map);
+      } else {
+        userMarker.setLatLng([userLat, userLng]);
+      }
+
+      map.setView([userLat, userLng], 14);
+
       cb(userLat, userLng);
     },
-    () => fallbackMap(type),
-    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    () => {
+      locationStatus.textContent = "Location denied.";
+    },
+    { enableHighAccuracy: true }
   );
 }
 
-/* ============================================================
-   INITIAL LOAD
-   ============================================================ */
-requestLocation("tree service supplies", (lat, lng) => {
-  updateMap("tree service supplies", lat, lng);
+// ============================================================
+// SEARCH SUPPLIES USING NOMINATIM
+// ============================================================
+async function searchSupplies(type, lat, lng) {
+  // Clear old markers
+  supplyMarkers.forEach(m => map.removeLayer(m));
+  supplyMarkers = [];
+
+  const url =
+    `https://nominatim.openstreetmap.org/search?` +
+    `q=${encodeURIComponent(type)}&format=json&limit=10&` +
+    `viewbox=${lng - 0.1},${lat + 0.1},${lng + 0.1},${lat - 0.1}&bounded=1`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  data.forEach(place => {
+    const marker = L.marker([place.lat, place.lon])
+      .addTo(map)
+      .bindPopup(`<b>${place.display_name}</b>`);
+    supplyMarkers.push(marker);
+  });
+
+  openInMaps.href =
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(type)}+near+${lat},${lng}`;
+}
+
+// ============================================================
+// INITIAL LOAD
+// ============================================================
+getLocation((lat, lng) => {
+  searchSupplies("tree service supplies", lat, lng);
 });
 
-/* ============================================================
-   FILTERS
-   ============================================================ */
-filterRow.addEventListener("click", (e) => {
+// ============================================================
+// FILTER CLICK
+// ============================================================
+filterRow.addEventListener("click", e => {
   const btn = e.target.closest(".pill");
   if (!btn) return;
 
   const type = btn.dataset.type;
   activeFilterLabel.textContent = type;
 
-  requestLocation(type, (lat, lng) => updateMap(type, lat, lng));
+  getLocation((lat, lng) => {
+    searchSupplies(type, lat, lng);
+  });
 });
 
-/* ============================================================
-   DIRECTIONS
-   ============================================================ */
+// ============================================================
+// DIRECTIONS
+// ============================================================
 function buildDirectionsUrl(origin, destination) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`;
 }
 
-directionsFromUserBtn.addEventListener("click", () => {
+directionsFromUserBtn.onclick = () => {
   const type = activeFilterLabel.textContent;
   if (type === "None") return alert("Select a supply filter first.");
 
-  requestLocation(type, (lat, lng) => {
+  getLocation((lat, lng) => {
     const origin = `${lat},${lng}`;
     window.open(buildDirectionsUrl(origin, type), "_blank");
   });
-});
+};
 
-directionsFromClientBtn.addEventListener("click", () => {
+directionsFromClientBtn.onclick = () => {
   const client = clientAddressInput.value.trim();
   if (!client) return alert("Enter a client address first.");
 
@@ -108,4 +128,4 @@ directionsFromClientBtn.addEventListener("click", () => {
   if (type === "None") return alert("Select a supply filter first.");
 
   window.open(buildDirectionsUrl(client, type), "_blank");
-});
+};
