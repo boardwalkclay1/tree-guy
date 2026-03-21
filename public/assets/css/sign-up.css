@@ -1,0 +1,77 @@
+/* RESET */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0d0f0d;
+  color: #e8ffe8;
+  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+}
+
+/* TITLE */
+h1 {
+  font-size: 2.2rem;
+  color: #caffca;
+  text-shadow: 0 0 12px #1f5f2b;
+  margin-bottom: 25px;
+}
+
+/* CARD */
+.card {
+  width: 90%;
+  max-width: 420px;
+  background: rgba(20, 35, 20, 0.9);
+  padding: 30px;
+  border-radius: 18px;
+  border: 2px solid #2e6b33;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+/* INPUTS */
+.card input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border-radius: 12px;
+  border: 1px solid #2e6b33;
+  background: rgba(255,255,255,0.08);
+  color: #e8ffe8;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s;
+}
+
+.card input:focus {
+  background: rgba(255,255,255,0.15);
+  border-color: #6aff6a;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 16px;
+  margin-top: 25px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #3fa63f, #2d7a2d);
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: bold;
+}
+
+button:hover {
+  transform: scale(1.03);
+  background: linear-gradient(135deg, #4fdc4f, #2d7a2d);
+}
