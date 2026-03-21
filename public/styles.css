@@ -1,8 +1,136 @@
 /* ============================================================
-   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (STABLE BUILD)
+   REAL TREE GUY OS — GLOBAL + DASHBOARD STYLE (STABLE BUILD)
    ============================================================ */
 
-/* ROOT VARIABLES — SEASON MODES */
+/* BACKGROUND + BASE */
+body.rtg-dashboard {
+  background:#0d0f0d url("./assets/icons/rtg-192.png") center center/cover no-repeat fixed;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  color: #caffca;
+}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.rtg-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  background: rgba(0,0,0,0.55);
+  border-bottom: 2px solid #2e6b33;
+  backdrop-filter: blur(10px);
+  gap: 20px;
+}
+
+/* BURGER */
+.rtg-burger {
+  width: 36px;
+  height: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.rtg-burger span {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: #caffca;
+}
+
+/* ============================================================
+   SIDEMENU
+   ============================================================ */
+.rtg-sidemenu {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 260px;
+  height: 100vh;
+  background: rgba(0,0,0,0.92);
+  border-right: 2px solid #2e6b33;
+  padding: 70px 20px 20px;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.7);
+  transition: left 0.25s ease;
+  z-index: 9999;
+  overflow-y: auto;
+}
+.rtg-sidemenu.open {
+  left: 0;
+}
+
+.rtg-sidemenu a {
+  display: block;
+  margin-bottom: 16px;
+  color: #d8ffd8;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.rtg-sidemenu a:hover {
+  color: #6aff6a;
+}
+
+.menu-section-title {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #caffca;
+}
+
+details {
+  margin-bottom: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid #2e6b33;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #ff7a00;
+  text-shadow: 0 0 6px rgba(255,122,0,0.4);
+}
+summary:hover {
+  color: #ff9d42;
+}
+details p {
+  color: #ffb56b;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.rtg-header {
+  margin-top: 40px;
+  text-align: center;
+}
+.rtg-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #caffca;
+  text-shadow: 0 0 14px #1f5f2b;
+}
+.rtg-subtitle {
+  font-size: 1.2rem;
+  color: #d8ffd8;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   CINEMATIC TREE SYSTEM
+   ============================================================ */
+
+/* ROOT VARIABLES */
 :root {
   --leaf-green: #2e6b33;
   --leaf-dark: #1f4d24;
@@ -10,45 +138,25 @@
   --glow: rgba(0,255,0,0.18);
 }
 
-/* FALL MODE */
-body.fall {
-  --leaf-green: #c96f1a;
-  --leaf-dark: #8a4b0f;
-  --glow: rgba(255,140,0,0.18);
-}
-
-/* WINTER MODE */
-body.winter {
-  --leaf-green: #bcd7e6;
-  --leaf-dark: #8aa8b8;
-  --glow: rgba(180,220,255,0.18);
-}
-
-/* ============================================================
-   TREE WRAPPER
-   ============================================================ */
-
+/* TREE WRAPPER — LIFTED UP */
 .tree-menu {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: -140px; /* LIFT TREE UP */
   padding-bottom: 220px;
   position: relative;
   overflow: visible;
-  z-index: 1; /* stays behind UI like burger, etc. */
+  z-index: 1;
 }
 
 .tree {
   position: relative;
   width: 480px;
-  min-height: 1200px;
+  min-height: 1100px;
   margin: 0 auto;
 }
 
-/* ============================================================
-   CANOPY — ORGANIC BLOBS
-   ============================================================ */
-
+/* CANOPY */
 .canopy {
   position: relative;
   width: 440px;
@@ -58,7 +166,6 @@ body.winter {
   border-radius: 50%;
   box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 50px var(--glow);
 }
-
 .canopy::before,
 .canopy::after {
   content: "";
@@ -67,14 +174,12 @@ body.winter {
   border-radius: 50%;
   box-shadow: 0 0 40px rgba(0,0,0,0.7);
 }
-
 .canopy::before {
   width: 330px;
   height: 330px;
   left: -70px;
   top: 90px;
 }
-
 .canopy::after {
   width: 330px;
   height: 330px;
@@ -82,10 +187,7 @@ body.winter {
   top: 90px;
 }
 
-/* ============================================================
-   TRUNK — CENTERED
-   ============================================================ */
-
+/* TRUNK */
 .trunk {
   width: 150px;
   height: 680px;
@@ -98,10 +200,7 @@ body.winter {
     0 0 40px var(--glow);
 }
 
-/* ============================================================
-   BRANCH SYSTEM — ALIGNMENT
-   ============================================================ */
-
+/* BRANCH SYSTEM */
 .branch {
   position: absolute;
   width: 440px;
@@ -110,7 +209,6 @@ body.winter {
   transform: translateX(-50%);
 }
 
-/* WOOD BAR */
 .branch-bar {
   position: absolute;
   top: 55px;
@@ -121,7 +219,6 @@ body.winter {
   box-shadow: 0 0 18px rgba(0,0,0,0.6);
 }
 
-/* BUSH */
 .branch-bush {
   position: absolute;
   width: 160px;
@@ -132,7 +229,6 @@ body.winter {
   box-shadow: 0 0 22px rgba(0,0,0,0.6);
 }
 
-/* BUTTON */
 .branch-btn {
   position: absolute;
   top: 26px;
@@ -148,12 +244,10 @@ body.winter {
   z-index: 10;
   transition: 0.15s;
 }
-
 .branch-btn:hover {
   background: rgba(0,0,0,0.75);
 }
 
-/* LEFT / RIGHT LOGIC */
 .branch.left .branch-bar { transform: rotate(-9deg); }
 .branch.left .branch-bush { left: -25px; }
 .branch.left .branch-btn { left: 70px; }
@@ -162,7 +256,7 @@ body.winter {
 .branch.right .branch-bush { right: -25px; }
 .branch.right .branch-btn { right: 70px; }
 
-/* BRANCH SPACING */
+/* BRANCH POSITIONS */
 .b1 { top: 380px; }
 .b2 { top: 510px; }
 .b3 { top: 640px; }
@@ -170,3 +264,41 @@ body.winter {
 .b5 { top: 900px; }
 .b6 { top: 1030px; }
 .b7 { top: 1160px; }
+
+/* ============================================================
+   RTG ONLINE BUTTON
+   ============================================================ */
+.rtg-online-bottom {
+  margin-top: 40px;
+  text-align: center;
+}
+.rtg-online-btn {
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #caffca;
+  text-decoration: none;
+  background: rgba(0,0,0,0.55);
+  border: 3px solid #ff7a00;
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  transition: 0.2s ease;
+}
+.rtg-online-btn:hover {
+  background: rgba(0,0,0,0.75);
+  border-color: #ffa75f;
+  color: #e6ffe6;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  text-align: center;
+  padding: 30px 10px;
+  margin-top: 40px;
+  color: #c8f5c8;
+  font-size: 1rem;
+  opacity: 0.9;
+}
