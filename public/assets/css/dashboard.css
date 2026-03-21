@@ -1,0 +1,243 @@
+/* ============================================================
+   REAL TREE GUY OS — DASHBOARD CSS
+   ============================================================ */
+
+body.rtg-dashboard {
+  background: #0d0f0d url("../assets/icons/rtg-192.png")
+    center center/cover no-repeat fixed;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  color: #caffca;
+}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.rtg-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  background: rgba(0,0,0,0.55);
+  border-bottom: 2px solid #2e6b33;
+  backdrop-filter: blur(10px);
+  gap: 20px;
+}
+
+/* BURGER */
+.rtg-burger {
+  width: 36px;
+  height: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.rtg-burger span {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: #caffca;
+}
+
+/* ============================================================
+   SIDEMENU
+   ============================================================ */
+.rtg-sidemenu {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 260px;
+  height: 100vh;
+  background: rgba(0,0,0,0.92);
+  border-right: 2px solid #2e6b33;
+  padding: 70px 20px 20px;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.7);
+  transition: left 0.25s ease;
+  z-index: 9999;
+  overflow-y: auto;
+}
+.rtg-sidemenu.open {
+  left: 0;
+}
+
+.rtg-sidemenu a {
+  display: block;
+  margin-bottom: 16px;
+  color: #d8ffd8;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.rtg-sidemenu a:hover {
+  color: #6aff6a;
+}
+
+.menu-section-title {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #caffca;
+}
+
+details {
+  margin-bottom: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid #2e6b33;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #ff7a00;
+  text-shadow: 0 0 6px rgba(255,122,0,0.4);
+}
+summary:hover {
+  color: #ff9d42;
+}
+details p {
+  color: #ffb56b;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.rtg-header {
+  margin-top: 90px;
+  text-align: center;
+}
+.rtg-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #caffca;
+  text-shadow: 0 0 14px #1f5f2b;
+}
+.rtg-subtitle {
+  font-size: 1.2rem;
+  color: #d8ffd8;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   TREE SYSTEM
+   ============================================================ */
+.tree-menu {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.tree {
+  position: relative;
+  width: 300px;
+  height: 500px;
+}
+
+/* CANOPY + TRUNK */
+.canopy {
+  width: 200px;
+  height: 200px;
+  background: #1f5f2b;
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: 0 0 20px rgba(0,255,0,0.2);
+}
+.trunk {
+  width: 40px;
+  height: 200px;
+  background: #5a3b1e;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+/* BRANCHES */
+.branch {
+  position: absolute;
+  width: 200px;
+  height: 80px;
+}
+.branch-bar {
+  width: 100%;
+  height: 10px;
+  background: #5a3b1e;
+  border-radius: 6px;
+}
+.branch-bush {
+  width: 60px;
+  height: 60px;
+  background: #1f5f2b;
+  border-radius: 50%;
+  margin-top: -20px;
+  box-shadow: 0 0 10px rgba(0,255,0,0.15);
+}
+.branch-btn {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.55);
+  border: 2px solid #2e6b33;
+  border-radius: 8px;
+  color: #caffca;
+  text-decoration: none;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+.branch-btn:hover {
+  background: rgba(0,0,0,0.75);
+  border-color: #6aff6a;
+}
+
+/* Branch positions */
+.b1 { top: 120px; left: -160px; }
+.b2 { top: 120px; right: -160px; }
+.b3 { top: 200px; left: -160px; }
+.b4 { top: 200px; right: -160px; }
+.b5 { top: 280px; left: -160px; }
+.b6 { top: 280px; right: -160px; }
+.b7 { top: 360px; left: -160px; }
+
+/* ============================================================
+   RTG ONLINE BUTTON
+   ============================================================ */
+.rtg-online-bottom {
+  margin-top: 40px;
+  text-align: center;
+}
+.rtg-online-btn {
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #caffca;
+  text-decoration: none;
+  background: rgba(0,0,0,0.55);
+  border: 3px solid #ff7a00;
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  transition: 0.2s ease;
+}
+.rtg-online-btn:hover {
+  background: rgba(0,0,0,0.75);
+  border-color: #ffa75f;
+  color: #e6ffe6;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  text-align: center;
+  padding: 30px 10px;
+  margin-top: 40px;
+  color: #c8f5c8;
+  font-size: 1rem;
+  opacity: 0.9;
+}
