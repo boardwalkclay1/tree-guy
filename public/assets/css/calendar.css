@@ -1,0 +1,176 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: #0d0f0d url("../../assets/icons/rtg-192.png") center/40% no-repeat fixed;
+  color: #e8ffe8;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 2px solid #2e6b33;
+  background: rgba(0,0,0,0.4);
+}
+header h1 {
+  font-size: 2rem;
+  color: #caffca;
+  margin: 0;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #a8ffa8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* NAV */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px;
+}
+.cal-nav button {
+  padding: 8px 18px;
+  background: #2e6b33;
+  border: none;
+  color: #e8ffe8;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.cal-nav button:hover { background: #3fa63f; }
+#monthLabel {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #caffca;
+  min-width: 200px;
+  text-align: center;
+}
+
+/* GRID */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 12px 40px;
+}
+.cal-day-label {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #6aff6a;
+  padding: 6px 0;
+}
+.cal-day {
+  min-height: 80px;
+  background: rgba(20,35,20,0.8);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  border: 1px solid #1e4a1e;
+  transition: 0.15s;
+}
+.cal-day:hover {
+  background: rgba(40,70,40,0.9);
+  border-color: #3fa63f;
+}
+.cal-day .num {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #caffca;
+}
+.cal-day.today {
+  border-color: #6aff6a;
+  background: rgba(30,80,30,0.85);
+}
+.cal-day.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+/* EVENT PILLS */
+.event-pill {
+  background: #2e6b33;
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 0.72rem;
+  margin-top: 3px;
+  color: #e8ffe8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.event-pill.contract { background: #1a4f8c; }
+.event-pill.bid { background: #6b3b2e; }
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.modal-box {
+  background: #0d1f0d;
+  border: 2px solid #2e6b33;
+  border-radius: 16px;
+  padding: 28px;
+  width: 90%;
+  max-width: 440px;
+}
+.modal-box h2 {
+  color: #caffca;
+  margin-top: 0;
+}
+label {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #a8ffa8;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #2e6b33;
+  background: rgba(20,40,20,0.9);
+  color: #e8ffe8;
+  font-size: 0.95rem;
+}
+textarea { height: 80px; }
+
+.hidden { display: none; }
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}
+#saveEvent { background: #2e6b33; color: #e8ffe8; }
+#saveEvent:hover { background: #3fa63f; }
+#closeModal { background: rgba(255,255,255,0.1); color: #e8ffe8; }
+#closeModal:hover { background: rgba(255,255,255,0.2); }
