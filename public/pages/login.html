@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Login – Real Tree Guy OS</title>
+
+  <!-- CSS IS IN /public/assets/css/login.css -->
   <link rel="stylesheet" href="../assets/css/login.css">
 </head>
 
@@ -11,8 +13,8 @@
   <h1>Tree Guy Login</h1>
 
   <div class="card">
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+    <input id="email" type="email" placeholder="Email" autocomplete="email">
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
 
     <button id="loginBtn">Login</button>
 
@@ -23,11 +25,12 @@
   </div>
 
   <script type="module">
+    /* JS IS NOW IN /public/assets/js/auth.js */
     import { loginUser } from "../assets/js/auth.js";
 
     document.getElementById("loginBtn").onclick = async () => {
-      const email = email.value.trim();
-      const password = password.value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
       const ok = await loginUser(email, password);
 
