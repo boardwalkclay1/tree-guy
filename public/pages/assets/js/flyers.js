@@ -1,6 +1,6 @@
 // flyers.js — Real Tree Guy OS (IndexedDB Version)
 
-import { initDB, save, get, getAll, remove } from "../../assets/js/db.js";
+import { initDB, save, get, getAll, remove } from "../../../assets/js/db.js";
 
 await initDB();
 
@@ -133,7 +133,6 @@ document.getElementById("saveDesign").onclick = async () => {
   const all = await getAll("documents");
   if (!all || all.length === 0) return;
 
-  // Load the most recent flyer design
   const saved = all.reverse().find(d => d.id.startsWith("FLY-"));
   if (!saved) return;
 
