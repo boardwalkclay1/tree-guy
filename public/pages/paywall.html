@@ -5,11 +5,11 @@
   <title>Unlock Tree Guy OS – $30</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- GLOBAL CSS -->
-  <link rel="stylesheet" href="/assets/css/paywall.css">
+  <!-- PAYWALL CSS -->
+  <link rel="stylesheet" href="../assets/css/paywall.css">
 
-  <!-- FAVICON (correct path) -->
-  <link rel="icon" type="image/png" href="../public/assets/icons/rtg-192.png">
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="../assets/icons/rtg-192.png">
 
   <!-- OG URL -->
   <meta property="og:url" content="https://realtreeguy.pages.dev/pages/paywall.html">
@@ -32,24 +32,42 @@
     </ul>
 
     <div class="qr-wrapper">
-      <img src="../public/assets/img/RTG-qrcode.png" alt="PayPal QR Code">
+      <img src="../assets/img/RTG-qrcode.png" alt="PayPal QR Code">
     </div>
 
     <div style="margin-top:25px; text-align:center;">
-      <style>.pp-DSRQ56T7C8XZN{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;cursor:pointer;}</style>
+      <style>
+        .pp-DSRQ56T7C8XZN {
+          text-align:center;
+          border:none;
+          border-radius:0.25rem;
+          min-width:11.625rem;
+          padding:0 2rem;
+          height:2.625rem;
+          font-weight:bold;
+          background-color:#FFD140;
+          color:#000000;
+          font-family:"Helvetica Neue",Arial,sans-serif;
+          font-size:1rem;
+          cursor:pointer;
+        }
+      </style>
+
       <form action="https://www.paypal.com/ncp/payment/DSRQ56T7C8XZN" method="post" target="_blank" style="display:inline-grid;gap:0.5rem;">
         <input class="pp-DSRQ56T7C8XZN" type="submit" value="Buy Now" />
         <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
-        <section style="font-size:0.75rem;">Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" style="height:0.875rem;"/></section>
+        <section style="font-size:0.75rem;">
+          Powered by 
+          <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" style="height:0.875rem;"/>
+        </section>
       </form>
     </div>
 
-    <div id="statusMsg" class="info"></div>
-    <div id="errorMsg" class="error"></div>
-  </div>
+    <p class="already">
+      Already unlocked? <a href="login.html">Log in</a>
+    </p>
 
-  <script>window.API_URL = "";</script>
-  <script type="module" src="paywall.js"></script>
+  </div>
 
 </body>
 </html>
