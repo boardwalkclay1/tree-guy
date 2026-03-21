@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <title>REAL TREE GUY – Dashboard</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../assets/icons/rtg-192.png">
   <link rel="stylesheet" href="../styles.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
@@ -106,6 +106,7 @@
     }
     details p {
       color: #ffb56b;
+      line-height: 1.4;
     }
 
     /* HEADER */
@@ -125,7 +126,14 @@
       margin-top: 8px;
     }
 
-    /* RTG ONLINE BUTTON AT BOTTOM */
+    /* TREE SYSTEM */
+    .tree-menu {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* RTG ONLINE BUTTON */
     .rtg-online-bottom {
       margin-top: 40px;
       text-align: center;
@@ -179,32 +187,62 @@
     <a href="../pages/flyers.html">Cards & Flyers</a>
     <a href="../pages/contracts.html">Contracts</a>
     <a href="../pages/measurement.html">Tree Measurement</a>
+    <a href="../pages/calendar.html">Calendar</a>
 
     <div class="menu-section-title">How to Use This App</div>
 
     <details>
       <summary>Saving Customers</summary>
-      <p>Store names, addresses, notes, and job history.</p>
+      <p>
+        Store customer names, phone numbers, addresses, and notes. Each customer can have multiple 
+        jobs attached to them, letting you track history, quotes, and completed work. This becomes 
+        your personal CRM — fully offline and stored on your device.
+      </p>
     </details>
 
     <details>
       <summary>Creating Jobs</summary>
-      <p>Add job titles, dates, prices, and notes.</p>
+      <p>
+        Add job titles, dates, pricing, and detailed notes. Jobs automatically link to the customer 
+        they belong to. Use this to track estimates, scheduled work, completed jobs, and follow‑ups. 
+        Everything saves instantly and stays on your device.
+      </p>
     </details>
 
     <details>
       <summary>Using Tree Measurement</summary>
-      <p>Measure tree height using your phone’s camera.</p>
+      <p>
+        Measure tree height using your phone’s camera and angle. Follow the on‑screen instructions 
+        to capture the base and top of the tree. The tool calculates an approximate height to help 
+        you quote jobs more accurately.
+      </p>
     </details>
 
     <details>
       <summary>Making Flyers</summary>
-      <p>Create printable cards and flyers for marketing.</p>
+      <p>
+        Create printable cards, door hangers, and flyers for marketing. Add your business name, 
+        phone number, services, and branding. Export the final design as an image or PDF to print 
+        or share.
+      </p>
     </details>
 
     <details>
       <summary>Contracts</summary>
-      <p>Fill out, save, and export simple work agreements.</p>
+      <p>
+        Fill out simple work agreements for customers. Add job details, pricing, and terms. Save 
+        contracts locally or export them for printing or sending. This helps protect you and your 
+        customer with clear expectations.
+      </p>
+    </details>
+
+    <details>
+      <summary>Calendar</summary>
+      <p>
+        Schedule jobs, reminders, and follow‑ups. The calendar stores everything locally and helps 
+        you stay organized day‑to‑day. Use it to plan your week, track upcoming work, and avoid 
+        double‑booking.
+      </p>
     </details>
 
   </nav>
@@ -252,10 +290,16 @@
         <a href="../pages/measurement.html" class="branch-btn">Tree Measurement</a>
       </div>
 
+      <div class="branch b6 right">
+        <div class="branch-bar"></div>
+        <div class="branch-bush"></div>
+        <a href="../pages/calendar.html" class="branch-btn">Calendar</a>
+      </div>
+
     </div>
   </main>
 
-  <!-- RTG ONLINE BUTTON AT BOTTOM -->
+  <!-- RTG ONLINE BUTTON -->
   <div class="rtg-online-bottom">
     <a class="rtg-online-btn" id="rtgOnlineBottom">RTG ONLINE</a>
   </div>
@@ -265,14 +309,11 @@
   </footer>
 
   <script type="module">
-    // Burger menu
     const burger = document.getElementById("rtgBurger");
     const sidemenu = document.getElementById("rtgSidemenu");
     burger.onclick = () => sidemenu.classList.toggle("open");
 
-    // RTG ONLINE — Coming Soon
-    const rtgOnlineBottom = document.getElementById("rtgOnlineBottom");
-    rtgOnlineBottom.onclick = () => {
+    document.getElementById("rtgOnlineBottom").onclick = () => {
       alert("RTG Online is coming soon.");
     };
   </script>
