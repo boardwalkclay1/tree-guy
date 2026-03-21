@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Login – Real Tree Guy OS</title>
+
+  <!-- CORRECT CSS PATH -->
   <link rel="stylesheet" href="../assets/css/login.css">
 </head>
 
@@ -23,11 +25,12 @@
   </div>
 
   <script type="module">
-    import { loginUser } from "./assets/js/auth.js";
+    // CORRECT JS PATH
+    import { loginUser } from "../assets/js/auth.js";
 
     document.getElementById("loginBtn").onclick = async () => {
-      const email = email.value.trim();
-      const password = password.value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
       const ok = await loginUser(email, password);
 
