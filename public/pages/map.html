@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real Tree Map</title>
+
+  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../../assets/css/map.css">
+</head>
+
+<body>
+
+  <section class="shell">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <h2>Supply Finder</h2>
+
+      <div id="locationStatus" class="status">Requesting location…</div>
+
+      <label>Supply Filters</label>
+      <div id="filterRow" class="pill-row">
+        <button class="pill" data-type="Home Depot">Home Depot</button>
+        <button class="pill" data-type="Lowe's">Lowe's</button>
+        <button class="pill" data-type="Ace Hardware">Ace Hardware</button>
+        <button class="pill" data-type="chainsaw repair shop">Chainsaw Shops</button>
+        <button class="pill" data-type="woodworking supply store">Woodworking Stores</button>
+        <button class="pill" data-type="wood dump site">Wood Dump Sites</button>
+        <button class="pill" data-type="sawmill">Sawmills</button>
+        <button class="pill" data-type="gas station">Gas Stations</button>
+      </div>
+
+      <label>Client Address (optional)</label>
+      <input id="clientAddress" placeholder="123 Oak St, Yulee, FL">
+
+      <button id="directionsFromUser" class="btn-primary">
+        Directions: Me → Supply
+      </button>
+
+      <button id="directionsFromClient" class="btn-ghost">
+        Directions: Client → Supply
+      </button>
+
+      <div class="status">
+        Filter: <span id="activeFilterLabel">None</span>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-wrap">
+      <iframe id="mapFrame" loading="lazy"></iframe>
+
+      <div class="map-footer">
+        <a id="openInMaps" href="https://www.google.com/maps" target="_blank">Open in Google Maps</a>
+      </div>
+    </div>
+
+  </section>
+
+  <script type="module" src="../assets/js/map.js"></script>
+
+</body>
+</html>
