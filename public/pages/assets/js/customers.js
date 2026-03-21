@@ -2,7 +2,7 @@
 // Real Tree Guy OS — Customers & Jobs (IndexedDB Version)
 // ============================================================
 
-import { initDB, save, getAll, remove } from "../../assets/js/db.js";
+import { initDB, save, getAll, remove } from "../../../assets/js/db.js";
 
 await initDB();
 
