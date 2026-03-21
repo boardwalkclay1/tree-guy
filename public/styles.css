@@ -7,13 +7,13 @@
   display: flex;
   justify-content: center;
   margin-top: 40px;
+  padding-bottom: 200px; /* ensures bottom branches never get cut off */
 }
 
 .tree {
   position: relative;
   width: 480px;
-  height: 1400px;
-  margin-bottom: 120px;
+  min-height: 1200px; /* FIX: allows natural growth instead of forcing 1400px */
 }
 
 /* ============================================================
