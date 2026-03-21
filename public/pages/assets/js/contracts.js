@@ -1,10 +1,29 @@
-// Keys
-const CONTRACT_KEY = "rtg_contracts_v1";
+// contracts.js — Real Tree Guy OS (IndexedDB Version)
 
-// Load saved contracts
-let contracts = JSON.parse(localStorage.getItem(CONTRACT_KEY) || "[]");
+import { initDB, save, getAll, remove } from "../../assets/js/db.js";
 
-// Build contract object
+await initDB();
+
+/* ============================================================
+   DOM ELEMENTS
+   ============================================================ */
+const clientName = document.getElementById("clientName");
+const clientPhone = document.getElementById("clientPhone");
+const clientEmail = document.getElementById("clientEmail");
+const clientAddress = document.getElementById("clientAddress");
+const scope = document.getElementById("scope");
+const price = document.getElementById("price");
+
+const fill = document.getElementById("fill");
+const send = document.getElementById("send");
+const saveBtn = document.getElementById("save");
+const calendarBtn = document.getElementById("calendar");
+
+const previewBox = document.getElementById("previewBox");
+
+/* ============================================================
+   BUILD CONTRACT OBJECT
+   ============================================================ */
 function buildContract() {
   const id = "CT-" + Date.now();
 
@@ -20,7 +39,9 @@ function buildContract() {
   };
 }
 
-// Render preview
+/* ============================================================
+   RENDER PREVIEW
+   ============================================================ */
 function renderPreview(data) {
   previewBox.textContent = `
 TREE WORK AGREEMENT
@@ -59,40 +80,53 @@ Business Representative: _______________________
   `;
 }
 
-// Preview button
+/* ============================================================
+   PREVIEW BUTTON
+   ============================================================ */
 fill.onclick = () => {
   const data = buildContract();
   renderPreview(data);
 };
 
-// Save contract
-save.onclick = () => {
+/* ============================================================
+   SAVE CONTRACT (IndexedDB)
+   ============================================================ */
+saveBtn.onclick = async () => {
   const data = buildContract();
-  contracts.push(data);
-  localStorage.setItem(CONTRACT_KEY, JSON.stringify(contracts));
+
+  await save("contracts", data);
+
   alert("Contract saved.");
 };
 
-// Email contract
+/* ============================================================
+   SEND VIA EMAIL
+   ============================================================ */
 send.onclick = () => {
   const data = buildContract();
+  renderPreview(data);
+
   const body = encodeURIComponent(previewBox.textContent);
-  window.location.href = `mailto:${data.email}?subject=Tree Work Agreement ${data.id}&body=${body}`;
+
+  window.location.href =
+    `mailto:${data.email}?subject=Tree Work Agreement ${data.id}&body=${body}`;
 };
 
-// Add to calendar (local event list)
-calendar.onclick = () => {
-  const events = JSON.parse(localStorage.getItem("rtg_events_v1") || "[]");
-
+/* ============================================================
+   ADD TO CALENDAR (IndexedDB)
+   ============================================================ */
+calendarBtn.onclick = async () => {
   const data = buildContract();
 
-  events.push({
-    id: Date.now(),
+  const event = {
+    id: "EV-" + Date.now(),
     date: new Date().toISOString().split("T")[0],
     title: `Contract: ${data.id}`,
-    notes: data.scope
-  });
+    notes: data.scope,
+    type: "contract"
+  };
 
-  localStorage.setItem("rtg_events_v1", JSON.stringify(events));
+  await save("calendar", event);
+
   alert("Added to calendar.");
 };
