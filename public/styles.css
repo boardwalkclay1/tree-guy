@@ -1,24 +1,58 @@
 /* ============================================================
-   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (FINAL FIXED BUILD)
+   REAL TREE GUY OS — CINEMATIC TREE SYSTEM (ULTIMATE BUILD)
    ============================================================ */
 
-/* TREE WRAPPER */
+/* ROOT VARIABLES — SEASON MODES */
+:root {
+  --leaf-green: #2e6b33;
+  --leaf-dark: #1f4d24;
+  --wood: #5a3b1e;
+  --glow: rgba(0,255,0,0.25);
+}
+
+/* FALL MODE */
+body.fall {
+  --leaf-green: #c96f1a;
+  --leaf-dark: #8a4b0f;
+  --glow: rgba(255,140,0,0.25);
+}
+
+/* WINTER MODE */
+body.winter {
+  --leaf-green: #bcd7e6;
+  --leaf-dark: #8aa8b8;
+  --glow: rgba(180,220,255,0.25);
+}
+
+/* ============================================================
+   TREE WRAPPER
+   ============================================================ */
+
 .tree-menu {
   display: flex;
   justify-content: center;
   margin-top: 40px;
-  padding-bottom: 240px; /* ensures bottom branches never get cut off */
+  padding-bottom: 260px;
+  position: relative;
+  overflow: visible;
 }
 
 .tree {
   position: relative;
   width: 480px;
-  min-height: 1250px; /* balanced height */
+  min-height: 1250px;
   margin: 0 auto;
+  animation: tree-breathe 6s ease-in-out infinite;
+}
+
+/* CANOPY — BREATHING EFFECT */
+@keyframes tree-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
 }
 
 /* ============================================================
-   3× FULL CANOPY — ORGANIC, CENTERED, BALANCED
+   CANOPY — ORGANIC BLOBS
    ============================================================ */
 
 .canopy {
@@ -26,16 +60,22 @@
   width: 440px;
   height: 440px;
   margin: 0 auto;
-  background: #2e6b33;
+  background: var(--leaf-green);
   border-radius: 50%;
-  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+  box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 60px var(--glow);
+  animation: canopy-sway 5s ease-in-out infinite alternate;
+}
+
+@keyframes canopy-sway {
+  from { transform: rotate(-1deg); }
+  to { transform: rotate(1deg); }
 }
 
 .canopy::before,
 .canopy::after {
   content: "";
   position: absolute;
-  background: #2e6b33;
+  background: var(--leaf-green);
   border-radius: 50%;
   box-shadow: 0 0 40px rgba(0,0,0,0.7);
 }
@@ -55,22 +95,23 @@
 }
 
 /* ============================================================
-   TRUNK — CENTERED, STRAIGHT, CINEMATIC
+   TRUNK — CENTERED + ROOT GLOW
    ============================================================ */
 
 .trunk {
   width: 150px;
   height: 680px;
-  background: #5a3b1e;
+  background: var(--wood);
   margin: 0 auto;
   border-radius: 55px;
   box-shadow:
     inset 0 0 30px rgba(0,0,0,0.6),
-    0 0 35px rgba(0,0,0,0.7);
+    0 0 35px rgba(0,0,0,0.7),
+    0 0 60px var(--glow);
 }
 
 /* ============================================================
-   BRANCH SYSTEM — ALTERNATING LEFT/RIGHT
+   BRANCH SYSTEM — SWAY + ALIGNMENT
    ============================================================ */
 
 .branch {
@@ -78,7 +119,13 @@
   width: 440px;
   height: 130px;
   left: 50%;
-  transform: translateX(-50%); /* ensures perfect centering */
+  transform: translateX(-50%);
+  animation: branch-sway 4s ease-in-out infinite alternate;
+}
+
+@keyframes branch-sway {
+  from { transform: translateX(-50%) rotate(-1deg); }
+  to { transform: translateX(-50%) rotate(1deg); }
 }
 
 /* WOOD BAR */
@@ -87,23 +134,23 @@
   top: 55px;
   width: 100%;
   height: 24px;
-  background: #5a3b1e;
+  background: var(--wood);
   border-radius: 14px;
   box-shadow: 0 0 18px rgba(0,0,0,0.6);
 }
 
-/* BUSH BEHIND BUTTON */
+/* BUSH */
 .branch-bush {
   position: absolute;
   width: 160px;
   height: 160px;
-  background: #2e6b33;
+  background: var(--leaf-dark);
   border-radius: 50%;
   top: -12px;
   box-shadow: 0 0 22px rgba(0,0,0,0.6);
 }
 
-/* BUTTON ON BRANCH */
+/* BUTTON */
 .branch-btn {
   position: absolute;
   top: 26px;
@@ -114,43 +161,27 @@
   text-decoration: none;
   font-weight: 900;
   font-size: 1.18rem;
-  border: 3px solid #2e6b33;
+  border: 3px solid var(--leaf-green);
   backdrop-filter: blur(6px);
   z-index: 10;
+  transition: 0.2s;
 }
 
 .branch-btn:hover {
   background: rgba(0,0,0,0.75);
+  transform: scale(1.05);
 }
 
-/* ============================================================
-   ALTERNATING LEFT / RIGHT LOGIC (FIXED ALIGNMENT)
-   ============================================================ */
+/* LEFT / RIGHT LOGIC */
+.branch.left .branch-bar { transform: rotate(-9deg); }
+.branch.left .branch-bush { left: -25px; }
+.branch.left .branch-btn { left: 70px; }
 
-.branch.left .branch-bar {
-  transform: rotate(-9deg);
-}
-.branch.left .branch-bush {
-  left: -25px;
-}
-.branch.left .branch-btn {
-  left: 70px;
-}
+.branch.right .branch-bar { transform: rotate(9deg); }
+.branch.right .branch-bush { right: -25px; }
+.branch.right .branch-btn { right: 70px; }
 
-.branch.right .branch-bar {
-  transform: rotate(9deg);
-}
-.branch.right .branch-bush {
-  right: -25px;
-}
-.branch.right .branch-btn {
-  right: 70px;
-}
-
-/* ============================================================
-   BRANCH SPACING — EVEN, BALANCED, CINEMATIC
-   ============================================================ */
-
+/* BRANCH SPACING */
 .b1 { top: 380px; }
 .b2 { top: 510px; }
 .b3 { top: 640px; }
@@ -160,24 +191,23 @@
 .b7 { top: 1160px; }
 
 /* ============================================================
-   BURGER MENU DROPDOWNS — CHAINSAW ORANGE
+   FALLING LEAVES — CINEMATIC PARTICLES
    ============================================================ */
 
-summary {
-  cursor: pointer;
-  font-weight: 700;
-  color: #ff7a00;
-  text-shadow: 0 0 6px rgba(255,122,0,0.4);
+@keyframes leaf-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
 }
 
-summary:hover {
-  color: #ff9d42;
-}
-
-details p {
-  color: #ffb56b;
-}
-
-summary::-webkit-details-marker {
-  color: #ff7a00;
+.leaf {
+  position: fixed;
+  top: -20px;
+  width: 14px;
+  height: 14px;
+  background: var(--leaf-green);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--glow);
+  animation: leaf-fall linear infinite;
+  opacity: 0.8;
+  z-index: 1;
 }
