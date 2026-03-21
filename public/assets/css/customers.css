@@ -1,0 +1,197 @@
+body {
+  background: #0d0f0d url("../../assets/icons/rtg-192.png")
+    center center / cover no-repeat fixed;
+  color: #e8ffe8;
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 0 0 40px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.rtg-header {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 2px solid #2e6b33;
+  background: rgba(0,0,0,0.4);
+}
+
+.rtg-header h1 {
+  font-size: 2rem;
+  color: #caffca;
+  margin: 0;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #a8ffa8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.tabs {
+  display: flex;
+  max-width: 700px;
+  margin: 20px auto 0;
+  padding: 0 16px;
+  border-bottom: 2px solid #2e6b33;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: #a8ffa8;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: 0.15s;
+}
+
+.tab-btn.active {
+  color: #caffca;
+  border-bottom-color: #6aff6a;
+  font-weight: bold;
+}
+
+.tab-panel {
+  display: none;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.card {
+  background: rgba(20,35,20,0.85);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #2e6b33;
+  margin-bottom: 16px;
+}
+
+h2 {
+  color: #caffca;
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #a8ffa8;
+  font-weight: bold;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 10px 14px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #2e6b33;
+  background: rgba(15,30,15,0.9);
+  color: #e8ffe8;
+  font-size: 0.95rem;
+}
+
+textarea {
+  height: 80px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 999px;
+  background: #2e6b33;
+  color: #e8ffe8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-top: 14px;
+}
+
+button:hover {
+  background: #3fa63f;
+}
+
+.customer-list,
+.job-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.customer-list li,
+.job-list li {
+  padding: 12px;
+  background: rgba(46,107,51,0.15);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(46,107,51,0.3);
+}
+
+.cust-name,
+.job-title {
+  font-weight: bold;
+  color: #caffca;
+  font-size: 1rem;
+}
+
+.cust-details,
+.job-details {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.badge-potential {
+  background: rgba(255,165,0,0.4);
+  color: #ffdd99;
+}
+
+.badge-scheduled {
+  background: rgba(46,107,51,0.5);
+  color: #caffca;
+}
+
+.badge-complete {
+  background: rgba(100,100,100,0.4);
+  color: #aaa;
+}
+
+.del-btn {
+  float: right;
+  background: transparent;
+  border: 1px solid rgba(255,80,80,0.4);
+  color: #ff8f8f;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 999px;
+}
+
+.del-btn:hover {
+  background: rgba(255,80,80,0.15);
+}
+
+.empty-note {
+  opacity: 0.5;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 20px;
+}
