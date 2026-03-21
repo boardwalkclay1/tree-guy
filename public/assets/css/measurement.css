@@ -1,0 +1,75 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0d0f0d url("../../assets/icons/rtg-192.png")
+    center center / 45% no-repeat fixed;
+  color: #e8ffe8;
+  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.rtg-header {
+  text-align: center;
+  padding: 30px;
+  background: rgba(0,0,0,0.35);
+  border-bottom: 2px solid #2e6b33;
+}
+
+.rtg-header h1 {
+  font-size: 2.4rem;
+  color: #caffca;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #a8ffa8;
+  text-decoration: none;
+}
+
+.measurement-shell {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: grid;
+  gap: 30px;
+}
+
+.tool-card {
+  background: rgba(20,35,20,0.85);
+  border: 2px solid #2e6b33;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.4);
+}
+
+.tool-card h2 {
+  color: #caffca;
+  margin-bottom: 10px;
+}
+
+.tool-card p {
+  color: #d8ffd8;
+  margin-bottom: 20px;
+}
+
+.rtg-btn {
+  display: inline-block;
+  padding: 12px 20px;
+  background: #2e6b33;
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid #3fa63f;
+}
+
+.rtg-btn:hover {
+  background: #3fa63f;
+}
