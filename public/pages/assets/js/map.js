@@ -1,5 +1,5 @@
 // ============================================================
-// Real Tree Guy OS — GPS MUST BE FRESH (NO CACHED LOCATION)
+// Real Tree Guy OS — FINAL GPS FIX (NO CACHE, NO RANDOM LOCATION)
 // ============================================================
 
 const mapFrame = document.getElementById("mapFrame");
@@ -11,23 +11,32 @@ const openInMaps = document.getElementById("openInMaps");
 let userLat = null;
 let userLng = null;
 
-// FORCE REAL GPS — NO CACHED LOCATION ALLOWED
-function getFreshLocation() {
+// ============================================================
+// GET REAL GPS — IGNORE FIRST (CACHED) LOCATION
+// ============================================================
+function getRealLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       pos => {
-        // IGNORE CACHED LOCATIONS
-        if (pos.coords.accuracy > 100) {
-          // accuracy too low = cached or stale
-          locationStatus.textContent = "Locking real GPS…";
-          return getFreshLocation().then(resolve).catch(reject);
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        // iPhone ALWAYS gives a cached location first.
+        // Cached locations ALWAYS have a timestamp older than 5 seconds.
+        const isFresh = (Date.now() - pos.timestamp) < 5000;
+
+        if (!isFresh) {
+          // Cached → request again
+          locationStatus.textContent = "Locking GPS…";
+          return getRealLocation().then(resolve).catch(reject);
         }
 
-        userLat = pos.coords.latitude;
-        userLng = pos.coords.longitude;
+        // FRESH GPS LOCKED
+        userLat = lat;
+        userLng = lng;
 
         locationStatus.textContent =
-          `GPS Locked: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+          `GPS Locked: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 
         resolve();
       },
@@ -38,12 +47,15 @@ function getFreshLocation() {
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 0 // ⭐ ZERO CACHE
+        maximumAge: 0 // FORCE NO CACHE
       }
     );
   });
 }
 
+// ============================================================
+// UPDATE MAP
+// ============================================================
 function updateMap(filterText) {
   if (userLat === null || userLng === null) return;
 
@@ -56,12 +68,16 @@ function updateMap(filterText) {
     `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 
+// ============================================================
 // INITIAL LOAD — WAIT FOR REAL GPS
-getFreshLocation().then(() => {
+// ============================================================
+getRealLocation().then(() => {
   updateMap("tree service supplies");
 });
 
+// ============================================================
 // FILTERS — WAIT FOR REAL GPS EVERY TIME
+// ============================================================
 filterRow.addEventListener("click", async e => {
   const btn = e.target.closest(".pill");
   if (!btn) return;
@@ -69,8 +85,8 @@ filterRow.addEventListener("click", async e => {
   const type = btn.dataset.type;
   activeFilterLabel.textContent = type;
 
-  locationStatus.textContent = "Getting real GPS…";
+  locationStatus.textContent = "Getting GPS…";
 
-  await getFreshLocation();  // ⭐ HARD WAIT FOR REAL GPS
+  await getRealLocation();   // HARD WAIT FOR REAL GPS
   updateMap(type);
 });
