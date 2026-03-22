@@ -1,73 +1,83 @@
 // ============================================================
-// REAL TREE GUY OS — SIDEBAR MODULE
+// REAL TREE GUY OS — SIDEBAR MODULE (REBUILT CLEAN)
 // ============================================================
 
-// inject sidebar HTML
 const sidemenu = document.getElementById("rtgSidemenu");
 
 sidemenu.innerHTML = `
-  <a href="../pages/profile.html">Profile</a>
-  <a href="../pages/customers.html">Customers & Jobs</a>
-  <a href="../pages/flyers.html">Cards & Flyers</a>
-  <a href="../pages/contracts.html">Contracts</a>
-  <a href="../pages/measurement.html">Tree Measurement</a>
-  <a href="../pages/calendar.html">Calendar</a>
-  <a href="../pages/map.html">RTG Map</a>
 
-  <div class="menu-section-title">How to Use This App</div>
+  <!-- MAIN DROPDOWN -->
+  <details class="rtg-master">
+    <summary class="rtg-master-title">App Pages</summary>
 
-  <details>
-    <summary>Saving Customers</summary>
-    <p>Store customer names, phone numbers, addresses, and notes. Each customer can have multiple jobs attached.</p>
+    <!-- PROFILE -->
+    <div class="rtg-item">
+      <span class="rtg-label">Profile</span>
+      <button class="enter-btn" onclick="location.href='../pages/profile.html'">Enter</button>
+      <p class="rtg-desc">Store your company name, logo, phone number, and details used across the OS.</p>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="rtg-item">
+      <span class="rtg-label">Customers & Jobs</span>
+      <button class="enter-btn" onclick="location.href='../pages/customers.html'">Enter</button>
+      <p class="rtg-desc">Save customers, attach jobs, track estimates, completed work, and follow‑ups.</p>
+    </div>
+
+    <!-- FLYERS -->
+    <div class="rtg-item">
+      <span class="rtg-label">Cards & Flyers</span>
+      <button class="enter-btn" onclick="location.href='../pages/flyers.html'">Enter</button>
+      <p class="rtg-desc">Create business cards, flyers, and door hangers for marketing.</p>
+    </div>
+
+    <!-- CONTRACTS -->
+    <div class="rtg-item">
+      <span class="rtg-label">Contracts</span>
+      <button class="enter-btn" onclick="location.href='../pages/contracts.html'">Enter</button>
+      <p class="rtg-desc">Generate simple work agreements you can save or send instantly.</p>
+    </div>
+
+    <!-- MEASUREMENT -->
+    <div class="rtg-item">
+      <span class="rtg-label">Tree Measurement</span>
+      <button class="enter-btn" onclick="location.href='../pages/measurement.html'">Enter</button>
+      <p class="rtg-desc">Measure tree height using your phone’s camera and angle.</p>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="rtg-item">
+      <span class="rtg-label">Calendar</span>
+      <button class="enter-btn" onclick="location.href='../pages/calendar.html'">Enter</button>
+      <p class="rtg-desc">Schedule jobs, reminders, and follow‑ups. Everything saves offline.</p>
+    </div>
+
+    <!-- MAP -->
+    <div class="rtg-item">
+      <span class="rtg-label">RTG Map</span>
+      <button class="enter-btn" onclick="location.href='../pages/map.html'">Enter</button>
+      <p class="rtg-desc">Find supply stores, dump sites, sawmills, gas stations, and more.</p>
+    </div>
+
   </details>
 
-  <details>
-    <summary>Creating Jobs</summary>
-    <p>Track estimates, scheduled work, completed jobs, and follow‑ups. Everything saves offline.</p>
-  </details>
-
-  <details>
-    <summary>Using Tree Measurement</summary>
-    <p>Measure tree height using your phone’s camera and angle. Helps you quote accurately.</p>
-  </details>
-
-  <details>
-    <summary>Making Flyers</summary>
-    <p>Create printable cards, door hangers, and flyers for marketing.</p>
-  </details>
-
-  <details>
-    <summary>Contracts</summary>
-    <p>Generate simple work agreements. Save or email them instantly.</p>
-  </details>
-
-  <details>
-    <summary>Calendar</summary>
-    <p>Schedule jobs, reminders, and follow‑ups. Everything is stored locally.</p>
-  </details>
-
-  <details>
-    <summary>RTG Map</summary>
-    <p>Find supply stores, dump sites, sawmills, gas stations, and more.</p>
-  </details>
-
+  <!-- RTG ONLINE BUTTON -->
   <div class="rtg-online-bottom">
-    <a class="rtg-online-btn" id="rtgOnlineBottom">RTG ONLINE</a>
+    <button class="rtg-online-btn" id="rtgOnlineBottom">RTG ONLINE</button>
   </div>
 `;
 
-// burger logic
+// ============================================================
+// BURGER LOGIC
+// ============================================================
 const burger = document.getElementById("rtgBurger");
-
 burger.addEventListener("click", () => {
   sidemenu.classList.toggle("open");
 });
 
-// dropdown logic
-sidemenu.querySelectorAll("details").forEach(d => {
-  d.addEventListener("toggle", () => {
-    const s = d.querySelector("summary");
-    if (d.open) s.classList.add("active");
-    else s.classList.remove("active");
-  });
+// ============================================================
+// RTG ONLINE — COMING SOON POPUP
+// ============================================================
+document.getElementById("rtgOnlineBottom").addEventListener("click", () => {
+  alert("RTG ONLINE — Coming Soon");
 });
