@@ -1,5 +1,5 @@
 /* ============================================================
-   REAL TREE GUY OS — GLOBAL + DASHBOARD STYLE (STABLE BUILD)
+   REAL TREE GUY OS — DASHBOARD STYLE (REBUILT CLEAN)
    ============================================================ */
 
 /* BACKGROUND + BASE */
@@ -48,72 +48,7 @@ body.rtg-dashboard {
 }
 
 /* ============================================================
-   SIDEMENU
-   ============================================================ */
-.rtg-sidemenu {
-  position: fixed;
-  top: 0;
-
-  /* ⭐ FIXED: fully off-screen so page is centered */
-  left: -320px;
-
-  width: 260px;
-  height: 100vh;
-  background: rgba(0,0,0,0.92);
-  border-right: 2px solid #2e6b33;
-  padding: 70px 20px 20px;
-  box-shadow: 4px 0 18px rgba(0,0,0,0.7);
-  transition: left 0.25s ease;
-  z-index: 9998;
-  overflow-y: auto;
-}
-.rtg-sidemenu.open {
-  left: 0;
-}
-
-.rtg-sidemenu a {
-  display: block;
-  margin-bottom: 16px;
-  color: #d8ffd8;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1.05rem;
-}
-.rtg-sidemenu a:hover {
-  color: #6aff6a;
-}
-
-.menu-section-title {
-  margin-top: 25px;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: #caffca;
-}
-
-details {
-  margin-bottom: 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid #2e6b33;
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-summary {
-  cursor: pointer;
-  font-weight: 700;
-  color: #ff7a00;
-  text-shadow: 0 0 6px rgba(255,122,0,0.4);
-}
-summary:hover {
-  color: #ff9d42;
-}
-details p {
-  color: #ffb56b;
-  line-height: 1.4;
-}
-
-/* ============================================================
-   HEADER — ALWAYS ABOVE TREE
+   HEADER — ABOVE TREE
    ============================================================ */
 .rtg-header {
   margin-top: 120px;
@@ -276,7 +211,7 @@ details p {
 .b7 { top: 1160px; }
 
 /* ============================================================
-   ⭐ BIG ORANGE RTG MAP BUTTON (ADDED)
+   BIG ORANGE RTG MAP BUTTON
    ============================================================ */
 .rtg-map-bottom {
   width: 100%;
