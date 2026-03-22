@@ -1,5 +1,5 @@
 // ============================================================
-// Real Tree Guy OS — Google Maps Embed Controller (HARD GPS GATE)
+// Real Tree Guy OS — GPS MUST BE FRESH (NO CACHED LOCATION)
 // ============================================================
 
 const mapFrame = document.getElementById("mapFrame");
@@ -11,16 +11,23 @@ const openInMaps = document.getElementById("openInMaps");
 let userLat = null;
 let userLng = null;
 
-// PROMISE: RESOLVES ONLY AFTER LOCATION IS RECEIVED
-function waitForLocation() {
+// FORCE REAL GPS — NO CACHED LOCATION ALLOWED
+function getFreshLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       pos => {
+        // IGNORE CACHED LOCATIONS
+        if (pos.coords.accuracy > 100) {
+          // accuracy too low = cached or stale
+          locationStatus.textContent = "Locking real GPS…";
+          return getFreshLocation().then(resolve).catch(reject);
+        }
+
         userLat = pos.coords.latitude;
         userLng = pos.coords.longitude;
 
         locationStatus.textContent =
-          `Location: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+          `GPS Locked: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
 
         resolve();
       },
@@ -28,12 +35,15 @@ function waitForLocation() {
         locationStatus.textContent = "Location denied.";
         reject(err);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0 // ⭐ ZERO CACHE
+      }
     );
   });
 }
 
-// UPDATE MAP EMBED
 function updateMap(filterText) {
   if (userLat === null || userLng === null) return;
 
@@ -46,16 +56,12 @@ function updateMap(filterText) {
     `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 
-// INITIAL LOAD — DO NOTHING UNTIL LOCATION IS READY
-waitForLocation()
-  .then(() => {
-    updateMap("tree service supplies");
-  })
-  .catch(() => {
-    // location denied — leave map as-is
-  });
+// INITIAL LOAD — WAIT FOR REAL GPS
+getFreshLocation().then(() => {
+  updateMap("tree service supplies");
+});
 
-// FILTERS — EACH CLICK WAITS FOR LOCATION FIRST
+// FILTERS — WAIT FOR REAL GPS EVERY TIME
 filterRow.addEventListener("click", async e => {
   const btn = e.target.closest(".pill");
   if (!btn) return;
@@ -63,12 +69,8 @@ filterRow.addEventListener("click", async e => {
   const type = btn.dataset.type;
   activeFilterLabel.textContent = type;
 
-  locationStatus.textContent = "Getting location…";
+  locationStatus.textContent = "Getting real GPS…";
 
-  try {
-    await waitForLocation();   // HARD WAIT
-    updateMap(type);
-  } catch (err) {
-    // location denied — nothing to update
-  }
+  await getFreshLocation();  // ⭐ HARD WAIT FOR REAL GPS
+  updateMap(type);
 });
