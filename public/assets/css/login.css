@@ -7,6 +7,7 @@
   padding: 0;
 }
 
+/* PAGE */
 body.auth-page {
   background: #0d0f0d;
   color: #e8ffe8;
@@ -20,48 +21,49 @@ body.auth-page {
 
 /* HEADER */
 .auth-header h1 {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   color: #caffca;
   text-shadow: 0 0 12px #1f5f2b;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 /* CARD */
 .auth-card {
-  width: 90%;
-  max-width: 420px;
-  background: rgba(20, 35, 20, 0.9);
-  padding: 30px;
-  border-radius: 18px;
+  width: 92%;
+  max-width: 440px;
+  background: rgba(20, 35, 20, 0.92);
+  padding: 34px;
+  border-radius: 20px;
   border: 2px solid #2e6b33;
-  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  box-shadow: 0 0 28px rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
 }
 
 /* INPUTS */
 .auth-card input {
   width: 100%;
-  padding: 14px;
-  margin-top: 15px;
-  border-radius: 12px;
+  padding: 16px;
+  margin-top: 18px;
+  border-radius: 14px;
   border: 1px solid #2e6b33;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.10);
   color: #e8ffe8;
-  font-size: 1rem;
+  font-size: 1.15rem;
   outline: none;
   transition: 0.2s;
 }
 
 .auth-card input:focus {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.18);
   border-color: #6aff6a;
 }
 
 /* BUTTON */
 .bubble-btn {
   width: 100%;
-  padding: 16px;
-  margin-top: 25px;
-  font-size: 1.2rem;
+  padding: 18px;
+  margin-top: 28px;
+  font-size: 1.3rem;
   border: none;
   border-radius: 50px;
   background: linear-gradient(135deg, #3fa63f, #2d7a2d);
@@ -78,9 +80,9 @@ body.auth-page {
 
 /* SMALL LINK */
 .small-link {
-  margin-top: 18px;
+  margin-top: 20px;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: #a8ffa8;
 }
 
@@ -88,4 +90,39 @@ body.auth-page {
   color: #caffca;
   text-decoration: none;
   font-weight: bold;
+}
+
+/* ============================
+   MOBILE BOOST (PHONE ONLY)
+   ============================ */
+@media (max-width: 480px) {
+
+  .auth-header h1 {
+    font-size: 2.9rem;
+    margin-bottom: 26px;
+  }
+
+  .auth-card {
+    width: 94%;
+    padding: 40px;
+    border-radius: 22px;
+  }
+
+  .auth-card input {
+    padding: 20px;
+    font-size: 1.25rem;
+  }
+
+  .bubble-btn {
+    padding: 22px;
+    font-size: 1.45rem;
+  }
+
+  .small-link {
+    font-size: 1.15rem;
+  }
+
+  .small-link a {
+    font-size: 1.2rem;
+  }
 }
