@@ -1,14 +1,16 @@
 /* ============================================================
-   REAL TREE GUY OS — DASHBOARD CSS
+   REAL TREE GUY OS — GLOBAL + DASHBOARD STYLE (STABLE BUILD)
    ============================================================ */
 
+/* BACKGROUND + BASE */
 body.rtg-dashboard {
-  background: #0d0f0d url("../assets/icons/rtg-192.png")
-    center center/cover no-repeat fixed;
+  background:#0d0f0d url("./assets/icons/rtg-192.png") center center/cover no-repeat fixed;
   margin: 0;
   padding: 0;
   font-family: system-ui, sans-serif;
   color: #caffca;
+  position: relative;
+  z-index: 0;
 }
 
 /* ============================================================
@@ -19,7 +21,7 @@ body.rtg-dashboard {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10000;
+  z-index: 9999;
   display: flex;
   align-items: center;
   padding: 14px 20px;
@@ -51,7 +53,10 @@ body.rtg-dashboard {
 .rtg-sidemenu {
   position: fixed;
   top: 0;
-  left: -280px;
+
+  /* ⭐ FIXED: fully off-screen so page is centered */
+  left: -320px;
+
   width: 260px;
   height: 100vh;
   background: rgba(0,0,0,0.92);
@@ -59,7 +64,7 @@ body.rtg-dashboard {
   padding: 70px 20px 20px;
   box-shadow: 4px 0 18px rgba(0,0,0,0.7);
   transition: left 0.25s ease;
-  z-index: 9999;
+  z-index: 9998;
   overflow-y: auto;
 }
 .rtg-sidemenu.open {
@@ -108,18 +113,22 @@ details p {
 }
 
 /* ============================================================
-   HEADER
+   HEADER — ALWAYS ABOVE TREE
    ============================================================ */
 .rtg-header {
-  margin-top: 90px;
+  margin-top: 120px;
   text-align: center;
+  position: relative;
+  z-index: 9997;
 }
+
 .rtg-title {
-  font-size: 3rem;
+  font-size: 3.4rem;
   font-weight: 900;
   color: #caffca;
   text-shadow: 0 0 14px #1f5f2b;
 }
+
 .rtg-subtitle {
   font-size: 1.2rem;
   color: #d8ffd8;
@@ -127,115 +136,169 @@ details p {
 }
 
 /* ============================================================
-   TREE SYSTEM
+   CINEMATIC TREE SYSTEM
    ============================================================ */
+
+:root {
+  --leaf-green: #2e6b33;
+  --leaf-dark: #1f4d24;
+  --wood: #5a3b1e;
+  --glow: rgba(0,255,0,0.18);
+}
+
 .tree-menu {
-  margin-top: 40px;
   display: flex;
   justify-content: center;
-  overflow: visible; /* FIX */
+  margin-top: -80px;
+  padding-bottom: 220px;
+  position: relative;
+  overflow: visible;
+  z-index: 1;
 }
 
 .tree {
   position: relative;
-  width: 300px;
-  height: 500px;
+  width: 480px;
+  min-height: 1100px;
+  margin: 0 auto;
+  z-index: 1;
 }
 
-/* CANOPY + TRUNK */
+/* CANOPY */
 .canopy {
-  width: 200px;
-  height: 200px;
-  background: #1f5f2b;
+  position: relative;
+  width: 440px;
+  height: 440px;
+  margin: 0 auto;
+  background: var(--leaf-green);
   border-radius: 50%;
-  margin: 0 auto;
-  box-shadow: 0 0 20px rgba(0,255,0,0.2);
+  box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 50px var(--glow);
+  z-index: 1;
 }
-.trunk {
-  width: 40px;
-  height: 200px;
-  background: #5a3b1e;
-  margin: 0 auto;
-  border-radius: 10px;
+.canopy::before,
+.canopy::after {
+  content: "";
+  position: absolute;
+  background: var(--leaf-green);
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+}
+.canopy::before {
+  width: 330px;
+  height: 330px;
+  left: -70px;
+  top: 90px;
+}
+.canopy::after {
+  width: 330px;
+  height: 330px;
+  right: -70px;
+  top: 90px;
 }
 
-/* BRANCHES */
+/* TRUNK */
+.trunk {
+  width: 150px;
+  height: 680px;
+  background: var(--wood);
+  margin: 0 auto;
+  border-radius: 55px;
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.6),
+    0 0 35px rgba(0,0,0,0.7),
+    0 0 40px var(--glow);
+}
+
+/* BRANCH SYSTEM */
 .branch {
   position: absolute;
-  width: 200px;
-  height: 80px;
+  width: 440px;
+  height: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
 }
+
 .branch-bar {
+  position: absolute;
+  top: 55px;
   width: 100%;
-  height: 10px;
-  background: #5a3b1e;
-  border-radius: 6px;
+  height: 24px;
+  background: var(--wood);
+  border-radius: 14px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.6);
 }
+
 .branch-bush {
-  width: 60px;
-  height: 60px;
-  background: #1f5f2b;
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background: var(--leaf-dark);
   border-radius: 50%;
-  margin-top: -20px;
-  box-shadow: 0 0 10px rgba(0,255,0,0.15);
+  top: -12px;
+  box-shadow: 0 0 22px rgba(0,0,0,0.6);
 }
+
 .branch-btn {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 6px 12px;
+  position: absolute;
+  top: 26px;
+  padding: 15px 34px;
   background: rgba(0,0,0,0.55);
-  border: 2px solid #2e6b33;
-  border-radius: 8px;
+  border-radius: 999px;
   color: #caffca;
   text-decoration: none;
-  font-weight: 700;
-  transition: 0.2s ease;
+  font-weight: 900;
+  font-size: 1.18rem;
+  border: 3px solid var(--leaf-green);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+  transition: 0.15s;
 }
 .branch-btn:hover {
   background: rgba(0,0,0,0.75);
-  border-color: #6aff6a;
 }
 
-/* Branch positions */
-.b1 { top: 120px; left: -160px; }
-.b2 { top: 120px; right: -160px; }
-.b3 { top: 200px; left: -160px; }
-.b4 { top: 200px; right: -160px; }
-.b5 { top: 280px; left: -160px; }
-.b6 { top: 280px; right: -160px; }
-/* .b7 REMOVED */
+.branch.left .branch-bar { transform: rotate(-9deg); }
+.branch.left .branch-bush { left: -25px; }
+.branch.left .branch-btn { left: 70px; }
+
+.branch.right .branch-bar { transform: rotate(9deg); }
+.branch.right .branch-bush { right: -25px; }
+.branch.right .branch-btn { right: 70px; }
+
+/* BRANCH POSITIONS */
+.b1 { top: 380px; }
+.b2 { top: 510px; }
+.b3 { top: 640px; }
+.b4 { top: 770px; }
+.b5 { top: 900px; }
+.b6 { top: 1030px; }
+.b7 { top: 1160px; }
 
 /* ============================================================
-   MASSIVE RTG MAP BUTTON
+   ⭐ BIG ORANGE RTG MAP BUTTON (ADDED)
    ============================================================ */
 .rtg-map-bottom {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 80px;
-  margin-bottom: 60px;
+  margin-top: 40px;
+  margin-bottom: 80px;
   position: relative;
-  z-index: 9999;
+  z-index: 99999;
 }
 
 .rtg-map-btn {
   display: inline-block;
-  background: #14522a;
-  color: #caffca;
-  padding: 28px 60px;
+  padding: 26px 60px;
   font-size: 2rem;
   font-weight: 900;
+  color: #caffca;
+  background: rgba(0,0,0,0.55);
+  border: 4px solid #ff7a00;
   border-radius: 20px;
-  border: 4px solid #2e6b33;
   text-decoration: none;
-  box-shadow: 0 0 20px rgba(0,255,0,0.25);
-  transition: 0.2s ease;
-}
-
-.rtg-map-btn:hover {
-  background: #1f7a3a;
-  border-color: #6aff6a;
-  box-shadow: 0 0 30px rgba(0,255,0,0.35);
+  box-shadow: 0 0 20px rgba(255,122,0,0.35);
 }
 
 /* ============================================================
