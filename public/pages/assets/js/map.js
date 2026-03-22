@@ -1,5 +1,5 @@
 // ============================================================
-// Real Tree Guy OS — Google Maps Embed Controller (PHONE SAFE)
+// Real Tree Guy OS — Google Maps Embed Controller (FINAL FIX)
 // ============================================================
 
 const mapFrame = document.getElementById("mapFrame");
@@ -10,12 +10,7 @@ const openInMaps = document.getElementById("openInMaps");
 
 let userLat = null;
 let userLng = null;
-
-// ============================================================
-// DISABLE FILTERS UNTIL GPS IS READY
-// ============================================================
-const filterButtons = document.querySelectorAll(".pill");
-filterButtons.forEach(btn => btn.disabled = true);
+let gpsReady = false; // ⭐ NEW — replaces disabled buttons
 
 // ============================================================
 // GET USER LOCATION (ALWAYS FRESH)
@@ -26,11 +21,10 @@ function getLocation(callback) {
       userLat = pos.coords.latitude;
       userLng = pos.coords.longitude;
 
+      gpsReady = true; // ⭐ GPS is ready
+
       locationStatus.textContent =
         `Location: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-
-      // ENABLE FILTERS ONCE GPS IS READY
-      filterButtons.forEach(btn => btn.disabled = false);
 
       callback();
     },
@@ -45,7 +39,7 @@ function getLocation(callback) {
 // UPDATE MAP EMBED
 // ============================================================
 function updateMap(filterText) {
-  if (!userLat || !userLng) return;
+  if (userLat === null || userLng === null) return;
 
   const q = encodeURIComponent(`${filterText} near ${userLat},${userLng}`);
 
@@ -64,16 +58,23 @@ getLocation(() => {
 });
 
 // ============================================================
-// FILTER BUTTONS — FORCE GPS BEFORE EVERY FILTER
+// FILTER BUTTONS — SAFE ON PHONE + DESKTOP
 // ============================================================
 filterRow.addEventListener("click", e => {
   const btn = e.target.closest(".pill");
   if (!btn) return;
 
   const type = btn.dataset.type;
+
+  // ⭐ Prevent filters from firing before GPS is ready
+  if (!gpsReady) {
+    locationStatus.textContent = "Waiting for GPS…";
+    return;
+  }
+
   activeFilterLabel.textContent = type;
 
-  // PHONE FIX: GET FRESH GPS BEFORE APPLYING FILTER
+  // ⭐ Always refresh GPS before applying filter
   getLocation(() => {
     updateMap(type);
   });
