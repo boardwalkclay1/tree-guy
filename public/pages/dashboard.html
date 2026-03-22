@@ -6,7 +6,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="../assets/icons/rtg-192.png">
-  <link rel="stylesheet" href="../styles.css">">
+  <link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="rtg-dashboard">
@@ -18,55 +18,8 @@
     </div>
   </div>
 
-  <!-- SIDEMENU -->
-  <nav class="rtg-sidemenu" id="rtgSidemenu">
-
-    <a href="../pages/profile.html">Profile</a>
-    <a href="../pages/customers.html">Customers & Jobs</a>
-    <a href="../pages/flyers.html">Cards & Flyers</a>
-    <a href="../pages/contracts.html">Contracts</a>
-    <a href="../pages/measurement.html">Tree Measurement</a>
-    <a href="../pages/calendar.html">Calendar</a>
-    <a href="../pages/map.html">RTG Map</a>
-
-    <div class="menu-section-title">How to Use This App</div>
-
-    <details>
-      <summary>Saving Customers</summary>
-      <p>Store customer names, phone numbers, addresses, and notes. Each customer can have multiple jobs attached.</p>
-    </details>
-
-    <details>
-      <summary>Creating Jobs</summary>
-      <p>Track estimates, scheduled work, completed jobs, and follow‑ups. Everything saves offline.</p>
-    </details>
-
-    <details>
-      <summary>Using Tree Measurement</summary>
-      <p>Measure tree height using your phone’s camera and angle. Helps you quote accurately.</p>
-    </details>
-
-    <details>
-      <summary>Making Flyers</summary>
-      <p>Create printable cards, door hangers, and flyers for marketing.</p>
-    </details>
-
-    <details>
-      <summary>Contracts</summary>
-      <p>Generate simple work agreements. Save or email them instantly.</p>
-    </details>
-
-    <details>
-      <summary>Calendar</summary>
-      <p>Schedule jobs, reminders, and follow‑ups. Everything is stored locally.</p>
-    </details>
-
-    <details>
-      <summary>RTG Map</summary>
-      <p>View job locations, customer clusters, and route planning (coming soon).</p>
-    </details>
-
-  </nav>
+  <!-- SIDEBAR (EMPTY — sidebar.js injects content) -->
+  <nav class="rtg-sidemenu" id="rtgSidemenu"></nav>
 
   <!-- HEADER -->
   <header class="rtg-header">
@@ -126,16 +79,17 @@
     </div>
   </main>
 
-  <!-- RTG ONLINE BUTTON -->
-  <div class="rtg-online-bottom">
-    <a class="rtg-online-btn" id="rtgOnlineBottom">RTG ONLINE</a>
+  <!-- RTG MAP BUTTON AT BOTTOM OF DASHBOARD -->
+  <div class="rtg-map-bottom">
+    <a class="rtg-map-btn" id="rtgMapBottom" href="../pages/map.html">RTG MAP</a>
   </div>
 
   <footer>
     © Real Tree Guy OS — All Rights Reserved
   </footer>
 
-  <!-- EXTERNAL DASHBOARD JS -->
+  <!-- MODULE SCRIPTS -->
+  <script type="module" src="../pages/assets/js/sidebar.js"></script>
   <script type="module" src="../pages/assets/js/dashboard.js"></script>
 
 </body>
