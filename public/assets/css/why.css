@@ -1,0 +1,98 @@
+/* BASE */
+body.rtg-why {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: #050705;
+  color: #e8ffe8;
+}
+
+/* HERO */
+.hero {
+  max-width: 900px;
+  margin: 40px auto 30px;
+  padding: 20px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 2.6rem;
+  margin-bottom: 10px;
+}
+.hero p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+.rtg-btn {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: #ff7a00;
+  color: #050705;
+  font-weight: 800;
+  text-decoration: none;
+}
+.rtg-btn-secondary {
+  background: transparent;
+  color: #ff7a00;
+  border: 2px solid #ff7a00;
+}
+
+/* PANELS */
+.panel-container {
+  max-width: 1100px;
+  margin: 10px auto 40px;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+}
+.panel {
+  background: #0b100b;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.7);
+}
+.panel img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  margin-bottom: 10px;
+}
+.panel h3 {
+  margin: 6px 0 6px;
+  font-size: 1.1rem;
+}
+.panel p {
+  font-size: 0.98rem;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+/* HEAVY SECTION */
+.why-heavy {
+  max-width: 900px;
+  margin: 10px auto 40px;
+  padding: 20px;
+  background: #060a06;
+  border-top: 2px solid #2e6b33;
+  border-bottom: 2px solid #2e6b33;
+}
+.why-heavy h2 {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+}
+.why-heavy p {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 20px 10px 30px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
