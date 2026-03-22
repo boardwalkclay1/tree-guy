@@ -8,9 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="../../assets/css/map.css">
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 
 <body>
@@ -53,7 +50,7 @@
 
     <!-- MAP -->
     <div class="map-wrap">
-      <div id="map"></div>
+      <iframe id="mapFrame" loading="lazy"></iframe>
 
       <div class="map-footer">
         <a id="openInMaps" href="https://www.google.com/maps" target="_blank">Open in Google Maps</a>
@@ -61,9 +58,6 @@
     </div>
 
   </section>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <!-- YOUR JS (UNCHANGED PATH) -->
   <script type="module" src="../pages/assets/js/map.js"></script>
