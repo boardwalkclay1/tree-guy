@@ -1,19 +1,19 @@
 // ============================================================
-// Real Tree Guy OS — Dashboard JS
+// REAL TREE GUY OS — DASHBOARD MODULE
 // ============================================================
 
-// SIDEMENU
-const burger = document.getElementById("rtgBurger");
-const sidemenu = document.getElementById("rtgSidemenu");
+// tree buttons
+document.querySelectorAll(".branch-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const href = btn.getAttribute("href");
+    if (href) window.location.href = href;
+  });
+});
 
-burger.onclick = () => {
-  sidemenu.classList.toggle("open");
-};
-
-// RTG ONLINE BUTTON
-const rtgOnline = document.getElementById("rtgOnlineBottom");
-if (rtgOnline) {
-  rtgOnline.onclick = () => {
-    alert("RTG Online is coming soon.");
-  };
+// bottom RTG MAP button
+const rtgMapBottom = document.getElementById("rtgMapBottom");
+if (rtgMapBottom) {
+  rtgMapBottom.addEventListener("click", () => {
+    window.location.href = "../pages/map.html";
+  });
 }
