@@ -1,6 +1,6 @@
 {
   "name": "Real Tree Guy OS",
-  "short_name": "RTG OS",
+  "short_name": "RTG",
   "description": "A modular static operating system for tree work: measurement tools, customer management, contracts, maps, and more.",
   "start_url": "/index.html",
   "scope": "/",
