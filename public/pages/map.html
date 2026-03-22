@@ -18,8 +18,13 @@
     <div class="left-panel">
       <h2>Supply Finder</h2>
 
+      <!-- BACK BUTTON -->
+      <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
+
+      <!-- GPS STATUS -->
       <div id="locationStatus" class="status">Requesting location…</div>
 
+      <!-- FILTERS -->
       <label>Supply Filters</label>
       <div id="filterRow" class="pill-row">
         <button class="pill" data-type="Home Depot">Home Depot</button>
@@ -32,16 +37,9 @@
         <button class="pill" data-type="gas station">Gas Stations</button>
       </div>
 
-      <label>Client Address (optional)</label>
-      <input id="clientAddress" placeholder="123 Oak St, Yulee, FL">
-
-      <button id="directionsFromUser" class="btn-primary">
-        Directions: Me → Supply
-      </button>
-
-      <button id="directionsFromClient" class="btn-ghost">
-        Directions: Client → Supply
-      </button>
+      <!-- ADDRESS INPUT ONLY -->
+      <label>Search Any Address</label>
+      <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
 
       <div class="status">
         Filter: <span id="activeFilterLabel">None</span>
@@ -53,13 +51,15 @@
       <iframe id="mapFrame" loading="lazy"></iframe>
 
       <div class="map-footer">
-        <a id="openInMaps" href="https://www.google.com/maps" target="_blank">Open in Google Maps</a>
+        <a id="openInMaps" href="https://www.google.com/maps" target="_blank">
+          Open in Google Maps
+        </a>
       </div>
     </div>
 
   </section>
 
-  <!-- YOUR JS (UNCHANGED PATH) -->
+  <!-- JS -->
   <script type="module" src="../pages/assets/js/map.js"></script>
 
 </body>
