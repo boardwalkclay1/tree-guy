@@ -1,5 +1,5 @@
 // ============================================================
-// Real Tree Guy OS — Google Maps Embed Controller
+// Real Tree Guy OS — Google Maps Embed Controller (PHONE SAFE)
 // ============================================================
 
 const mapFrame = document.getElementById("mapFrame");
@@ -12,7 +12,13 @@ let userLat = null;
 let userLng = null;
 
 // ============================================================
-// GET USER LOCATION
+// DISABLE FILTERS UNTIL GPS IS READY
+// ============================================================
+const filterButtons = document.querySelectorAll(".pill");
+filterButtons.forEach(btn => btn.disabled = true);
+
+// ============================================================
+// GET USER LOCATION (ALWAYS FRESH)
 // ============================================================
 function getLocation(callback) {
   navigator.geolocation.getCurrentPosition(
@@ -23,12 +29,15 @@ function getLocation(callback) {
       locationStatus.textContent =
         `Location: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
 
+      // ENABLE FILTERS ONCE GPS IS READY
+      filterButtons.forEach(btn => btn.disabled = false);
+
       callback();
     },
     err => {
       locationStatus.textContent = "Location denied.";
     },
-    { enableHighAccuracy: true }
+    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
   );
 }
 
@@ -40,24 +49,22 @@ function updateMap(filterText) {
 
   const q = encodeURIComponent(`${filterText} near ${userLat},${userLng}`);
 
-  const url =
+  mapFrame.src =
     `https://www.google.com/maps?q=${q}&z=13&output=embed`;
-
-  mapFrame.src = url;
 
   openInMaps.href =
     `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 
 // ============================================================
-// INITIAL LOAD
+// INITIAL LOAD — FORCE GPS FIRST
 // ============================================================
 getLocation(() => {
   updateMap("tree service supplies");
 });
 
 // ============================================================
-// FILTER BUTTONS
+// FILTER BUTTONS — FORCE GPS BEFORE EVERY FILTER
 // ============================================================
 filterRow.addEventListener("click", e => {
   const btn = e.target.closest(".pill");
@@ -66,6 +73,7 @@ filterRow.addEventListener("click", e => {
   const type = btn.dataset.type;
   activeFilterLabel.textContent = type;
 
+  // PHONE FIX: GET FRESH GPS BEFORE APPLYING FILTER
   getLocation(() => {
     updateMap(type);
   });
