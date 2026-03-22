@@ -133,6 +133,7 @@ details p {
   margin-top: 40px;
   display: flex;
   justify-content: center;
+  overflow: visible; /* FIX */
 }
 
 .tree {
@@ -202,32 +203,39 @@ details p {
 .b4 { top: 200px; right: -160px; }
 .b5 { top: 280px; left: -160px; }
 .b6 { top: 280px; right: -160px; }
-.b7 { top: 360px; left: -160px; }
+/* .b7 REMOVED */
 
 /* ============================================================
-   RTG ONLINE BUTTON
+   MASSIVE RTG MAP BUTTON
    ============================================================ */
-.rtg-online-bottom {
-  margin-top: 40px;
-  text-align: center;
+.rtg-map-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 9999;
 }
-.rtg-online-btn {
+
+.rtg-map-btn {
   display: inline-block;
-  padding: 14px 28px;
-  font-size: 1.3rem;
-  font-weight: 900;
+  background: #14522a;
   color: #caffca;
+  padding: 28px 60px;
+  font-size: 2rem;
+  font-weight: 900;
+  border-radius: 20px;
+  border: 4px solid #2e6b33;
   text-decoration: none;
-  background: rgba(0,0,0,0.55);
-  border: 3px solid #ff7a00;
-  border-radius: 14px;
-  backdrop-filter: blur(6px);
+  box-shadow: 0 0 20px rgba(0,255,0,0.25);
   transition: 0.2s ease;
 }
-.rtg-online-btn:hover {
-  background: rgba(0,0,0,0.75);
-  border-color: #ffa75f;
-  color: #e6ffe6;
+
+.rtg-map-btn:hover {
+  background: #1f7a3a;
+  border-color: #6aff6a;
+  box-shadow: 0 0 30px rgba(0,255,0,0.35);
 }
 
 /* ============================================================
