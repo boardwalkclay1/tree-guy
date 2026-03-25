@@ -1,28 +1,30 @@
-// flyers.js — Real Tree Guy OS (IndexedDB Version)
+// ============================================================
+// REAL TREE GUY OS — FLYERS / CARDS / DOOR HANGERS STUDIO
+// FULL REBUILD (IndexedDB Version)
+// ============================================================
 
-import { initDB, save, get, getAll, remove } from "../../../assets/js/db.js";
-
+import { initDB, save, getAll } from "/assets/js/db.js";
 await initDB();
 
 /* ============================================================
    MODE SWITCHING
    ============================================================ */
+const preview = document.getElementById("preview");
+
 const modeCard = document.getElementById("modeCard");
 const modeFlyer = document.getElementById("modeFlyer");
 const modeDoor = document.getElementById("modeDoorHanger");
-const preview = document.getElementById("preview");
 
 function setMode(mode) {
-  preview.className = "";
-  preview.classList.add(mode + "-mode");
+  preview.classList.remove("card-mode", "flyer-mode", "doorhanger-mode");
 
-  modeCard.classList.remove("active");
-  modeFlyer.classList.remove("active");
-  modeDoor.classList.remove("active");
+  if (mode === "card") preview.classList.add("card-mode");
+  if (mode === "flyer") preview.classList.add("flyer-mode");
+  if (mode === "door") preview.classList.add("doorhanger-mode");
 
-  if (mode === "card") modeCard.classList.add("active");
-  if (mode === "flyer") modeFlyer.classList.add("active");
-  if (mode === "door") modeDoor.classList.add("active");
+  modeCard.classList.toggle("active", mode === "card");
+  modeFlyer.classList.toggle("active", mode === "flyer");
+  modeDoor.classList.toggle("active", mode === "door");
 }
 
 modeCard.onclick = () => setMode("card");
@@ -30,7 +32,7 @@ modeFlyer.onclick = () => setMode("flyer");
 modeDoor.onclick = () => setMode("door");
 
 /* ============================================================
-   LIVE PREVIEW ELEMENTS
+   PREVIEW ELEMENTS
    ============================================================ */
 const headlineInput = document.getElementById("headline");
 const bodyInput = document.getElementById("body");
@@ -55,9 +57,17 @@ const accentColor = document.getElementById("accentColor");
 /* ============================================================
    TEXT UPDATES
    ============================================================ */
-headlineInput.oninput = () => previewHeadline.textContent = headlineInput.value;
-bodyInput.oninput = () => previewBody.textContent = bodyInput.value;
-offerInput.oninput = () => previewOffer.textContent = offerInput.value;
+headlineInput.oninput = () => {
+  previewHeadline.textContent = headlineInput.value;
+};
+
+bodyInput.oninput = () => {
+  previewBody.textContent = bodyInput.value;
+};
+
+offerInput.oninput = () => {
+  previewOffer.textContent = offerInput.value;
+};
 
 /* ============================================================
    BACKGROUND IMAGE
@@ -94,40 +104,49 @@ logoUpload.onchange = e => {
 /* ============================================================
    COLORS
    ============================================================ */
-bgColor.oninput = () => preview.style.backgroundColor = bgColor.value;
+bgColor.oninput = () => {
+  preview.style.backgroundColor = bgColor.value;
+};
 
 textColor.oninput = () => {
   previewHeadline.style.color = textColor.value;
   previewBody.style.color = textColor.value;
 };
 
-accentColor.oninput = () => previewOffer.style.color = accentColor.value;
+accentColor.oninput = () => {
+  previewOffer.style.color = accentColor.value;
+};
 
 /* ============================================================
-   SAVE DESIGN (IndexedDB)
+   SAVE DESIGN
    ============================================================ */
 document.getElementById("saveDesign").onclick = async () => {
   const design = {
     id: "FLY-" + Date.now(),
-    mode: preview.className,
+    mode:
+      preview.classList.contains("card-mode") ? "card-mode" :
+      preview.classList.contains("flyer-mode") ? "flyer-mode" :
+      "doorhanger-mode",
+
     headline: headlineInput.value,
     body: bodyInput.value,
     offer: offerInput.value,
+
     bgColor: bgColor.value,
     textColor: textColor.value,
     accentColor: accentColor.value,
+
     bgStrength: bgStrength.value,
     bgImage: previewBg.style.backgroundImage,
     logoImage: previewLogo.style.backgroundImage
   };
 
   await save("documents", design);
-
   alert("Design saved.");
 };
 
 /* ============================================================
-   LOAD DESIGN (auto-load latest)
+   LOAD MOST RECENT DESIGN
    ============================================================ */
 (async function loadDesign() {
   const all = await getAll("documents");
@@ -160,7 +179,8 @@ document.getElementById("saveDesign").onclick = async () => {
   if (saved.bgImage) previewBg.style.backgroundImage = saved.bgImage;
   if (saved.logoImage) previewLogo.style.backgroundImage = saved.logoImage;
 
-  preview.className = saved.mode;
+  preview.classList.remove("card-mode", "flyer-mode", "doorhanger-mode");
+  preview.classList.add(saved.mode);
 })();
 
 /* ============================================================
