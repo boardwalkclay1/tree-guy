@@ -3,7 +3,7 @@
 // FULL REBUILD (IndexedDB Version)
 // ============================================================
 
-import { initDB, save, getAll } from "/assets/js/db.js";
+import { initDB, save, getAll } from "../../../assets/js/db.js";
 await initDB();
 
 /* ============================================================
