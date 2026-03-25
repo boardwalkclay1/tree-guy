@@ -1,9 +1,9 @@
 // ============================================================
 // REAL TREE GUY OS — FLYERS / CARDS / DOOR HANGERS STUDIO
-// FULL REBUILD (IndexedDB Version)
+// FULL REBUILD (IndexedDB Version) — FIXED
 // ============================================================
 
-import { initDB, save, getAll } from "../../../assets/js/db.js";
+import { initDB, save, getAll } from "./db.js";
 await initDB();
 
 /* ============================================================
@@ -16,11 +16,12 @@ const modeFlyer = document.getElementById("modeFlyer");
 const modeDoor = document.getElementById("modeDoorHanger");
 
 function setMode(mode) {
-  preview.classList.remove("card-mode", "flyer-mode", "doorhanger-mode");
+  // mode is: "card" | "flyer" | "door"
+  preview.classList.remove("card-mode", "flyer-mode", "door-mode", "doorhanger-mode");
 
-  if (mode === "card") preview.classList.add("card-mode");
-  if (mode === "flyer") preview.classList.add("flyer-mode");
-  if (mode === "door") preview.classList.add("doorhanger-mode");
+  // if your CSS uses door-mode, this line is correct:
+  const className = mode === "door" ? "door-mode" : `${mode}-mode`;
+  preview.classList.add(className);
 
   modeCard.classList.toggle("active", mode === "card");
   modeFlyer.classList.toggle("active", mode === "flyer");
@@ -121,21 +122,19 @@ accentColor.oninput = () => {
    SAVE DESIGN
    ============================================================ */
 document.getElementById("saveDesign").onclick = async () => {
+  let mode = "card-mode";
+  if (preview.classList.contains("flyer-mode")) mode = "flyer-mode";
+  else if (preview.classList.contains("door-mode") || preview.classList.contains("doorhanger-mode")) mode = "door-mode";
+
   const design = {
     id: "FLY-" + Date.now(),
-    mode:
-      preview.classList.contains("card-mode") ? "card-mode" :
-      preview.classList.contains("flyer-mode") ? "flyer-mode" :
-      "doorhanger-mode",
-
+    mode,
     headline: headlineInput.value,
     body: bodyInput.value,
     offer: offerInput.value,
-
     bgColor: bgColor.value,
     textColor: textColor.value,
     accentColor: accentColor.value,
-
     bgStrength: bgStrength.value,
     bgImage: previewBg.style.backgroundImage,
     logoImage: previewLogo.style.backgroundImage
@@ -179,8 +178,12 @@ document.getElementById("saveDesign").onclick = async () => {
   if (saved.bgImage) previewBg.style.backgroundImage = saved.bgImage;
   if (saved.logoImage) previewLogo.style.backgroundImage = saved.logoImage;
 
-  preview.classList.remove("card-mode", "flyer-mode", "doorhanger-mode");
+  preview.classList.remove("card-mode", "flyer-mode", "door-mode", "doorhanger-mode");
   preview.classList.add(saved.mode);
+
+  if (saved.mode === "card-mode") setMode("card");
+  else if (saved.mode === "flyer-mode") setMode("flyer");
+  else setMode("door");
 })();
 
 /* ============================================================
@@ -215,5 +218,5 @@ document.getElementById("shareFlyer").onclick = async () => {
    FULLSCREEN
    ============================================================ */
 document.getElementById("fullscreenFlyer").onclick = () => {
-  preview.requestFullscreen();
+  if (preview.requestFullscreen) preview.requestFullscreen();
 };
