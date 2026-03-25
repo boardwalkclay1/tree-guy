@@ -11,6 +11,10 @@ const openInMaps = document.getElementById("openInMaps");
 let userLat = null;
 let userLng = null;
 
+// YOUR MAPBOX TOKEN (FREE)
+// Replace with your token from https://account.mapbox.com/
+const MAPBOX_TOKEN = "YOUR_MAPBOX_TOKEN_HERE";
+
 // ============================================================
 // GET REAL GPS — IGNORE FIRST (CACHED) LOCATION
 // ============================================================
@@ -21,17 +25,13 @@ function getRealLocation() {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
 
-        // iPhone ALWAYS gives a cached location first.
-        // Cached locations ALWAYS have a timestamp older than 5 seconds.
         const isFresh = (Date.now() - pos.timestamp) < 5000;
 
         if (!isFresh) {
-          // Cached → request again
           locationStatus.textContent = "Locking GPS…";
           return getRealLocation().then(resolve).catch(reject);
         }
 
-        // FRESH GPS LOCKED
         userLat = lat;
         userLng = lng;
 
@@ -47,25 +47,27 @@ function getRealLocation() {
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 0 // FORCE NO CACHE
+        maximumAge: 0
       }
     );
   });
 }
 
 // ============================================================
-// UPDATE MAP
+// UPDATE MAP — NOW USING MAPBOX STATIC MAP (ALWAYS WORKS)
 // ============================================================
 function updateMap(filterText) {
   if (userLat === null || userLng === null) return;
 
-  const q = encodeURIComponent(`${filterText} near ${userLat},${userLng}`);
+  const marker = `pin-s+ff0000(${userLng},${userLat})`;
 
+  // Static map image (loads in ANY iframe)
   mapFrame.src =
-    `https://www.google.com/maps?q=${q}&z=13&output=embed`;
+    `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${marker}/${userLng},${userLat},13/600x600?access_token=${MAPBOX_TOKEN}`;
 
+  // Open in Mapbox full map
   openInMaps.href =
-    `https://www.google.com/maps/search/?api=1&query=${q}`;
+    `https://www.mapbox.com/maps/?zoom=14&center=${userLng},${userLat}`;
 }
 
 // ============================================================
@@ -87,6 +89,6 @@ filterRow.addEventListener("click", async e => {
 
   locationStatus.textContent = "Getting GPS…";
 
-  await getRealLocation();   // HARD WAIT FOR REAL GPS
+  await getRealLocation();
   updateMap(type);
 });
