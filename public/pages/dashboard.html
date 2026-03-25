@@ -5,8 +5,12 @@
   <title>REAL TREE GUY – Dashboard</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- FAVICON -->
   <link rel="icon" type="image/png" href="../assets/icons/rtg-192.png">
-  <link rel="stylesheet" href="/assets/css/dashboard.css">
+
+  <!-- DASHBOARD CSS -->
+  <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
 
 <body class="rtg-dashboard">
@@ -18,7 +22,7 @@
     </div>
   </div>
 
-  <!-- SIDEBAR (EMPTY — sidebar.js injects content) -->
+  <!-- SIDEBAR (sidebar.js injects content) -->
   <nav class="rtg-sidemenu" id="rtgSidemenu"></nav>
 
   <!-- HEADER -->
@@ -37,56 +41,56 @@
       <div class="branch b1 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../pages/profile.html" class="branch-btn">Profile</a>
+        <a href="profile.html" class="branch-btn">Profile</a>
       </div>
 
       <div class="branch b2 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../pages/customers.html" class="branch-btn">Customers & Jobs</a>
+        <a href="customers.html" class="branch-btn">Customers & Jobs</a>
       </div>
 
       <div class="branch b3 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../pages/flyers.html" class="branch-btn">Cards & Flyers</a>
+        <a href="flyers.html" class="branch-btn">Cards & Flyers</a>
       </div>
 
       <div class="branch b4 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../pages/contracts.html" class="branch-btn">Contracts</a>
+        <a href="contracts.html" class="branch-btn">Contracts</a>
       </div>
 
       <div class="branch b5 left">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../pages/measurement.html" class="branch-btn">Tree Measurement</a>
+        <a href="measurement.html" class="branch-btn">Tree Measurement</a>
       </div>
 
       <div class="branch b6 right">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="../pages/calendar.html" class="branch-btn">Calendar</a>
+        <a href="calendar.html" class="branch-btn">Calendar</a>
       </div>
 
-      <!-- ⭐ BRANCH 7 REMOVED — NO RTG MAP IN TREE -->
+      <!-- ⭐ RTG MAP REMOVED FROM TREE — MOVED TO BOTTOM BUTTON -->
 
     </div>
   </main>
 
-  <!-- ⭐ RTG MAP BUTTON AT BOTTOM CENTER OF PAGE -->
+  <!-- ⭐ RTG MAP BUTTON AT BOTTOM CENTER -->
   <div class="rtg-map-bottom">
-    <a class="rtg-map-btn" id="rtgMapBottom" href="../pages/map.html">RTG MAP</a>
+    <a class="rtg-map-btn" id="rtgMapBottom" href="map.html">RTG MAP</a>
   </div>
 
   <footer>
     © Real Tree Guy OS — All Rights Reserved
   </footer>
 
-  <!-- MODULE SCRIPTS -->
-  <script type="module" src="/pages/assets/js/sidebar.js"></script>
-  <script type="module" src="/pages/assets/js/dashboard.js"></script>
+  <!-- MODULE SCRIPTS (CORRECT PATHS) -->
+  <script type="module" src="../assets/js/sidebar.js"></script>
+  <script type="module" src="../assets/js/dashboard.js"></script>
 
 </body>
 </html>
