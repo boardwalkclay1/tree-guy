@@ -7,19 +7,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- FAVICON -->
-  <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
+  <link rel="icon" type="image/png" href="assets/icons/rtg-192.png?v=3">
 
   <!-- APPLE TOUCH ICON -->
-  <link rel="apple-touch-icon" href="/assets/icons/rtg-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/rtg-192.png?v=3">
 
   <!-- MANIFEST -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="/assets/css/index.css">
+  <link rel="stylesheet" href="assets/css/index.css">
 
   <style>
-    /* SIDEBAR STYLES */
+    /* SIDEBAR */
     #sidebar {
       position: fixed;
       top: 0;
@@ -54,23 +54,50 @@
       font-size: 30px;
       cursor: pointer;
       z-index: 10000;
-      color: #111;
+      color: #caffca;
+    }
+
+    /* NEW FEATURE LIST */
+    .rtg-features {
+      max-width: 700px;
+      margin: 60px auto;
+      text-align: center;
+      color: #caffca;
+      padding: 0 20px;
+    }
+
+    .rtg-features h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 12px rgba(46,107,51,0.6);
+    }
+
+    .rtg-features ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .rtg-features li {
+      font-size: 1.2rem;
+      margin: 12px 0;
+      color: #d8ffd8;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- HAMBURGER BUTTON -->
+  <!-- HAMBURGER -->
   <div id="hamburger">☰</div>
 
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <h2>Menu</h2>
-    <a href="/pages/login.html">Login</a>
-    <a href="/pages/paywall.html">Unlock OS</a>
-    <a href="/pages/why.html">Why Real Tree Guy?</a>
-    <a href="/pages/support.html">Support</a>
+    <a href="pages/login.html">Login</a>
+    <a href="pages/paywall.html">Unlock OS</a>
+    <a href="pages/why.html">Why Real Tree Guy?</a>
+    <a href="pages/support.html">Support</a>
   </nav>
 
   <!-- HERO -->
@@ -83,50 +110,32 @@
       Real Tree Guy OS is your entire business in your pocket.
     </p>
 
-    <!-- MAIN CTA -->
-    <a class="rtg-btn" href="/pages/paywall.html">
+    <a class="rtg-btn" href="pages/paywall.html">
       Unlock Real Tree Guy OS – $30 One‑Time
     </a>
 
-    <!-- SMALL LOGIN BUTTON -->
-    <a class="rtg-btn login-small" href="/pages/login.html">
+    <a class="rtg-btn login-small" href="pages/login.html">
       Login
     </a>
   </header>
 
-  <!-- PANELS -->
-  <section class="panel-container">
-
-    <div class="panel">
-      <img src="/assets/img/panels/panel1.png" alt="Contracts Page Preview">
-      <h3>Contracts Module</h3>
-      <p>Build, edit, and save professional tree‑service contracts right from your phone.</p>
-    </div>
-
-    <div class="panel">
-      <img src="/assets/img/panels/panel2.png" alt="Calendar Page Preview">
-      <h3>Calendar & Job Reminders</h3>
-      <p>Schedule jobs, set reminders, and organize your entire week.</p>
-    </div>
-
-    <div class="panel">
-      <img src="/assets/img/panels/panel3.png" alt="Tree Measurement Tool Preview">
-      <h3>Tree Measurement Tool</h3>
-      <p>Take a photo and instantly estimate tree height and trunk width.</p>
-    </div>
-
-    <div class="panel">
-      <img src="/assets/img/panels/panel4.png" alt="Flyers and Cards Page Preview">
-      <h3>Flyers, Cards & Door Hangers</h3>
-      <p>Edit your business cards, flyers, and door hangers inside the OS.</p>
-    </div>
-
+  <!-- NEW FEATURE LIST -->
+  <section class="rtg-features">
+    <h2>What’s Inside the OS</h2>
+    <ul>
+      <li>✔ Contracts & Estimates</li>
+      <li>✔ Calendar & Job Scheduling</li>
+      <li>✔ Tree Measurement Tools</li>
+      <li>✔ Flyers, Cards & Door Hangers</li>
+      <li>✔ Customer & Job Management</li>
+      <li>✔ Offline‑First, Works Anywhere</li>
+    </ul>
   </section>
 
   <!-- BOTTOM LINKS -->
   <div class="rtg-bottom-links">
-    <a class="rtg-bottom-btn" href="/pages/login.html">Already have an account?</a>
-    <a class="rtg-bottom-btn" href="/pages/why.html">Why Real Tree Guy?</a>
+    <a class="rtg-bottom-btn" href="pages/login.html">Already have an account?</a>
+    <a class="rtg-bottom-btn" href="pages/why.html">Why Real Tree Guy?</a>
   </div>
 
   <footer>
@@ -142,7 +151,6 @@
       sidebar.classList.toggle("open");
     });
 
-    // Close sidebar when clicking outside
     document.addEventListener("click", (e) => {
       if (!sidebar.contains(e.target) && e.target !== hamburger) {
         sidebar.classList.remove("open");
