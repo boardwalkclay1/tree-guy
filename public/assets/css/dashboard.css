@@ -71,6 +71,31 @@ body.rtg-dashboard {
 }
 
 /* ============================================================
+   WEATHER MODULE
+   ============================================================ */
+.rtg-weather {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.35);
+  border-bottom: 2px solid #2e6b33;
+  padding: 20px;
+  color: #caffca;
+  backdrop-filter: blur(10px);
+  margin-top: 20px;
+}
+
+.rtg-weather h3 {
+  font-size: 2.4rem;
+  margin: 0;
+}
+
+.rtg-weather p {
+  margin: 2px 0;
+  font-size: 1.1rem;
+}
+
+/* ============================================================
    CINEMATIC TREE SYSTEM
    ============================================================ */
 
@@ -84,7 +109,7 @@ body.rtg-dashboard {
 .tree-menu {
   display: flex;
   justify-content: center;
-  margin-top: -80px;
+  margin-top: -40px;
   padding-bottom: 220px;
   position: relative;
   overflow: visible;
@@ -208,7 +233,6 @@ body.rtg-dashboard {
 .b4 { top: 770px; }
 .b5 { top: 900px; }
 .b6 { top: 1030px; }
-.b7 { top: 1160px; }
 
 /* ============================================================
    BIG ORANGE RTG MAP BUTTON
