@@ -17,19 +17,61 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="/assets/css/index.css">
+
+  <style>
+    /* SIDEBAR STYLES */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: #111;
+      color: white;
+      padding: 20px;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.4);
+      transition: left 0.3s ease;
+      z-index: 9999;
+    }
+
+    #sidebar.open {
+      left: 0;
+    }
+
+    #sidebar a {
+      display: block;
+      padding: 12px 0;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      border-bottom: 1px solid #333;
+    }
+
+    #hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 10000;
+      color: #111;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- BURGER BUTTON -->
-  <div id="rtgBurger" class="rtg-burger">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+  <!-- HAMBURGER BUTTON -->
+  <div id="hamburger">☰</div>
 
-  <!-- SIDEBAR (JS will fill this) -->
-  <aside id="rtgSidemenu"></aside>
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <h2>Menu</h2>
+    <a href="/pages/login.html">Login</a>
+    <a href="/pages/paywall.html">Unlock OS</a>
+    <a href="/pages/why.html">Why Real Tree Guy?</a>
+    <a href="/pages/support.html">Support</a>
+  </nav>
 
   <!-- HERO -->
   <header class="hero">
@@ -91,8 +133,22 @@
     Real Tree Guy • Built for the Ones Who Really Do the Work
   </footer>
 
-  <!-- JS -->
-  <script src="/assets/js/sidebar.js"></script>
+  <!-- SIDEBAR JS -->
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const hamburger = document.getElementById("hamburger");
+
+    hamburger.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    // Close sidebar when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!sidebar.contains(e.target) && e.target !== hamburger) {
+        sidebar.classList.remove("open");
+      }
+    });
+  </script>
 
 </body>
 </html>
