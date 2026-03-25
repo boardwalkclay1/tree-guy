@@ -1,0 +1,11 @@
+{
+  "specialClients": [
+    {
+      "id": "client_001",
+      "email": "davidmoussalli@gmail.com",
+      "canCreatePassword": true,
+      "status": "pending",
+      "createdAt": "2026-03-24T00:00:00Z"
+    }
+  ]
+}
