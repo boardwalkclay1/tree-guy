@@ -31,6 +31,18 @@
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
   </header>
 
+  <!-- WEATHER MODULE -->
+  <section class="rtg-weather">
+    <div class="weather-left">
+      <h3 id="weatherTemp">--°</h3>
+      <p id="weatherCondition">Loading...</p>
+    </div>
+    <div class="weather-right">
+      <p id="weatherLocation">Locating...</p>
+      <p id="weatherHighLow">H: --°  L: --°</p>
+    </div>
+  </section>
+
   <!-- TREE SYSTEM -->
   <main class="tree-menu">
     <div class="tree">
@@ -74,12 +86,21 @@
         <a href="calendar.html" class="branch-btn">Calendar</a>
       </div>
 
-      <!-- ⭐ RTG MAP REMOVED FROM TREE — MOVED TO BOTTOM BUTTON -->
-
     </div>
   </main>
 
-  <!-- ⭐ RTG MAP BUTTON AT BOTTOM CENTER -->
+  <!-- REAL TREE SHOP -->
+  <section class="rtg-shop">
+    <h2>🪓 Real Tree Shop</h2>
+    <div class="shop-grid">
+      <a href="shop-saws.html" class="shop-item">Chainsaws</a>
+      <a href="shop-ropes.html" class="shop-item">Ropes & Rigging</a>
+      <a href="shop-safety.html" class="shop-item">Safety Gear</a>
+      <a href="shop-tools.html" class="shop-item">Tools & Accessories</a>
+    </div>
+  </section>
+
+  <!-- RTG MAP BUTTON -->
   <div class="rtg-map-bottom">
     <a class="rtg-map-btn" id="rtgMapBottom" href="map.html">RTG MAP</a>
   </div>
@@ -88,7 +109,7 @@
     © Real Tree Guy OS — All Rights Reserved
   </footer>
 
-  <!-- MODULE SCRIPTS (CORRECT PATHS) -->
+  <!-- MODULE SCRIPTS -->
   <script type="module" src="../assets/js/sidebar.js"></script>
   <script type="module" src="../assets/js/dashboard.js"></script>
 
