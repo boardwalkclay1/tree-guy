@@ -1,91 +1,98 @@
 // ============================================================
-// REAL TREE GUY OS — SIDEBAR MODULE (FINAL VERSION)
+// Real Tree Guy OS — FINAL GPS FIX (NO CACHE, NO RANDOM LOCATION)
 // ============================================================
 
-const sidemenu = document.getElementById("rtgSidemenu");
+const mapFrame = document.getElementById("mapFrame");
+const filterRow = document.getElementById("filterRow");
+const activeFilterLabel = document.getElementById("activeFilterLabel");
+const locationStatus = document.getElementById("locationStatus");
+const openInMaps = document.getElementById("openInMaps");
 
-sidemenu.innerHTML = `
-
-  <!-- PROFILE -->
-  <details class="rtg-item">
-    <summary class="rtg-label">Profile</summary>
-    <div class="rtg-drop">
-      <p>Store your company name, logo, phone number, and details used across the OS.</p>
-      <button class="enter-btn" onclick="location.href='../pages/profile.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- CUSTOMERS -->
-  <details class="rtg-item">
-    <summary class="rtg-label">Customers & Jobs</summary>
-    <div class="rtg-drop">
-      <p>Save customers, attach jobs, track estimates, completed work, and follow‑ups.</p>
-      <button class="enter-btn" onclick="location.href='../pages/customers.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- FLYERS -->
-  <details class="rtg-item">
-    <summary class="rtg-label">Cards & Flyers</summary>
-    <div class="rtg-drop">
-      <p>Create business cards, flyers, and door hangers for marketing.</p>
-      <button class="enter-btn" onclick="location.href='../pages/flyers.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- CONTRACTS -->
-  <details class="rtg-item">
-    <summary class="rtg-label">Contracts</summary>
-    <div class="rtg-drop">
-      <p>Generate simple work agreements you can save or send instantly.</p>
-      <button class="enter-btn" onclick="location.href='../pages/contracts.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- MEASUREMENT -->
-  <details class="rtg-item">
-    <summary class="rtg-label">Tree Measurement</summary>
-    <div class="rtg-drop">
-      <p>Measure tree height using your phone’s camera and angle.</p>
-      <button class="enter-btn" onclick="location.href='../pages/measurement.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- CALENDAR -->
-  <details class="rtg-item">
-    <summary class="rtg-label">Calendar</summary>
-    <div class="rtg-drop">
-      <p>Schedule jobs, reminders, and follow‑ups. Everything saves offline.</p>
-      <button class="enter-btn" onclick="location.href='../pages/calendar.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- MAP -->
-  <details class="rtg-item">
-    <summary class="rtg-label">RTG Map</summary>
-    <div class="rtg-drop">
-      <p>Find supply stores, dump sites, sawmills, gas stations, and more.</p>
-      <button class="enter-btn" onclick="location.href='../pages/map.html'">ENTER</button>
-    </div>
-  </details>
-
-  <!-- RTG ONLINE -->
-  <div class="rtg-online-bottom">
-    <button class="rtg-online-btn" id="rtgOnlineBottom">RTG ONLINE</button>
-  </div>
-`;
+let userLat = null;
+let userLng = null;
 
 // ============================================================
-// BURGER LOGIC
+// GET REAL GPS — IGNORE FIRST (CACHED) LOCATION
 // ============================================================
-const burger = document.getElementById("rtgBurger");
-burger.addEventListener("click", () => {
-  sidemenu.classList.toggle("open");
+function getRealLocation() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        const isFresh = (Date.now() - pos.timestamp) < 5000;
+
+        if (!isFresh) {
+          locationStatus.textContent = "Locking GPS…";
+          return getRealLocation().then(resolve).catch(reject);
+        }
+
+        userLat = lat;
+        userLng = lng;
+
+        locationStatus.textContent =
+          `GPS Locked: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+
+        resolve();
+      },
+      err => {
+        locationStatus.textContent = "Location denied.";
+        reject(err);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      }
+    );
+  });
+}
+
+// ============================================================
+// UPDATE MAP — NOW USING OPENSTREETMAP (ALWAYS WORKS)
+// ============================================================
+function updateMap(filterText) {
+  if (userLat === null || userLng === null) return;
+
+  const encoded = encodeURIComponent(filterText);
+
+  // Build a bounding box around the user
+  const bbox = [
+    userLng - 0.05,
+    userLat - 0.05,
+    userLng + 0.05,
+    userLat + 0.05
+  ].join(",");
+
+  // Embed map (always loads)
+  mapFrame.src =
+    `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${userLat},${userLng}`;
+
+  // External link (opens full map with search)
+  openInMaps.href =
+    `https://www.openstreetmap.org/?mlat=${userLat}&mlon=${userLng}#map=14/${userLat}/${userLng}`;
+}
+
+// ============================================================
+// INITIAL LOAD — WAIT FOR REAL GPS
+// ============================================================
+getRealLocation().then(() => {
+  updateMap("tree service supplies");
 });
 
 // ============================================================
-// RTG ONLINE — COMING SOON
+// FILTERS — WAIT FOR REAL GPS EVERY TIME
 // ============================================================
-document.getElementById("rtgOnlineBottom").addEventListener("click", () => {
-  alert("RTG ONLINE — Coming Soon");
+filterRow.addEventListener("click", async e => {
+  const btn = e.target.closest(".pill");
+  if (!btn) return;
+
+  const type = btn.dataset.type;
+  activeFilterLabel.textContent = type;
+
+  locationStatus.textContent = "Getting GPS…";
+
+  await getRealLocation();
+  updateMap(type);
 });
