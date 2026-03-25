@@ -1,0 +1,81 @@
+// /assets/data/real-tree-shop.json
+{
+  "shop": {
+    "id": "real_tree_shop_main",
+    "name": "Real Tree Shop",
+    "brand": "Real Tree Guy",
+    "currency": "USD"
+  },
+  "categories": [
+    {
+      "id": "climbing_gear",
+      "name": "Climbing Gear"
+    },
+    {
+      "id": "ropes_rigging",
+      "name": "Ropes & Rigging"
+    },
+    {
+      "id": "ppe_safety",
+      "name": "PPE & Safety"
+    },
+    {
+      "id": "saws_cutting",
+      "name": "Saws & Cutting"
+    }
+  ],
+  "products": [
+    {
+      "id": "rtg_saddle_001",
+      "name": "Pro Arborist Saddle",
+      "category_id": "climbing_gear",
+      "price": 289.99,
+      "image": "/assets/img/shop/saddle_001.png",
+      "description": "All‑day comfort saddle built for real climbers.",
+      "cheapest_vendor": {
+        "name": "Vendor A",
+        "price": 289.99,
+        "url": "https://vendor-a.com/saddle_001"
+      }
+    },
+    {
+      "id": "rtg_rope_200_001",
+      "name": "200ft 11.5mm Climbing Rope",
+      "category_id": "ropes_rigging",
+      "price": 129.99,
+      "image": "/assets/img/shop/rope_200_001.png",
+      "description": "Low‑stretch climbing line for precise movement.",
+      "cheapest_vendor": {
+        "name": "Vendor B",
+        "price": 129.99,
+        "url": "https://vendor-b.com/rope_200_001"
+      }
+    },
+    {
+      "id": "rtg_helmet_001",
+      "name": "Impact Arborist Helmet",
+      "category_id": "ppe_safety",
+      "price": 89.99,
+      "image": "/assets/img/shop/helmet_001.png",
+      "description": "Certified helmet with visor and ear protection.",
+      "cheapest_vendor": {
+        "name": "Vendor C",
+        "price": 89.99,
+        "url": "https://vendor-c.com/helmet_001"
+      }
+    },
+    {
+      "id": "rtg_saw_001",
+      "name": "50cc Pro Chainsaw",
+      "category_id": "saws_cutting",
+      "price": 499.99,
+      "image": "/assets/img/shop/saw_001.png",
+      "description": "Reliable mid‑size saw for daily production work.",
+      "cheapest_vendor": {
+        "name": "Vendor D",
+        "price": 499.99,
+        "url": "https://vendor-d.com/saw_001"
+      }
+    }
+  ]
+}
