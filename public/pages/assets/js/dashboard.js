@@ -1,46 +1,98 @@
-// REAL TREE GUY — DASHBOARD MODULE (ORIGINAL STYLE)
+// =========================
+// API + AUTH
+// =========================
+const API = window.API_URL;
 
-// TREE BRANCH BUTTONS
-document.querySelectorAll(".branch-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const href = btn.getAttribute("href");
-    if (href) window.location.href = href;
-  });
-});
-
-// WEATHER MODULE
-const weatherTemp = document.getElementById("weatherTemp");
-const weatherCondition = document.getElementById("weatherCondition");
-const weatherLocation = document.getElementById("weatherLocation");
-const weatherHighLow = document.getElementById("weatherHighLow");
-
-function loadWeather() {
-  if (!navigator.geolocation) {
-    if (weatherLocation) weatherLocation.textContent = "Location unavailable";
-    return;
+  function getToken() {
+    return localStorage.getItem("token");
   }
 
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+  async function getUser() {
+    const token = getToken();
+    if (!token) return null;
 
     try {
-      const url = `https://api.weatherapi.com/v1/forecast.json?key=YOUR_KEY&q=${lat},${lon}&days=1`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Weather error");
-      const data = await res.json();
-
-      if (weatherTemp) weatherTemp.textContent = Math.round(data.current.temp_f) + "°";
-      if (weatherCondition) weatherCondition.textContent = data.current.condition.text;
-      if (weatherLocation) weatherLocation.textContent = data.location.name;
-
-      const hi = Math.round(data.forecast.forecastday[0].day.maxtemp_f);
-      const lo = Math.round(data.forecast.forecastday[0].day.mintemp_f);
-      if (weatherHighLow) weatherHighLow.textContent = `H: ${hi}°  L: ${lo}°`;
+      const res = await fetch(`${API}/api/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return null;
+      return res.json();
     } catch {
-      if (weatherLocation) weatherLocation.textContent = "Weather unavailable";
+      return null;
     }
-  });
-}
+  }
 
-loadWeather();
+  async function requireAuth(redirect = "/treeguy/login.html") {
+    const user = await getUser();
+    if (!user) window.location.href = redirect;
+    return user;
+  }
+
+  // =========================
+  // HAMBURGER MENU
+  // =========================
+  const burger = document.getElementById("rtgBurger");
+  const sidemenu = document.getElementById("rtgSidemenu");
+
+  burger.addEventListener("click", () => {
+    sidemenu.classList.toggle("open");
+  });
+
+  // =========================
+  // MAP LOGIC
+  // =========================
+  const dashMap = document.getElementById("rtgMap");
+  const dashFilterButtons = document.querySelectorAll("#rtg-filters button");
+  const radiusEl = document.getElementById("rtgRadius");
+
+  const DEFAULT_ZOOM = 14;
+
+  function setRadiusText(zoom) {
+    let miles = 5;
+    if (zoom >= 15) miles = 2;
+    if (zoom >= 16) miles = 1;
+    radiusEl.textContent = `Searching within ~${miles} miles of your location.`;
+  }
+
+  function updateMapWithType(type) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const q = `${type} near ${lat},${lng}`;
+        const zoom = DEFAULT_ZOOM;
+
+        dashMap.src =
+          `https://www.google.com/maps?q=${encodeURIComponent(q)}&z=${zoom}&output=embed`;
+
+        setRadiusText(zoom);
+      },
+      () => {
+        const q = `${type} near me`;
+        const zoom = 13;
+
+        dashMap.src =
+          `https://www.google.com/maps?q=${encodeURIComponent(q)}&z=${zoom}&output=embed`;
+
+        radiusEl.textContent =
+          "Location denied. Showing results near your device's map region.";
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    );
+  }
+
+  // =========================
+  // INITIAL LOAD
+  // =========================
+  await requireAuth();
+  updateMapWithType("tree service supplies");
+
+  // =========================
+  // FILTER BUTTONS
+  // =========================
+  dashFilterButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const type = btn.dataset.type;
+      updateMapWithType(type);
+    });
+  });
