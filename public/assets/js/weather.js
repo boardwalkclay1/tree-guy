@@ -1,16 +1,15 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER ENGINE
+// REAL TREE GUY OS — WEATHER ENGINE (OPEN-METEO)
 // ============================================================
 
 const weatherBox = document.getElementById("weatherBox");
 const forecastRow = document.getElementById("forecastRow");
 
-// FREE weather API (Open-Meteo)
+// OPEN-METEO (free, no key)
 const API = "https://api.open-meteo.com/v1/forecast";
 
 async function getWeather(lat, lng) {
-  const url = `${API}?latitude=${lat}&longitude=${lng}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
-
+  const url = `${API}?latitude=${lat}&longitude=${lng}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&temperature_unit=fahrenheit&timezone=auto`;
   const res = await fetch(url);
   return res.json();
 }
@@ -36,18 +35,15 @@ function codeToText(code) {
 
 // GET GPS
 function getLocation() {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
-      pos => resolve({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      }),
+      pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       () => resolve({ lat: 34.0, lng: -84.0 }) // fallback ATL
     );
   });
 }
 
-// RENDER TODAY
+// TODAY
 function renderToday(data) {
   const w = data.current_weather;
   const text = codeToText(w.weathercode);
@@ -58,10 +54,9 @@ function renderToday(data) {
   `;
 }
 
-// RENDER FORECAST
+// FORECAST
 function renderForecast(data) {
   const days = data.daily;
-
   forecastRow.innerHTML = "";
 
   for (let i = 0; i < days.time.length; i++) {
