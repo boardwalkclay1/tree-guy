@@ -1,39 +1,12 @@
-// REAL TREE GUY OS — DASHBOARD MODULE
+// REAL TREE GUY — DASHBOARD MODULE (ORIGINAL STYLE)
 
-// TREE BRANCH BUTTONS (if using .branch-btn links)
+// TREE BRANCH BUTTONS
 document.querySelectorAll(".branch-btn").forEach(btn => {
-  btn.addEventListener("click", e => {
-    e.preventDefault();
+  btn.addEventListener("click", () => {
     const href = btn.getAttribute("href");
     if (href) window.location.href = href;
   });
 });
-
-// BOTTOM BUTTONS UNDER TREE
-const rtgShopBottom = document.getElementById("rtgShopBottom");
-const rtgOnlineBottom = document.getElementById("rtgOnlineBottom");
-const rtgMapBottom = document.getElementById("rtgMapBottom");
-
-if (rtgShopBottom) {
-  rtgShopBottom.addEventListener("click", e => {
-    e.preventDefault();
-    window.location.href = "/pages/real-tree-shop.html";
-  });
-}
-
-if (rtgOnlineBottom) {
-  rtgOnlineBottom.addEventListener("click", e => {
-    e.preventDefault();
-    window.location.href = "/pages/rtg-online.html";
-  });
-}
-
-if (rtgMapBottom) {
-  rtgMapBottom.addEventListener("click", e => {
-    e.preventDefault();
-    window.location.href = "/pages/map.html";
-  });
-}
 
 // WEATHER MODULE
 const weatherTemp = document.getElementById("weatherTemp");
