@@ -1,98 +1,89 @@
 // ============================================================
-// Real Tree Guy OS — FINAL GPS FIX (NO CACHE, NO RANDOM LOCATION)
+// REAL TREE GUY OS — SIDEBAR ENGINE (FINAL BUILD)
 // ============================================================
 
-const mapFrame = document.getElementById("mapFrame");
-const filterRow = document.getElementById("filterRow");
-const activeFilterLabel = document.getElementById("activeFilterLabel");
-const locationStatus = document.getElementById("locationStatus");
-const openInMaps = document.getElementById("openInMaps");
+// SAFE GETTER
+const $ = id => document.getElementById(id);
 
-let userLat = null;
-let userLng = null;
+// SIDEBAR + BURGER
+const sidemenu = $("rtgSidemenu");
+const burger = $("rtgBurger");
 
-// ============================================================
-// GET REAL GPS — IGNORE FIRST (CACHED) LOCATION
-// ============================================================
-function getRealLocation() {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-
-        const isFresh = (Date.now() - pos.timestamp) < 5000;
-
-        if (!isFresh) {
-          locationStatus.textContent = "Locking GPS…";
-          return getRealLocation().then(resolve).catch(reject);
-        }
-
-        userLat = lat;
-        userLng = lng;
-
-        locationStatus.textContent =
-          `GPS Locked: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-
-        resolve();
-      },
-      err => {
-        locationStatus.textContent = "Location denied.";
-        reject(err);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0
-      }
-    );
+// OPEN/CLOSE
+if (burger && sidemenu) {
+  burger.addEventListener("click", () => {
+    sidemenu.classList.toggle("open");
   });
 }
 
 // ============================================================
-// UPDATE MAP — NOW USING OPENSTREETMAP (ALWAYS WORKS)
+// SIDEBAR CONTENT (DROPDOWNS + LEAF LINKS)
 // ============================================================
-function updateMap(filterText) {
-  if (userLat === null || userLng === null) return;
 
-  const encoded = encodeURIComponent(filterText);
+if (sidemenu) {
+  sidemenu.innerHTML = `
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Profile <span class="arrow">▾</span></button>
+      <div class="nav-desc">Manage your business info.</div>
+      <a href="profile.html" class="nav-leaf">🌿 Go to Profile</a>
+    </div>
 
-  // Build a bounding box around the user
-  const bbox = [
-    userLng - 0.05,
-    userLat - 0.05,
-    userLng + 0.05,
-    userLat + 0.05
-  ].join(",");
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Customers & Jobs <span class="arrow">▾</span></button>
+      <div class="nav-desc">Track customers and jobs.</div>
+      <a href="customers.html" class="nav-leaf">🌿 Go to Customers</a>
+    </div>
 
-  // Embed map (always loads)
-  mapFrame.src =
-    `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${userLat},${userLng}`;
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Cards & Flyers <span class="arrow">▾</span></button>
+      <div class="nav-desc">Design flyers and cards.</div>
+      <a href="flyers.html" class="nav-leaf">🌿 Go to Flyers</a>
+    </div>
 
-  // External link (opens full map with search)
-  openInMaps.href =
-    `https://www.openstreetmap.org/?mlat=${userLat}&mlon=${userLng}#map=14/${userLat}/${userLng}`;
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Contracts <span class="arrow">▾</span></button>
+      <div class="nav-desc">Create job contracts.</div>
+      <a href="contracts.html" class="nav-leaf">🌿 Go to Contracts</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Tree Measurement <span class="arrow">▾</span></button>
+      <div class="nav-desc">Measure trees accurately.</div>
+      <a href="measurement.html" class="nav-leaf">🌿 Go to Measurement</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Calendar <span class="arrow">▾</span></button>
+      <div class="nav-desc">Schedule jobs.</div>
+      <a href="calendar.html" class="nav-leaf">🌿 Go to Calendar</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> Real Tree Shop <span class="arrow">▾</span></button>
+      <div class="nav-desc">Gear and tools for tree work.</div>
+      <a href="shop.html" class="nav-leaf">🌿 Go to Shop</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-main"><span>🌿</span> RTG Map <span class="arrow">▾</span></button>
+      <div class="nav-desc">Live GPS map for tree work.</div>
+      <a href="map.html" class="nav-leaf">🌿 Go to RTG Map</a>
+    </div>
+  `;
 }
 
 // ============================================================
-// INITIAL LOAD — WAIT FOR REAL GPS
+// DROPDOWN LOGIC
 // ============================================================
-getRealLocation().then(() => {
-  updateMap("tree service supplies");
-});
 
-// ============================================================
-// FILTERS — WAIT FOR REAL GPS EVERY TIME
-// ============================================================
-filterRow.addEventListener("click", async e => {
-  const btn = e.target.closest(".pill");
-  if (!btn) return;
+if (sidemenu) {
+  sidemenu.addEventListener("click", e => {
+    const main = e.target.closest(".nav-main");
+    if (!main) return;
 
-  const type = btn.dataset.type;
-  activeFilterLabel.textContent = type;
+    const item = main.closest(".nav-item");
+    if (!item) return;
 
-  locationStatus.textContent = "Getting GPS…";
-
-  await getRealLocation();
-  updateMap(type);
-});
+    item.classList.toggle("open");
+  });
+}
