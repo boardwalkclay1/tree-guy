@@ -1,8 +1,8 @@
 // ============================================================
-// REAL TREE GUY OS — DASHBOARD MODULE (WITH WEATHER)
+// REAL TREE GUY OS — DASHBOARD MODULE (WITH WEATHER) — CLEAN REBUILD
 // ============================================================
 
-// tree buttons
+// TREE BUTTONS
 document.querySelectorAll(".branch-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const href = btn.getAttribute("href");
@@ -10,7 +10,7 @@ document.querySelectorAll(".branch-btn").forEach(btn => {
   });
 });
 
-// bottom RTG MAP button
+// BOTTOM MAP BUTTON
 const rtgMapBottom = document.getElementById("rtgMapBottom");
 if (rtgMapBottom) {
   rtgMapBottom.addEventListener("click", () => {
