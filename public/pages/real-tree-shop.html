@@ -1,0 +1,75 @@
+<!-- /pages/real-tree-shop.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real Tree Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
+  <link rel="apple-touch-icon" href="/assets/icons/rtg-192.png">
+  <link rel="manifest" href="/manifest.json">
+
+  <link rel="stylesheet" href="/assets/css/index.css">
+  <link rel="stylesheet" href="/assets/css/real-tree-shop.css">
+</head>
+<body>
+
+  <header class="rtg-shop-header">
+    <div class="rtg-shop-brand">
+      <h1>REAL TREE SHOP</h1>
+      <p>Curated tree gear from the cheapest sources — under the Real Tree Guy brand.</p>
+    </div>
+    <div class="rtg-shop-cart">
+      <button id="cartButton" class="rtg-shop-cart-btn">
+        Cart <span id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="rtg-shop-main">
+    <aside class="rtg-shop-sidebar">
+      <h2>Categories</h2>
+      <ul id="categoryList" class="rtg-shop-category-list">
+        <!-- Filled by JS -->
+      </ul>
+    </aside>
+
+    <section class="rtg-shop-content">
+      <div class="rtg-shop-toolbar">
+        <h2 id="currentCategoryLabel">All Products</h2>
+        <input
+          id="productSearch"
+          type="search"
+          placeholder="Search tree gear…"
+          class="rtg-shop-search"
+        >
+      </div>
+
+      <div id="productGrid" class="rtg-shop-grid">
+        <!-- Products injected by JS -->
+      </div>
+    </section>
+  </main>
+
+  <div id="cartDrawer" class="rtg-shop-cart-drawer">
+    <div class="rtg-shop-cart-header">
+      <h2>Your Cart</h2>
+      <button id="closeCart" class="rtg-shop-cart-close">✕</button>
+    </div>
+    <div id="cartItems" class="rtg-shop-cart-items"></div>
+    <div class="rtg-shop-cart-footer">
+      <div class="rtg-shop-cart-total">
+        Total: $<span id="cartTotal">0.00</span>
+      </div>
+      <button id="checkoutButton" class="rtg-shop-checkout-btn">
+        Review Order (Real Tree Guy)
+      </button>
+    </div>
+  </div>
+
+  <div id="cartOverlay" class="rtg-shop-cart-overlay"></div>
+
+  <script src="/assets/js/real-tree-shop.js"></script>
+</body>
+</html>
