@@ -1,25 +1,22 @@
 // ============================================================
-// REAL TREE GUY OS — SIDEBAR ENGINE (FINAL BUILD)
+// REAL TREE GUY OS — SIDEBAR + BURGER (FINAL, BULLETPROOF)
 // ============================================================
 
 // SAFE GETTER
 const $ = id => document.getElementById(id);
 
-// SIDEBAR + BURGER
-const sidemenu = $("rtgSidemenu");
+// ELEMENTS
 const burger = $("rtgBurger");
+const sidemenu = $("rtgSidemenu");
 
-// OPEN/CLOSE
+// OPEN/CLOSE SIDEBAR
 if (burger && sidemenu) {
   burger.addEventListener("click", () => {
     sidemenu.classList.toggle("open");
   });
 }
 
-// ============================================================
-// SIDEBAR CONTENT (DROPDOWNS + LEAF LINKS)
-// ============================================================
-
+// SIDEBAR CONTENT
 if (sidemenu) {
   sidemenu.innerHTML = `
     <div class="nav-item">
@@ -72,10 +69,7 @@ if (sidemenu) {
   `;
 }
 
-// ============================================================
 // DROPDOWN LOGIC
-// ============================================================
-
 if (sidemenu) {
   sidemenu.addEventListener("click", e => {
     const main = e.target.closest(".nav-main");
