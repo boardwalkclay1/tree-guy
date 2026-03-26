@@ -1,34 +1,22 @@
-/* ============================================================
-   REAL TREE GUY OS — DASHBOARD STYLE (REBUILT CLEAN)
-   ============================================================ */
-
-/* BACKGROUND + BASE */
+/* BASE */
 body.rtg-dashboard {
-  background:#0d0f0d url("./assets/icons/rtg-192.png") center center/cover no-repeat fixed;
   margin: 0;
-  padding: 0;
-  font-family: system-ui, sans-serif;
+  background: #0d0f0d;
   color: #caffca;
-  position: relative;
-  z-index: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* ============================================================
-   TOP BAR
-   ============================================================ */
+/* TOP BAR */
 .rtg-topbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
   padding: 14px 20px;
   background: rgba(0,0,0,0.55);
   border-bottom: 2px solid #2e6b33;
   backdrop-filter: blur(10px);
-  gap: 20px;
+  z-index: 9999;
 }
 
 /* BURGER */
@@ -41,233 +29,148 @@ body.rtg-dashboard {
   cursor: pointer;
 }
 .rtg-burger span {
-  display: block;
   height: 4px;
   border-radius: 999px;
   background: #caffca;
 }
 
-/* ============================================================
-   HEADER — ABOVE TREE
-   ============================================================ */
-.rtg-header {
-  margin-top: 120px;
-  text-align: center;
-  position: relative;
-  z-index: 9997;
+/* SIDEBAR */
+.rtg-sidemenu {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 240px;
+  height: 100vh;
+  background: rgba(0,0,0,0.94);
+  border-right: 2px solid #2e6b33;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: left 0.25s ease;
+  z-index: 99999;
+}
+.rtg-sidemenu.open {
+  left: 0;
 }
 
-.rtg-title {
-  font-size: 3.4rem;
-  font-weight: 900;
+.nav-item {
+  border: 1px solid #ff7a00;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background: rgba(0,0,0,0.6);
+}
+.nav-main {
+  width: 100%;
+  background: none;
+  border: none;
   color: #caffca;
-  text-shadow: 0 0 14px #1f5f2b;
-}
-
-.rtg-subtitle {
-  font-size: 1.2rem;
-  color: #d8ffd8;
-  margin-top: 8px;
-}
-
-/* ============================================================
-   WEATHER MODULE
-   ============================================================ */
-.rtg-weather {
+  padding: 12px;
+  font-size: 0.95rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,0,0,0.35);
-  border-bottom: 2px solid #2e6b33;
-  padding: 20px;
+  cursor: pointer;
+}
+.nav-title {
+  font-weight: 600;
+}
+.nav-title-orange {
+  color: #ff7a00;
+}
+.nav-desc {
+  display: none;
+  padding: 8px 12px;
+  color: #ffb870;
+  font-size: 0.85rem;
+}
+.nav-desc-orange {
+  color: #ffb870;
+}
+.nav-leaf {
+  display: none;
+  padding: 8px 12px 12px;
   color: #caffca;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.nav-item.open .nav-desc,
+.nav-item.open .nav-leaf {
+  display: block;
+}
+.nav-divider {
+  margin: 16px 0;
+  border-top: 1px solid #2e6b33;
+  opacity: 0.7;
+}
+.nav-special {
+  border-color: #ff7a00;
+}
+
+/* HEADER */
+.rtg-header {
+  margin-top: 110px;
+  text-align: center;
+}
+.rtg-title {
+  font-size: 3rem;
+  font-weight: 900;
+  text-shadow: 0 0 14px #1f5f2b;
+}
+.rtg-subtitle {
+  margin-top: 6px;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* WEATHER */
+.rtg-weather {
+  margin: 20px;
+  padding: 20px;
+  background: rgba(0,0,0,0.35);
+  border: 2px solid #2e6b33;
+  border-radius: 14px;
   backdrop-filter: blur(10px);
-  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
 .rtg-weather h3 {
-  font-size: 2.4rem;
   margin: 0;
+  font-size: 2.4rem;
 }
-
 .rtg-weather p {
   margin: 2px 0;
-  font-size: 1.1rem;
 }
 
-/* ============================================================
-   CINEMATIC TREE SYSTEM
-   ============================================================ */
-
-:root {
-  --leaf-green: #2e6b33;
-  --leaf-dark: #1f4d24;
-  --wood: #5a3b1e;
-  --glow: rgba(0,255,0,0.18);
-}
-
+/* TREE AREA (ASSUMES TREE MARKUP EXISTS) */
 .tree-menu {
+  margin: 40px 20px 20px;
+}
+
+/* BOTTOM BUTTONS UNDER TREE */
+.rtg-bottom-row {
   display: flex;
-  justify-content: center;
-  margin-top: -40px;
-  padding-bottom: 220px;
-  position: relative;
-  overflow: visible;
-  z-index: 1;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  margin: 40px 0 60px;
 }
-
-.tree {
-  position: relative;
-  width: 480px;
-  min-height: 1100px;
-  margin: 0 auto;
-  z-index: 1;
-}
-
-/* CANOPY */
-.canopy {
-  position: relative;
-  width: 440px;
-  height: 440px;
-  margin: 0 auto;
-  background: var(--leaf-green);
-  border-radius: 50%;
-  box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 50px var(--glow);
-  z-index: 1;
-}
-.canopy::before,
-.canopy::after {
-  content: "";
-  position: absolute;
-  background: var(--leaf-green);
-  border-radius: 50%;
-  box-shadow: 0 0 40px rgba(0,0,0,0.7);
-}
-.canopy::before {
-  width: 330px;
-  height: 330px;
-  left: -70px;
-  top: 90px;
-}
-.canopy::after {
-  width: 330px;
-  height: 330px;
-  right: -70px;
-  top: 90px;
-}
-
-/* TRUNK */
-.trunk {
-  width: 150px;
-  height: 680px;
-  background: var(--wood);
-  margin: 0 auto;
-  border-radius: 55px;
-  box-shadow:
-    inset 0 0 30px rgba(0,0,0,0.6),
-    0 0 35px rgba(0,0,0,0.7),
-    0 0 40px var(--glow);
-}
-
-/* BRANCH SYSTEM */
-.branch {
-  position: absolute;
-  width: 440px;
-  height: 130px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-}
-
-.branch-bar {
-  position: absolute;
-  top: 55px;
-  width: 100%;
-  height: 24px;
-  background: var(--wood);
-  border-radius: 14px;
-  box-shadow: 0 0 18px rgba(0,0,0,0.6);
-}
-
-.branch-bush {
-  position: absolute;
-  width: 160px;
-  height: 160px;
-  background: var(--leaf-dark);
-  border-radius: 50%;
-  top: -12px;
-  box-shadow: 0 0 22px rgba(0,0,0,0.6);
-}
-
-.branch-btn {
-  position: absolute;
-  top: 26px;
-  padding: 15px 34px;
-  background: rgba(0,0,0,0.55);
-  border-radius: 999px;
-  color: #caffca;
-  text-decoration: none;
-  font-weight: 900;
-  font-size: 1.18rem;
-  border: 3px solid var(--leaf-green);
-  backdrop-filter: blur(6px);
-  z-index: 10;
-  transition: 0.15s;
-}
-.branch-btn:hover {
-  background: rgba(0,0,0,0.75);
-}
-
-.branch.left .branch-bar { transform: rotate(-9deg); }
-.branch.left .branch-bush { left: -25px; }
-.branch.left .branch-btn { left: 70px; }
-
-.branch.right .branch-bar { transform: rotate(9deg); }
-.branch.right .branch-bush { right: -25px; }
-.branch.right .branch-btn { right: 70px; }
-
-/* BRANCH POSITIONS */
-.b1 { top: 380px; }
-.b2 { top: 510px; }
-.b3 { top: 640px; }
-.b4 { top: 770px; }
-.b5 { top: 900px; }
-.b6 { top: 1030px; }
-
-/* ============================================================
-   BIG ORANGE RTG MAP BUTTON
-   ============================================================ */
-.rtg-map-bottom {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  margin-bottom: 80px;
-  position: relative;
-  z-index: 99999;
-}
-
-.rtg-map-btn {
+.rtg-bottom-btn {
   display: inline-block;
-  padding: 26px 60px;
-  font-size: 2rem;
-  font-weight: 900;
+  padding: 18px 40px;
+  border-radius: 18px;
+  border: 3px solid #ff7a00;
+  background: rgba(0,0,0,0.65);
   color: #caffca;
-  background: rgba(0,0,0,0.55);
-  border: 4px solid #ff7a00;
-  border-radius: 20px;
+  font-size: 1.3rem;
+  font-weight: 900;
   text-decoration: none;
-  box-shadow: 0 0 20px rgba(255,122,0,0.35);
+  box-shadow: 0 0 18px rgba(255,122,0,0.35);
 }
 
-/* ============================================================
-   FOOTER
-   ============================================================ */
+/* FOOTER */
 footer {
   text-align: center;
-  padding: 30px 10px;
-  margin-top: 40px;
-  color: #c8f5c8;
-  font-size: 1rem;
-  opacity: 0.9;
+  padding: 24px 10px;
+  font-size: 0.95rem;
+  opacity: 0.8;
 }
