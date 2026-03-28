@@ -11,15 +11,15 @@
 
   <style>
     body {
-      background: #0d0f0d url("public/favicon.ico")
-        center center / cover no-repeat;
+      background: #0d0f0d url("public/favicon.ico") center center no-repeat;
+      background-size: contain;
       background-attachment: fixed;
     }
 
     @media (max-width: 768px) {
       body {
-        background: #0d0f0d url("public/favicon.ico")
-          center top / contain no-repeat;
+        background: #0d0f0d url("public/favicon.ico") center top no-repeat;
+        background-size: contain;
         background-attachment: scroll;
       }
     }
@@ -40,36 +40,64 @@
   <!-- SIDEBAR -->
   <nav class="rtg-sidemenu" id="rtgSidemenu">
 
-    <a href="index.html">🏠 RTG Online Home</a>
-    <a href="treeguy/dashboard.html">🌳 Tree Guy Dashboard</a>
-
-    <a href="modules/profile/profile.html">Profile</a>
-    <a href="modules/customers/customers.html">Customers & Jobs</a>
-    <a href="modules/measurement/measurement.html">Tree Measurement</a>
-    <a href="modules/contracts/contracts.html">Contracts</a>
-    <a href="modules/calendar/calendar.html">Calendar</a>
-    <a href="modules/flyers/flyers.html">Cards & Flyers</a>
-    <a href="modules/map/real-tree-map.html">Real Tree Map (Full Screen)</a>
-
-    <!-- ORANGE SPECIALS -->
-    <div class="rtg-special">
-      <button class="rtg-special-btn">
-        <span>REAL TREE SHOP</span> ▾
-      </button>
-      <div class="rtg-special-desc">
-        Your gear, tools, and merch hub for Real Tree Guy operations.
-      </div>
-      <a href="modules/shop/real-tree-shop.html" class="rtg-special-link">Open Real Tree Shop</a>
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🏠 RTG Online Home ▾</button>
+      <div class="rtg-menu-desc">Main portal for Real Tree Guy Online services.</div>
+      <a href="index.html" class="rtg-menu-link">Open RTG Online</a>
     </div>
 
-    <div class="rtg-special">
-      <button class="rtg-special-btn">
-        <span>RTG ONLINE</span> ▾
-      </button>
-      <div class="rtg-special-desc">
-        RTG Online portal for digital services, updates, and online tools.
-      </div>
-      <a href="index.html" class="rtg-special-link">Go to RTG Online</a>
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🌳 Tree Guy Dashboard ▾</button>
+      <div class="rtg-menu-desc">Your main dashboard for all tree service tools.</div>
+      <a href="treeguy/dashboard.html" class="rtg-menu-link">Open Dashboard</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">👤 Profile ▾</button>
+      <div class="rtg-menu-desc">Manage your Real Tree Guy account and settings.</div>
+      <a href="modules/profile/profile.html" class="rtg-menu-link">Open Profile</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📋 Customers & Jobs ▾</button>
+      <div class="rtg-menu-desc">Track customers, quotes, and job details.</div>
+      <a href="modules/customers/customers.html" class="rtg-menu-link">Open Customers</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📏 Tree Measurement ▾</button>
+      <div class="rtg-menu-desc">Measure trees and calculate estimates.</div>
+      <a href="modules/measurement/measurement.html" class="rtg-menu-link">Open Measurement</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📄 Contracts ▾</button>
+      <div class="rtg-menu-desc">Create and manage service contracts.</div>
+      <a href="modules/contracts/contracts.html" class="rtg-menu-link">Open Contracts</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📅 Calendar ▾</button>
+      <div class="rtg-menu-desc">Schedule jobs and manage your workday.</div>
+      <a href="modules/calendar/calendar.html" class="rtg-menu-link">Open Calendar</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🪧 Cards & Flyers ▾</button>
+      <div class="rtg-menu-desc">Design and print promotional materials.</div>
+      <a href="modules/flyers/flyers.html" class="rtg-menu-link">Open Flyers</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🗺️ Real Tree Map ▾</button>
+      <div class="rtg-menu-desc">Find tree service resources near you.</div>
+      <a href="modules/map/real-tree-map.html" class="rtg-menu-link">Open Map</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🛒 Real Tree Shop ▾</button>
+      <div class="rtg-menu-desc">Buy gear, tools, and Real Tree Guy merch.</div>
+      <a href="modules/shop/real-tree-shop.html" class="rtg-menu-link">Open Shop</a>
     </div>
 
   </nav>
@@ -138,45 +166,20 @@
     <a class="rtg-bottom-btn orange" href="index.html">RTG ONLINE</a>
   </div>
 
-  <!-- MAP SECTION -->
-  <section class="card rtg-map-card">
-    <h2 class="rtg-map-title">Real Tree Map</h2>
-
-    <p class="rtg-map-text">
-      Pick a filter. We’ll ask for your location and search right around you.
-    </p>
-
-    <div id="rtg-filters" class="rtg-filter-wrap">
-      <button class="btn-ghost" data-type="tree service supplies">Tree Service Supplies</button>
-      <button class="btn-ghost" data-type="Home Depot">Home Depot</button>
-      <button class="btn-ghost" data-type="Lowe's">Lowe’s</button>
-      <button class="btn-ghost" data-type="Ace Hardware">Ace Hardware</button>
-      <button class="btn-ghost" data-type="sawmill">Sawmills</button>
-      <button class="btn-ghost" data-type="wood dump site">Wood Dumps</button>
-      <button class="btn-ghost" data-type="chainsaw repair shop">Chainsaw Repair</button>
-      <button class="btn-ghost" data-type="woodworking supply store">Woodworking Stores</button>
-      <button class="btn-ghost" data-type="gas station">Gas Stations</button>
-    </div>
-
-    <div class="rtg-map-frame-wrap">
-      <iframe id="rtgMap" loading="lazy"></iframe>
-    </div>
-
-    <div class="rtg-radius" id="rtgRadius">
-      Searching within ~5 miles of your location.
-    </div>
-
-    <a href="modules/map/real-tree-map.html" class="btn-primary rtg-map-full">
-      Open Full Screen Real Tree Map
-    </a>
-  </section>
-
   <footer class="rtg-footer">
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
   <script type="module" src="/pages/assets/js/auth.js"></script>
   <script type="module" src="/pages/assets/js/dashboard.js"></script>
+
+  <script>
+    document.querySelectorAll(".rtg-menu-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.parentElement.classList.toggle("open");
+      });
+    });
+  </script>
 
 </body>
 </html>
