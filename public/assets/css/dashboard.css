@@ -1,4 +1,21 @@
 /* ============================
+   BACKGROUND FIX FOR .ICO FILE
+============================ */
+body {
+  background: #0d0f0d url("public/favicon.ico") center center no-repeat;
+  background-size: contain;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  body {
+    background: #0d0f0d url("public/favicon.ico") center top no-repeat;
+    background-size: contain;
+    background-attachment: scroll;
+  }
+}
+
+/* ============================
    TREE BRANCH SLIDE ANIMATION
 ============================ */
 .branch.slide {
