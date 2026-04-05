@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real Tree Guy Online – Tree Guy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background:#020617; color:#e5e7eb; }
+    header { padding:12px 16px; background:#0b1120; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1f2937; }
+    header h1 { font-size:18px; margin:0; }
+    header nav a { color:#9ca3af; margin-left:12px; text-decoration:none; font-size:14px; }
+    main { display:flex; min-height:calc(100vh - 48px); }
+    aside { width:230px; background:#020617; border-right:1px solid #1f2937; padding:16px 0; }
+    aside a { display:block; padding:8px 16px; color:#9ca3af; text-decoration:none; font-size:14px; }
+    aside a.active, aside a:hover { background:#111827; color:#fff; }
+    section { flex:1; padding:16px; }
+    h2 { margin-top:0; }
+    .card { background:#020617; border-radius:8px; padding:12px 14px; margin-bottom:12px; border:1px solid #1f2937; }
+    label { display:block; font-size:13px; margin-bottom:8px; }
+    input, textarea, select { width:100%; padding:8px; margin-top:4px; border-radius:4px; border:1px solid #374151; font-size:14px; background:#020617; color:#e5e7eb; }
+    button { padding:8px 14px; border-radius:4px; border:none; background:#16a34a; color:#fff; font-size:14px; cursor:pointer; }
+    button.secondary { background:#1f2937; }
+    .row { display:flex; gap:12px; }
+    .row > div { flex:1; }
+    .list { font-size:14px; }
+    .item { padding:8px 10px; border-radius:6px; background:#020617; border:1px solid #1f2937; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+    .badge { font-size:11px; padding:2px 6px; border-radius:999px; background:#1f2937; margin-left:6px; }
+    .badge.role { background:#0f766e; }
+    .badge.storm { background:#b91c1c; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #374151; font-size:11px; margin-right:4px; }
+    .likes { font-size:12px; color:#9ca3af; margin-top:4px; }
+    .chat-window { display:flex; flex-direction:column; height:260px; border-radius:8px; border:1px solid #1f2937; overflow:hidden; }
+    .chat-messages { flex:1; padding:8px; overflow-y:auto; font-size:13px; background:#020617; }
+    .chat-input { display:flex; border-top:1px solid #1f2937; }
+    .chat-input input { border:none; border-radius:0; flex:1; }
+    .chat-input button { border-radius:0; }
+    .gear-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+    .gear-item { background:#020617; border-radius:8px; border:1px solid #1f2937; padding:10px; font-size:13px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Real Tree Guy Online – Tree Guy</h1>
+  <nav>
+    <a href="/online/client/index.html">Client Side</a>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <a href="#" data-view="overview" class="active">Overview</a>
+    <a href="#" data-view="profile">Profile & Roles</a>
+    <a href="#" data-view="leads">Leads</a>
+    <a href="#" data-view="jobs">My Jobs</a>
+    <a href="#" data-view="crew">Crew Network</a>
+    <a href="#" data-view="chat">Chats</a>
+    <a href="#" data-view="gear">Tree Gear</a>
+    <a href="#" data-view="settings">Settings</a>
+  </aside>
+
+  <section id="tg-view"></section>
+</main>
+
+<script>
+  const tgState = {
+    profile: {
+      name: "Sample Tree Guy",
+      business: "Sample Tree Co.",
+      city: "Stone Mountain, GA",
+      radius: 25,
+      roles: ["Climber"],
+      bio: "Climber with 8 years in removals and pruning.",
+      likes: 12
+    },
+    leads: [
+      {
+        id: "lead_1",
+        title: "Large oak over driveway",
+        city: "Decatur, GA",
+        storm: false,
+        budget: 1200,
+        unlocked: false
+      },
+      {
+        id: "lead_2",
+        title: "Storm damage – tree on roof",
+        city: "Atlanta, GA",
+        storm: true,
+        budget: null,
+        unlocked: false
+      }
+    ],
+    jobs: [],
+    crew: [
+      { id: "tg_2", name: "Marcus", roles: ["Groundsman"], city: "Atlanta", likes: 5 },
+      { id: "tg_3", name: "Luis", roles: ["Climber","Groundsman"], city: "Clarkston", likes: 9 }
+    ],
+    chats: [
+      { id: "chat_1", with: "Marcus", messages: [
+        { from: "Marcus", text: "You need a groundsman tomorrow?", at: "09:10" },
+        { from: "You", text: "Yeah, 8am in Decatur.", at: "09:12" }
+      ] }
+    ],
+    gear: [
+      { id: "g1", name: "Climbing Rope 150ft", brand: "Sterling", price: 189 },
+      { id: "g2", name: "Tree Saddle", brand: "Notch", price: 320 },
+      { id: "g3", name: "Helmet with Visor", brand: "Pfanner", price: 210 },
+      { id: "g4", name: "Rigging Block", brand: "DMM", price: 145 }
+    ],
+    wallet: {
+      leadCredits: 0,
+      spentOnLeads: 0
+    }
+  };
+
+  const tgView = document.getElementById("tg-view");
+  const tgNav = document.querySelectorAll("aside a");
+
+  tgNav.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      tgNav.forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+      renderTG(link.getAttribute("data-view"));
+    });
+  });
+
+  function renderTG(view) {
+    if (view === "overview") return renderTGOverview();
+    if (view === "profile") return renderTGProfile();
+    if (view === "leads") return renderTGLeads();
+    if (view === "jobs") return renderTGJobs();
+    if (view === "crew") return renderTGCrew();
+    if (view === "chat") return renderTGChat();
+    if (view === "gear") return renderTGGear();
+    if (view === "settings") return renderTGSettings();
+  }
+
+  function renderTGOverview() {
+    const unlockedLeads = tgState.leads.filter(l => l.unlocked).length;
+    const jobsCount = tgState.jobs.length;
+    tgView.innerHTML = `
+      <h2>Overview</h2>
+      <div class="row">
+        <div class="card">
+          <strong>Unlocked Leads</strong><br>${unlockedLeads}
+        </div>
+        <div class="card">
+          <strong>Active Jobs</strong><br>${jobsCount}
+        </div>
+        <div class="card">
+          <strong>Profile Likes</strong><br>${tgState.profile.likes}
+        </div>
+      </div>
+      <div class="card">
+        <strong>Roles:</strong>
+        ${tgState.profile.roles.map(r => `<span class="pill">${r}</span>`).join("")}
+      </div>
+    `;
+  }
+
+  function renderTGProfile() {
+    const p = tgState.profile;
+    tgView.innerHTML = `
+      <h2>Profile & Roles</h2>
+      <div class="card">
+        <form id="tg-profile-form">
+          <label>Name
+            <input type="text" name="name" value="${p.name}">
+          </label>
+          <label>Business
+            <input type="text" name="business" value="${p.business}">
+          </label>
+          <div class="row">
+            <div>
+              <label>City
+                <input type="text" name="city" value="${p.city}">
+              </label>
+            </div>
+            <div>
+              <label>Service Radius (miles)
+                <input type="number" name="radius" value="${p.radius}">
+              </label>
+            </div>
+          </div>
+          <label>Roles (check all that apply)</label>
+          <div class="row">
+            <div>
+              <label><input type="checkbox" name="role" value="Groundsman" ${p.roles.includes("Groundsman") ? "checked" : ""}> Groundsman</label>
+              <label><input type="checkbox" name="role" value="Climber" ${p.roles.includes("Climber") ? "checked" : ""}> Climber</label>
+            </div>
+            <div>
+              <label><input type="checkbox" name="role" value="Sales" ${p.roles.includes("Sales") ? "checked" : ""}> Sales</label>
+              <label><input type="checkbox" name="role" value="Owner" ${p.roles.includes("Owner") ? "checked" : ""}> Owner</label>
+            </div>
+          </div>
+          <label>Bio
+            <textarea name="bio" rows="4">${p.bio}</textarea>
+          </label>
+          <button type="submit">Save Profile</button>
+        </form>
+      </div>
+      <div class="card">
+        <strong>Public Profile Preview</strong>
+        <div style="margin-top:6px;">
+          <div><strong>${p.name}</strong> – ${p.business}</div>
+          <div style="font-size:12px;color:#9ca3af;">${p.city} • ${p.radius}mi radius</div>
+          <div style="margin-top:4px;">
+            ${p.roles.map(r => `<span class="badge role">${r}</span>`).join("")}
+          </div>
+          <div style="margin-top:6px;font-size:13px;">${p.bio}</div>
+          <div class="likes">Likes: ${p.likes}</div>
+        </div>
+      </div>
+    `;
+    document.getElementById("tg-profile-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      tgState.profile.name = fd.get("name");
+      tgState.profile.business = fd.get("business");
+      tgState.profile.city = fd.get("city");
+      tgState.profile.radius = Number(fd.get("radius") || 0);
+      tgState.profile.bio = fd.get("bio");
+      tgState.profile.roles = fd.getAll("role");
+      alert("Profile saved (front-end only placeholder).");
+      renderTGProfile();
+    });
+  }
+
+  function renderTGLeads() {
+    if (!tgState.leads.length) {
+      tgView.innerHTML = `
+        <h2>Leads</h2>
+        <div class="card">No leads in your area yet.</div>
+      `;
+      return;
+    }
+    const items = tgState.leads.map(lead => `
+      <div class="item">
+        <div>
+          <strong>${lead.title}</strong>
+          ${lead.storm ? '<span class="badge storm">Storm</span>' : ""}
+          <div style="font-size:12px;color:#9ca3af;">${lead.city}</div>
+          <div style="font-size:12px;color:#9ca3af;">Budget: ${lead.budget ? "$" + lead.budget : "Not listed"}</div>
+        </div>
+        <div style="text-align:right;font-size:12px;">
+          ${lead.unlocked ? `
+            <div class="badge">Unlocked</div>
+            <button class="secondary" data-lead="${lead.id}" data-action="view">View</button>
+          ` : `
+            <button data-lead="${lead.id}" data-action="unlock">
+              Unlock Lead ${lead.storm ? "($25)" : "($10)"}
+            </button>
+          `}
+        </div>
+      </div>
+    `).join("");
+    tgView.innerHTML = `
+      <h2>Leads</h2>
+      <div class="card">
+        <div><strong>Lead Credits:</strong> ${tgState.wallet.leadCredits} • <strong>Spent on Leads:</strong> $${tgState.wallet.spentOnLeads}</div>
+      </div>
+      <div class="list">${items}</div>
+    `;
+    document.querySelectorAll(".item button").forEach(btn => {
+      const leadId = btn.getAttribute("data-lead");
+      const action = btn.getAttribute("data-action");
+      btn.addEventListener("click", () => {
+        const lead = tgState.leads.find(l => l.id === leadId);
+        if (!lead) return;
+        if (action === "unlock") {
+          const cost = lead.storm ? 25 : 10;
+          if (!confirm(`Unlock this lead for $${cost}?`)) return;
+          lead.unlocked = true;
+          tgState.wallet.spentOnLeads += cost;
+          alert("Lead unlocked. Now you can see client contact and message them (backend needed).");
+          renderTGLeads();
+        } else {
+          alert("Lead detail placeholder. Here you’d show client info and start a job.");
+        }
+      });
+    });
+  }
+
+  function renderTGJobs() {
+    if (!tgState.jobs.length) {
+      tgView.innerHTML = `
+        <h2>My Jobs</h2>
+        <div class="card">No active jobs yet. Unlock leads and convert them into jobs.</div>
+      `;
+      return;
+    }
+    const items = tgState.jobs.map(job => `
+      <div class="item">
+        <div>
+          <strong>${job.title}</strong>
+          <div style="font-size:12px;color:#9ca3af;">${job.address}</div>
+        </div>
+        <div style="font-size:12px;text-align:right;">
+          <div>Status: ${job.status}</div>
+          <button class="secondary">Open</button>
+        </div>
+      </div>
+    `).join("");
+    tgView.innerHTML = `
+      <h2>My Jobs</h2>
+      <div class="list">${items}</div>
+    `;
+  }
+
+  function renderTGCrew() {
+    const items = tgState.crew.map(c => `
+      <div class="item">
+        <div>
+          <strong>${c.name}</strong>
+          <div style="font-size:12px;color:#9ca3af;">${c.city}</div>
+          <div style="margin-top:4px;">
+            ${c.roles.map(r => `<span class="badge role">${r}</span>`).join("")}
+          </div>
+          <div class="likes">Likes: ${c.likes}</div>
+        </div>
+        <div style="font-size:12px;text-align:right;">
+          <button class="secondary" data-crew="${c.id}" data-action="chat">Chat</button>
+          <button class="secondary" data-crew="${c.id}" data-action="like">Like</button>
+        </div>
+      </div>
+    `).join("");
+    tgView.innerHTML = `
+      <h2>Crew Network</h2>
+      <div class="card">
+        <strong>Find climbers, groundsmen, and crews near you.</strong>
+      </div>
+      <div class="list">${items}</div>
+    `;
+    document.querySelectorAll(".item button").forEach(btn => {
+      const id = btn.getAttribute("data-crew");
+      const action = btn.getAttribute("data-action");
+      btn.addEventListener("click", () => {
+        const crew = tgState.crew.find(c => c.id === id);
+        if (!crew) return;
+        if (action === "chat") {
+          alert(`Open chat with ${crew.name} (hook into chats backend).`);
+        } else {
+          crew.likes++;
+          alert(`You liked ${crew.name}.`);
+          renderTGCrew();
+        }
+      });
+    });
+  }
+
+  function renderTGChat() {
+    const chat = tgState.chats[0];
+    if (!chat) {
+      tgView.innerHTML = `
+        <h2>Chats</h2>
+        <div class="card">No chats yet. Start from a crew profile or unlocked lead.</div>
+      `;
+      return;
+    }
+    const msgs = chat.messages.map(m => `
+      <div style="margin-bottom:4px;">
+        <strong>${m.from}:</strong> ${m.text}
+        <span style="font-size:11px;color:#6b7280;">${m.at}</span>
+      </div>
+    `).join("");
+    tgView.innerHTML = `
+      <h2>Chats</h2>
+      <div class="card">
+        <div><strong>Chat with ${chat.with}</strong></div>
+        <div class="chat-window">
+          <div class="chat-messages" id="chat-messages">${msgs}</div>
+          <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button id="chat-send">Send</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById("chat-send").addEventListener("click", () => {
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if (!text) return;
+      chat.messages.push({ from: "You", text, at: new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) });
+      input.value = "";
+      renderTGChat();
+    });
+  }
+
+  function renderTGGear() {
+    const items = tgState.gear.map(g => `
+      <div class="gear-item">
+        <strong>${g.name}</strong>
+        <div style="font-size:12px;color:#9ca3af;">${g.brand}</div>
+        <div style="margin-top:4px;">$${g.price}</div>
+        <button style="margin-top:6px;" data-gear="${g.id}">Add to Cart</button>
+      </div>
+    `).join("");
+    tgView.innerHTML = `
+      <h2>Tree Gear</h2>
+      <div class="card">
+        <strong>Buy ropes, saddles, helmets, and rigging gear inside the app.</strong>
+      </div>
+      <div class="gear-grid">${items}</div>
+    `;
+    document.querySelectorAll(".gear-item button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        alert("Gear purchase placeholder. Connect to checkout / payment backend.");
+      });
+    });
+  }
+
+  function renderTGSettings() {
+    tgView.innerHTML = `
+      <h2>Settings</h2>
+      <div class="card">
+        <form id="tg-settings-form">
+          <label>Notification Email
+            <input type="email" name="email" value="treeguy@example.com">
+          </label>
+          <label>Phone
+            <input type="tel" name="phone" value="">
+          </label>
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    `;
+    document.getElementById("tg-settings-form").addEventListener("submit", e => {
+      e.preventDefault();
+      alert("Settings saved (front-end only placeholder).");
+    });
+  }
+
+  renderTG("overview");
+</script>
+</body>
+</html>
