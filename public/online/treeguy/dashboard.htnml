@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tree Guy Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <aside>
+    <a href="dashboard.html">Overview</a>
+    <a href="leads.html">Leads</a>
+    <a href="jobs.html">My Jobs</a>
+    <a href="crew.html">Crew</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="contracts.html">Contracts</a>
+    <a href="settings.html">Settings</a>
+  </aside>
+
+  <main>
+    <h1>Tree Guy Overview</h1>
+    <div>New Leads</div>
+    <div>Active Jobs</div>
+    <div>Crew Status</div>
+  </main>
+</body>
+</html>
