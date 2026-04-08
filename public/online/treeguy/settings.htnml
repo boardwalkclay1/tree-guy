@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tree Guy Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <h1>Settings</h1>
+  <form>
+    <label>Business Name<input type="text"></label>
+    <label>Phone<input type="tel"></label>
+    <button>Save</button>
+  </form>
+</body>
+</html>
