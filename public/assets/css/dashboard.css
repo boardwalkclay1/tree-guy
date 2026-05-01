@@ -9,7 +9,6 @@
 }
 
 .tree {
-  /* NO POSITIONING */
   width: 100%;
   max-width: 360px;
   margin: 0 auto;
@@ -25,7 +24,7 @@
   background: #1f5f2b;
   border-radius: 50%;
   box-shadow: 0 0 20px rgba(46, 107, 51, 0.6);
-  margin-bottom: 10px; /* spacing controlled by HTML if needed */
+  margin-bottom: 10px;
 }
 
 /* TRUNK */
@@ -34,26 +33,29 @@
   height: 240px;
   background: #5a3c1a;
   border-radius: 10px;
-  margin-bottom: 20px; /* spacing controlled by HTML if needed */
+  margin-bottom: 20px;
 }
 
-/* BRANCHES */
-.branch {
-  /* NO ABSOLUTE POSITIONING */
+/* BRANCH ROWS */
+.branch-row {
   width: 100%;
-  max-width: 260px;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 12px 0; /* spacing now controlled by HTML/CSS flow */
+  margin: 12px 0;
 }
 
-.branch.left {
+.branch-row.left {
   justify-content: flex-start;
 }
 
-.branch.right {
+.branch-row.right {
   justify-content: flex-end;
+}
+
+/* BRANCH */
+.branch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .branch-bar {
@@ -85,15 +87,15 @@
   color: #000;
 }
 
-/* SLIDE ANIMATION (kept) */
+/* SLIDE ANIMATION */
 .branch.slide {
   transition: transform 0.45s ease;
 }
 
-.branch.left.slide:hover {
+.branch-row.left .branch.slide:hover {
   transform: translateX(-10px);
 }
 
-.branch.right.slide:hover {
+.branch-row.right .branch.slide:hover {
   transform: translateX(10px);
 }
