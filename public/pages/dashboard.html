@@ -10,8 +10,8 @@
   <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
 
   <!-- GLOBAL + DASHBOARD CSS -->
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/assets/css/dashboard.css">
+  <link rel="stylesheet" href="/public/styles.css">
+  <link rel="stylesheet" href="/public/assets/css/dashboard.css">
 </head>
 
 <body>
@@ -23,9 +23,9 @@
     <div class="rtg-topbar-left">
       <img src="/public/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
 
-      <!-- WEATHER WIDGET (LIVE) -->
+      <!-- WEATHER WIDGET -->
       <div class="weather-widget">
-        <a href="/modules/weather/weather.html" class="weather-link">
+        <a href="/public/pages/weather.html" class="weather-link">
           <span id="weatherTemp">--°</span>
           <span id="weatherIcon">⛅</span>
         </a>
@@ -39,8 +39,8 @@
 
     <!-- RIGHT SIDE: LINKS + BURGER -->
     <div class="rtg-topbar-right">
-      <a href="/modules/weather/weather.html" class="rtg-topbar-link">Weather</a>
-      <a href="/index.html" class="rtg-topbar-link">Home</a>
+      <a href="/public/pages/weather.html" class="rtg-topbar-link">Weather</a>
+      <a href="/public/pages/dashboard.html" class="rtg-topbar-link">Dashboard</a>
 
       <button class="rtg-burger" id="rtgBurger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
@@ -55,55 +55,55 @@
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🏠 Home ▾</button>
       <div class="rtg-menu-desc">Main portal for Real Tree Guy Online services.</div>
-      <a href="/index.html" class="rtg-menu-link">Open Home</a>
+      <a href="/public/pages/dashboard.html" class="rtg-menu-link">Open Home</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">👤 Profile ▾</button>
       <div class="rtg-menu-desc">Manage your account and settings.</div>
-      <a href="/modules/profile/profile.html" class="rtg-menu-link">Open Profile</a>
+      <a href="/public/pages/profile.html" class="rtg-menu-link">Open Profile</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📋 Customers & Jobs ▾</button>
       <div class="rtg-menu-desc">Track customers, quotes, and job details.</div>
-      <a href="/modules/customers/customers.html" class="rtg-menu-link">Open Customers</a>
+      <a href="/public/pages/customers.html" class="rtg-menu-link">Open Customers</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📏 Tree Measurement ▾</button>
       <div class="rtg-menu-desc">Measure trees and calculate estimates.</div>
-      <a href="/modules/measurement/measurement.html" class="rtg-menu-link">Open Measurement</a>
+      <a href="/public/pages/measurement.html" class="rtg-menu-link">Open Measurement</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📄 Contracts ▾</button>
       <div class="rtg-menu-desc">Create and manage service contracts.</div>
-      <a href="/modules/contracts/contracts.html" class="rtg-menu-link">Open Contracts</a>
+      <a href="/public/pages/contracts.html" class="rtg-menu-link">Open Contracts</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📅 Calendar ▾</button>
       <div class="rtg-menu-desc">Schedule jobs and manage your workday.</div>
-      <a href="/modules/calendar/calendar.html" class="rtg-menu-link">Open Calendar</a>
+      <a href="/public/pages/calendar.html" class="rtg-menu-link">Open Calendar</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🪧 Cards & Flyers ▾</button>
       <div class="rtg-menu-desc">Design and print promotional materials.</div>
-      <a href="/modules/flyers/flyers.html" class="rtg-menu-link">Open Flyers</a>
+      <a href="/public/pages/flyers.html" class="rtg-menu-link">Open Flyers</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🗺️ Real Tree Map ▾</button>
       <div class="rtg-menu-desc">Find tree service resources near you.</div>
-      <a href="/modules/map/real-tree-map.html" class="rtg-menu-link">Open Map</a>
+      <a href="/public/pages/map.html" class="rtg-menu-link">Open Map</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🛒 Shop ▾</button>
       <div class="rtg-menu-desc">Buy gear, tools, and merch.</div>
-      <a href="/modules/shop/real-tree-shop.html" class="rtg-menu-link">Open Shop</a>
+      <a href="/public/pages/shop.html" class="rtg-menu-link">Open Shop</a>
     </div>
 
   </nav>
@@ -124,43 +124,43 @@
       <div class="branch b1 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/profile/profile.html" class="branch-btn">Profile</a>
+        <a href="/public/pages/profile.html" class="branch-btn">Profile</a>
       </div>
 
       <div class="branch b2 right slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/customers/customers.html" class="branch-btn">Customers & Jobs</a>
+        <a href="/public/pages/customers.html" class="branch-btn">Customers & Jobs</a>
       </div>
 
       <div class="branch b3 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a>
+        <a href="/public/pages/measurement.html" class="branch-btn">Tree Measurement</a>
       </div>
 
       <div class="branch b4 right slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/contracts/contracts.html" class="branch-btn">Contracts</a>
+        <a href="/public/pages/contracts.html" class="branch-btn">Contracts</a>
       </div>
 
       <div class="branch b5 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/calendar/calendar.html" class="branch-btn">Calendar</a>
+        <a href="/public/pages/calendar.html" class="branch-btn">Calendar</a>
       </div>
 
       <div class="branch b6 right slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a>
+        <a href="/public/pages/flyers.html" class="branch-btn">Cards & Flyers</a>
       </div>
 
       <div class="branch b7 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="/modules/map/real-tree-map.html" class="branch-btn">Real Tree Map</a>
+        <a href="/public/pages/map.html" class="branch-btn">Real Tree Map</a>
       </div>
 
     </div>
@@ -168,14 +168,14 @@
 
   <!-- BOTTOM BUTTONS -->
   <div class="rtg-bottom-buttons">
-    <a class="rtg-bottom-btn orange" href="/modules/shop/real-tree-shop.html">REAL TREE SHOP</a>
-    <a class="rtg-bottom-btn orange" href="/index.html">RTG ONLINE</a>
+    <a class="rtg-bottom-btn orange" href="/public/pages/shop.html">REAL TREE SHOP</a>
+    <a class="rtg-bottom-btn orange" href="/public/pages/dashboard.html">DASHBOARD</a>
   </div>
 
   <footer class="rtg-footer">
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <script src="/pages/assets/js/dashboard.js"></script>
+  <script src="/public/assets/js/dashboard.js"></script>
 </body>
 </html>
