@@ -9,19 +9,11 @@
   <link rel="stylesheet" href="/pages/assets/css/rtg-dashboard.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- TEMP INLINE BACKGROUND (CSS WILL BE REBUILT NEXT) -->
   <style>
     body {
-      background: #0d0f0d url("public/favicon.ico") center center no-repeat;
-      background-size: contain;
-      background-attachment: fixed;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        background: #0d0f0d url("public/favicon.ico") center top no-repeat;
-        background-size: contain;
-        background-attachment: scroll;
-      }
+      background: #0d0f0d url("public/assets/img/rtg-logo.jpg") left 40px top 40px no-repeat fixed;
+      background-size: 140px;
     }
   </style>
 </head>
@@ -30,11 +22,21 @@
 
   <!-- TOP BAR -->
   <div class="rtg-topbar">
-    <div class="rtg-burger" id="rtgBurger">
-      <span></span><span></span><span></span>
+    <div class="rtg-topbar-left">
+      <img src="public/assets/img/rtg-logo.jpg" class="rtg-logo">
+      <div class="rtg-topbar-title">REAL TREE GUY OS</div>
     </div>
-    <div class="rtg-topbar-title">REAL TREE GUY OS</div>
-    <a href="index.html" class="rtg-topbar-link">RTG Online</a>
+
+    <div class="rtg-topbar-center">
+      <div id="rtgClock" class="rtg-clock">--:--:--</div>
+    </div>
+
+    <div class="rtg-topbar-right">
+      <a href="index.html" class="rtg-topbar-link">RTG Online</a>
+      <div class="rtg-burger" id="rtgBurger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
   </div>
 
   <!-- SIDEBAR -->
@@ -108,7 +110,7 @@
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
   </header>
 
-  <!-- TREE SYSTEM -->
+  <!-- TREE SYSTEM (UNCHANGED STRUCTURE) -->
   <main class="tree-menu">
     <div class="tree">
 
@@ -170,14 +172,33 @@
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <script type="module" src="/pages/assets/js/auth.js"></script>
-  <script type="module" src="/pages/assets/js/dashboard.js"></script>
+  <!-- CLOCK SCRIPT -->
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("rtgClock").textContent =
+        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
 
+  <!-- MENU DROPDOWNS -->
   <script>
     document.querySelectorAll(".rtg-menu-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         btn.parentElement.classList.toggle("open");
       });
+    });
+  </script>
+
+  <!-- BURGER -->
+  <script>
+    const burger = document.getElementById("rtgBurger");
+    const menu = document.getElementById("rtgSidemenu");
+
+    burger.addEventListener("click", () => {
+      menu.classList.toggle("open");
     });
   </script>
 
