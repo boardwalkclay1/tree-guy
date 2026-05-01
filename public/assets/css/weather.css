@@ -1,0 +1,202 @@
+/* ============================================
+   REAL TREE GUY — WEATHER CENTER UI
+   Storm Ops Dashboard • Tactical Theme
+   ============================================ */
+
+body.rtg-weather {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  background: #0d0f0d;
+  color: #ffffff;
+}
+
+/* HEADER */
+.weather-header {
+  text-align: center;
+  padding: 30px 20px;
+  background: rgba(0, 0, 0, 0.75);
+  border-bottom: 2px solid #2e6b33;
+}
+
+.weather-header h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #caffca;
+  text-shadow: 0 0 12px #1f5f2b;
+}
+
+.weather-header .sub {
+  font-size: 1rem;
+  color: #9ddf9d;
+  margin-top: 4px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: #ff8c42;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #ffb673;
+  text-shadow: 0 0 8px #ff8c42;
+}
+
+/* MAIN SHELL */
+.weather-shell {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* MODULE CARDS */
+.module-card {
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid #2e6b33;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 12px rgba(46, 107, 51, 0.4);
+}
+
+.module-card h2 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  font-size: 1.4rem;
+  color: #caffca;
+  text-shadow: 0 0 8px #1f5f2b;
+}
+
+/* LOCATION SELECTOR */
+.location-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.location-row input {
+  width: 90px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 2px solid #ff8c42;
+  background: #000;
+  color: #fff;
+}
+
+.rtg-btn.small {
+  padding: 6px 12px;
+  background: transparent;
+  border: 2px solid #ff8c42;
+  border-radius: 8px;
+  color: #ff8c42;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.rtg-btn.small:hover {
+  background: #ff8c42;
+  color: #000;
+}
+
+/* CURRENT CONDITIONS */
+.current-flex {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.current-temp {
+  font-size: 3.4rem;
+  font-weight: 900;
+  color: #ff8c42;
+  text-shadow: 0 0 12px #ff8c42;
+}
+
+.current-details p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+/* TICKERS */
+.ticker {
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(255, 140, 66, 0.15);
+  border-left: 4px solid #ff8c42;
+  font-weight: 700;
+}
+
+.ticker.hazard {
+  background: rgba(255, 0, 0, 0.15);
+  border-left-color: #ff4444;
+}
+
+/* HOURLY STRIP */
+.hourly-strip {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 6px;
+}
+
+.hourly-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.hourly-strip::-webkit-scrollbar-thumb {
+  background: #2e6b33;
+  border-radius: 4px;
+}
+
+/* DAILY STRIP */
+.daily-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* INFO GRID */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 14px;
+}
+
+.info-grid div {
+  font-size: 1rem;
+}
+
+/* RADAR */
+.radar-frame {
+  width: 100%;
+  height: 420px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(46, 107, 51, 0.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .current-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .current-temp {
+    font-size: 2.8rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .radar-frame {
+    height: 300px;
+  }
+}
