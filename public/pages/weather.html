@@ -5,10 +5,11 @@
   <title>Weather – Real Tree Guy OS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Correct CSS Path -->
   <link rel="stylesheet" href="/assets/css/weather.css">
 
-  <!-- Weather Engine Modules -->
-  <script type="module" src="/pages/assets/js/weather/weather.js"></script>
+  <!-- Correct Weather Engine Path -->
+  <script type="module" src="/assets/js/weather/weather.js"></script>
 </head>
 
 <body class="rtg-weather">
@@ -16,14 +17,14 @@
   <header class="weather-header">
     <h1>🌪️ Real Tree Guy Weather Center</h1>
     <p class="sub">Storm Chaser Mode • Live Ops Dashboard</p>
+
+    <!-- Correct Dashboard Path -->
     <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
   </header>
 
   <main class="weather-shell">
 
-    <!-- ============================
-         LOCATION SELECTOR MODULE
-         ============================ -->
+    <!-- LOCATION SELECTOR -->
     <section class="module-card location-card">
       <h2>📍 Location</h2>
 
@@ -39,9 +40,7 @@
       <p id="locationStatus">Waiting for location…</p>
     </section>
 
-    <!-- ============================
-         CURRENT CONDITIONS MODULE
-         ============================ -->
+    <!-- CURRENT CONDITIONS -->
     <section class="module-card" id="currentConditions">
       <h2>🌤️ Current Conditions</h2>
 
@@ -60,25 +59,19 @@
       <div class="ticker hazard" id="hazardTicker">Hazard status loading…</div>
     </section>
 
-    <!-- ============================
-         HOURLY FORECAST MODULE
-         ============================ -->
+    <!-- HOURLY FORECAST -->
     <section class="module-card">
       <h2>⏱️ Next 12 Hours</h2>
       <div id="hourlyStrip" class="hourly-strip"></div>
     </section>
 
-    <!-- ============================
-         DAILY FORECAST MODULE
-         ============================ -->
+    <!-- DAILY FORECAST -->
     <section class="module-card">
       <h2>📅 Next 7 Days</h2>
       <div id="dailyStrip" class="daily-strip"></div>
     </section>
 
-    <!-- ============================
-         WIND MODULE
-         ============================ -->
+    <!-- WIND -->
     <section class="module-card">
       <h2>💨 Wind Intelligence</h2>
       <div class="info-grid">
@@ -89,9 +82,7 @@
       </div>
     </section>
 
-    <!-- ============================
-         PRESSURE MODULE
-         ============================ -->
+    <!-- PRESSURE -->
     <section class="module-card">
       <h2>📉 Pressure Trend</h2>
       <div class="info-grid">
@@ -100,9 +91,7 @@
       </div>
     </section>
 
-    <!-- ============================
-         STORM RISK MODULE
-         ============================ -->
+    <!-- STORM RISK -->
     <section class="module-card">
       <h2>⚠️ Storm Risk</h2>
       <div class="info-grid">
@@ -111,9 +100,7 @@
       </div>
     </section>
 
-    <!-- ============================
-         TREE HAZARD MODULE
-         ============================ -->
+    <!-- TREE HAZARD -->
     <section class="module-card">
       <h2>🌲 Tree Hazard Level</h2>
       <div class="info-grid">
@@ -122,9 +109,7 @@
       </div>
     </section>
 
-    <!-- ============================
-         RADAR MODULE
-         ============================ -->
+    <!-- RADAR -->
     <section class="module-card">
       <h2>📡 Live Radar</h2>
       <iframe
@@ -136,7 +121,8 @@
 
   </main>
 
-  <script type="module" src="/pages/assets/js/weather/weather.js"></script>
+  <!-- Correct JS Path -->
+  <script type="module" src="/assets/js/weather/weather.js"></script>
 
 </body>
 </html>
