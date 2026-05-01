@@ -19,6 +19,27 @@
   <link rel="stylesheet" href="assets/css/index.css">
 
   <style>
+    /* BACKGROUND IMAGE */
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("public/assets/img/rtg-logo.jpg") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    /* DARK OVERLAY FOR READABILITY */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.55);
+      z-index: -1;
+    }
+
     /* SIDEBAR */
     #sidebar {
       position: fixed;
