@@ -1,37 +1,14 @@
 /* ============================================
-   GLOBAL DASHBOARD BACKGROUND + SEASONS
+   REAL TREE GUY — DASHBOARD (BRANCH TREE VERSION)
    ============================================ */
 
-/* Default solid green */
 body {
-  background: #0f3d0f; /* deep spruce green */
   margin: 0;
   padding: 0;
+  background: #0f3d0f; /* solid spruce green */
   font-family: system-ui, sans-serif;
   color: #fff;
   overflow-x: hidden;
-}
-
-/* Seasonal modes (toggle by adding class to <body>) */
-
-/* SPRING */
-body.spring {
-  background: linear-gradient(#0f3d0f, #1f5f2b);
-}
-
-/* SUMMER */
-body.summer {
-  background: linear-gradient(#0f3d0f, #2e8b57);
-}
-
-/* FALL */
-body.fall {
-  background: linear-gradient(#3d2b1f, #8b4513);
-}
-
-/* WINTER */
-body.winter {
-  background: linear-gradient(#0a1a2a, #1f3d5f);
 }
 
 /* ============================================
@@ -182,7 +159,7 @@ body.winter {
 }
 
 /* ============================================
-   TREE SYSTEM — CLEAN, NO POSITIONING LOGIC
+   TREE SYSTEM — ABSOLUTE POSITIONING VERSION
    ============================================ */
 
 .tree-menu {
@@ -192,54 +169,56 @@ body.winter {
 }
 
 .tree {
-  width: 100%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  width: 360px;
+  height: 650px;
 }
 
 /* CANOPY */
 .canopy {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 280px;
   height: 180px;
   background: #1f5f2b;
   border-radius: 50%;
   box-shadow: 0 0 20px rgba(46, 107, 51, 0.6);
-  margin-bottom: 10px;
 }
 
 /* TRUNK */
 .trunk {
+  position: absolute;
+  top: 180px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 70px;
   height: 240px;
   background: #5a3c1a;
   border-radius: 10px;
-  margin-bottom: 20px;
 }
 
-/* BRANCH ROWS */
-.branch-row {
-  width: 100%;
-  display: flex;
-  margin: 12px 0;
-}
-
-.branch-row.left {
-  justify-content: flex-start;
-}
-
-.branch-row.right {
-  justify-content: flex-end;
-}
-
-/* BRANCH */
+/* BRANCHES */
 .branch {
+  position: absolute;
+  width: 220px;
+  height: 60px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* vertical positions */
+.branch-row:nth-of-type(1) .branch { top: 70px; left: -150px; }
+.branch-row:nth-of-type(2) .branch { top: 130px; right: -150px; }
+.branch-row:nth-of-type(3) .branch { top: 190px; left: -150px; }
+.branch-row:nth-of-type(4) .branch { top: 250px; right: -150px; }
+.branch-row:nth-of-type(5) .branch { top: 310px; left: -150px; }
+.branch-row:nth-of-type(6) .branch { top: 370px; right: -150px; }
+.branch-row:nth-of-type(7) .branch { top: 430px; left: -150px; }
+
+/* branch visuals */
 .branch-bar {
   width: 80px;
   height: 12px;
@@ -267,19 +246,6 @@ body.winter {
 .branch-btn:hover {
   background: #ff8c42;
   color: #000;
-}
-
-/* SLIDE ANIMATION */
-.branch.slide {
-  transition: transform 0.45s ease;
-}
-
-.branch-row.left .branch.slide:hover {
-  transform: translateX(-10px);
-}
-
-.branch-row.right .branch.slide:hover {
-  transform: translateX(10px);
 }
 
 /* ============================================
