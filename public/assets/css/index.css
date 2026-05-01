@@ -7,13 +7,26 @@
   padding: 0;
 }
 
-/* BACKGROUND */
+/* FULLSCREEN BACKGROUND (FIXED + COVER) */
 body {
-  background: #0d0f0d url("../assets/icons/rtg-192.png")
-    center center / 45% no-repeat fixed;
+  background: #0d0f0d url("../img/rtg-logo.jpg")
+    center center / cover no-repeat fixed;
   color: #e8ffe8;
   font-family: system-ui, sans-serif;
   min-height: 100vh;
+  position: relative;
+}
+
+/* DARK OVERLAY FOR READABILITY */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  z-index: -1;
 }
 
 /* HERO */
@@ -40,6 +53,7 @@ body {
   margin: 0 auto 30px;
 }
 
+/* BUTTONS */
 .rtg-btn {
   display: inline-block;
   padding: 14px 28px;
@@ -107,6 +121,7 @@ body {
   font-weight: 600;
 }
 
+/* FOOTER */
 footer {
   text-align: center;
   padding: 20px;
