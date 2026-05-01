@@ -6,10 +6,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- FAVICON -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-  <!-- GLOBAL + DASHBOARD CSS -->
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/assets/css/dashboard.css">
 </head>
@@ -19,7 +17,7 @@
   <!-- TOP BAR -->
   <div class="rtg-topbar">
 
-    <!-- LEFT SIDE: LOGO + WEATHER WIDGET -->
+    <!-- LEFT -->
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
 
@@ -31,16 +29,16 @@
       </div>
     </div>
 
-    <!-- CENTER: CLOCK -->
+    <!-- CENTER -->
     <div class="rtg-topbar-center">
       <div id="rtgClock" class="rtg-clock">--:--:--</div>
     </div>
 
-    <!-- RIGHT SIDE: WEATHER + BURGER -->
+    <!-- RIGHT -->
     <div class="rtg-topbar-right">
       <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
 
-      <button class="rtg-burger" id="rtgBurger" aria-label="Toggle menu">
+      <button class="rtg-burger" id="rtgBurger">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -112,53 +110,67 @@
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
   </header>
 
-  <!-- TREE SYSTEM -->
+  <!-- TREE SYSTEM (HTML controls layout) -->
   <main class="tree-menu">
     <div class="tree">
 
       <div class="canopy"></div>
       <div class="trunk"></div>
 
-      <div class="branch b1 left slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/profile.html" class="branch-btn">Profile</a>
+      <div class="branch-row left">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/profile.html" class="branch-btn">Profile</a>
+        </div>
       </div>
 
-      <div class="branch b2 right slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/customers.html" class="branch-btn">Customers & Jobs</a>
+      <div class="branch-row right">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/customers.html" class="branch-btn">Customers & Jobs</a>
+        </div>
       </div>
 
-      <div class="branch b3 left slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/measurement.html" class="branch-btn">Tree Measurement</a>
+      <div class="branch-row left">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/measurement.html" class="branch-btn">Tree Measurement</a>
+        </div>
       </div>
 
-      <div class="branch b4 right slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/contracts.html" class="branch-btn">Contracts</a>
+      <div class="branch-row right">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/contracts.html" class="branch-btn">Contracts</a>
+        </div>
       </div>
 
-      <div class="branch b5 left slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/calendar.html" class="branch-btn">Calendar</a>
+      <div class="branch-row left">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/calendar.html" class="branch-btn">Calendar</a>
+        </div>
       </div>
 
-      <div class="branch b6 right slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/flyers.html" class="branch-btn">Cards & Flyers</a>
+      <div class="branch-row right">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/flyers.html" class="branch-btn">Cards & Flyers</a>
+        </div>
       </div>
 
-      <div class="branch b7 left slide">
-        <div class="branch-bar"></div>
-        <div class="branch-bush"></div>
-        <a href="/pages/map.html" class="branch-btn">Real Tree Map</a>
+      <div class="branch-row left">
+        <div class="branch">
+          <div class="branch-bar"></div>
+          <div class="branch-bush"></div>
+          <a href="/pages/map.html" class="branch-btn">Real Tree Map</a>
+        </div>
       </div>
 
     </div>
