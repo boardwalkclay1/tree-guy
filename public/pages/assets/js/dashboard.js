@@ -3,6 +3,7 @@ function updateClock() {
   const now = new Date();
   const clockEl = document.getElementById("rtgClock");
   if (!clockEl) return;
+
   clockEl.textContent = now.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -19,13 +20,11 @@ document.querySelectorAll(".rtg-menu-btn").forEach(btn => {
   });
 });
 
-// BURGER + SIDEBAR TOGGLE
+// BURGER + SIDEBAR
 const burger = document.getElementById("rtgBurger");
-const menu = document.getElementById("rtgSidemenu");
+const sidemenu = document.getElementById("rtgSidemenu");
 
-if (burger && menu) {
-  burger.addEventListener("click", () => {
-    menu.classList.toggle("open");
-    burger.classList.toggle("open");
-  });
-}
+burger.addEventListener("click", () => {
+  sidemenu.classList.toggle("open");
+  burger.classList.toggle("open");
+});
