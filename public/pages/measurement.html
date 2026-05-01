@@ -4,38 +4,129 @@
   <meta charset="UTF-8">
   <title>Tree Measurement – Real Tree Guy OS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
+
+  <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
   <link rel="stylesheet" href="/assets/css/measurement.css">
+
+  <!-- CORE ENGINE -->
+  <script type="module" src="/pages/measurement/measurement.js"></script>
+
+  <!-- ADVANCED ENGINE -->
+  <script type="module" src="/pages/measurement/measurement-advanced.js"></script>
 </head>
 
 <body>
 
   <header class="rtg-header">
-    <h1>🌲 Tree Measurement Tools</h1>
-    <a class="back-link" href="../../pages/dashboard.html">← Back to Dashboard</a>
+    <h1>🌲 Real Tree Guy Measurement Suite</h1>
+    <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
   </header>
 
   <main class="measurement-shell">
 
-    <div class="tool-card">
-      <h2>📐 Manual Measurement</h2>
-      <p>Enter distance, angle, circumference, and calculate height, DBH, and fall zone.</p>
-      <a class="rtg-btn" href="/pages/measurement/manual/manual.html">Open Manual Tool</a>
-    </div>
+    <!-- AUTO SENSOR STATUS -->
+    <section class="sensor-status">
+      <h3>📡 Sensor Status</h3>
+      <div id="gps-status">GPS: <span>Loading…</span></div>
+      <div id="compass-status">Compass: <span>Loading…</span></div>
+      <div id="orientation-status">Orientation: <span>Loading…</span></div>
+    </section>
 
-    <div class="tool-card">
-      <h2>📸 Photo Measurement</h2>
-      <p>Upload a photo, mark points, set a reference object, and calculate height/width.</p>
-      <a class="rtg-btn" href="/pages/measurement/photo/photo.html">Open Photo Tool</a>
-    </div>
+    <!-- TOOL GRID -->
+    <section class="tool-grid">
 
-    <div class="tool-card">
-      <h2>🎥 Live Camera Measurement</h2>
-      <p>Use your camera to mark the base, tilt up, and measure height in real time.</p>
-      <a class="rtg-btn" href="/pages/measurement/live/live.html">Open Live Tool</a>
-    </div>
+      <div class="tool-card" data-tool="manual">
+        <h2>📐 Manual Measurement</h2>
+        <p>Enter distance, angle, circumference, and calculate height, DBH, and fall zone.</p>
+        <button class="rtg-btn open-tool" data-target="/pages/measurement/manual/manual.html">
+          Open Manual Tool
+        </button>
+      </div>
+
+      <div class="tool-card" data-tool="photo">
+        <h2>📸 Photo Measurement</h2>
+        <p>Upload a photo, mark points, set a reference object, and calculate height/width.</p>
+        <button class="rtg-btn open-tool" data-target="/pages/measurement/photo/photo.html">
+          Open Photo Tool
+        </button>
+      </div>
+
+      <div class="tool-card" data-tool="live">
+        <h2>🎥 Live Camera Measurement</h2>
+        <p>Use your camera to mark the base, tilt up, and measure height in real time.</p>
+        <button class="rtg-btn open-tool" data-target="/pages/measurement/live/live.html">
+          Open Live Tool
+        </button>
+      </div>
+
+      <div class="tool-card" data-tool="distance">
+        <h2>📍 Distance Between Objects</h2>
+        <p>Measure tree-to-tree, tree-to-house, or any two GPS points.</p>
+        <button class="rtg-btn open-tool" data-target="/pages/measurement/distance/distance.html">
+          Open Distance Tool
+        </button>
+      </div>
+
+      <div class="tool-card" data-tool="advanced">
+        <h2>🧠 Advanced Analysis</h2>
+        <p>Fall zone prediction, hazard scoring, triangulation, crown spread, and more.</p>
+        <button class="rtg-btn open-tool" data-target="/pages/measurement/advanced/advanced.html">
+          Open Advanced Tools
+        </button>
+      </div>
+
+    </section>
 
   </main>
+
+  <script type="module">
+    import { Sensors } from "/pages/measurement/measurement.js";
+    import { MeasurementAdvanced } from "/pages/measurement/measurement-advanced.js";
+
+    /* ============================
+       AUTO-INIT SENSORS
+       ============================ */
+    async function initSensors() {
+      try {
+        await Sensors.initGPS();
+        document.querySelector("#gps-status span").textContent =
+          `${Sensors.gps.lat.toFixed(5)}, ${Sensors.gps.lon.toFixed(5)}`;
+      } catch {
+        document.querySelector("#gps-status span").textContent = "Unavailable";
+      }
+
+      Sensors.initCompass();
+      Sensors.initOrientation();
+
+      setInterval(() => {
+        if (Sensors.compass !== null) {
+          document.querySelector("#compass-status span").textContent =
+            `${Sensors.compass.toFixed(1)}°`;
+        }
+
+        if (Sensors.orientation) {
+          document.querySelector("#orientation-status span").textContent =
+            `β ${Sensors.orientation.beta?.toFixed(1)}°`;
+        }
+
+        // Feed advanced engine
+        MeasurementAdvanced.tickSensorFusion();
+
+      }, 200);
+    }
+
+    initSensors();
+
+
+    /* ============================
+       TOOL NAVIGATION
+       ============================ */
+    document.querySelectorAll(".open-tool").forEach(btn => {
+      btn.addEventListener("click", () => {
+        window.location.href = btn.dataset.target;
+      });
+    });
+  </script>
 
 </body>
 </html>
