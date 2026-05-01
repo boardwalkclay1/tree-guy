@@ -4,21 +4,78 @@
   <meta charset="UTF-8">
   <title>Weather – Real Tree Guy OS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="/assets/css/weather.css">
+
+  <!-- Weather Engines -->
+  <script type="module" src="/pages/measurement/measurement.js"></script>
+  <script type="module" src="/pages/measurement/measurement-advanced.js"></script>
 </head>
 
 <body class="rtg-weather">
 
-  <div class="weather-shell">
-    <h1>Weather</h1>
+  <header class="weather-header">
+    <h1>🌪️ Real Tree Guy Weather Center</h1>
+    <p class="sub">Storm Chaser Mode Activated</p>
+    <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
+  </header>
 
-    <div id="weatherBox" class="weather-box">
+  <main class="weather-shell">
+
+    <!-- CURRENT CONDITIONS -->
+    <section class="weather-box" id="weatherBox">
       Loading weather…
-    </div>
+    </section>
 
-    <div id="forecastRow" class="forecast-row"></div>
-  </div>
+    <!-- HOURLY FORECAST -->
+    <section class="forecast-section">
+      <h2>Next 24 Hours</h2>
+      <div id="forecastRow" class="forecast-row"></div>
+    </section>
 
-  <script type="module" src="../assets/js/weather.js"></script>
+    <!-- STORM DATA -->
+    <section class="storm-grid">
+
+      <div class="storm-card" id="windCard">
+        <h3>💨 Wind</h3>
+        <p id="windSpeed">Loading…</p>
+        <p id="windGust"></p>
+        <p id="windDir"></p>
+      </div>
+
+      <div class="storm-card" id="pressureCard">
+        <h3>📉 Pressure</h3>
+        <p id="pressure">Loading…</p>
+        <p id="pressureTrend"></p>
+      </div>
+
+      <div class="storm-card" id="stormRiskCard">
+        <h3>⚠️ Storm Risk</h3>
+        <p id="stormRisk">Loading…</p>
+        <p id="stormNotes"></p>
+      </div>
+
+      <div class="storm-card" id="hazardCard">
+        <h3>🌲 Tree Hazard Level</h3>
+        <p id="hazardScore">Loading…</p>
+        <p id="hazardNotes"></p>
+      </div>
+
+    </section>
+
+    <!-- RADAR -->
+    <section class="radar-section">
+      <h2>📡 Live Radar (Free NOAA Layer)</h2>
+      <iframe
+        class="radar-frame"
+        src="https://radar.weather.gov/?settings=v1_eyJ0eXBlIjoiYmFzaWMiLCJ6b29tIjoxMCwibGF0IjoxOC4yLCJsb24iOi04NC4zLCJvdmVybGF5cyI6WyJyYWRhciJdfQ=="
+        loading="lazy">
+      </iframe>
+    </section>
+
+  </main>
+
+  <script type="module" src="/assets/js/weather.js"></script>
+
 </body>
 </html>
