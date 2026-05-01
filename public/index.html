@@ -40,6 +40,27 @@
       z-index: -1;
     }
 
+    /* GLOBAL LINK FIX — ORANGE LINKS */
+    a {
+      color: #ff8c42;
+      text-decoration: none;
+      font-weight: 700;
+      transition: 0.25s ease;
+    }
+
+    a:hover {
+      color: #ffb673;
+      text-shadow: 0 0 8px #ff8c42;
+    }
+
+    a:visited {
+      color: #ff8c42;
+    }
+
+    a:active {
+      color: #ffb673;
+    }
+
     /* SIDEBAR */
     #sidebar {
       position: fixed;
@@ -62,8 +83,6 @@
     #sidebar a {
       display: block;
       padding: 12px 0;
-      color: white;
-      text-decoration: none;
       font-size: 18px;
       border-bottom: 1px solid #333;
     }
