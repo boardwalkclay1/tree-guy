@@ -4,18 +4,14 @@
   <meta charset="UTF-8">
   <title>REAL TREE GUY – Dashboard</title>
 
-  <link rel="icon" type="image/x-icon" href="public/favicon.ico">
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/pages/assets/css/rtg-dashboard.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- TEMP INLINE BACKGROUND (CSS WILL BE REBUILT NEXT) -->
-  <style>
-    body {
-      background: #0d0f0d url("public/assets/img/rtg-logo.jpg") left 40px top 40px no-repeat fixed;
-      background-size: 140px;
-    }
-  </style>
+  <!-- FAVICON -->
+  <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+
+  <!-- GLOBAL + DASHBOARD CSS -->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/pages/assets/css/dashboard.css">
 </head>
 
 <body>
@@ -23,7 +19,7 @@
   <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
-      <img src="public/assets/img/rtg-logo.jpg" class="rtg-logo">
+      <img src="/public/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
       <div class="rtg-topbar-title">REAL TREE GUY OS</div>
     </div>
 
@@ -32,10 +28,10 @@
     </div>
 
     <div class="rtg-topbar-right">
-      <a href="index.html" class="rtg-topbar-link">RTG Online</a>
-      <div class="rtg-burger" id="rtgBurger">
+      <a href="/index.html" class="rtg-topbar-link">RTG Online</a>
+      <button class="rtg-burger" id="rtgBurger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
-      </div>
+      </button>
     </div>
   </div>
 
@@ -45,61 +41,61 @@
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🏠 RTG Online Home ▾</button>
       <div class="rtg-menu-desc">Main portal for Real Tree Guy Online services.</div>
-      <a href="index.html" class="rtg-menu-link">Open RTG Online</a>
+      <a href="/index.html" class="rtg-menu-link">Open RTG Online</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🌳 Tree Guy Dashboard ▾</button>
       <div class="rtg-menu-desc">Your main dashboard for all tree service tools.</div>
-      <a href="treeguy/dashboard.html" class="rtg-menu-link">Open Dashboard</a>
+      <a href="/treeguy/dashboard.html" class="rtg-menu-link">Open Dashboard</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">👤 Profile ▾</button>
       <div class="rtg-menu-desc">Manage your Real Tree Guy account and settings.</div>
-      <a href="modules/profile/profile.html" class="rtg-menu-link">Open Profile</a>
+      <a href="/modules/profile/profile.html" class="rtg-menu-link">Open Profile</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📋 Customers & Jobs ▾</button>
       <div class="rtg-menu-desc">Track customers, quotes, and job details.</div>
-      <a href="modules/customers/customers.html" class="rtg-menu-link">Open Customers</a>
+      <a href="/modules/customers/customers.html" class="rtg-menu-link">Open Customers</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📏 Tree Measurement ▾</button>
       <div class="rtg-menu-desc">Measure trees and calculate estimates.</div>
-      <a href="modules/measurement/measurement.html" class="rtg-menu-link">Open Measurement</a>
+      <a href="/modules/measurement/measurement.html" class="rtg-menu-link">Open Measurement</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📄 Contracts ▾</button>
       <div class="rtg-menu-desc">Create and manage service contracts.</div>
-      <a href="modules/contracts/contracts.html" class="rtg-menu-link">Open Contracts</a>
+      <a href="/modules/contracts/contracts.html" class="rtg-menu-link">Open Contracts</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">📅 Calendar ▾</button>
       <div class="rtg-menu-desc">Schedule jobs and manage your workday.</div>
-      <a href="modules/calendar/calendar.html" class="rtg-menu-link">Open Calendar</a>
+      <a href="/modules/calendar/calendar.html" class="rtg-menu-link">Open Calendar</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🪧 Cards & Flyers ▾</button>
       <div class="rtg-menu-desc">Design and print promotional materials.</div>
-      <a href="modules/flyers/flyers.html" class="rtg-menu-link">Open Flyers</a>
+      <a href="/modules/flyers/flyers.html" class="rtg-menu-link">Open Flyers</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🗺️ Real Tree Map ▾</button>
       <div class="rtg-menu-desc">Find tree service resources near you.</div>
-      <a href="modules/map/real-tree-map.html" class="rtg-menu-link">Open Map</a>
+      <a href="/modules/map/real-tree-map.html" class="rtg-menu-link">Open Map</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">🛒 Real Tree Shop ▾</button>
       <div class="rtg-menu-desc">Buy gear, tools, and Real Tree Guy merch.</div>
-      <a href="modules/shop/real-tree-shop.html" class="rtg-menu-link">Open Shop</a>
+      <a href="/modules/shop/real-tree-shop.html" class="rtg-menu-link">Open Shop</a>
     </div>
 
   </nav>
@@ -110,7 +106,7 @@
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
   </header>
 
-  <!-- TREE SYSTEM (UNCHANGED STRUCTURE) -->
+  <!-- TREE SYSTEM -->
   <main class="tree-menu">
     <div class="tree">
 
@@ -120,43 +116,43 @@
       <div class="branch b1 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/profile/profile.html" class="branch-btn">Profile</a>
+        <a href="/modules/profile/profile.html" class="branch-btn">Profile</a>
       </div>
 
       <div class="branch b2 right slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/customers/customers.html" class="branch-btn">Customers & Jobs</a>
+        <a href="/modules/customers/customers.html" class="branch-btn">Customers & Jobs</a>
       </div>
 
       <div class="branch b3 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a>
+        <a href="/modules/measurement/measurement.html" class="branch-btn">Tree Measurement</a>
       </div>
 
       <div class="branch b4 right slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/contracts/contracts.html" class="branch-btn">Contracts</a>
+        <a href="/modules/contracts/contracts.html" class="branch-btn">Contracts</a>
       </div>
 
       <div class="branch b5 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/calendar/calendar.html" class="branch-btn">Calendar</a>
+        <a href="/modules/calendar/calendar.html" class="branch-btn">Calendar</a>
       </div>
 
       <div class="branch b6 right slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a>
+        <a href="/modules/flyers/flyers.html" class="branch-btn">Cards & Flyers</a>
       </div>
 
       <div class="branch b7 left slide">
         <div class="branch-bar"></div>
         <div class="branch-bush"></div>
-        <a href="modules/map/real-tree-map.html" class="branch-btn">Real Tree Map</a>
+        <a href="/modules/map/real-tree-map.html" class="branch-btn">Real Tree Map</a>
       </div>
 
     </div>
@@ -164,43 +160,14 @@
 
   <!-- BOTTOM BUTTONS -->
   <div class="rtg-bottom-buttons">
-    <a class="rtg-bottom-btn orange" href="modules/shop/real-tree-shop.html">REAL TREE SHOP</a>
-    <a class="rtg-bottom-btn orange" href="index.html">RTG ONLINE</a>
+    <a class="rtg-bottom-btn orange" href="/modules/shop/real-tree-shop.html">REAL TREE SHOP</a>
+    <a class="rtg-bottom-btn orange" href="/index.html">RTG ONLINE</a>
   </div>
 
   <footer class="rtg-footer">
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <!-- CLOCK SCRIPT -->
-  <script>
-    function updateClock() {
-      const now = new Date();
-      document.getElementById("rtgClock").textContent =
-        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-  </script>
-
-  <!-- MENU DROPDOWNS -->
-  <script>
-    document.querySelectorAll(".rtg-menu-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        btn.parentElement.classList.toggle("open");
-      });
-    });
-  </script>
-
-  <!-- BURGER -->
-  <script>
-    const burger = document.getElementById("rtgBurger");
-    const menu = document.getElementById("rtgSidemenu");
-
-    burger.addEventListener("click", () => {
-      menu.classList.toggle("open");
-    });
-  </script>
-
+  <script src="/pages/assets/js/dashboard.js"></script>
 </body>
 </html>
