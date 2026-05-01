@@ -1,192 +1,5 @@
-/* CORE LAYOUT */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-  color: #ffffff;
-  background: #0d0f0d url("/public/assets/img/rtg-logo.jpg") left 40px top 40px no-repeat fixed;
-  background-size: 140px;
-  overflow-x: hidden;
-}
-
-/* LINKS (ORANGE THEME) */
-a {
-  color: #ff8c42;
-  text-decoration: none;
-  font-weight: 700;
-  transition: 0.25s ease;
-}
-
-a:hover {
-  color: #ffb673;
-  text-shadow: 0 0 8px #ff8c42;
-}
-
-a:visited {
-  color: #ff8c42;
-}
-
-/* TOP BAR */
-.rtg-topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 18px;
-  background: rgba(0, 0, 0, 0.8);
-  border-bottom: 2px solid #2e6b33;
-  backdrop-filter: blur(4px);
-}
-
-.rtg-topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.rtg-logo {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.rtg-topbar-title {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #caffca;
-  text-shadow: 0 0 8px #1f5f2b;
-}
-
-.rtg-topbar-center {
-  display: flex;
-  justify-content: center;
-  flex: 1;
-}
-
-.rtg-clock {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #ff8c42; /* ORANGE TIME */
-  text-shadow: 0 0 8px #ff8c42;
-}
-
-.rtg-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.rtg-topbar-link {
-  font-size: 0.95rem;
-}
-
-/* BURGER */
-.rtg-burger {
-  width: 34px;
-  height: 26px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-}
-
-.rtg-burger span {
-  display: block;
-  height: 4px;
-  border-radius: 4px;
-  background: #ff8c42;
-  transition: 0.25s ease;
-}
-
-/* Burger active animation */
-.rtg-burger.open span:nth-child(1) {
-  transform: translateY(10px) rotate(45deg);
-}
-
-.rtg-burger.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.rtg-burger.open span:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
-}
-
-/* SIDEBAR */
-.rtg-sidemenu {
-  position: fixed;
-  top: 0;
-  left: -260px;
-  width: 260px;
-  height: 100vh;
-  background: #111;
-  padding: 20px;
-  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.4);
-  transition: left 0.3s ease;
-  z-index: 9999;
-}
-
-.rtg-sidemenu.open {
-  left: 0;
-}
-
-.rtg-menu-item {
-  margin-bottom: 18px;
-}
-
-.rtg-menu-btn {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: #ff8c42;
-  font-weight: 700;
-  font-size: 0.98rem;
-  text-align: left;
-  padding: 6px 0;
-  cursor: pointer;
-}
-
-.rtg-menu-desc {
-  display: none;
-  color: #ffcc99;
-  font-size: 0.85rem;
-  margin: 4px 0;
-}
-
-.rtg-menu-link {
-  display: none;
-  color: #ff8c42;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.rtg-menu-item.open .rtg-menu-desc,
-.rtg-menu-item.open .rtg-menu-link {
-  display: block;
-}
-
-/* HEADER */
-.rtg-header {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.rtg-title {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #caffca;
-  text-shadow: 0 0 12px #1f5f2b;
-}
-
-.rtg-subtitle {
-  font-size: 1.1rem;
-  color: #9ddf9d;
-}
-
 /* ============================================
-   TREE SYSTEM (FIXED ALIGNMENT)
+   TREE SYSTEM — NO POSITIONING LOGIC
    ============================================ */
 
 .tree-menu {
@@ -195,68 +8,52 @@ a:visited {
   margin-top: 40px;
 }
 
-.rtg-header + .tree-menu {
-  margin-top: 30px;
-}
-
 .tree {
-  position: relative;
-  width: 360px;
-  height: 650px;
+  /* NO POSITIONING */
+  width: 100%;
+  max-width: 360px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* CANOPY */
 .canopy {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   width: 280px;
   height: 180px;
   background: #1f5f2b;
   border-radius: 50%;
   box-shadow: 0 0 20px rgba(46, 107, 51, 0.6);
+  margin-bottom: 10px; /* spacing controlled by HTML if needed */
 }
 
 /* TRUNK */
 .trunk {
-  position: absolute;
-  top: 180px;
-  left: 50%;
-  transform: translateX(-50%);
   width: 70px;
   height: 240px;
   background: #5a3c1a;
   border-radius: 10px;
+  margin-bottom: 20px; /* spacing controlled by HTML if needed */
 }
 
 /* BRANCHES */
 .branch {
-  position: absolute;
-  width: 220px;
-  height: 60px;
+  /* NO ABSOLUTE POSITIONING */
+  width: 100%;
+  max-width: 260px;
   display: flex;
   align-items: center;
   gap: 10px;
+  margin: 12px 0; /* spacing now controlled by HTML/CSS flow */
 }
 
-/* vertical positions */
-.branch.b1 { top: 70px; }
-.branch.b2 { top: 130px; }
-.branch.b3 { top: 190px; }
-.branch.b4 { top: 250px; }
-.branch.b5 { top: 310px; }
-.branch.b6 { top: 370px; }
-.branch.b7 { top: 430px; }
-
-/* left/right offsets tuned in */
 .branch.left {
-  left: -150px;
+  justify-content: flex-start;
 }
 
 .branch.right {
-  right: -150px;
+  justify-content: flex-end;
 }
 
 .branch-bar {
@@ -273,7 +70,6 @@ a:visited {
   border-radius: 50%;
 }
 
-/* BRANCH BUTTON */
 .branch-btn {
   padding: 8px 14px;
   background: rgba(0, 0, 0, 0.5);
@@ -289,67 +85,15 @@ a:visited {
   color: #000;
 }
 
-/* BRANCH SLIDE ANIMATION */
+/* SLIDE ANIMATION (kept) */
 .branch.slide {
   transition: transform 0.45s ease;
 }
 
 .branch.left.slide:hover {
-  transform: translateX(-14px);
+  transform: translateX(-10px);
 }
 
 .branch.right.slide:hover {
-  transform: translateX(14px);
-}
-
-/* BOTTOM BUTTONS */
-.rtg-bottom-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 50px 0;
-}
-
-.rtg-bottom-btn {
-  padding: 14px 26px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  border-radius: 10px;
-  color: #fff;
-  background: transparent;
-  border: 3px solid #ff8c42;
-  transition: 0.25s ease;
-}
-
-.rtg-bottom-btn:hover {
-  background: #ff8c42;
-  color: #000;
-}
-
-/* FOOTER */
-.rtg-footer {
-  text-align: center;
-  padding: 20px;
-  color: #9ddf9d;
-  font-size: 0.9rem;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .rtg-topbar-title {
-    font-size: 1.05rem;
-  }
-
-  .rtg-clock {
-    font-size: 1.1rem;
-  }
-
-  .tree {
-    transform: scale(0.85);
-  }
-
-  .rtg-bottom-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
+  transform: translateX(10px);
 }
