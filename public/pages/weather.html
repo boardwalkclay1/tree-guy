@@ -7,65 +7,126 @@
 
   <link rel="stylesheet" href="/assets/css/weather.css">
 
-  <!-- Weather Engines -->
-  <script type="module" src="/pages/measurement/measurement.js"></script>
-  <script type="module" src="/pages/measurement/measurement-advanced.js"></script>
+  <!-- Weather Engine Modules -->
+  <script type="module" src="/pages/assets/js/weather/weather.js"></script>
 </head>
 
 <body class="rtg-weather">
 
   <header class="weather-header">
     <h1>🌪️ Real Tree Guy Weather Center</h1>
-    <p class="sub">Storm Chaser Mode Activated</p>
+    <p class="sub">Storm Chaser Mode • Live Ops Dashboard</p>
     <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
   </header>
 
   <main class="weather-shell">
 
-    <!-- CURRENT CONDITIONS -->
-    <section class="weather-box" id="weatherBox">
-      Loading weather…
+    <!-- ============================
+         LOCATION SELECTOR MODULE
+         ============================ -->
+    <section class="module-card location-card">
+      <h2>📍 Location</h2>
+
+      <div class="location-row">
+        <button id="useGPS" class="rtg-btn small">Use My GPS</button>
+
+        <input id="manualLat" type="number" step="0.0001" placeholder="Lat">
+        <input id="manualLon" type="number" step="0.0001" placeholder="Lon">
+
+        <button id="setManual" class="rtg-btn small">Set</button>
+      </div>
+
+      <p id="locationStatus">Waiting for location…</p>
     </section>
 
-    <!-- HOURLY FORECAST -->
-    <section class="forecast-section">
-      <h2>Next 24 Hours</h2>
-      <div id="forecastRow" class="forecast-row"></div>
+    <!-- ============================
+         CURRENT CONDITIONS MODULE
+         ============================ -->
+    <section class="module-card" id="currentConditions">
+      <h2>🌤️ Current Conditions</h2>
+
+      <div class="current-flex">
+        <div class="current-temp" id="currentTemp">--°</div>
+
+        <div class="current-details">
+          <p id="currentWind">Wind: --</p>
+          <p id="currentGust">Gusts: --</p>
+          <p id="currentPressure">Pressure: --</p>
+          <p id="currentRain">Rain: --</p>
+        </div>
+      </div>
+
+      <div class="ticker" id="stormTicker">Storm status loading…</div>
+      <div class="ticker hazard" id="hazardTicker">Hazard status loading…</div>
     </section>
 
-    <!-- STORM DATA -->
-    <section class="storm-grid">
-
-      <div class="storm-card" id="windCard">
-        <h3>💨 Wind</h3>
-        <p id="windSpeed">Loading…</p>
-        <p id="windGust"></p>
-        <p id="windDir"></p>
-      </div>
-
-      <div class="storm-card" id="pressureCard">
-        <h3>📉 Pressure</h3>
-        <p id="pressure">Loading…</p>
-        <p id="pressureTrend"></p>
-      </div>
-
-      <div class="storm-card" id="stormRiskCard">
-        <h3>⚠️ Storm Risk</h3>
-        <p id="stormRisk">Loading…</p>
-        <p id="stormNotes"></p>
-      </div>
-
-      <div class="storm-card" id="hazardCard">
-        <h3>🌲 Tree Hazard Level</h3>
-        <p id="hazardScore">Loading…</p>
-        <p id="hazardNotes"></p>
-      </div>
-
+    <!-- ============================
+         HOURLY FORECAST MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>⏱️ Next 12 Hours</h2>
+      <div id="hourlyStrip" class="hourly-strip"></div>
     </section>
 
-    <!-- RADAR -->
-    <section class="radar-section">
-      <h2>📡 Live Radar (Free NOAA Layer)</h2>
+    <!-- ============================
+         DAILY FORECAST MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>📅 Next 7 Days</h2>
+      <div id="dailyStrip" class="daily-strip"></div>
+    </section>
+
+    <!-- ============================
+         WIND MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>💨 Wind Intelligence</h2>
+      <div class="info-grid">
+        <div><strong>Wind Speed:</strong> <span id="windSpeed">--</span></div>
+        <div><strong>Wind Gusts:</strong> <span id="windGust">--</span></div>
+        <div><strong>Direction:</strong> <span id="windDir">--</span></div>
+        <div><strong>Gust Ratio:</strong> <span id="gustRatio">--</span></div>
+      </div>
+    </section>
+
+    <!-- ============================
+         PRESSURE MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>📉 Pressure Trend</h2>
+      <div class="info-grid">
+        <div><strong>Pressure:</strong> <span id="pressure">--</span></div>
+        <div><strong>Trend:</strong> <span id="pressureTrend">--</span></div>
+      </div>
+    </section>
+
+    <!-- ============================
+         STORM RISK MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>⚠️ Storm Risk</h2>
+      <div class="info-grid">
+        <div><strong>Risk Level:</strong> <span id="stormRisk">--</span></div>
+        <div><strong>Notes:</strong> <span id="stormNotes">--</span></div>
+      </div>
+    </section>
+
+    <!-- ============================
+         TREE HAZARD MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>🌲 Tree Hazard Level</h2>
+      <div class="info-grid">
+        <div><strong>Hazard Score:</strong> <span id="hazardScore">--</span></div>
+        <div><strong>Analysis:</strong> <span id="hazardNotes">--</span></div>
+      </div>
+    </section>
+
+    <!-- ============================
+         RADAR MODULE
+         ============================ -->
+    <section class="module-card">
+      <h2>📡 Live Radar</h2>
       <iframe
         class="radar-frame"
         src="https://radar.weather.gov/?settings=v1_eyJ0eXBlIjoiYmFzaWMiLCJ6b29tIjoxMCwibGF0IjoxOC4yLCJsb24iOi04NC4zLCJvdmVybGF5cyI6WyJyYWRhciJdfQ=="
@@ -75,7 +136,7 @@
 
   </main>
 
-  <script type="module" src="/assets/js/weather.js"></script>
+  <script type="module" src="/pages/assets/js/weather/weather.js"></script>
 
 </body>
 </html>
