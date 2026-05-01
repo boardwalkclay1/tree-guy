@@ -18,41 +18,49 @@
 
   <!-- TOP BAR -->
   <div class="rtg-topbar">
+
+    <!-- LEFT SIDE: LOGO + WEATHER WIDGET -->
     <div class="rtg-topbar-left">
       <img src="/public/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
-      <div class="rtg-topbar-title">REAL TREE GUY OS</div>
+
+      <!-- WEATHER WIDGET (LIVE) -->
+      <div class="weather-widget">
+        <a href="/modules/weather/weather.html" class="weather-link">
+          <span id="weatherTemp">--°</span>
+          <span id="weatherIcon">⛅</span>
+        </a>
+      </div>
     </div>
 
+    <!-- CENTER: CLOCK -->
     <div class="rtg-topbar-center">
       <div id="rtgClock" class="rtg-clock">--:--:--</div>
     </div>
 
+    <!-- RIGHT SIDE: LINKS + BURGER -->
     <div class="rtg-topbar-right">
-      <a href="/index.html" class="rtg-topbar-link">RTG Online</a>
+      <a href="/modules/weather/weather.html" class="rtg-topbar-link">Weather</a>
+      <a href="/index.html" class="rtg-topbar-link">Home</a>
+
       <button class="rtg-burger" id="rtgBurger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
     </div>
+
   </div>
 
   <!-- SIDEBAR -->
   <nav class="rtg-sidemenu" id="rtgSidemenu">
 
     <div class="rtg-menu-item">
-      <button class="rtg-menu-btn">🏠 RTG Online Home ▾</button>
+      <button class="rtg-menu-btn">🏠 Home ▾</button>
       <div class="rtg-menu-desc">Main portal for Real Tree Guy Online services.</div>
-      <a href="/index.html" class="rtg-menu-link">Open RTG Online</a>
-    </div>
-
-    <div class="rtg-menu-item">
-      <button class="rtg-menu-btn">🌳 Tree Guy Dashboard ▾</button>
-      <div class="rtg-menu-desc">Your main dashboard for all tree service tools.</div>
-      <a href="/treeguy/dashboard.html" class="rtg-menu-link">Open Dashboard</a>
+      <a href="/index.html" class="rtg-menu-link">Open Home</a>
     </div>
 
     <div class="rtg-menu-item">
       <button class="rtg-menu-btn">👤 Profile ▾</button>
-      <div class="rtg-menu-desc">Manage your Real Tree Guy account and settings.</div>
+      <div class="rtg-menu-desc">Manage your account and settings.</div>
       <a href="/modules/profile/profile.html" class="rtg-menu-link">Open Profile</a>
     </div>
 
@@ -93,8 +101,8 @@
     </div>
 
     <div class="rtg-menu-item">
-      <button class="rtg-menu-btn">🛒 Real Tree Shop ▾</button>
-      <div class="rtg-menu-desc">Buy gear, tools, and Real Tree Guy merch.</div>
+      <button class="rtg-menu-btn">🛒 Shop ▾</button>
+      <div class="rtg-menu-desc">Buy gear, tools, and merch.</div>
       <a href="/modules/shop/real-tree-shop.html" class="rtg-menu-link">Open Shop</a>
     </div>
 
