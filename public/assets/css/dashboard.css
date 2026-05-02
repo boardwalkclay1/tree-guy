@@ -6,7 +6,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: #0f3d0f;
+  background: #0f3d0f; /* solid green */
   font-family: system-ui, sans-serif;
   color: #fff;
   overflow-x: hidden;
@@ -18,7 +18,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 18px;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   border-bottom: 2px solid #2e6b33;
   backdrop-filter: blur(4px);
 }
@@ -37,6 +37,20 @@ body {
   object-fit: cover;
 }
 
+/* WEATHER LINK */
+.weather-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffcc99;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* CLOCK */
 .rtg-clock {
   font-size: 1.3rem;
   font-weight: 800;
@@ -44,6 +58,7 @@ body {
   text-shadow: 0 0 8px #ff8c42;
 }
 
+/* TOPBAR LINK */
 .rtg-topbar-link {
   color: #ff8c42;
   font-weight: 700;
@@ -67,7 +82,7 @@ body {
   display: block;
   height: 4px;
   border-radius: 4px;
-  background: #ff8c42;
+  background: #ff8c42; /* orange burger */
   transition: 0.25s ease;
 }
 
@@ -267,7 +282,10 @@ body {
   transform: translateX(8px);
 }
 
-/* BOTTOM BUTTONS */
+/* ============================================
+   BOTTOM BUTTONS
+   ============================================ */
+
 .rtg-bottom-buttons {
   display: flex;
   justify-content: center;
@@ -283,6 +301,7 @@ body {
   color: #fff;
   background: transparent;
   border: 3px solid #ff8c42;
+  text-decoration: none;
   transition: 0.25s ease;
 }
 
