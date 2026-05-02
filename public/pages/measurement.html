@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
+
+  <!-- GLOBAL + DASHBOARD STYLE SYSTEM -->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
   <link rel="stylesheet" href="/assets/css/measurement.css">
 
   <!-- CORE ENGINE -->
@@ -17,16 +21,99 @@
 
 <body>
 
+  <!-- TOP BAR (MATCHES DASHBOARD) -->
+  <div class="rtg-topbar">
+
+    <div class="rtg-topbar-left">
+      <img src="/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
+
+      <div class="weather-widget">
+        <a href="/pages/weather.html" class="weather-link">
+          <span id="weatherTemp">--°</span>
+          <span id="weatherIcon">⛅</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="rtg-topbar-center">
+      <div id="rtgClock" class="rtg-clock">--:--:--</div>
+    </div>
+
+    <div class="rtg-topbar-right">
+      <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
+
+      <button class="rtg-burger" id="rtgBurger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR (MATCHES DASHBOARD) -->
+  <nav class="rtg-sidemenu" id="rtgSidemenu">
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🏠 Home ▾</button>
+      <div class="rtg-menu-desc">Main portal for Real Tree Guy Online services.</div>
+      <a href="/pages/dashboard.html" class="rtg-menu-link">Open Home</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📏 Measurement ▾</button>
+      <div class="rtg-menu-desc">Tree measurement tools and analysis.</div>
+      <a href="/pages/measurement.html" class="rtg-menu-link">Open Measurement</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📋 Customers & Jobs ▾</button>
+      <div class="rtg-menu-desc">Track customers, quotes, and job details.</div>
+      <a href="/pages/customers.html" class="rtg-menu-link">Open Customers</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📄 Contracts ▾</button>
+      <div class="rtg-menu-desc">Create and manage service contracts.</div>
+      <a href="/pages/contracts.html" class="rtg-menu-link">Open Contracts</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">📅 Calendar ▾</button>
+      <div class="rtg-menu-desc">Schedule jobs and manage your workday.</div>
+      <a href="/pages/calendar.html" class="rtg-menu-link">Open Calendar</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🪧 Cards & Flyers ▾</button>
+      <div class="rtg-menu-desc">Design and print promotional materials.</div>
+      <a href="/pages/flyers.html" class="rtg-menu-link">Open Flyers</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🗺️ Real Tree Map ▾</button>
+      <div class="rtg-menu-desc">Find tree service resources near you.</div>
+      <a href="/pages/map.html" class="rtg-menu-link">Open Map</a>
+    </div>
+
+    <div class="rtg-menu-item">
+      <button class="rtg-menu-btn">🛒 Shop ▾</button>
+      <div class="rtg-menu-desc">Buy gear, tools, and merch.</div>
+      <a href="/pages/shop.html" class="rtg-menu-link">Open Shop</a>
+    </div>
+
+  </nav>
+
+  <!-- HEADER -->
   <header class="rtg-header">
-    <h1>🌲 Real Tree Guy Measurement Suite</h1>
-    <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
+    <h1 class="rtg-title">TREE MEASUREMENT SUITE</h1>
+    <p class="rtg-subtitle">Live Sensors • Photo Tools • Manual Tools • Advanced Analysis</p>
   </header>
 
+  <!-- MAIN CONTENT -->
   <main class="measurement-shell">
 
-    <!-- AUTO SENSOR STATUS -->
-    <section class="sensor-status">
-      <h3>📡 Sensor Status</h3>
+    <!-- SENSOR STATUS -->
+    <section class="module-card sensor-status">
+      <h2>📡 Sensor Status</h2>
       <div id="gps-status">GPS: <span>Loading…</span></div>
       <div id="compass-status">Compass: <span>Loading…</span></div>
       <div id="orientation-status">Orientation: <span>Loading…</span></div>
@@ -35,7 +122,7 @@
     <!-- TOOL GRID -->
     <section class="tool-grid">
 
-      <div class="tool-card" data-tool="manual">
+      <div class="tool-card">
         <h2>📐 Manual Measurement</h2>
         <p>Enter distance, angle, circumference, and calculate height, DBH, and fall zone.</p>
         <button class="rtg-btn open-tool" data-target="/pages/measurement/manual/manual.html">
@@ -43,7 +130,7 @@
         </button>
       </div>
 
-      <div class="tool-card" data-tool="photo">
+      <div class="tool-card">
         <h2>📸 Photo Measurement</h2>
         <p>Upload a photo, mark points, set a reference object, and calculate height/width.</p>
         <button class="rtg-btn open-tool" data-target="/pages/measurement/photo/photo.html">
@@ -51,7 +138,7 @@
         </button>
       </div>
 
-      <div class="tool-card" data-tool="live">
+      <div class="tool-card">
         <h2>🎥 Live Camera Measurement</h2>
         <p>Use your camera to mark the base, tilt up, and measure height in real time.</p>
         <button class="rtg-btn open-tool" data-target="/pages/measurement/live/live.html">
@@ -59,7 +146,7 @@
         </button>
       </div>
 
-      <div class="tool-card" data-tool="distance">
+      <div class="tool-card">
         <h2>📍 Distance Between Objects</h2>
         <p>Measure tree-to-tree, tree-to-house, or any two GPS points.</p>
         <button class="rtg-btn open-tool" data-target="/pages/measurement/distance/distance.html">
@@ -67,7 +154,7 @@
         </button>
       </div>
 
-      <div class="tool-card" data-tool="advanced">
+      <div class="tool-card">
         <h2>🧠 Advanced Analysis</h2>
         <p>Fall zone prediction, hazard scoring, triangulation, crown spread, and more.</p>
         <button class="rtg-btn open-tool" data-target="/pages/measurement/advanced/advanced.html">
@@ -79,13 +166,18 @@
 
   </main>
 
+  <!-- FOOTER -->
+  <footer class="rtg-footer">
+    <p>Real Tree Guy • Modular Static App</p>
+  </footer>
+
+  <!-- JS: CLOCK + SIDEBAR + TOOL NAV -->
+  <script src="/assets/js/dashboard.js"></script>
+
   <script type="module">
     import { Sensors } from "/pages/measurement/measurement.js";
     import { MeasurementAdvanced } from "/pages/measurement/measurement-advanced.js";
 
-    /* ============================
-       AUTO-INIT SENSORS
-       ============================ */
     async function initSensors() {
       try {
         await Sensors.initGPS();
@@ -109,7 +201,6 @@
             `β ${Sensors.orientation.beta?.toFixed(1)}°`;
         }
 
-        // Feed advanced engine
         MeasurementAdvanced.tickSensorFusion();
 
       }, 200);
@@ -117,10 +208,6 @@
 
     initSensors();
 
-
-    /* ============================
-       TOOL NAVIGATION
-       ============================ */
     document.querySelectorAll(".open-tool").forEach(btn => {
       btn.addEventListener("click", () => {
         window.location.href = btn.dataset.target;
