@@ -1,13 +1,3 @@
-/* BACKGROUND controlled by JS */
-body {
-  margin: 0;
-  padding: 0;
-  background: #0f3d0f;
-  font-family: system-ui, sans-serif;
-  color: #fff;
-  overflow-x: hidden;
-}
-
 /* TOP BAR */
 .rtg-topbar {
   display: flex;
@@ -19,6 +9,14 @@ body {
   backdrop-filter: blur(4px);
 }
 
+/* LEFT / RIGHT GROUPS */
+.rtg-topbar-left,
+.rtg-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* even spacing */
+}
+
 .rtg-logo {
   width: 52px;
   height: 52px;
@@ -26,6 +24,7 @@ body {
   object-fit: cover;
 }
 
+/* CLOCK */
 .rtg-clock {
   font-size: 1.3rem;
   font-weight: 800;
@@ -33,10 +32,13 @@ body {
   text-shadow: 0 0 8px #ff8c42;
 }
 
+/* WEATHER LINK */
 .rtg-topbar-link {
   color: #ff8c42;
   font-weight: 700;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* BURGER */
@@ -48,46 +50,22 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center; /* center bars */
   cursor: pointer;
 }
 
 .rtg-burger span {
+  width: 100%;
   height: 4px;
   border-radius: 4px;
   background: #ff8c42;
 }
 
-/* SIDEBAR */
-.rtg-sidemenu {
-  position: fixed;
-  top: 0;
-  left: -260px;
-  width: 260px;
-  height: 100vh;
-  background: rgba(0,0,0,0.85);
-  padding: 20px;
-  transition: 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  z-index: 9999;
-}
-
-.rtg-sidemenu.open {
-  left: 0;
-}
-
-.rtg-menu-link {
-  color: #ffcc99;
-  font-size: 1.1rem;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-/* MAIN */
+/* HEADER (title lower by ~0.5 inch ≈ 48px) */
+.rtg-header,
 .rtg-main {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 88px; /* was ~40px, now lower */
 }
 
 .rtg-title {
@@ -98,39 +76,5 @@ body {
 
 .rtg-subtitle {
   font-size: 1.1rem;
-  color: #9ddf9d;
-}
-
-/* GRID */
-.rtg-grid {
-  margin: 40px auto;
-  width: 90%;
-  max-width: 900px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-}
-
-.rtg-card {
-  padding: 20px;
-  background: rgba(0,0,0,0.55);
-  border: 2px solid #ff8c42;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.1rem;
-  transition: 0.25s ease;
-}
-
-.rtg-card:hover {
-  background: #ff8c42;
-  color: #000;
-}
-
-/* FOOTER */
-.rtg-footer {
-  text-align: center;
-  padding: 20px;
   color: #9ddf9d;
 }
