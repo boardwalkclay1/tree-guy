@@ -1,8 +1,8 @@
-/* BACKGROUND = rtg-weather */
+/* BACKGROUND controlled by JS */
 body {
   margin: 0;
   padding: 0;
-  background: url('/assets/img/rtg-weather.jpg') center/cover no-repeat fixed;
+  background: #0f3d0f;
   font-family: system-ui, sans-serif;
   color: #fff;
   overflow-x: hidden;
@@ -70,6 +70,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  z-index: 9999;
 }
 
 .rtg-sidemenu.open {
