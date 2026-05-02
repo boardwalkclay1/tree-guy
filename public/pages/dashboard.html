@@ -1,342 +1,68 @@
-/* ============================================
-   REAL TREE GUY — DASHBOARD (FLEX BRANCH TREE)
-   ============================================ */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>REAL TREE GUY – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* BACKGROUND */
-body {
-  margin: 0;
-  padding: 0;
-  background: #0f3d0f; /* solid green */
-  font-family: system-ui, sans-serif;
-  color: #fff;
-  overflow-x: hidden;
-}
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-/* TOP BAR */
-.rtg-topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 18px;
-  background: rgba(0, 0, 0, 0.75);
-  border-bottom: 2px solid #2e6b33;
-  backdrop-filter: blur(4px);
-}
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
 
-.rtg-topbar-left,
-.rtg-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+<body>
 
-.rtg-logo {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
-  object-fit: cover;
-}
+  <!-- TOP BAR -->
+  <div class="rtg-topbar">
+    <div class="rtg-topbar-left">
+      <img src="/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
+    </div>
 
-/* WEATHER LINK */
-.weather-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.4);
-  color: #ffcc99;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
+    <div class="rtg-topbar-center">
+      <div id="rtgClock" class="rtg-clock">--:--:--</div>
+    </div>
 
-/* CLOCK */
-.rtg-clock {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #ff8c42;
-  text-shadow: 0 0 8px #ff8c42;
-}
+    <div class="rtg-topbar-right">
+      <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
+      <button class="rtg-burger" id="rtgBurger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
 
-/* TOPBAR LINK */
-.rtg-topbar-link {
-  color: #ff8c42;
-  font-weight: 700;
-  text-decoration: none;
-}
+  <!-- SIDEBAR -->
+  <nav class="rtg-sidemenu" id="rtgSidemenu">
+    <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
+    <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
+    <a href="/pages/customers.html" class="rtg-menu-link">Customers & Jobs</a>
+    <a href="/pages/measurement.html" class="rtg-menu-link">Tree Measurement</a>
+    <a href="/pages/contracts.html" class="rtg-menu-link">Contracts</a>
+    <a href="/pages/calendar.html" class="rtg-menu-link">Calendar</a>
+    <a href="/pages/flyers.html" class="rtg-menu-link">Cards & Flyers</a>
+    <a href="/pages/map.html" class="rtg-menu-link">Real Tree Map</a>
+    <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
+  </nav>
 
-/* BURGER */
-.rtg-burger {
-  width: 34px;
-  height: 26px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-}
+  <!-- MAIN DASHBOARD -->
+  <main class="rtg-main">
+    <h1 class="rtg-title">REAL TREE GUY</h1>
+    <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
 
-.rtg-burger span {
-  display: block;
-  height: 4px;
-  border-radius: 4px;
-  background: #ff8c42; /* orange burger */
-  transition: 0.25s ease;
-}
+    <div class="rtg-grid">
+      <a href="/pages/profile.html" class="rtg-card">Profile</a>
+      <a href="/pages/customers.html" class="rtg-card">Customers & Jobs</a>
+      <a href="/pages/measurement.html" class="rtg-card">Tree Measurement</a>
+      <a href="/pages/contracts.html" class="rtg-card">Contracts</a>
+      <a href="/pages/calendar.html" class="rtg-card">Calendar</a>
+      <a href="/pages/flyers.html" class="rtg-card">Cards & Flyers</a>
+      <a href="/pages/map.html" class="rtg-card">Real Tree Map</a>
+      <a href="/pages/shop.html" class="rtg-card">Shop</a>
+    </div>
+  </main>
 
-.rtg-burger.open span:nth-child(1) {
-  transform: translateY(10px) rotate(45deg);
-}
+  <footer class="rtg-footer">
+    <p>Real Tree Guy • Modular Static App</p>
+  </footer>
 
-.rtg-burger.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.rtg-burger.open span:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
-}
-
-/* SIDEBAR */
-.rtg-sidemenu {
-  position: fixed;
-  top: 0;
-  left: -260px;
-  width: 260px;
-  height: 100vh;
-  background: #111;
-  padding: 20px;
-  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.4);
-  transition: left 0.3s ease;
-  z-index: 9999;
-}
-
-.rtg-sidemenu.open {
-  left: 0;
-}
-
-.rtg-menu-item {
-  margin-bottom: 18px;
-}
-
-.rtg-menu-btn {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: #ff8c42;
-  font-weight: 700;
-  font-size: 1rem;
-  text-align: left;
-  padding: 6px 0;
-  cursor: pointer;
-}
-
-.rtg-menu-desc,
-.rtg-menu-link {
-  display: none;
-  color: #ffcc99;
-  font-size: 0.9rem;
-}
-
-.rtg-menu-item.open .rtg-menu-desc,
-.rtg-menu-item.open .rtg-menu-link {
-  display: block;
-}
-
-/* HEADER */
-.rtg-header {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.rtg-title {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #caffca;
-  text-shadow: 0 0 12px #1f5f2b;
-}
-
-.rtg-subtitle {
-  font-size: 1.1rem;
-  color: #9ddf9d;
-}
-
-/* ============================================
-   TREE SYSTEM — STABLE FLEX VERSION
-   ============================================ */
-
-.tree-menu {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-}
-
-/* keep tree centered but not huge */
-.tree {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto 80px; /* extra bottom space so it doesn't hit buttons */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-/* CANOPY: three touching circles (center, left, right) */
-.canopy {
-  position: relative;
-  width: 180px;
-  height: 120px;
-  background: #1f5f2b;
-  border-radius: 50%;
-  box-shadow: 0 0 20px rgba(46, 107, 51, 0.6);
-  margin-bottom: 0;
-}
-
-.canopy::before,
-.canopy::after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  width: 140px;
-  height: 100px;
-  background: #1f5f2b;
-  border-radius: 50%;
-}
-
-.canopy::before {
-  left: -70px;  /* left circle touching center */
-}
-
-.canopy::after {
-  right: -70px; /* right circle touching center */
-}
-
-/* TRUNK: log style */
-.trunk {
-  width: 80px;
-  height: 160px;
-  background: #5a3c1a;
-  border-radius: 20px;
-  margin-top: -10px;  /* tuck slightly into canopy */
-  margin-bottom: 10px;
-  position: relative;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-}
-
-/* BRANCH ROWS */
-.branch-row {
-  width: 100%;
-  display: flex;
-  margin: 6px 0;
-  padding: 0 10px;
-}
-
-/* left/right alignment */
-.branch-row.left {
-  justify-content: flex-start;
-}
-
-.branch-row.right {
-  justify-content: flex-end;
-}
-
-/* BRANCH */
-.branch {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* vertical stacking around trunk – gentler offsets so it stays near trunk */
-.branch-row:nth-of-type(1) { margin-top: -80px; }  /* high near canopy */
-.branch-row:nth-of-type(2) { margin-top: -60px; }
-.branch-row:nth-of-type(3) { margin-top: -40px; }
-.branch-row:nth-of-type(4) { margin-top: -20px; }
-.branch-row:nth-of-type(5) { margin-top: 0; }
-.branch-row:nth-of-type(6) { margin-top: 10px; }
-.branch-row:nth-of-type(7) { margin-top: 20px; }
-
-/* BRANCH VISUALS: bar + bush at end */
-.branch-bar {
-  width: 90px;
-  height: 14px;
-  background: #5a3c1a;
-  border-radius: 7px;
-}
-
-.branch-bush {
-  width: 42px;
-  height: 42px;
-  background: #1f5f2b;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(46, 107, 51, 0.6);
-}
-
-/* BUTTONS ON BRANCHES */
-.branch-btn {
-  padding: 8px 14px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 2px solid #ff8c42;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  color: #ffffff;
-  text-decoration: none;
-  transition: 0.25s ease;
-  white-space: nowrap;
-}
-
-.branch-btn:hover {
-  background: #ff8c42;
-  color: #000;
-}
-
-/* SLIDE HOVER ANIMATION */
-.branch.slide {
-  transition: transform 0.25s ease;
-}
-
-.branch-row.left .branch.slide:hover {
-  transform: translateX(-8px);
-}
-
-.branch-row.right .branch.slide:hover {
-  transform: translateX(8px);
-}
-
-/* ============================================
-   BOTTOM BUTTONS
-   ============================================ */
-
-.rtg-bottom-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 0 0 50px 0; /* tree already has 80px bottom margin */
-}
-
-.rtg-bottom-btn {
-  padding: 14px 26px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  border-radius: 10px;
-  color: #fff;
-  background: transparent;
-  border: 3px solid #ff8c42;
-  text-decoration: none;
-  transition: 0.25s ease;
-}
-
-.rtg-bottom-btn:hover {
-  background: #ff8c42;
-  color: #000;
-}
-
-/* FOOTER */
-.rtg-footer {
-  text-align: center;
-  padding: 20px;
-  color: #9ddf9d;
-  font-size: 0.9rem;
-}
+  <script src="/assets/js/dashboard.js"></script>
+</body>
+</html>
