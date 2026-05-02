@@ -1,5 +1,5 @@
 /* ============================================
-   REAL TREE GUY — DASHBOARD (BRANCH TREE VERSION)
+   REAL TREE GUY — DASHBOARD (FLEX BRANCH TREE)
    ============================================ */
 
 /* BACKGROUND */
@@ -147,7 +147,10 @@ body {
   color: #9ddf9d;
 }
 
-/* TREE SYSTEM */
+/* ============================================
+   TREE SYSTEM — STABLE FLEX VERSION
+   ============================================ */
+
 .tree-menu {
   display: flex;
   justify-content: center;
@@ -155,56 +158,70 @@ body {
 }
 
 .tree {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  width: 360px;
-  height: 650px;
 }
 
 /* CANOPY */
 .canopy {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   width: 280px;
   height: 180px;
   background: #1f5f2b;
   border-radius: 50%;
   box-shadow: 0 0 20px rgba(46, 107, 51, 0.6);
+  margin-bottom: 10px;
 }
 
 /* TRUNK */
 .trunk {
-  position: absolute;
-  top: 180px;
-  left: 50%;
-  transform: translateX(-50%);
   width: 70px;
   height: 240px;
   background: #5a3c1a;
   border-radius: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
 }
 
-/* BRANCHES */
+/* BRANCH ROWS */
+.branch-row {
+  width: 100%;
+  display: flex;
+  margin: 10px 0;
+  padding: 0 10px;
+}
+
+/* left/right alignment */
+.branch-row.left {
+  justify-content: flex-start;
+}
+
+.branch-row.right {
+  justify-content: flex-end;
+}
+
+/* BRANCH */
 .branch {
-  position: absolute;
-  width: 220px;
-  height: 60px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* BULLETPROOF BRANCH POSITIONS */
-.b1 .branch { top: 70px; left: -150px; }
-.b2 .branch { top: 130px; right: -150px; }
-.b3 .branch { top: 190px; left: -150px; }
-.b4 .branch { top: 250px; right: -150px; }
-.b5 .branch { top: 310px; left: -150px; }
-.b6 .branch { top: 370px; right: -150px; }
-.b7 .branch { top: 430px; left: -150px; }
+/* vertical overlap with trunk */
+.branch-row:nth-of-type(1) { margin-top: -140px; }
+.branch-row:nth-of-type(2) { margin-top: -110px; }
+.branch-row:nth-of-type(3) { margin-top: -80px; }
+.branch-row:nth-of-type(4) { margin-top: -50px; }
+.branch-row:nth-of-type(5) { margin-top: -20px; }
+.branch-row:nth-of-type(6) { margin-top: 10px; }
+.branch-row:nth-of-type(7) { margin-top: 40px; }
 
-/* branch visuals */
+/* BRANCH VISUALS */
 .branch-bar {
   width: 80px;
   height: 12px;
@@ -219,6 +236,7 @@ body {
   border-radius: 50%;
 }
 
+/* BUTTONS ON BRANCHES */
 .branch-btn {
   padding: 8px 14px;
   background: rgba(0, 0, 0, 0.5);
@@ -226,12 +244,27 @@ body {
   border-radius: 8px;
   font-size: 0.95rem;
   color: #ffffff;
+  text-decoration: none;
   transition: 0.25s ease;
+  white-space: nowrap;
 }
 
 .branch-btn:hover {
   background: #ff8c42;
   color: #000;
+}
+
+/* SLIDE HOVER ANIMATION */
+.branch.slide {
+  transition: transform 0.25s ease;
+}
+
+.branch-row.left .branch.slide:hover {
+  transform: translateX(-8px);
+}
+
+.branch-row.right .branch.slide:hover {
+  transform: translateX(8px);
 }
 
 /* BOTTOM BUTTONS */
