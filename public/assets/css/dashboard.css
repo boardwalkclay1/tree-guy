@@ -195,14 +195,14 @@ body {
   gap: 10px;
 }
 
-/* vertical positions */
-.branch-row:nth-child(3) .branch { top: 70px; left: -150px; }
-.branch-row:nth-child(4) .branch { top: 130px; right: -150px; }
-.branch-row:nth-child(5) .branch { top: 190px; left: -150px; }
-.branch-row:nth-child(6) .branch { top: 250px; right: -150px; }
-.branch-row:nth-child(7) .branch { top: 310px; left: -150px; }
-.branch-row:nth-child(8) .branch { top: 370px; right: -150px; }
-.branch-row:nth-child(9) .branch { top: 430px; left: -150px; }
+/* BULLETPROOF BRANCH POSITIONS */
+.b1 .branch { top: 70px; left: -150px; }
+.b2 .branch { top: 130px; right: -150px; }
+.b3 .branch { top: 190px; left: -150px; }
+.b4 .branch { top: 250px; right: -150px; }
+.b5 .branch { top: 310px; left: -150px; }
+.b6 .branch { top: 370px; right: -150px; }
+.b7 .branch { top: 430px; left: -150px; }
 
 /* branch visuals */
 .branch-bar {
