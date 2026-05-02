@@ -7,7 +7,9 @@
 
   <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
 
-  <!-- GLOBAL + DASHBOARD STYLE SYSTEM -->
+  <!-- CORE STYLE SYSTEM -->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
   <link rel="stylesheet" href="/assets/css/measurement.css">
 
   <!-- CORE ENGINE -->
@@ -19,7 +21,7 @@
 
 <body>
 
-  <!-- TOP BAR (MATCHES DASHBOARD) -->
+  <!-- TOP BAR -->
   <div class="rtg-topbar">
 
     <div class="rtg-topbar-left">
@@ -47,7 +49,7 @@
 
   </div>
 
-  <!-- SIDEBAR (MATCHES DASHBOARD) -->
+  <!-- SIDEBAR -->
   <nav class="rtg-sidemenu" id="rtgSidemenu">
 
     <div class="rtg-menu-item">
@@ -103,79 +105,191 @@
   <!-- HEADER -->
   <header class="rtg-header">
     <h1 class="rtg-title">TREE MEASUREMENT SUITE</h1>
-    <p class="rtg-subtitle">Live Sensors • Photo Tools • Manual Tools • Advanced Analysis</p>
+    <p class="rtg-subtitle">Manual • Photo • Live • Distance • Advanced</p>
   </header>
 
-  <!-- MAIN CONTENT -->
+  <!-- SHELL -->
   <main class="measurement-shell">
 
-    <!-- SENSOR STATUS -->
-    <section class="module-card sensor-status">
-      <h2>📡 Sensor Status</h2>
-      <div id="gps-status">GPS: <span>Loading…</span></div>
-      <div id="compass-status">Compass: <span>Loading…</span></div>
-      <div id="orientation-status">Orientation: <span>Loading…</span></div>
-    </section>
+    <!-- LEFT: MODE BUTTONS -->
+    <aside class="measurement-modes">
+      <button class="mode-btn active" data-mode="manual">📐 Manual</button>
+      <button class="mode-btn" data-mode="photo">📸 Photo</button>
+      <button class="mode-btn" data-mode="live">🎥 Live Camera</button>
+      <button class="mode-btn" data-mode="distance">📍 Distance</button>
+      <button class="mode-btn" data-mode="advanced">🧠 Advanced</button>
 
-    <!-- TOOL GRID -->
-    <section class="tool-grid">
+      <section class="sensor-status module-card">
+        <h2>📡 Sensor Status</h2>
+        <div id="gps-status">GPS: <span>Loading…</span></div>
+        <div id="compass-status">Compass: <span>Loading…</span></div>
+        <div id="orientation-status">Orientation: <span>Loading…</span></div>
+      </section>
+    </aside>
 
-      <div class="tool-card">
-        <h2>📐 Manual Measurement</h2>
-        <p>Enter distance, angle, circumference, and calculate height, DBH, and fall zone.</p>
-        <button class="rtg-btn open-tool" data-target="/pages/measurement/manual/manual.html">
-          Open Manual Tool
-        </button>
-      </div>
+    <!-- RIGHT: MODE PANELS -->
+    <section class="measurement-panels">
 
-      <div class="tool-card">
-        <h2>📸 Photo Measurement</h2>
-        <p>Upload a photo, mark points, set a reference object, and calculate height/width.</p>
-        <button class="rtg-btn open-tool" data-target="/pages/measurement/photo/photo.html">
-          Open Photo Tool
-        </button>
-      </div>
+      <!-- MANUAL -->
+      <section class="mode-panel active" id="mode-manual">
+        <div class="module-card">
+          <h2>📐 Manual Measurement</h2>
+          <p>Enter distance, angle, and circumference to compute height, DBH, and fall zone.</p>
 
-      <div class="tool-card">
-        <h2>🎥 Live Camera Measurement</h2>
-        <p>Use your camera to mark the base, tilt up, and measure height in real time.</p>
-        <button class="rtg-btn open-tool" data-target="/pages/measurement/live/live.html">
-          Open Live Tool
-        </button>
-      </div>
+          <div class="manual-grid">
+            <label>
+              Distance to Tree (ft)
+              <input type="number" id="manual-distance" step="0.1">
+            </label>
 
-      <div class="tool-card">
-        <h2>📍 Distance Between Objects</h2>
-        <p>Measure tree-to-tree, tree-to-house, or any two GPS points.</p>
-        <button class="rtg-btn open-tool" data-target="/pages/measurement/distance/distance.html">
-          Open Distance Tool
-        </button>
-      </div>
+            <label>
+              Angle to Top (°)
+              <input type="number" id="manual-angle" step="0.1">
+            </label>
 
-      <div class="tool-card">
-        <h2>🧠 Advanced Analysis</h2>
-        <p>Fall zone prediction, hazard scoring, triangulation, crown spread, and more.</p>
-        <button class="rtg-btn open-tool" data-target="/pages/measurement/advanced/advanced.html">
-          Open Advanced Tools
-        </button>
-      </div>
+            <label>
+              Circumference at Breast Height (in)
+              <input type="number" id="manual-circumference" step="0.1">
+            </label>
+          </div>
+
+          <button class="rtg-btn" id="manual-calc">Calculate</button>
+
+          <div class="manual-results">
+            <div>Height: <span id="manual-height">--</span></div>
+            <div>DBH: <span id="manual-dbh">--</span></div>
+            <div>Fall Zone: <span id="manual-fallzone">--</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHOTO -->
+      <section class="mode-panel" id="mode-photo">
+        <div class="photo-shell module-card">
+          <div class="photo-controls">
+            <h2>📸 Photo Measurement</h2>
+            <p>Upload a photo, set a reference, and mark points.</p>
+
+            <input type="file" id="photo-input" accept="image/*">
+
+            <div class="photo-info">
+              <label>
+                Reference Height (ft)
+                <input type="number" id="photo-ref-height" step="0.1">
+              </label>
+              <button class="rtg-btn" id="photo-calc">Calculate</button>
+            </div>
+
+            <div class="photo-results">
+              <div>Estimated Height: <span id="photo-height">--</span></div>
+              <div>Estimated Width: <span id="photo-width">--</span></div>
+            </div>
+          </div>
+
+          <div class="photo-stage" id="photo-stage">
+            <!-- background image set via JS -->
+            <div class="photo-overlay" id="photo-overlay">
+              <!-- markers / guides can be drawn here by measurement.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIVE CAMERA -->
+      <section class="mode-panel" id="mode-live">
+        <div class="module-card live-shell">
+          <h2>🎥 Live Camera Measurement</h2>
+          <p>Mark base, tilt up, and compute height in real time.</p>
+
+          <div class="live-layout">
+            <div class="live-video-wrap">
+              <video id="live-video" autoplay playsinline></video>
+              <div class="live-reticle"></div>
+            </div>
+
+            <div class="live-controls">
+              <button class="rtg-btn" id="live-start">Start Camera</button>
+              <button class="rtg-btn" id="live-mark-base">Mark Base</button>
+              <button class="rtg-btn" id="live-mark-top">Mark Top</button>
+
+              <div class="live-results">
+                <div>Estimated Height: <span id="live-height">--</span></div>
+                <div>Tilt Angle: <span id="live-angle">--</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DISTANCE -->
+      <section class="mode-panel" id="mode-distance">
+        <div class="module-card">
+          <h2>📍 Distance Between Objects</h2>
+          <p>Use GPS to measure distance between two points.</p>
+
+          <div class="distance-grid">
+            <button class="rtg-btn" id="distance-set-a">Set Point A (Here)</button>
+            <button class="rtg-btn" id="distance-set-b">Set Point B (Here)</button>
+          </div>
+
+          <div class="distance-results">
+            <div>Point A: <span id="distance-a">--</span></div>
+            <div>Point B: <span id="distance-b">--</span></div>
+            <div>Distance: <span id="distance-value">--</span></div>
+            <div>Bearing: <span id="distance-bearing">--</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADVANCED -->
+      <section class="mode-panel" id="mode-advanced">
+        <div class="module-card">
+          <h2>🧠 Advanced Analysis</h2>
+          <p>Fall zone prediction, hazard scoring, triangulation, crown spread, and more.</p>
+
+          <div class="advanced-results">
+            <div>Hazard Score: <span id="adv-hazard">--</span></div>
+            <div>Fall Zone: <span id="adv-fallzone">--</span></div>
+            <div>Crown Spread: <span id="adv-crown">--</span></div>
+            <div>Notes: <span id="adv-notes">--</span></div>
+          </div>
+        </div>
+      </section>
 
     </section>
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="rtg-footer">
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <!-- JS: CLOCK + SIDEBAR + TOOL NAV -->
+  <!-- DASHBOARD JS (clock + sidebar) -->
   <script src="/assets/js/dashboard.js"></script>
 
+  <!-- MEASUREMENT UI WIRING -->
   <script type="module">
     import { Sensors } from "/pages/measurement/measurement.js";
     import { MeasurementAdvanced } from "/pages/measurement/measurement-advanced.js";
 
+    // MODE SWITCHING
+    const modeButtons = document.querySelectorAll(".mode-btn");
+    const modePanels = document.querySelectorAll(".mode-panel");
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const mode = btn.dataset.mode;
+
+        modeButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        modePanels.forEach(panel => {
+          panel.classList.toggle("active", panel.id === `mode-${mode}`);
+        });
+      });
+    });
+
+    // SENSORS
     async function initSensors() {
       try {
         await Sensors.initGPS();
@@ -200,17 +314,41 @@
         }
 
         MeasurementAdvanced.tickSensorFusion();
-
       }, 200);
     }
-
     initSensors();
 
-    document.querySelectorAll(".open-tool").forEach(btn => {
-      btn.addEventListener("click", () => {
-        window.location.href = btn.dataset.target;
+    // PHOTO BACKGROUND
+    const photoInput = document.getElementById("photo-input");
+    const photoStage = document.getElementById("photo-stage");
+
+    if (photoInput && photoStage) {
+      photoInput.addEventListener("change", e => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        photoStage.style.backgroundImage = `url('${url}')`;
       });
-    });
+    }
+
+    // LIVE CAMERA
+    const liveVideo = document.getElementById("live-video");
+    const liveStart = document.getElementById("live-start");
+
+    if (liveStart && liveVideo) {
+      liveStart.addEventListener("click", async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+          liveVideo.srcObject = stream;
+        } catch (e) {
+          console.error("Camera error", e);
+        }
+      });
+    }
+
+    // Manual / photo / distance / advanced buttons:
+    // Hook into your existing logic inside measurement.js / measurement-advanced.js
+    // by attaching listeners here or letting those modules bind to these IDs.
   </script>
 
 </body>
