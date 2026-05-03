@@ -200,3 +200,29 @@ body {
   color: #9ddf9d;
   font-size: 0.9rem;
 }
+/* TOP BAR */
+.rtg-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 28px; /* was 18px – brings both sides in a bit */
+  background: rgba(0,0,0,0.75);
+  border-bottom: 2px solid #2e6b33;
+  backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 1000;
+}
+
+.rtg-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: 12px;   /* move logo to the right */
+}
+
+.rtg-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-right: 12px;  /* move burger to the left (inward) */
+}
