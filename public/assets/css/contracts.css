@@ -1,138 +1,89 @@
 body {
-  background: #0d0f0d url("../../assets/icons/rtg-192.png")
-    center center / cover no-repeat fixed;
-  color: #e8ffe8;
-  font-family: system-ui, sans-serif;
   margin: 0;
-  padding: 0 0 40px;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+  background: #0b1b0b;
+  color: #fff;
 }
 
 .rtg-header {
-  text-align: center;
-  padding: 20px;
-  border-bottom: 2px solid #2e6b33;
-  background: rgba(0,0,0,0.4);
-}
-
-.rtg-header h1 {
-  font-size: 2rem;
-  color: #caffca;
-  margin: 0;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.85);
+  border-bottom: 1px solid #2e6b33;
 }
 
 .back-link {
-  display: inline-block;
-  margin-top: 8px;
-  color: #a8ffa8;
+  color: #ff8c42;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-.contract-card {
-  max-width: 700px;
-  margin: 30px auto;
-  padding: 24px;
-  background: rgba(20,35,20,0.85);
-  border-radius: 16px;
-  border: 1px solid #2e6b33;
-}
-
-h2 {
-  color: #caffca;
-  margin-top: 0;
-}
-
-label {
-  display: block;
-  margin-top: 14px;
-  font-size: 0.95rem;
-  color: #a8ffa8;
-  font-weight: bold;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 10px 14px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #2e6b33;
-  background: rgba(15,30,15,0.9);
-  color: #e8ffe8;
-  font-size: 0.95rem;
-}
-
-textarea {
-  height: 110px;
-}
-
-input:focus, textarea:focus {
-  outline: none;
-  border-color: #6aff6a;
-}
-
-.action-row {
+.contracts-shell {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.action-row button {
-  flex: 1;
-  min-width: 120px;
-  padding: 12px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: bold;
-}
-
-#fill {
-  background: #2e6b33;
-  color: #e8ffe8;
-}
-#fill:hover {
-  background: #3fa63f;
-}
-
-#send {
-  background: #1a4a8c;
-  color: #e8ffe8;
-}
-#send:hover {
-  background: #2260b8;
-}
-
-#save {
-  background: #6b3b2e;
-  color: #e8ffe8;
-}
-#save:hover {
-  background: #934e3d;
-}
-
-#calendar {
-  background: rgba(255,255,255,0.1);
-  color: #e8ffe8;
-}
-#calendar:hover {
-  background: rgba(255,255,255,0.18);
-}
-
-#previewBox {
-  margin-top: 20px;
-  white-space: pre-wrap;
-  font-family: monospace;
-  font-size: 0.85rem;
-  background: rgba(0,0,0,0.4);
+  justify-content: center;
   padding: 16px;
+}
+
+/* compact widget ~ small card */
+.contracts-widget {
+  width: 260px; /* ~2.7in on standard screens */
+  padding: 10px;
+  background: rgba(0,0,0,0.8);
   border-radius: 10px;
-  border: 1px solid #2e6b33;
-  min-height: 80px;
-  color: #d8ffd8;
+  border: 1px solid #ff8c42;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  font-size: 0.85rem;
+}
+
+.contracts-widget h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.field-row {
+  margin-bottom: 6px;
+}
+
+.field-row input,
+.field-row textarea {
+  width: 100%;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  font-size: 0.8rem;
+  background: #111;
+  color: #fff;
+}
+
+.btn-row {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.btn-row button {
+  flex: 1;
+  padding: 4px 0;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #ff8c42;
+  color: #000;
+  font-weight: 600;
+}
+
+.preview-box {
+  margin-top: 6px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #050805;
+  max-height: 140px;
+  overflow-y: auto;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  white-space: pre-wrap;
 }
