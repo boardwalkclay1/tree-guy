@@ -31,7 +31,6 @@ body {
   display: flex;
   align-items: center;
 
-  /* FIX: give the right side REAL space */
   padding-left: 20px;
   padding-right: 20px;
 
@@ -48,7 +47,7 @@ body {
   gap: 16px;
 }
 
-/* CENTER — FIX: prevent it from hogging space */
+/* CENTER — prevent it from hogging space */
 .rtg-topbar-center {
   flex: 0 1 auto;
   display: flex;
@@ -56,14 +55,14 @@ body {
   margin: 0 auto;
 }
 
-/* RIGHT — FIX: give it a minimum width + shift left */
+/* RIGHT — give it room + shift right 1/2 inch */
 .rtg-topbar-right {
   display: flex;
   align-items: center;
   gap: 20px;
 
-  min-width: 150px;      /* ← prevents clipping */
-  margin-right: 96px;    /* ← EXACT 1 inch left shift */
+  min-width: 150px;
+  margin-right: 48px; /* ← EXACT 1/2 inch to the right */
 }
 
 .rtg-logo {
@@ -88,7 +87,7 @@ body {
 }
 
 /* ============================================================
-   BURGER — HIDDEN BY DEFAULT
+   BURGER — 100% INVISIBLE UNTIL SIDEBAR OPENS
 ============================================================ */
 .rtg-burger {
   width: 34px;
@@ -97,12 +96,14 @@ body {
   border: none;
   background: transparent;
 
-  display: none; /* ← completely hidden */
-
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
+
+  visibility: hidden;   /* ← FIX */
+  opacity: 0;           /* ← FIX */
+  pointer-events: none; /* ← FIX */
 }
 
 .rtg-burger span {
@@ -110,6 +111,13 @@ body {
   height: 4px;
   border-radius: 4px;
   background: #ff8c42;
+}
+
+/* SHOW BURGER ONLY WHEN SIDEBAR IS OPEN */
+#rtgSidemenu.open + .rtg-topbar .rtg-burger {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ============================================================
@@ -135,13 +143,6 @@ body {
 
 .rtg-sidemenu.open {
   left: 0;
-}
-
-/* ============================================================
-   SHOW BURGER ONLY WHEN SIDEBAR IS OPEN
-============================================================ */
-#rtgSidemenu.open + .rtg-topbar .rtg-burger {
-  display: flex;
 }
 
 /* ============================================================
