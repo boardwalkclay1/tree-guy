@@ -1,6 +1,6 @@
 // ============================================================
-// REAL TREE GUY — DASHBOARD JS (FINAL BUILD)
-// Clock • Sidebar • Weather • Compass • Widgets
+// REAL TREE GUY — DASHBOARD JS (CLEAN VERSION)
+// No CSS logic • No layout logic • Pure functionality only
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,14 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const clockEl = document.getElementById("rtgClock");
 
   function updateClock() {
+    if (!clockEl) return;
     const now = new Date();
-    if (clockEl) {
-      clockEl.textContent = now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-    }
+    clockEl.textContent = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
   }
 
   updateClock();
@@ -33,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const logo = document.querySelector(".rtg-logo");
 
   function toggleMenu() {
+    if (!sidemenu) return;
     sidemenu.classList.toggle("open");
   }
 
@@ -59,6 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function applyWeatherBackground(code) {
+    const bgLayer = document.getElementById("rtgBackground");
+    if (!bgLayer) return;
+
     let bg = "/assets/img/weather/default.jpg";
 
     if (code === 0 || code === 1) bg = "/assets/img/weather/sunny.jpg";
@@ -68,13 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (code >= 71 && code <= 77) bg = "/assets/img/weather/snow.jpg";
     else if (code >= 95) bg = "/assets/img/weather/storm.jpg";
 
-    document.body.style.background = `url('${bg}') center/cover fixed`;
+    bgLayer.style.backgroundImage = `url('${bg}')`;
   }
 
   async function loadWeather() {
     const { lat, lon } = await getLocation();
     const data = await getWeather(lat, lon);
-
     if (data && data.current_weather) {
       applyWeatherBackground(data.current_weather.weathercode);
     }
@@ -84,22 +86,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // COMPASS (REAL DEVICE ORIENTATION)
+  // COMPASS
   // ============================================================
   const compassEl = document.getElementById("rtgCompass");
 
-  if (compassEl) {
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", e => {
-        if (e.webkitCompassHeading) {
-          compassEl.style.transform = `rotate(${e.webkitCompassHeading * -1}deg)`;
-        } else if (e.alpha !== null) {
-          compassEl.style.transform = `rotate(${e.alpha * -1}deg)`;
-        }
-      });
-    } else {
-      compassEl.style.opacity = "0.5";
-    }
+  if (compassEl && window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", e => {
+      if (e.webkitCompassHeading) {
+        compassEl.style.transform = `rotate(${e.webkitCompassHeading * -1}deg)`;
+      } else if (e.alpha !== null) {
+        compassEl.style.transform = `rotate(${e.alpha * -1}deg)`;
+      }
+    });
   }
 
 
@@ -117,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // WIDGET 1 — TODAY'S JOBS
+  // TODAY'S JOBS
   // ============================================================
   const JOB_KEY = "rtgJobs";
   let jobIndex = 0;
@@ -134,13 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderJob() {
-    const jobs = loadJobs();
     const display = document.getElementById("jobDisplay");
-
     if (!display) return;
 
+    const jobs = loadJobs();
+
     if (jobs.length === 0) {
-      display.innerHTML = `<p class="rtg-no-jobs">No jobs scheduled today.</p>`;
+      display.innerHTML = `<p>No jobs scheduled today.</p>`;
       return;
     }
 
@@ -170,7 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.geolocation.getCurrentPosition(pos => {
       const jobs = loadJobs();
       const job = jobs[jobIndex];
-
       job.savedLocation = `${pos.coords.latitude}, ${pos.coords.longitude}`;
       Storage.set(JOB_KEY, jobs);
       renderJob();
@@ -182,9 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!note) return;
 
     const jobs = loadJobs();
-    const job = jobs[jobIndex];
-
-    job.notes = note;
+    jobs[jobIndex].notes = note;
     Storage.set(JOB_KEY, jobs);
     renderJob();
   }
@@ -207,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // WIDGET 2 — JOB TIMER
+  // JOB TIMER
   // ============================================================
   let timerInterval;
   let seconds = 0;
@@ -218,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const timerReset = document.getElementById("timerReset");
 
   if (timerDisplay) {
-    timerStart.addEventListener("click", () => {
+    timerStart?.addEventListener("click", () => {
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
         seconds++;
@@ -226,11 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 1000);
     });
 
-    timerStop.addEventListener("click", () => {
-      clearInterval(timerInterval);
-    });
+    timerStop?.addEventListener("click", () => clearInterval(timerInterval));
 
-    timerReset.addEventListener("click", () => {
+    timerReset?.addEventListener("click", () => {
       clearInterval(timerInterval);
       seconds = 0;
       timerDisplay.textContent = "00:00:00";
@@ -246,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // WIDGET 3 — PHOTO CAPTURE
+  // PHOTO CAPTURE
   // ============================================================
   const photoVideo = document.getElementById("photoPreview");
   const photoGallery = document.getElementById("photoGallery");
@@ -256,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => photoVideo.srcObject = stream);
 
-    takePhoto.addEventListener("click", () => {
+    takePhoto?.addEventListener("click", () => {
       const canvas = document.createElement("canvas");
       canvas.width = photoVideo.videoWidth;
       canvas.height = photoVideo.videoHeight;
@@ -266,15 +259,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const img = document.createElement("img");
       img.src = canvas.toDataURL("image/png");
-      img.className = "rtg-photo-thumb";
 
-      photoGallery.appendChild(img);
+      photoGallery?.appendChild(img);
     });
   }
 
 
   // ============================================================
-  // WIDGET 4 — QUICK DIAL
+  // QUICK DIAL
   // ============================================================
   const quickDialList = document.getElementById("quickDialList");
 
@@ -283,18 +275,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     customers.forEach(c => {
       const item = document.createElement("div");
-      item.className = "quickdial-item";
 
       item.innerHTML = `
         <h3>${c.name}</h3>
         <p>${c.phone}</p>
         <p>${c.address}</p>
-
-        <div class="quickdial-actions">
-          <button class="call-btn" onclick="window.location.href='tel:${c.phone}'">Call</button>
-          <button class="text-btn" onclick="window.location.href='sms:${c.phone}'">Text</button>
-          <button class="map-btn" onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(c.address)}')">Map</button>
-        </div>
+        <button onclick="window.location.href='tel:${c.phone}'">Call</button>
+        <button onclick="window.location.href='sms:${c.phone}'">Text</button>
+        <button onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(c.address)}')">Map</button>
       `;
 
       quickDialList.appendChild(item);
