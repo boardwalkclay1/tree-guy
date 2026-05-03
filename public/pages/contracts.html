@@ -4,59 +4,64 @@
   <meta charset="UTF-8">
   <title>Contracts – Real Tree Guy OS</title>
 
-  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
 
-  <link rel="stylesheet" href="../../assets/css/contracts.css">
+  <link rel="stylesheet" href="css/contracts.css">
 </head>
 
 <body>
 
   <header class="rtg-header">
-    <h1>📄 Contracts Generator</h1>
-    <a class="back-link" href="../../pages/dashboard.html">← Back to Dashboard</a>
+    <h1>📄 Contracts</h1>
+    <a class="back-link" href="../dashboard.html">← Back to Dashboard</a>
   </header>
 
-  <div class="contract-card">
+  <!-- COMPACT CONTRACTS WIDGET -->
+  <main class="contracts-shell">
+    <section class="contracts-widget" id="contractsWidget">
+      <h2>Quick Contract</h2>
 
-    <h2>Client Information</h2>
+      <div class="field-row">
+        <input id="cName" placeholder="Client name">
+      </div>
 
-    <label>Client Name</label>
-    <input id="clientName" placeholder="Full name">
+      <div class="field-row">
+        <input id="cPhone" placeholder="Phone">
+      </div>
 
-    <label>Phone</label>
-    <input id="clientPhone" placeholder="(555) 000-0000">
+      <div class="field-row">
+        <input id="cEmail" placeholder="Email">
+      </div>
 
-    <label>Email</label>
-    <input id="clientEmail" type="email" placeholder="client@email.com">
+      <div class="field-row">
+        <input id="cAddress" placeholder="Address">
+      </div>
 
-    <label>Property Address</label>
-    <input id="clientAddress" placeholder="123 Main St, City, State">
+      <div class="field-row">
+        <textarea id="cScope" rows="2" placeholder="Scope of work"></textarea>
+      </div>
 
-    <label>Scope of Work</label>
-    <textarea id="scope" placeholder="Describe the tree work in detail…"></textarea>
+      <div class="field-row">
+        <input id="cPrice" placeholder="Price">
+      </div>
 
-    <label>Total Price</label>
-    <input id="price" placeholder="e.g. $850.00">
+      <div class="btn-row">
+        <button id="cPreviewBtn">Preview</button>
+        <button id="cSaveBtn">Save</button>
+      </div>
 
-    <div class="action-row">
-      <button id="fill">Preview Contract</button>
-      <button id="send">Send via Email</button>
-      <button id="save">Save</button>
-      <button id="calendar">Add to Calendar</button>
-    </div>
+      <div class="btn-row">
+        <button id="cEmailBtn">Email</button>
+        <button id="cCalBtn">Calendar</button>
+      </div>
 
-    <div id="previewBox">
-      Fill out the form above and click Preview to generate the contract.
-    </div>
+      <div id="cPreviewBox" class="preview-box">
+        Fill fields and tap Preview.
+      </div>
+    </section>
+  </main>
 
-  </div>
-
-  <!-- DB ENGINE FIRST -->
-  <script type="module" src="../../assets/js/db.js"></script>
-
-  <!-- CONTRACT LOGIC SECOND -->
-  <script type="module" src="../pages/assets/js/contracts.js"></script>
-
+  <script src="js/contracts.js"></script>
 </body>
 </html>
