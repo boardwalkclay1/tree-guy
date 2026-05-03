@@ -8,14 +8,29 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
   <!-- GLOBAL + DASHBOARD STYLES -->
+  <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/assets/css/dashboard.css">
 </head>
 
 <body>
 
-  <!-- ============================================================
-       TOP BAR
-  ============================================================ -->
+  <!-- BACKGROUND LAYER (for weather JS, no flicker) -->
+  <div id="rtgBackground"></div>
+
+  <!-- SIDEBAR FIRST so CSS can target + .rtg-topbar -->
+  <nav id="rtgSidemenu" class="rtg-sidemenu">
+    <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
+    <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
+    <a href="/pages/customers.html" class="rtg-menu-link">Customers & Jobs</a>
+    <a href="/pages/measurement.html" class="rtg-menu-link">Tree Measurement</a>
+    <a href="/pages/contracts.html" class="rtg-menu-link">Contracts</a>
+    <a href="/pages/calendar.html" class="rtg-menu-link">Calendar</a>
+    <a href="/pages/flyers.html" class="rtg-menu-link">Cards & Flyers</a>
+    <a href="/pages/map.html" class="rtg-menu-link">Real Tree Map</a>
+    <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
+  </nav>
+
+  <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
@@ -34,40 +49,18 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       SIDEBAR
-  ============================================================ -->
-  <nav id="rtgSidemenu" class="rtg-sidemenu">
-    <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
-    <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
-    <a href="/pages/customers.html" class="rtg-menu-link">Customers & Jobs</a>
-    <a href="/pages/measurement.html" class="rtg-menu-link">Tree Measurement</a>
-    <a href="/pages/contracts.html" class="rtg-menu-link">Contracts</a>
-    <a href="/pages/calendar.html" class="rtg-menu-link">Calendar</a>
-    <a href="/pages/flyers.html" class="rtg-menu-link">Cards & Flyers</a>
-    <a href="/pages/map.html" class="rtg-menu-link">Real Tree Map</a>
-    <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
-  </nav>
-
-  <!-- ============================================================
-       MAIN DASHBOARD
-  ============================================================ -->
+  <!-- MAIN DASHBOARD -->
   <main class="rtg-main">
     <h1 class="rtg-title">REAL TREE GUY</h1>
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
 
-
-    <!-- ============================================================
-         WIDGETS SECTION
-    ============================================================ -->
-
     <!-- TODAY'S JOBS WIDGET -->
-    <div class="rtg-widget rtg-todayjobs">
+    <section class="rtg-widget rtg-todayjobs">
       <div class="rtg-widget-header">
         <h2>Today's Jobs</h2>
         <div class="rtg-job-nav">
-          <button id="jobPrev">◀</button>
-          <button id="jobNext">▶</button>
+          <button id="jobPrev" class="rtg-btn small">◀</button>
+          <button id="jobNext" class="rtg-btn small">▶</button>
         </div>
       </div>
 
@@ -76,15 +69,14 @@
       </div>
 
       <div class="rtg-job-actions">
-        <button id="jobDone" class="rtg-action-btn green">Mark Done</button>
-        <button id="jobSaveLoc" class="rtg-action-btn orange">Save Location</button>
-        <button id="jobAddNote" class="rtg-action-btn blue">Add Note</button>
+        <button id="jobDone" class="rtg-btn green">Mark Done</button>
+        <button id="jobSaveLoc" class="rtg-btn orange">Save Location</button>
+        <button id="jobAddNote" class="rtg-btn blue">Add Note</button>
       </div>
-    </div>
-
+    </section>
 
     <!-- JOB TIMER WIDGET -->
-    <div class="rtg-widget rtg-jobtimer">
+    <section class="rtg-widget rtg-jobtimer">
       <h2>Job Timer</h2>
       <div id="timerDisplay" class="timer-display">00:00:00</div>
 
@@ -93,31 +85,26 @@
         <button id="timerStop" class="rtg-btn orange">Stop</button>
         <button id="timerReset" class="rtg-btn blue">Reset</button>
       </div>
-    </div>
-
+    </section>
 
     <!-- PHOTO CAPTURE WIDGET -->
-    <div class="rtg-widget rtg-photo">
+    <section class="rtg-widget rtg-photo">
       <h2>Job Photos</h2>
 
       <video id="photoPreview" autoplay playsinline></video>
       <button id="takePhoto" class="rtg-btn orange">Take Photo</button>
 
       <div id="photoGallery" class="photo-gallery"></div>
-    </div>
-
+    </section>
 
     <!-- QUICK DIAL WIDGET -->
-    <div class="rtg-widget rtg-quickdial">
+    <section class="rtg-widget rtg-quickdial">
       <h2>Quick Dial</h2>
       <div id="quickDialList" class="quickdial-list"></div>
-    </div>
+    </section>
 
-
-    <!-- ============================================================
-         MAIN GRID NAVIGATION
-    ============================================================ -->
-    <div class="rtg-grid">
+    <!-- MAIN GRID NAVIGATION -->
+    <section class="rtg-grid">
       <a href="/pages/profile.html" class="rtg-card">Profile</a>
       <a href="/pages/customers.html" class="rtg-card">Customers & Jobs</a>
       <a href="/pages/measurement.html" class="rtg-card">Tree Measurement</a>
@@ -126,25 +113,20 @@
       <a href="/pages/flyers.html" class="rtg-card">Cards & Flyers</a>
       <a href="/pages/map.html" class="rtg-card">Real Tree Map</a>
       <a href="/pages/shop.html" class="rtg-card">Shop</a>
-    </div>
-
+    </section>
 
     <!-- BOTTOM BUTTONS -->
     <div class="rtg-bottom-buttons">
-      <a class="rtg-bottom-btn orange" href="/pages/shop.html">REAL TREE SHOP</a>
-      <a class="rtg-bottom-btn orange" href="/index.html">RTG ONLINE</a>
+      <a class="rtg-bottom-btn" href="/pages/shop.html">REAL TREE SHOP</a>
+      <a class="rtg-bottom-btn" href="/index.html">RTG ONLINE</a>
     </div>
-
   </main>
 
   <footer class="rtg-footer">
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <!-- ============================================================
-       JS
-  ============================================================ -->
+  <!-- JS -->
   <script src="/pages/assets/js/dashboard.js"></script>
-
 </body>
 </html>
