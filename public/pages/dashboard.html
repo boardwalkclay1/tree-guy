@@ -17,7 +17,7 @@
   <!-- BACKGROUND LAYER -->
   <div id="rtgBackground"></div>
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR (must be FIRST for sibling selector to work) -->
   <nav id="rtgSidemenu" class="rtg-sidemenu">
     <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
     <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
@@ -30,7 +30,7 @@
     <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
   </nav>
 
-  <!-- TOP BAR -->
+  <!-- TOP BAR (must be DIRECTLY after sidebar) -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
@@ -43,6 +43,7 @@
     <div class="rtg-topbar-right">
       <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
 
+      <!-- BURGER (hidden until sidebar opens) -->
       <button id="rtgBurger" class="rtg-burger" type="button">
         <span></span><span></span><span></span>
       </button>
@@ -54,12 +55,10 @@
     <h1 class="rtg-title">REAL TREE GUY</h1>
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
 
-    <!-- WIDGETS -->
     <section class="rtg-widget">
       <h2>Widgets Load Here</h2>
     </section>
 
-    <!-- GRID NAV -->
     <section class="rtg-grid">
       <a href="/pages/profile.html" class="rtg-card">Profile</a>
       <a href="/pages/customers.html" class="rtg-card">Customers & Jobs</a>
