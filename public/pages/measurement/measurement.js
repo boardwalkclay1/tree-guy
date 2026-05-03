@@ -1,188 +1,90 @@
-/* ============================================================
-   REAL TREE GUY MEASUREMENT ENGINE — CORE LAYER
-   Single-file version containing:
-   - Sensors
-   - Math Tools
-   - Live Camera Measurement
-   - Photo Measurement
-   - Manual Measurement
-   - GPS Distance Measurement
-   - UI Controls
-   ============================================================ */
+// ============================================================
+// REAL TREE GUY — MEASUREMENT TOOLS
+// Modes • Camera First • Simple Saves
+// ============================================================
 
-/* ============================
-   SENSORS MODULE
-   ============================ */
-export const Sensors = {
-    gps: null,
-    compass: null,
-    orientation: null,
+document.addEventListener("DOMContentLoaded", () => {
+  // MODE SWITCHING
+  const modeButtons = document.querySelectorAll(".mode-btn");
+  const panels = document.querySelectorAll(".rtg-mode-panel");
 
-    async initGPS() {
-        return new Promise((resolve, reject) => {
-            if (!navigator.geolocation) return reject("GPS not supported");
+  modeButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.mode;
 
-            navigator.geolocation.getCurrentPosition(
-                pos => {
-                    this.gps = {
-                        lat: pos.coords.latitude,
-                        lon: pos.coords.longitude,
-                        accuracy: pos.coords.accuracy
-                    };
-                    resolve(this.gps);
-                },
-                err => reject(err),
-                { enableHighAccuracy: true }
-            );
-        });
-    },
+      modeButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
 
-    async initCompass() {
-        window.addEventListener("deviceorientationabsolute", e => {
-            this.compass = e.alpha;
-        });
-    },
+      panels.forEach(p => {
+        p.classList.toggle("active", p.id === `mode-${mode}`);
+      });
+    });
+  });
 
-    async initOrientation() {
-        window.addEventListener("deviceorientation", e => {
-            this.orientation = {
-                beta: e.beta,
-                gamma: e.gamma,
-                alpha: e.alpha
-            };
-        });
+  // CAMERA
+  const video = document.getElementById("measureVideo");
+  const canvas = document.getElementById("measureCanvas");
+  const captureBtn = document.getElementById("captureFrame");
+  const gallery = document.getElementById("photoGallery");
+
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+    } catch (err) {
+      console.error("Camera error:", err);
     }
-};
+  }
 
+  // Start camera immediately
+  startCamera();
 
-/* ============================
-   MATH MODULE
-   ============================ */
-export const MathTools = {
-    pythag(a, b) {
-        return Math.sqrt(a*a + b*b);
-    },
+  // Capture frame
+  captureBtn.addEventListener("click", () => {
+    if (!video.videoWidth) return;
 
-    angleToHeight(distance, angleDegrees) {
-        const angle = angleDegrees * (Math.PI / 180);
-        return Math.tan(angle) * distance;
-    },
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
 
-    pixelDistance(p1, p2) {
-        return Math.sqrt(
-            Math.pow(p2.x - p1.x, 2) +
-            Math.pow(p2.y - p1.y, 2)
-        );
-    },
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/png");
+    img.className = "rtg-photo-thumb";
 
-    gpsDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371e3;
-        const φ1 = lat1 * Math.PI/180;
-        const φ2 = lat2 * Math.PI/180;
-        const Δφ = (lat2-lat1) * Math.PI/180;
-        const Δλ = (lon2-lon1) * Math.PI/180;
+    if (gallery) gallery.appendChild(img);
+  });
 
-        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                  Math.cos(φ1) * Math.cos(φ2) *
-                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  // SIMPLE SAVES (localStorage)
+  const MEASURE_KEY = "rtgMeasurement";
 
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  function saveMeasurement(partial) {
+    const existing = JSON.parse(localStorage.getItem(MEASURE_KEY)) || {};
+    const updated = { ...existing, ...partial, updatedAt: new Date().toISOString() };
+    localStorage.setItem(MEASURE_KEY, JSON.stringify(updated));
+  }
 
-        return R * c;
-    }
-};
+  document.getElementById("saveHeight").addEventListener("click", () => {
+    const val = document.getElementById("heightInput").value;
+    if (!val) return;
+    saveMeasurement({ heightFt: Number(val) });
+  });
 
+  document.getElementById("saveDiameter").addEventListener("click", () => {
+    const val = document.getElementById("diameterInput").value;
+    if (!val) return;
+    saveMeasurement({ diameterIn: Number(val) });
+  });
 
-/* ============================
-   LIVE CAMERA MEASUREMENT
-   ============================ */
-export const LiveMeasure = {
-    video: null,
+  document.getElementById("saveDistance").addEventListener("click", () => {
+    const val = document.getElementById("distanceInput").value;
+    if (!val) return;
+    saveMeasurement({ distanceFt: Number(val) });
+  });
 
-    async initCamera(videoElement) {
-        this.video = videoElement;
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
-        });
-
-        this.video.srcObject = stream;
-        await this.video.play();
-    },
-
-    getHeight(distance) {
-        if (!Sensors.orientation) return null;
-
-        const angle = Sensors.orientation.beta;
-        return MathTools.angleToHeight(distance, angle);
-    }
-};
-
-
-/* ============================
-   PHOTO MEASUREMENT
-   ============================ */
-export const PhotoMeasure = {
-    image: null,
-    points: [],
-
-    loadImage(file, imgElement) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            imgElement.src = e.target.result;
-            this.image = imgElement;
-        };
-        reader.readAsDataURL(file);
-    },
-
-    addPoint(x, y) {
-        this.points.push({ x, y });
-    },
-
-    measure() {
-        if (this.points.length < 2) return null;
-        return MathTools.pixelDistance(this.points[0], this.points[1]);
-    }
-};
-
-
-/* ============================
-   MANUAL MEASUREMENT
-   ============================ */
-export const ManualMeasure = {
-    heightFromAngle(distance, angle) {
-        return MathTools.angleToHeight(distance, angle);
-    },
-
-    pythag(a, b) {
-        return MathTools.pythag(a, b);
-    }
-};
-
-
-/* ============================
-   DISTANCE BETWEEN OBJECTS
-   ============================ */
-export const DistanceTool = {
-    async measureToPoint(lat, lon) {
-        if (!Sensors.gps) await Sensors.initGPS();
-
-        return MathTools.gpsDistance(
-            Sensors.gps.lat,
-            Sensors.gps.lon,
-            lat,
-            lon
-        );
-    }
-};
-
-
-/* ============================
-   UI MODULE
-   ============================ */
-export const UI = {
-    showTab(id) {
-        document.querySelectorAll(".tab").forEach(t => t.style.display = "none");
-        document.getElementById(id).style.display = "block";
-    }
-};
+  document.getElementById("saveNotes").addEventListener("click", () => {
+    const val = document.getElementById("notesInput").value.trim();
+    if (!val) return;
+    saveMeasurement({ notes: val });
+  });
+});
