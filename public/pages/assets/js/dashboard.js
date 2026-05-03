@@ -1,6 +1,6 @@
 // ============================================================
 // REAL TREE GUY — DASHBOARD JS (FINAL BUILD)
-// Clock • Sidebar • Weather • Compass
+// Clock • Sidebar • Weather • Compass • Widgets
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -92,17 +92,213 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.DeviceOrientationEvent) {
       window.addEventListener("deviceorientation", e => {
         if (e.webkitCompassHeading) {
-          // iOS
           compassEl.style.transform = `rotate(${e.webkitCompassHeading * -1}deg)`;
         } else if (e.alpha !== null) {
-          // Android
           compassEl.style.transform = `rotate(${e.alpha * -1}deg)`;
         }
       });
     } else {
-      // fallback: show static compass
       compassEl.style.opacity = "0.5";
     }
+  }
+
+
+  // ============================================================
+  // STORAGE UTILS
+  // ============================================================
+  const Storage = {
+    get(key, fallback = []) {
+      return JSON.parse(localStorage.getItem(key)) || fallback;
+    },
+    set(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  };
+
+
+  // ============================================================
+  // WIDGET 1 — TODAY'S JOBS
+  // ============================================================
+  const JOB_KEY = "rtgJobs";
+  let jobIndex = 0;
+
+  function loadJobs() {
+    const jobs = Storage.get(JOB_KEY);
+    return jobs.filter(j => isToday(j.date));
+  }
+
+  function isToday(dateStr) {
+    const today = new Date();
+    const d = new Date(dateStr);
+    return d.toDateString() === today.toDateString();
+  }
+
+  function renderJob() {
+    const jobs = loadJobs();
+    const display = document.getElementById("jobDisplay");
+
+    if (!display) return;
+
+    if (jobs.length === 0) {
+      display.innerHTML = `<p class="rtg-no-jobs">No jobs scheduled today.</p>`;
+      return;
+    }
+
+    if (jobIndex < 0) jobIndex = jobs.length - 1;
+    if (jobIndex >= jobs.length) jobIndex = 0;
+
+    const job = jobs[jobIndex];
+
+    display.innerHTML = `
+      <h3>${job.client}</h3>
+      <p><strong>Time:</strong> ${job.time}</p>
+      <p><strong>Address:</strong> ${job.address}</p>
+      <p><strong>Notes:</strong> ${job.notes || "None"}</p>
+      <p><strong>Saved Location:</strong> ${job.savedLocation || "None"}</p>
+    `;
+  }
+
+  function markJobDone() {
+    const jobs = loadJobs();
+    jobs.splice(jobIndex, 1);
+    Storage.set(JOB_KEY, jobs);
+    jobIndex = 0;
+    renderJob();
+  }
+
+  function saveJobLocation() {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const jobs = loadJobs();
+      const job = jobs[jobIndex];
+
+      job.savedLocation = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+      Storage.set(JOB_KEY, jobs);
+      renderJob();
+    });
+  }
+
+  function addJobNote() {
+    const note = prompt("Add a note:");
+    if (!note) return;
+
+    const jobs = loadJobs();
+    const job = jobs[jobIndex];
+
+    job.notes = note;
+    Storage.set(JOB_KEY, jobs);
+    renderJob();
+  }
+
+  document.getElementById("jobPrev")?.addEventListener("click", () => {
+    jobIndex--;
+    renderJob();
+  });
+
+  document.getElementById("jobNext")?.addEventListener("click", () => {
+    jobIndex++;
+    renderJob();
+  });
+
+  document.getElementById("jobDone")?.addEventListener("click", markJobDone);
+  document.getElementById("jobSaveLoc")?.addEventListener("click", saveJobLocation);
+  document.getElementById("jobAddNote")?.addEventListener("click", addJobNote);
+
+  renderJob();
+
+
+  // ============================================================
+  // WIDGET 2 — JOB TIMER
+  // ============================================================
+  let timerInterval;
+  let seconds = 0;
+
+  const timerDisplay = document.getElementById("timerDisplay");
+  const timerStart = document.getElementById("timerStart");
+  const timerStop = document.getElementById("timerStop");
+  const timerReset = document.getElementById("timerReset");
+
+  if (timerDisplay) {
+    timerStart.addEventListener("click", () => {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        seconds++;
+        timerDisplay.textContent = formatTime(seconds);
+      }, 1000);
+    });
+
+    timerStop.addEventListener("click", () => {
+      clearInterval(timerInterval);
+    });
+
+    timerReset.addEventListener("click", () => {
+      clearInterval(timerInterval);
+      seconds = 0;
+      timerDisplay.textContent = "00:00:00";
+    });
+  }
+
+  function formatTime(sec) {
+    const h = String(Math.floor(sec / 3600)).padStart(2, "0");
+    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
+    const s = String(sec % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  }
+
+
+  // ============================================================
+  // WIDGET 3 — PHOTO CAPTURE
+  // ============================================================
+  const photoVideo = document.getElementById("photoPreview");
+  const photoGallery = document.getElementById("photoGallery");
+  const takePhoto = document.getElementById("takePhoto");
+
+  if (photoVideo) {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => photoVideo.srcObject = stream);
+
+    takePhoto.addEventListener("click", () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = photoVideo.videoWidth;
+      canvas.height = photoVideo.videoHeight;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(photoVideo, 0, 0);
+
+      const img = document.createElement("img");
+      img.src = canvas.toDataURL("image/png");
+      img.className = "rtg-photo-thumb";
+
+      photoGallery.appendChild(img);
+    });
+  }
+
+
+  // ============================================================
+  // WIDGET 4 — QUICK DIAL
+  // ============================================================
+  const quickDialList = document.getElementById("quickDialList");
+
+  if (quickDialList) {
+    const customers = Storage.get("rtgCustomers");
+
+    customers.forEach(c => {
+      const item = document.createElement("div");
+      item.className = "quickdial-item";
+
+      item.innerHTML = `
+        <h3>${c.name}</h3>
+        <p>${c.phone}</p>
+        <p>${c.address}</p>
+
+        <div class="quickdial-actions">
+          <button class="call-btn" onclick="window.location.href='tel:${c.phone}'">Call</button>
+          <button class="text-btn" onclick="window.location.href='sms:${c.phone}'">Text</button>
+          <button class="map-btn" onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(c.address)}')">Map</button>
+        </div>
+      `;
+
+      quickDialList.appendChild(item);
+    });
   }
 
 });
