@@ -1,132 +1,130 @@
-// contracts.js — Real Tree Guy OS (IndexedDB Version)
+// REAL TREE GUY — CONTRACTS ENGINE (single file)
 
-import { initDB, save, getAll, remove } from "../../../assets/js/db.js";
+(function () {
+  // DOM
+  const nameEl = document.getElementById("cName");
+  const phoneEl = document.getElementById("cPhone");
+  const emailEl = document.getElementById("cEmail");
+  const addrEl = document.getElementById("cAddress");
+  const scopeEl = document.getElementById("cScope");
+  const priceEl = document.getElementById("cPrice");
 
-await initDB();
+  const previewBtn = document.getElementById("cPreviewBtn");
+  const saveBtn = document.getElementById("cSaveBtn");
+  const emailBtn = document.getElementById("cEmailBtn");
+  const calBtn = document.getElementById("cCalBtn");
+  const previewBox = document.getElementById("cPreviewBox");
 
-/* ============================================================
-   DOM ELEMENTS
-   ============================================================ */
-const clientName = document.getElementById("clientName");
-const clientPhone = document.getElementById("clientPhone");
-const clientEmail = document.getElementById("clientEmail");
-const clientAddress = document.getElementById("clientAddress");
-const scope = document.getElementById("scope");
-const price = document.getElementById("price");
+  if (!previewBox) return;
 
-const fill = document.getElementById("fill");
-const send = document.getElementById("send");
-const saveBtn = document.getElementById("save");
-const calendarBtn = document.getElementById("calendar");
-
-const previewBox = document.getElementById("previewBox");
-
-/* ============================================================
-   BUILD CONTRACT OBJECT
-   ============================================================ */
-function buildContract() {
-  const id = "CT-" + Date.now();
-
-  return {
-    id,
-    name: clientName.value.trim(),
-    phone: clientPhone.value.trim(),
-    email: clientEmail.value.trim(),
-    address: clientAddress.value.trim(),
-    scope: scope.value.trim(),
-    price: price.value.trim(),
-    timestamp: new Date().toLocaleString()
-  };
-}
-
-/* ============================================================
-   RENDER PREVIEW
-   ============================================================ */
-function renderPreview(data) {
-  previewBox.textContent = `
-TREE WORK AGREEMENT
-Contract ID: ${data.id}
-Generated: ${data.timestamp}
-
-Client:
-  Name: ${data.name}
-  Phone: ${data.phone}
-  Email: ${data.email}
-  Address: ${data.address}
-
------------------------------------------
-SCOPE OF WORK
------------------------------------------
-${data.scope}
-
------------------------------------------
-PRICE
------------------------------------------
-${data.price}
-
------------------------------------------
-TERMS
------------------------------------------
-• Client agrees to allow access to property.
-• Work will be completed professionally and safely.
-• Payment is due upon completion unless otherwise stated.
-• Client may reply to this email with their typed name as an e-signature.
-
------------------------------------------
-SIGNATURES
------------------------------------------
-Client Signature: _______________________
-Business Representative: _______________________
-  `;
-}
-
-/* ============================================================
-   PREVIEW BUTTON
-   ============================================================ */
-fill.onclick = () => {
-  const data = buildContract();
-  renderPreview(data);
-};
-
-/* ============================================================
-   SAVE CONTRACT (IndexedDB)
-   ============================================================ */
-saveBtn.onclick = async () => {
-  const data = buildContract();
-
-  await save("contracts", data);
-
-  alert("Contract saved.");
-};
-
-/* ============================================================
-   SEND VIA EMAIL
-   ============================================================ */
-send.onclick = () => {
-  const data = buildContract();
-  renderPreview(data);
-
-  const body = encodeURIComponent(previewBox.textContent);
-
-  window.location.href =
-    `mailto:${data.email}?subject=Tree Work Agreement ${data.id}&body=${body}`;
-};
-
-/* ============================================================
-   ADD TO CALENDAR (IndexedDB)
-   ============================================================ */
-calendarBtn.onclick = async () => {
-  const data = buildContract();
-
-  const event = {
-    id: "EV-" + Date.now(),
-    date: new Date().toISOString().split("T")[0],
-    title: `Contract: ${data.id}`,
-    notes: data.scope,
-    type: "contract"
+  // Storage helpers
+  const Storage = {
+    get(key, fallback = []) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) || fallback;
+      } catch {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
   };
 
-  await save("calendar", event);
+  function getFormData() {
+    return {
+      name: (nameEl?.value || "").trim(),
+      phone: (phoneEl?.value || "").trim(),
+      email: (emailEl?.value || "").trim(),
+      address: (addrEl?.value || "").trim(),
+      scope: (scopeEl?.value || "").trim(),
+      price: (priceEl?.value || "").trim(),
+      createdAt: new Date().toISOString()
+    };
+  }
 
-  alert("Added to calendar.");
-};
+  function buildContractText(data) {
+    return [
+      `TREE WORK AGREEMENT`,
+      ``,
+      `Client: ${data.name || "N/A"}`,
+      `Phone: ${data.phone || "N/A"}`,
+      `Email: ${data.email || "N/A"}`,
+      `Address: ${data.address || "N/A"}`,
+      ``,
+      `Scope of Work:`,
+      `${data.scope || "N/A"}`,
+      ``,
+      `Total Price: ${data.price || "N/A"}`,
+      ``,
+      `Client agrees to the above scope and price for tree work to be performed.`,
+      ``,
+      `Client Signature: _____________________________`,
+      `Date: __________________`
+    ].join("\n");
+  }
+
+  function renderPreview() {
+    const data = getFormData();
+    const text = buildContractText(data);
+    previewBox.textContent = text;
+  }
+
+  function saveContract() {
+    const data = getFormData();
+    if (!data.name) {
+      alert("Add at least a client name before saving.");
+      return;
+    }
+
+    // Save customer
+    const customers = Storage.get("rtgCustomers");
+    const existing = customers.find(c => c.name === data.name && c.phone === data.phone);
+    if (!existing) {
+      customers.push({
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        address: data.address
+      });
+      Storage.set("rtgCustomers", customers);
+    }
+
+    // Save contract
+    const contracts = Storage.get("rtgContracts");
+    contracts.push(data);
+    Storage.set("rtgContracts", contracts);
+
+    alert("Contract saved.");
+  }
+
+  function emailContract() {
+    const data = getFormData();
+    const body = encodeURIComponent(buildContractText(data));
+    const subject = encodeURIComponent(`Tree Work Agreement for ${data.name || "Client"}`);
+    const to = data.email || "";
+
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  }
+
+  function calendarContract() {
+    const data = getFormData();
+    const title = encodeURIComponent(`Tree Work – ${data.name || "Client"}`);
+    const details = encodeURIComponent(buildContractText(data));
+    const location = encodeURIComponent(data.address || "");
+
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}`;
+    window.open(url, "_blank");
+  }
+
+  // Events
+  previewBtn?.addEventListener("click", renderPreview);
+  saveBtn?.addEventListener("click", saveContract);
+  emailBtn?.addEventListener("click", emailContract);
+  calBtn?.addEventListener("click", calendarContract);
+
+  // Optional: auto-preview on input
+  [nameEl, phoneEl, emailEl, addrEl, scopeEl, priceEl].forEach(el => {
+    el?.addEventListener("change", renderPreview);
+  });
+})();
