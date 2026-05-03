@@ -14,10 +14,10 @@
 
 <body>
 
-  <!-- BACKGROUND LAYER (for weather JS, no flicker) -->
+  <!-- BACKGROUND LAYER -->
   <div id="rtgBackground"></div>
 
-  <!-- SIDEBAR FIRST so CSS can target + .rtg-topbar -->
+  <!-- SIDEBAR -->
   <nav id="rtgSidemenu" class="rtg-sidemenu">
     <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
     <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
@@ -49,61 +49,17 @@
     </div>
   </div>
 
-  <!-- MAIN DASHBOARD -->
+  <!-- MAIN -->
   <main class="rtg-main">
     <h1 class="rtg-title">REAL TREE GUY</h1>
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
 
-    <!-- TODAY'S JOBS WIDGET -->
-    <section class="rtg-widget rtg-todayjobs">
-      <div class="rtg-widget-header">
-        <h2>Today's Jobs</h2>
-        <div class="rtg-job-nav">
-          <button id="jobPrev" class="rtg-btn small">◀</button>
-          <button id="jobNext" class="rtg-btn small">▶</button>
-        </div>
-      </div>
-
-      <div id="jobDisplay" class="rtg-job-display">
-        <p class="rtg-no-jobs">Loading jobs...</p>
-      </div>
-
-      <div class="rtg-job-actions">
-        <button id="jobDone" class="rtg-btn green">Mark Done</button>
-        <button id="jobSaveLoc" class="rtg-btn orange">Save Location</button>
-        <button id="jobAddNote" class="rtg-btn blue">Add Note</button>
-      </div>
+    <!-- WIDGETS -->
+    <section class="rtg-widget">
+      <h2>Widgets Load Here</h2>
     </section>
 
-    <!-- JOB TIMER WIDGET -->
-    <section class="rtg-widget rtg-jobtimer">
-      <h2>Job Timer</h2>
-      <div id="timerDisplay" class="timer-display">00:00:00</div>
-
-      <div class="timer-buttons">
-        <button id="timerStart" class="rtg-btn green">Start</button>
-        <button id="timerStop" class="rtg-btn orange">Stop</button>
-        <button id="timerReset" class="rtg-btn blue">Reset</button>
-      </div>
-    </section>
-
-    <!-- PHOTO CAPTURE WIDGET -->
-    <section class="rtg-widget rtg-photo">
-      <h2>Job Photos</h2>
-
-      <video id="photoPreview" autoplay playsinline></video>
-      <button id="takePhoto" class="rtg-btn orange">Take Photo</button>
-
-      <div id="photoGallery" class="photo-gallery"></div>
-    </section>
-
-    <!-- QUICK DIAL WIDGET -->
-    <section class="rtg-widget rtg-quickdial">
-      <h2>Quick Dial</h2>
-      <div id="quickDialList" class="quickdial-list"></div>
-    </section>
-
-    <!-- MAIN GRID NAVIGATION -->
+    <!-- GRID NAV -->
     <section class="rtg-grid">
       <a href="/pages/profile.html" class="rtg-card">Profile</a>
       <a href="/pages/customers.html" class="rtg-card">Customers & Jobs</a>
@@ -115,7 +71,6 @@
       <a href="/pages/shop.html" class="rtg-card">Shop</a>
     </section>
 
-    <!-- BOTTOM BUTTONS -->
     <div class="rtg-bottom-buttons">
       <a class="rtg-bottom-btn" href="/pages/shop.html">REAL TREE SHOP</a>
       <a class="rtg-bottom-btn" href="/index.html">RTG ONLINE</a>
@@ -126,7 +81,6 @@
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
-  <!-- JS -->
   <script src="/pages/assets/js/dashboard.js"></script>
 </body>
 </html>
