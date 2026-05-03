@@ -29,11 +29,11 @@ body {
   height: 70px;
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
 
+  /* FIX: give the right side REAL space */
   padding-left: 20px;
-  padding-right: 40px; /* ← FIX: gives Weather link room */
+  padding-right: 20px;
 
   background: rgba(0,0,0,0.85);
   border-bottom: 2px solid #2e6b33;
@@ -41,17 +41,29 @@ body {
   z-index: 1000;
 }
 
-.rtg-topbar-left,
+/* LEFT */
+.rtg-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* CENTER — FIX: prevent it from hogging space */
+.rtg-topbar-center {
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* RIGHT — FIX: give it a minimum width + shift left */
 .rtg-topbar-right {
   display: flex;
   align-items: center;
   gap: 20px;
-}
 
-.rtg-topbar-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
+  min-width: 150px;      /* ← prevents clipping */
+  margin-right: 96px;    /* ← EXACT 1 inch left shift */
 }
 
 .rtg-logo {
@@ -85,7 +97,7 @@ body {
   border: none;
   background: transparent;
 
-  display: none; /* ← FIX: burger is hidden */
+  display: none; /* ← completely hidden */
 
   flex-direction: column;
   justify-content: space-between;
@@ -128,10 +140,8 @@ body {
 /* ============================================================
    SHOW BURGER ONLY WHEN SIDEBAR IS OPEN
 ============================================================ */
-
-/* THIS is the correct selector for your HTML structure */
 #rtgSidemenu.open + .rtg-topbar .rtg-burger {
-  display: flex; /* ← FIX: burger only appears AFTER logo press */
+  display: flex;
 }
 
 /* ============================================================
@@ -176,12 +186,6 @@ body {
   border-radius: 12px;
 }
 
-.rtg-widget-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 /* ============================================================
    BUTTONS
 ============================================================ */
@@ -193,11 +197,6 @@ body {
   cursor: pointer;
   color: #000;
   background: #ff8c42;
-}
-
-.rtg-btn.small {
-  padding: 6px 10px;
-  font-size: 0.9rem;
 }
 
 .rtg-btn.green {
