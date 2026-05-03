@@ -1,12 +1,12 @@
-/* ============================================
-   REAL TREE GUY — DASHBOARD (CLEAN VERSION)
-   ============================================ */
+/* ============================================================
+   REAL TREE GUY — DASHBOARD OS (CINEMATIC UPGRADE)
+   ============================================================ */
 
-/* BACKGROUND (dynamic weather JS will override this) */
+/* GLOBAL BACKGROUND */
 body {
   margin: 0;
   padding: 0;
-  background: #0f3d0f;
+  background: #0b2d0b;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -15,58 +15,89 @@ body {
   overflow-x: hidden;
 }
 
-/* ============================================
+/* ============================================================
    TOP BAR
-   ============================================ */
+   ============================================================ */
 
 .rtg-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
-  background: rgba(0,0,0,0.75);
+  padding: 14px 26px;
+  background: rgba(0, 0, 0, 0.78);
   border-bottom: 2px solid #2e6b33;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2000;
 }
 
-.rtg-topbar-left,
-.rtg-topbar-right {
+/* LEFT SIDE */
+.rtg-topbar-left {
   display: flex;
   align-items: center;
-  gap: 18px; /* EVEN spacing */
+  gap: 14px;
+  margin-left: 6px;
 }
 
 .rtg-logo {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
   object-fit: cover;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 0 10px rgba(255,140,66,0.4);
 }
 
+.rtg-logo:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 14px rgba(255,140,66,0.7);
+}
+
+/* CENTER CLOCK */
 .rtg-clock {
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: 1.45rem;
+  font-weight: 900;
   color: #ff8c42;
-  text-shadow: 0 0 8px #ff8c42;
+  text-shadow: 0 0 10px #ff8c42;
+}
+
+/* RIGHT SIDE */
+.rtg-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-right: 6px;
 }
 
 .rtg-topbar-link {
   color: #ff8c42;
   font-weight: 700;
   text-decoration: none;
+  transition: 0.2s ease;
 }
 
-/* BURGER */
+.rtg-topbar-link:hover {
+  color: #ffd7b3;
+}
+
+/* ============================================================
+   BURGER — HIDDEN UNTIL SIDEBAR OPENS
+   ============================================================ */
+
 .rtg-burger {
   width: 34px;
   height: 26px;
   padding: 0;
   border: none;
   background: transparent;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center; /* centers bars */
+  align-items: center;
   cursor: pointer;
 }
 
@@ -78,23 +109,31 @@ body {
   transition: 0.25s ease;
 }
 
-/* ============================================
+/* SHOW BURGER WHEN SIDEBAR IS OPEN */
+.rtg-sidemenu.open ~ .rtg-topbar .rtg-burger,
+.rtg-sidemenu.open + .rtg-topbar .rtg-burger {
+  display: flex;
+}
+
+/* ============================================================
    SIDEBAR
-   ============================================ */
+   ============================================================ */
 
 .rtg-sidemenu {
   position: fixed;
   top: 0;
-  left: -260px;
-  width: 260px;
+  left: -270px;
+  width: 270px;
   height: 100vh;
-  background: rgba(0,0,0,0.9);
-  padding: 20px;
+  background: rgba(0,0,0,0.92);
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  transition: left 0.3s ease;
-  z-index: 9999;
+  gap: 20px;
+  transition: left 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 2px solid #ff8c42;
+  box-shadow: 4px 0 14px rgba(0,0,0,0.5);
+  z-index: 3000;
 }
 
 .rtg-sidemenu.open {
@@ -103,36 +142,60 @@ body {
 
 .rtg-menu-link {
   color: #ffcc99;
-  font-size: 1.1rem;
-  text-decoration: none;
+  font-size: 1.2rem;
   font-weight: 700;
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,140,66,0.3);
+  transition: 0.2s ease;
 }
 
-/* ============================================
+.rtg-menu-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px #ff8c42;
+}
+
+/* ============================================================
    MAIN CONTENT
-   ============================================ */
+   ============================================================ */
 
 .rtg-main {
   text-align: center;
-  margin-top: 88px; /* TITLE LOWERED by ~0.5 inch */
+  margin-top: 120px;
   padding: 0 16px 40px;
 }
 
 .rtg-title {
-  font-size: 3rem;
+  font-size: 3.2rem;
   font-weight: 900;
   color: #caffca;
-  text-shadow: 0 0 12px #1f5f2b;
+  text-shadow: 0 0 14px #1f5f2b;
 }
 
 .rtg-subtitle {
-  font-size: 1.1rem;
-  color: #9ddf9d;
+  font-size: 1.2rem;
+  color: #a8f0a8;
+  margin-top: -6px;
 }
 
-/* ============================================
+/* ============================================================
+   WIDGETS (GLOBAL STYLE)
+   ============================================================ */
+
+.rtg-widget {
+  background: rgba(0,0,0,0.55);
+  border: 2px solid #ff8c42;
+  border-radius: 14px;
+  padding: 20px;
+  margin: 30px auto;
+  max-width: 900px;
+  box-shadow: 0 0 14px rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+}
+
+/* ============================================================
    GRID BUTTONS
-   ============================================ */
+   ============================================================ */
 
 .rtg-grid {
   margin: 40px auto 30px;
@@ -140,47 +203,47 @@ body {
   max-width: 900px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
+  gap: 22px;
 }
 
 .rtg-card {
-  padding: 20px;
+  padding: 22px;
   background: rgba(0,0,0,0.6);
   border: 2px solid #ff8c42;
-  border-radius: 12px;
+  border-radius: 14px;
   text-decoration: none;
   color: #fff;
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 800;
+  font-size: 1.1rem;
   transition: 0.25s ease;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
 .rtg-card:hover {
   background: #ff8c42;
   color: #000;
+  transform: translateY(-3px);
 }
 
-/* ============================================
-   BOTTOM BUTTONS — GREEN WITH ORANGE TEXT
-   ============================================ */
+/* ============================================================
+   BOTTOM BUTTONS
+   ============================================================ */
 
 .rtg-bottom-buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .rtg-bottom-btn {
-  padding: 14px 26px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  border-radius: 10px;
-
-  background: #0f3d0f;   /* RTG green */
-  color: #ff8c42;        /* orange text */
+  padding: 16px 28px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  border-radius: 12px;
+  background: #0f3d0f;
+  color: #ff8c42;
   border: 3px solid #ff8c42;
-
   text-decoration: none;
   transition: 0.25s ease;
 }
@@ -188,41 +251,17 @@ body {
 .rtg-bottom-btn:hover {
   background: #ff8c42;
   color: #0f3d0f;
+  transform: translateY(-2px);
 }
 
-/* ============================================
+/* ============================================================
    FOOTER
-   ============================================ */
+   ============================================================ */
 
 .rtg-footer {
   text-align: center;
   padding: 20px;
   color: #9ddf9d;
   font-size: 0.9rem;
-}
-/* TOP BAR */
-.rtg-topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 28px; /* was 18px – brings both sides in a bit */
-  background: rgba(0,0,0,0.75);
-  border-bottom: 2px solid #2e6b33;
-  backdrop-filter: blur(4px);
-  position: relative;
-  z-index: 1000;
-}
-
-.rtg-topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-left: 12px;   /* move logo to the right */
-}
-
-.rtg-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-right: 12px;  /* move burger to the left (inward) */
+  opacity: 0.8;
 }
