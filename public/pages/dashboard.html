@@ -17,7 +17,9 @@
   <!-- BACKGROUND LAYER -->
   <div id="rtgBackground"></div>
 
-  <!-- SIDEBAR (must be FIRST for sibling selector to work) -->
+  <!-- ============================================================
+       SIDEBAR (MUST BE FIRST FOR BURGER SELECTOR TO WORK)
+  ============================================================ -->
   <nav id="rtgSidemenu" class="rtg-sidemenu">
     <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
     <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
@@ -30,28 +32,38 @@
     <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
   </nav>
 
-  <!-- TOP BAR (must be DIRECTLY after sidebar) -->
+  <!-- ============================================================
+       TOP BAR (MUST BE DIRECTLY AFTER SIDEBAR)
+  ============================================================ -->
   <div class="rtg-topbar">
+
+    <!-- LEFT -->
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" class="rtg-logo" alt="Real Tree Guy Logo">
     </div>
 
+    <!-- CENTER -->
     <div class="rtg-topbar-center">
       <div id="rtgClock" class="rtg-clock">--:--:--</div>
     </div>
 
+    <!-- RIGHT -->
     <div class="rtg-topbar-right">
       <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
 
-      <!-- BURGER (hidden until sidebar opens) -->
+      <!-- BURGER (forced invisible until sidebar opens) -->
       <button id="rtgBurger" class="rtg-burger" type="button">
         <span></span><span></span><span></span>
       </button>
     </div>
+
   </div>
 
-  <!-- MAIN -->
+  <!-- ============================================================
+       MAIN
+  ============================================================ -->
   <main class="rtg-main">
+
     <h1 class="rtg-title">REAL TREE GUY</h1>
     <p class="rtg-subtitle">Modular Static OS for Tree Work</p>
 
@@ -74,12 +86,18 @@
       <a class="rtg-bottom-btn" href="/pages/shop.html">REAL TREE SHOP</a>
       <a class="rtg-bottom-btn" href="/index.html">RTG ONLINE</a>
     </div>
+
   </main>
 
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
   <footer class="rtg-footer">
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
+  <!-- JS -->
   <script src="/pages/assets/js/dashboard.js"></script>
+
 </body>
 </html>
