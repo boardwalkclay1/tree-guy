@@ -13,24 +13,28 @@
 
 <body>
 
+  <!-- HEADER -->
   <header class="rtg-header">
     <h1>🎨 Cards & Flyers Studio</h1>
     <a href="../../dashboard.html" class="rtg-back">← Back to Dashboard</a>
   </header>
 
+  <!-- MAIN LAYOUT -->
   <main class="flyer-shell">
 
-    <!-- LEFT PANEL -->
+    <!-- LEFT PANEL — CONTROLS -->
     <section class="flyer-controls">
 
       <h2>🛠️ Design Controls</h2>
 
+      <!-- MODE SWITCH -->
       <div class="mode-toggle">
         <button id="modeCard" class="active">Card</button>
         <button id="modeFlyer">Flyer</button>
         <button id="modeDoorHanger">Door Hanger</button>
       </div>
 
+      <!-- TEMPLATE SELECTOR -->
       <label>🎭 Template</label>
       <select id="templateSelect">
         <option value="classic">🌲 Classic Tree Service</option>
@@ -40,6 +44,7 @@
         <option value="storm">⚡ Storm Damage Emergency</option>
       </select>
 
+      <!-- TEXT INPUTS -->
       <label>📝 Headline</label>
       <input id="headline" placeholder="Professional Tree Removal">
 
@@ -49,15 +54,18 @@
       <label>🏷️ Offer / CTA</label>
       <input id="offer" placeholder="10% Off This Week">
 
+      <!-- BACKGROUND -->
       <label>🌄 Background Image</label>
       <input type="file" id="bgUpload" accept="image/*">
 
       <label>🌫️ Background Strength</label>
       <input type="range" id="bgStrength" min="0" max="100" value="25">
 
+      <!-- LOGO -->
       <label>🌲 Logo Override</label>
       <input type="file" id="logoUpload" accept="image/*">
 
+      <!-- COLORS -->
       <div class="row">
         <div>
           <label>🎨 Background Color</label>
@@ -80,8 +88,10 @@
         </div>
       </div>
 
+      <!-- SAVE -->
       <button id="saveDesign" class="rtg-btn-green">💾 Save Design</button>
 
+      <!-- ACTION BUTTONS -->
       <div class="actions-row">
         <button id="printFlyer" class="rtg-btn-blue">🖨️ Print</button>
         <button id="emailFlyer" class="rtg-btn-purple">✉️ Email</button>
@@ -91,32 +101,42 @@
 
     </section>
 
-    <!-- RIGHT PANEL -->
+    <!-- RIGHT PANEL — LIVE PREVIEW -->
     <section class="flyer-preview">
       <h2>👀 Live Preview</h2>
 
-      <div id="previewWrapper">
-        <div id="preview" class="card-mode">
-          <div id="previewBg"></div>
-          <div id="previewLogo"></div>
+      <div id="previewWrapper" class="preview-wrapper">
 
+        <div id="preview" class="preview-base card-mode">
+
+          <!-- Background -->
+          <div id="previewBg" class="preview-bg"></div>
+
+          <!-- Logo -->
+          <div id="previewLogo" class="preview-logo"></div>
+
+          <!-- Text Content -->
           <div class="preview-content">
-            <div id="previewHeadline" class="flyer-headline"></div>
-            <div id="previewBody" class="flyer-body"></div>
-            <div id="previewOffer" class="flyer-offer"></div>
+            <div id="previewHeadline" class="flyer-headline">Your Headline</div>
+            <div id="previewBody" class="flyer-body">Your description goes here.</div>
+            <div id="previewOffer" class="flyer-offer">Your offer goes here.</div>
           </div>
 
-          <div id="previewContact" class="flyer-contact"></div>
+          <!-- Contact Footer -->
+          <div id="previewContact" class="flyer-contact">
+            Business Name • Phone • Email
+          </div>
+
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- DB ENGINE FIRST -->
+  <!-- DB ENGINE -->
   <script type="module" src="/assets/js/db.js"></script>
 
-  <!-- FLYER LOGIC SECOND (FIXED PATH) -->
+  <!-- FLYER LOGIC -->
   <script type="module" src="/pages/assets/js/flyers.js"></script>
 
 </body>
