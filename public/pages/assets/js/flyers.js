@@ -1,40 +1,20 @@
 // ============================================================
 // REAL TREE GUY OS — FLYERS / CARDS / DOOR HANGERS STUDIO
-// FULL REBUILD (IndexedDB Version) — FIXED
+// FULL REBUILD (IndexedDB + Profile Auto‑Populate)
 // ============================================================
 
 import { initDB, save, getAll } from "./db.js";
 await initDB();
 
 /* ============================================================
-   MODE SWITCHING
-   ============================================================ */
+   DOM ELEMENTS
+============================================================ */
 const preview = document.getElementById("preview");
 
 const modeCard = document.getElementById("modeCard");
 const modeFlyer = document.getElementById("modeFlyer");
 const modeDoor = document.getElementById("modeDoorHanger");
 
-function setMode(mode) {
-  // mode is: "card" | "flyer" | "door"
-  preview.classList.remove("card-mode", "flyer-mode", "door-mode", "doorhanger-mode");
-
-  // if your CSS uses door-mode, this line is correct:
-  const className = mode === "door" ? "door-mode" : `${mode}-mode`;
-  preview.classList.add(className);
-
-  modeCard.classList.toggle("active", mode === "card");
-  modeFlyer.classList.toggle("active", mode === "flyer");
-  modeDoor.classList.toggle("active", mode === "door");
-}
-
-modeCard.onclick = () => setMode("card");
-modeFlyer.onclick = () => setMode("flyer");
-modeDoor.onclick = () => setMode("door");
-
-/* ============================================================
-   PREVIEW ELEMENTS
-   ============================================================ */
 const headlineInput = document.getElementById("headline");
 const bodyInput = document.getElementById("body");
 const offerInput = document.getElementById("offer");
@@ -56,23 +36,81 @@ const textColor = document.getElementById("textColor");
 const accentColor = document.getElementById("accentColor");
 
 /* ============================================================
-   TEXT UPDATES
-   ============================================================ */
-headlineInput.oninput = () => {
-  previewHeadline.textContent = headlineInput.value;
-};
+   LOAD PROFILE (IndexedDB + LocalStorage)
+============================================================ */
+async function loadProfile() {
+  let p = null;
 
-bodyInput.oninput = () => {
-  previewBody.textContent = bodyInput.value;
-};
+  const dbProfiles = await getAll("profile");
+  if (dbProfiles && dbProfiles.length > 0) {
+    p = dbProfiles[0];
+  }
 
-offerInput.oninput = () => {
-  previewOffer.textContent = offerInput.value;
-};
+  if (!p) {
+    try {
+      p = JSON.parse(localStorage.getItem("rtg_profile"));
+    } catch {
+      p = null;
+    }
+  }
+
+  return p || {
+    name: "",
+    biz: "",
+    phone: "",
+    email: "",
+    address: "",
+    bio: "",
+    logo: ""
+  };
+}
+
+/* ============================================================
+   APPLY PROFILE TO FLYER PREVIEW
+============================================================ */
+(async function applyProfile() {
+  const p = await loadProfile();
+
+  // Contact line
+  if (previewContact) {
+    previewContact.textContent =
+      `${p.biz || p.name} • ${p.phone || ""} • ${p.email || ""}`;
+  }
+
+  // Logo
+  if (p.logo && previewLogo) {
+    previewLogo.style.backgroundImage = p.logo;
+  }
+})();
+
+/* ============================================================
+   MODE SWITCHING (Card / Flyer / Door Hanger)
+============================================================ */
+function setMode(mode) {
+  preview.classList.remove("card-mode", "flyer-mode", "door-mode");
+
+  const className = mode === "door" ? "door-mode" : `${mode}-mode`;
+  preview.classList.add(className);
+
+  modeCard.classList.toggle("active", mode === "card");
+  modeFlyer.classList.toggle("active", mode === "flyer");
+  modeDoor.classList.toggle("active", mode === "door");
+}
+
+modeCard.onclick = () => setMode("card");
+modeFlyer.onclick = () => setMode("flyer");
+modeDoor.onclick = () => setMode("door");
+
+/* ============================================================
+   LIVE TEXT UPDATES
+============================================================ */
+headlineInput.oninput = () => previewHeadline.textContent = headlineInput.value;
+bodyInput.oninput = () => previewBody.textContent = bodyInput.value;
+offerInput.oninput = () => previewOffer.textContent = offerInput.value;
 
 /* ============================================================
    BACKGROUND IMAGE
-   ============================================================ */
+============================================================ */
 bgUpload.onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -89,8 +127,8 @@ bgStrength.oninput = () => {
 };
 
 /* ============================================================
-   LOGO UPLOAD
-   ============================================================ */
+   LOGO UPLOAD (Overrides profile logo)
+============================================================ */
 logoUpload.onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -104,10 +142,8 @@ logoUpload.onchange = e => {
 
 /* ============================================================
    COLORS
-   ============================================================ */
-bgColor.oninput = () => {
-  preview.style.backgroundColor = bgColor.value;
-};
+============================================================ */
+bgColor.oninput = () => preview.style.backgroundColor = bgColor.value;
 
 textColor.oninput = () => {
   previewHeadline.style.color = textColor.value;
@@ -120,11 +156,11 @@ accentColor.oninput = () => {
 
 /* ============================================================
    SAVE DESIGN
-   ============================================================ */
+============================================================ */
 document.getElementById("saveDesign").onclick = async () => {
   let mode = "card-mode";
   if (preview.classList.contains("flyer-mode")) mode = "flyer-mode";
-  else if (preview.classList.contains("door-mode") || preview.classList.contains("doorhanger-mode")) mode = "door-mode";
+  if (preview.classList.contains("door-mode")) mode = "door-mode";
 
   const design = {
     id: "FLY-" + Date.now(),
@@ -146,7 +182,7 @@ document.getElementById("saveDesign").onclick = async () => {
 
 /* ============================================================
    LOAD MOST RECENT DESIGN
-   ============================================================ */
+============================================================ */
 (async function loadDesign() {
   const all = await getAll("documents");
   if (!all || all.length === 0) return;
@@ -178,7 +214,7 @@ document.getElementById("saveDesign").onclick = async () => {
   if (saved.bgImage) previewBg.style.backgroundImage = saved.bgImage;
   if (saved.logoImage) previewLogo.style.backgroundImage = saved.logoImage;
 
-  preview.classList.remove("card-mode", "flyer-mode", "door-mode", "doorhanger-mode");
+  preview.classList.remove("card-mode", "flyer-mode", "door-mode");
   preview.classList.add(saved.mode);
 
   if (saved.mode === "card-mode") setMode("card");
@@ -188,12 +224,12 @@ document.getElementById("saveDesign").onclick = async () => {
 
 /* ============================================================
    PRINT
-   ============================================================ */
+============================================================ */
 document.getElementById("printFlyer").onclick = () => window.print();
 
 /* ============================================================
    EMAIL
-   ============================================================ */
+============================================================ */
 document.getElementById("emailFlyer").onclick = () => {
   const subject = encodeURIComponent("My Tree Service Flyer");
   const body = encodeURIComponent("Attached is my flyer design.");
@@ -202,7 +238,7 @@ document.getElementById("emailFlyer").onclick = () => {
 
 /* ============================================================
    SHARE
-   ============================================================ */
+============================================================ */
 document.getElementById("shareFlyer").onclick = async () => {
   if (navigator.share) {
     navigator.share({
@@ -216,7 +252,7 @@ document.getElementById("shareFlyer").onclick = async () => {
 
 /* ============================================================
    FULLSCREEN
-   ============================================================ */
+============================================================ */
 document.getElementById("fullscreenFlyer").onclick = () => {
   if (preview.requestFullscreen) preview.requestFullscreen();
 };
