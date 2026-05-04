@@ -1,0 +1,36 @@
+// /pages/printful/products.js
+import { printfulRequest } from "./printful-client.js";
+
+/**
+ * List synced products from your Printful store
+ */
+export async function listProducts({ offset = 0, limit = 20 } = {}) {
+  return await printfulRequest(`/sync/products?offset=${offset}&limit=${limit}`);
+}
+
+/**
+ * Create a simple product using an existing Printful product + your design file
+ * productId: Printful base product (e.g., shirt, poster, etc.)
+ * fileId: Printful file ID from /files
+ */
+export async function createProductWithFile({ productId, fileId, name }) {
+  // This is a simplified example using product templates / sync
+  return await printfulRequest("/sync/products", {
+    method: "POST",
+    body: {
+      sync_product: {
+        name: name || "Real Tree Guy Custom Product",
+        thumbnail: null
+      },
+      sync_variants: [
+        {
+          retail_price: "25.00",
+          variant_id: productId,
+          files: [
+            { id: fileId }
+          ]
+        }
+      ]
+    }
+  });
+}
