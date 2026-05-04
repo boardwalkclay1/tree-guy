@@ -36,7 +36,7 @@ const textColor = document.getElementById("textColor");
 const accentColor = document.getElementById("accentColor");
 
 /* ============================================================
-   LOAD PROFILE (IndexedDB + LocalStorage)
+   LOAD PROFILE
 ============================================================ */
 async function loadProfile() {
   let p = null;
@@ -64,7 +64,7 @@ async function loadProfile() {
 }
 
 /* ============================================================
-   APPLY PROFILE TO FLYER PREVIEW
+   APPLY PROFILE TO PREVIEW
 ============================================================ */
 (async function applyProfile() {
   const p = await loadProfile();
@@ -120,7 +120,7 @@ bgStrength.oninput = () => {
 };
 
 /* ============================================================
-   LOGO UPLOAD (Overrides profile logo)
+   LOGO UPLOAD
 ============================================================ */
 logoUpload.onchange = e => {
   const file = e.target.files[0];
