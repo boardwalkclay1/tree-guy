@@ -4,139 +4,93 @@
   <meta charset="UTF-8">
   <title>Real Tree Guy – Cards & Flyers</title>
 
-  <!-- FONTS -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- THEME + PAGE CSS -->
-  <link rel="stylesheet" href="../../assets/css/flyer.css">
+  <link rel="stylesheet" href="/assets/css/flyer.css">
 </head>
 
 <body>
 
-  <!-- HEADER -->
   <header class="rtg-header">
     <h1>🎨 Cards & Flyers Studio</h1>
-    <a href="../../dashboard.html" class="rtg-back">← Back to Dashboard</a>
+    <a href="/pages/dashboard.html" class="rtg-back">← Back</a>
   </header>
 
-  <!-- MAIN LAYOUT -->
   <main class="flyer-shell">
 
-    <!-- LEFT PANEL — CONTROLS -->
+    <!-- LEFT PANEL -->
     <section class="flyer-controls">
 
-      <h2>🛠️ Design Controls</h2>
+      <h2>Design Controls</h2>
 
-      <!-- MODE SWITCH -->
       <div class="mode-toggle">
         <button id="modeCard" class="active">Card</button>
         <button id="modeFlyer">Flyer</button>
         <button id="modeDoorHanger">Door Hanger</button>
       </div>
 
-      <!-- TEMPLATE SELECTOR -->
-      <label>🎭 Template</label>
-      <select id="templateSelect">
-        <option value="classic">🌲 Classic Tree Service</option>
-        <option value="bold">🔥 Bold Offer</option>
-        <option value="minimal">✨ Minimal Clean</option>
-        <option value="premium">💎 Premium Gold</option>
-        <option value="storm">⚡ Storm Damage Emergency</option>
-      </select>
-
-      <!-- TEXT INPUTS -->
-      <label>📝 Headline</label>
+      <label>Headline</label>
       <input id="headline" placeholder="Professional Tree Removal">
 
-      <label>📄 Description</label>
-      <textarea id="body" placeholder="Describe your service or offer..."></textarea>
+      <label>Description</label>
+      <textarea id="body" placeholder="Describe your service..."></textarea>
 
-      <label>🏷️ Offer / CTA</label>
+      <label>Offer / CTA</label>
       <input id="offer" placeholder="10% Off This Week">
 
-      <!-- BACKGROUND -->
-      <label>🌄 Background Image</label>
+      <label>Background Image</label>
       <input type="file" id="bgUpload" accept="image/*">
 
-      <label>🌫️ Background Strength</label>
+      <label>Background Strength</label>
       <input type="range" id="bgStrength" min="0" max="100" value="25">
 
-      <!-- LOGO -->
-      <label>🌲 Logo Override</label>
+      <label>Logo Override</label>
       <input type="file" id="logoUpload" accept="image/*">
 
-      <!-- COLORS -->
-      <div class="row">
-        <div>
-          <label>🎨 Background Color</label>
-          <input type="color" id="bgColor" value="#ffffff">
-        </div>
-        <div>
-          <label>🖋️ Text Color</label>
-          <input type="color" id="textColor" value="#111827">
-        </div>
-      </div>
+      <label>Background Color</label>
+      <input type="color" id="bgColor" value="#ffffff">
 
-      <div class="row">
-        <div>
-          <label>🌟 Accent Color</label>
-          <input type="color" id="accentColor" value="#4caf50">
-        </div>
-        <div>
-          <label>🔤 Font</label>
-          <select id="fontSelect"></select>
-        </div>
-      </div>
+      <label>Text Color</label>
+      <input type="color" id="textColor" value="#111827">
 
-      <!-- SAVE -->
-      <button id="saveDesign" class="rtg-btn-green">💾 Save Design</button>
+      <label>Accent Color</label>
+      <input type="color" id="accentColor" value="#4caf50">
 
-      <!-- ACTION BUTTONS -->
+      <button id="saveDesign" class="rtg-btn-green">Save Design</button>
+
       <div class="actions-row">
-        <button id="printFlyer" class="rtg-btn-blue">🖨️ Print</button>
-        <button id="emailFlyer" class="rtg-btn-purple">✉️ Email</button>
-        <button id="shareFlyer" class="rtg-btn-green">📤 Share</button>
-        <button id="fullscreenFlyer" class="rtg-btn-orange">🖥️ Fullscreen</button>
+        <button id="printFlyer" class="rtg-btn-blue">Print</button>
+        <button id="emailFlyer" class="rtg-btn-purple">Email</button>
+        <button id="shareFlyer" class="rtg-btn-green">Share</button>
+        <button id="fullscreenFlyer" class="rtg-btn-orange">Fullscreen</button>
       </div>
 
     </section>
 
-    <!-- RIGHT PANEL — LIVE PREVIEW -->
+    <!-- RIGHT PANEL -->
     <section class="flyer-preview">
-      <h2>👀 Live Preview</h2>
+      <h2>Live Preview</h2>
 
-      <div id="previewWrapper" class="preview-wrapper">
+      <div id="preview" class="preview-base card-mode">
 
-        <div id="preview" class="preview-base card-mode">
+        <div id="previewBg" class="preview-bg"></div>
 
-          <!-- Background -->
-          <div id="previewBg" class="preview-bg"></div>
+        <div id="previewLogo" class="preview-logo"></div>
 
-          <!-- Logo -->
-          <div id="previewLogo" class="preview-logo"></div>
-
-          <!-- Text Content -->
-          <div class="preview-content">
-            <div id="previewHeadline" class="flyer-headline">Your Headline</div>
-            <div id="previewBody" class="flyer-body">Your description goes here.</div>
-            <div id="previewOffer" class="flyer-offer">Your offer goes here.</div>
-          </div>
-
-          <!-- Contact Footer -->
-          <div id="previewContact" class="flyer-contact">
-            Business Name • Phone • Email
-          </div>
-
+        <div class="preview-content">
+          <div id="previewHeadline" class="flyer-headline">Your Headline</div>
+          <div id="previewBody" class="flyer-body">Your description goes here.</div>
+          <div id="previewOffer" class="flyer-offer">Your offer goes here.</div>
         </div>
+
+        <div id="previewContact" class="flyer-contact">
+          Business Name • Phone • Email
+        </div>
+
       </div>
     </section>
 
   </main>
 
-  <!-- DB ENGINE -->
   <script type="module" src="/assets/js/db.js"></script>
-
-  <!-- FLYER LOGIC -->
   <script type="module" src="/pages/assets/js/flyers.js"></script>
 
 </body>
