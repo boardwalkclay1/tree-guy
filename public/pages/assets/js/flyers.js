@@ -42,9 +42,7 @@ async function loadProfile() {
   let p = null;
 
   const dbProfiles = await getAll("profile");
-  if (dbProfiles && dbProfiles.length > 0) {
-    p = dbProfiles[0];
-  }
+  if (dbProfiles?.length > 0) p = dbProfiles[0];
 
   if (!p) {
     try {
@@ -71,26 +69,21 @@ async function loadProfile() {
 (async function applyProfile() {
   const p = await loadProfile();
 
-  // Contact line
-  if (previewContact) {
-    previewContact.textContent =
-      `${p.biz || p.name} • ${p.phone || ""} • ${p.email || ""}`;
-  }
+  previewContact.textContent =
+    `${p.biz || p.name} • ${p.phone || ""} • ${p.email || ""}`;
 
-  // Logo
-  if (p.logo && previewLogo) {
-    previewLogo.style.backgroundImage = p.logo;
-  }
+  if (p.logo) previewLogo.style.backgroundImage = p.logo;
 })();
 
 /* ============================================================
-   MODE SWITCHING (Card / Flyer / Door Hanger)
+   MODE SWITCHING
 ============================================================ */
 function setMode(mode) {
   preview.classList.remove("card-mode", "flyer-mode", "door-mode");
 
-  const className = mode === "door" ? "door-mode" : `${mode}-mode`;
-  preview.classList.add(className);
+  preview.classList.add(
+    mode === "door" ? "door-mode" : `${mode}-mode`
+  );
 
   modeCard.classList.toggle("active", mode === "card");
   modeFlyer.classList.toggle("active", mode === "flyer");
@@ -185,7 +178,7 @@ document.getElementById("saveDesign").onclick = async () => {
 ============================================================ */
 (async function loadDesign() {
   const all = await getAll("documents");
-  if (!all || all.length === 0) return;
+  if (!all?.length) return;
 
   const saved = all.reverse().find(d => d.id.startsWith("FLY-"));
   if (!saved) return;
@@ -214,12 +207,11 @@ document.getElementById("saveDesign").onclick = async () => {
   if (saved.bgImage) previewBg.style.backgroundImage = saved.bgImage;
   if (saved.logoImage) previewLogo.style.backgroundImage = saved.logoImage;
 
-  preview.classList.remove("card-mode", "flyer-mode", "door-mode");
-  preview.classList.add(saved.mode);
-
-  if (saved.mode === "card-mode") setMode("card");
-  else if (saved.mode === "flyer-mode") setMode("flyer");
-  else setMode("door");
+  setMode(
+    saved.mode === "card-mode" ? "card" :
+    saved.mode === "flyer-mode" ? "flyer" :
+    "door"
+  );
 })();
 
 /* ============================================================
