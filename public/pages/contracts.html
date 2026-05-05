@@ -13,38 +13,33 @@
 <body>
 
   <header class="rtg-header">
-    <h1>📄 Contracts</h1>
+    <h1>📄 Contracts Center</h1>
     <a class="back-link" href="../dashboard.html">← Back to Dashboard</a>
   </header>
 
-  <!-- COMPACT CONTRACTS WIDGET -->
+  <!-- TABS -->
+  <nav class="contracts-tabs">
+    <button class="tab-btn active" data-tab="contractTab">Contract</button>
+    <button class="tab-btn" data-tab="estimateTab">Estimate</button>
+    <button class="tab-btn" data-tab="proposalTab">Proposal</button>
+    <button class="tab-btn" data-tab="invoiceTab">Invoice</button>
+  </nav>
+
   <main class="contracts-shell">
-    <section class="contracts-widget" id="contractsWidget">
+
+    <!-- ============================
+         CONTRACT TAB
+    ============================= -->
+    <section id="contractTab" class="contracts-widget tab-section active">
+
       <h2>Quick Contract</h2>
 
-      <div class="field-row">
-        <input id="cName" placeholder="Client name">
-      </div>
-
-      <div class="field-row">
-        <input id="cPhone" placeholder="Phone">
-      </div>
-
-      <div class="field-row">
-        <input id="cEmail" placeholder="Email">
-      </div>
-
-      <div class="field-row">
-        <input id="cAddress" placeholder="Address">
-      </div>
-
-      <div class="field-row">
-        <textarea id="cScope" rows="2" placeholder="Scope of work"></textarea>
-      </div>
-
-      <div class="field-row">
-        <input id="cPrice" placeholder="Price">
-      </div>
+      <div class="field-row"><input id="cName" placeholder="Client name"></div>
+      <div class="field-row"><input id="cPhone" placeholder="Phone"></div>
+      <div class="field-row"><input id="cEmail" placeholder="Email"></div>
+      <div class="field-row"><input id="cAddress" placeholder="Address"></div>
+      <div class="field-row"><textarea id="cScope" rows="2" placeholder="Scope of work"></textarea></div>
+      <div class="field-row"><input id="cPrice" placeholder="Price"></div>
 
       <div class="btn-row">
         <button id="cPreviewBtn">Preview</button>
@@ -56,10 +51,91 @@
         <button id="cCalBtn">Calendar</button>
       </div>
 
-      <div id="cPreviewBox" class="preview-box">
-        Fill fields and tap Preview.
-      </div>
+      <div id="cPreviewBox" class="preview-box">Fill fields and tap Preview.</div>
     </section>
+
+    <!-- ============================
+         ESTIMATE TAB
+    ============================= -->
+    <section id="estimateTab" class="contracts-widget tab-section">
+
+      <h2>Quick Estimate</h2>
+
+      <div class="field-row"><input id="eName" placeholder="Client name"></div>
+      <div class="field-row"><input id="ePhone" placeholder="Phone"></div>
+      <div class="field-row"><input id="eEmail" placeholder="Email"></div>
+      <div class="field-row"><input id="eAddress" placeholder="Address"></div>
+      <div class="field-row"><textarea id="eScope" rows="2" placeholder="Work description"></textarea></div>
+      <div class="field-row"><input id="eLabor" placeholder="Labor cost"></div>
+      <div class="field-row"><input id="eMaterials" placeholder="Materials cost"></div>
+
+      <div class="btn-row">
+        <button id="ePreviewBtn">Preview</button>
+        <button id="eSaveBtn">Save</button>
+      </div>
+
+      <div class="btn-row">
+        <button id="eEmailBtn">Email</button>
+        <button id="eCalBtn">Calendar</button>
+      </div>
+
+      <div id="ePreviewBox" class="preview-box">Fill fields and tap Preview.</div>
+    </section>
+
+    <!-- ============================
+         PROPOSAL TAB
+    ============================= -->
+    <section id="proposalTab" class="contracts-widget tab-section">
+
+      <h2>Quick Proposal</h2>
+
+      <div class="field-row"><input id="pName" placeholder="Client name"></div>
+      <div class="field-row"><input id="pPhone" placeholder="Phone"></div>
+      <div class="field-row"><input id="pEmail" placeholder="Email"></div>
+      <div class="field-row"><input id="pAddress" placeholder="Address"></div>
+      <div class="field-row"><textarea id="pScope" rows="2" placeholder="Project overview"></textarea></div>
+      <div class="field-row"><textarea id="pDeliverables" rows="2" placeholder="Deliverables"></textarea></div>
+      <div class="field-row"><input id="pPrice" placeholder="Total price"></div>
+
+      <div class="btn-row">
+        <button id="pPreviewBtn">Preview</button>
+        <button id="pSaveBtn">Save</button>
+      </div>
+
+      <div class="btn-row">
+        <button id="pEmailBtn">Email</button>
+        <button id="pCalBtn">Calendar</button>
+      </div>
+
+      <div id="pPreviewBox" class="preview-box">Fill fields and tap Preview.</div>
+    </section>
+
+    <!-- ============================
+         INVOICE TAB
+    ============================= -->
+    <section id="invoiceTab" class="contracts-widget tab-section">
+
+      <h2>Quick Invoice</h2>
+
+      <div class="field-row"><input id="iName" placeholder="Client name"></div>
+      <div class="field-row"><input id="iPhone" placeholder="Phone"></div>
+      <div class="field-row"><input id="iEmail" placeholder="Email"></div>
+      <div class="field-row"><input id="iAddress" placeholder="Address"></div>
+      <div class="field-row"><textarea id="iWork" rows="2" placeholder="Work performed"></textarea></div>
+      <div class="field-row"><input id="iAmount" placeholder="Amount due"></div>
+
+      <div class="btn-row">
+        <button id="iPreviewBtn">Preview</button>
+        <button id="iSaveBtn">Save</button>
+      </div>
+
+      <div class="btn-row">
+        <button id="iEmailBtn">Email</button>
+      </div>
+
+      <div id="iPreviewBox" class="preview-box">Fill fields and tap Preview.</div>
+    </section>
+
   </main>
 
   <script src="js/contracts.js"></script>
