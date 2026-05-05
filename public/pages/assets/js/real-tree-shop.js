@@ -1,258 +1,321 @@
-// /assets/js/real-tree-shop.js
+// ============================================================
+// REAL TREE GUY OS — REAL TREE SHOP
+// Printful-powered shop (frontend)
+// ============================================================
 
-const SHOP_JSON_URL = "/assets/data/real-tree-shop.json";
+const productGrid = document.getElementById("productGrid");
+const categoryList = document.getElementById("categoryList");
+const currentCategoryLabel = document.getElementById("currentCategoryLabel");
+const productSearch = document.getElementById("productSearch");
 
-let shopData = null;
-let filteredCategory = null;
-let searchTerm = "";
-let cart = [];
-
-const categoryListEl = document.getElementById("categoryList");
-const productGridEl = document.getElementById("productGrid");
-const currentCategoryLabelEl = document.getElementById("currentCategoryLabel");
-const productSearchEl = document.getElementById("productSearch");
-
-const cartButtonEl = document.getElementById("cartButton");
-const cartCountEl = document.getElementById("cartCount");
-const cartDrawerEl = document.getElementById("cartDrawer");
-const cartOverlayEl = document.getElementById("cartOverlay");
-const closeCartEl = document.getElementById("closeCart");
+const cartButton = document.getElementById("cartButton");
+const cartDrawer = document.getElementById("cartDrawer");
+const cartOverlay = document.getElementById("cartOverlay");
+const closeCart = document.getElementById("closeCart");
 const cartItemsEl = document.getElementById("cartItems");
 const cartTotalEl = document.getElementById("cartTotal");
-const checkoutButtonEl = document.getElementById("checkoutButton");
+const cartCountEl = document.getElementById("cartCount");
+const checkoutButton = document.getElementById("checkoutButton");
 
-async function loadShopData() {
-  const res = await fetch(SHOP_JSON_URL, { cache: "no-store" });
-  shopData = await res.json();
-  renderCategories();
+const checkoutModal = document.getElementById("checkoutModal");
+const cancelCheckout = document.getElementById("cancelCheckout");
+const confirmCheckout = document.getElementById("confirmCheckout");
+
+const custName = document.getElementById("custName");
+const custEmail = document.getElementById("custEmail");
+const custPhone = document.getElementById("custPhone");
+const custAddress = document.getElementById("custAddress");
+
+const logoFileInput = document.getElementById("logoFile");
+const logoPreview = document.getElementById("logoPreview");
+
+let products = [];
+let filteredProducts = [];
+let categories = [];
+let cart = [];
+let logoDataUrl = null;
+
+/* ============================================================
+   FETCH PRODUCTS FROM PRINTFUL BACKEND
+============================================================ */
+async function loadProducts() {
+  const res = await fetch("/api/printful/products");
+  if (!res.ok) {
+    console.error("Failed to load products");
+    return;
+  }
+  const data = await res.json();
+  products = data.products || [];
+  filteredProducts = products.slice();
+
+  buildCategories();
   renderProducts();
 }
 
-function renderCategories() {
-  if (!shopData) return;
-  categoryListEl.innerHTML = "";
-
-  const allLi = document.createElement("li");
-  const allBtn = document.createElement("button");
-  allBtn.textContent = "All Products";
-  allBtn.className = "rtg-shop-category-btn active";
-  allBtn.dataset.categoryId = "";
-  allBtn.addEventListener("click", () => {
-    filteredCategory = null;
-    updateCategoryButtons("");
-    currentCategoryLabelEl.textContent = "All Products";
-    renderProducts();
+/* ============================================================
+   CATEGORIES
+============================================================ */
+function buildCategories() {
+  const set = new Set();
+  products.forEach(p => {
+    if (p.category) set.add(p.category);
   });
-  allLi.appendChild(allBtn);
-  categoryListEl.appendChild(allLi);
 
-  shopData.categories.forEach(cat => {
+  categories = ["All", ...Array.from(set)];
+  categoryList.innerHTML = "";
+
+  categories.forEach(cat => {
     const li = document.createElement("li");
-    const btn = document.createElement("button");
-    btn.textContent = cat.name;
-    btn.className = "rtg-shop-category-btn";
-    btn.dataset.categoryId = cat.id;
-    btn.addEventListener("click", () => {
-      filteredCategory = cat.id;
-      updateCategoryButtons(cat.id);
-      currentCategoryLabelEl.textContent = cat.name;
-      renderProducts();
-    });
-    li.appendChild(btn);
-    categoryListEl.appendChild(li);
+    li.textContent = cat;
+    li.className = "rtg-shop-category-item";
+    li.onclick = () => {
+      filterByCategory(cat);
+    };
+    categoryList.appendChild(li);
   });
 }
 
-function updateCategoryButtons(activeId) {
-  const buttons = categoryListEl.querySelectorAll(".rtg-shop-category-btn");
-  buttons.forEach(btn => {
-    if (btn.dataset.categoryId === activeId) {
-      btn.classList.add("active");
-    } else if (!activeId && btn.dataset.categoryId === "") {
-      btn.classList.add("active");
-    } else {
-      btn.classList.remove("active");
-    }
-  });
+function filterByCategory(cat) {
+  if (cat === "All") {
+    filteredProducts = products.slice();
+    currentCategoryLabel.textContent = "All Products";
+  } else {
+    filteredProducts = products.filter(p => p.category === cat);
+    currentCategoryLabel.textContent = cat;
+  }
+  renderProducts();
 }
 
+/* ============================================================
+   SEARCH
+============================================================ */
+productSearch.oninput = () => {
+  const q = productSearch.value.toLowerCase();
+  filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    (p.description || "").toLowerCase().includes(q)
+  );
+  renderProducts();
+};
+
+/* ============================================================
+   RENDER PRODUCTS
+============================================================ */
 function renderProducts() {
-  if (!shopData) return;
-  productGridEl.innerHTML = "";
+  productGrid.innerHTML = "";
 
-  let products = shopData.products.slice();
-
-  if (filteredCategory) {
-    products = products.filter(p => p.category_id === filteredCategory);
+  if (!filteredProducts.length) {
+    productGrid.innerHTML = `<p>No products found.</p>`;
+    return;
   }
 
-  if (searchTerm.trim() !== "") {
-    const term = searchTerm.toLowerCase();
-    products = products.filter(p =>
-      p.name.toLowerCase().includes(term) ||
-      (p.description && p.description.toLowerCase().includes(term))
-    );
-  }
-
-  products.forEach(product => {
-    const card = document.createElement("article");
+  filteredProducts.forEach(p => {
+    const card = document.createElement("div");
     card.className = "rtg-shop-card";
 
-    const img = document.createElement("img");
-    img.src = product.image;
-    img.alt = product.name;
+    card.innerHTML = `
+      <div class="rtg-shop-card-image" style="background-image:url('${p.thumbnail || ""}')"></div>
+      <div class="rtg-shop-card-body">
+        <h3>${p.name}</h3>
+        <p>${p.description || ""}</p>
+        <div class="rtg-shop-card-footer">
+          <span class="rtg-shop-price">$${(p.price || 0).toFixed(2)}</span>
+          <button class="rtg-shop-add-btn">Add to Cart</button>
+        </div>
+      </div>
+    `;
 
-    const title = document.createElement("div");
-    title.className = "rtg-shop-card-title";
-    title.textContent = product.name;
+    const addBtn = card.querySelector(".rtg-shop-add-btn");
+    addBtn.onclick = () => addToCart(p);
 
-    const desc = document.createElement("div");
-    desc.className = "rtg-shop-card-desc";
-    desc.textContent = product.description || "";
-
-    const price = document.createElement("div");
-    price.className = "rtg-shop-card-price";
-    price.textContent = `$${product.price.toFixed(2)}`;
-
-    const footer = document.createElement("div");
-    footer.className = "rtg-shop-card-footer";
-
-    const vendor = document.createElement("div");
-    vendor.className = "rtg-shop-card-vendor";
-    vendor.textContent = `Cheapest: ${product.cheapest_vendor.name}`;
-
-    const addBtn = document.createElement("button");
-    addBtn.className = "rtg-shop-add-btn";
-    addBtn.textContent = "Add to Cart";
-    addBtn.addEventListener("click", () => addToCart(product.id));
-
-    footer.appendChild(vendor);
-    footer.appendChild(addBtn);
-
-    card.appendChild(img);
-    card.appendChild(title);
-    card.appendChild(desc);
-    card.appendChild(price);
-    card.appendChild(footer);
-
-    productGridEl.appendChild(card);
+    productGrid.appendChild(card);
   });
 }
 
-function addToCart(productId) {
-  const existing = cart.find(item => item.productId === productId);
+/* ============================================================
+   CART LOGIC
+============================================================ */
+function addToCart(product) {
+  const existing = cart.find(item => item.product.id === product.id);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ productId, qty: 1 });
+    cart.push({
+      product,
+      qty: 1
+    });
   }
   updateCartUI();
 }
 
-function removeFromCart(productId) {
-  cart = cart.filter(item => item.productId !== productId);
+function removeFromCart(index) {
+  cart.splice(index, 1);
   updateCartUI();
 }
 
-function changeCartQty(productId, delta) {
-  const item = cart.find(i => i.productId === productId);
-  if (!item) return;
-  item.qty += delta;
-  if (item.qty <= 0) {
-    removeFromCart(productId);
-  } else {
-    updateCartUI();
+function changeQty(index, delta) {
+  cart[index].qty += delta;
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
   }
+  updateCartUI();
 }
 
 function updateCartUI() {
-  cartCountEl.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
-
   cartItemsEl.innerHTML = "";
   let total = 0;
+  let count = 0;
 
-  cart.forEach(item => {
-    const product = shopData.products.find(p => p.id === item.productId);
-    if (!product) return;
+  cart.forEach((item, idx) => {
+    const lineTotal = (item.product.price || 0) * item.qty;
+    total += lineTotal;
+    count += item.qty;
 
     const row = document.createElement("div");
-    row.className = "rtg-shop-cart-item";
+    row.className = "rtg-shop-cart-row";
 
-    const name = document.createElement("div");
-    name.className = "rtg-shop-cart-item-name";
-    name.textContent = product.name;
+    row.innerHTML = `
+      <div class="rtg-shop-cart-row-main">
+        <div class="rtg-shop-cart-row-title">${item.product.name}</div>
+        <div class="rtg-shop-cart-row-meta">$${(item.product.price || 0).toFixed(2)} each</div>
+      </div>
+      <div class="rtg-shop-cart-row-controls">
+        <button class="rtg-shop-qty-btn" data-delta="-1">-</button>
+        <span class="rtg-shop-qty">${item.qty}</span>
+        <button class="rtg-shop-qty-btn" data-delta="1">+</button>
+        <span class="rtg-shop-line-total">$${lineTotal.toFixed(2)}</span>
+        <button class="rtg-shop-remove-btn">✕</button>
+      </div>
+    `;
 
-    const qtyWrap = document.createElement("div");
-    qtyWrap.className = "rtg-shop-cart-item-qty";
+    const minusBtn = row.querySelector('[data-delta="-1"]');
+    const plusBtn = row.querySelector('[data-delta="1"]');
+    const removeBtn = row.querySelector(".rtg-shop-remove-btn");
 
-    const minusBtn = document.createElement("button");
-    minusBtn.className = "rtg-shop-cart-qty-btn";
-    minusBtn.textContent = "−";
-    minusBtn.addEventListener("click", () => changeCartQty(product.id, -1));
-
-    const qtyText = document.createElement("span");
-    qtyText.textContent = item.qty;
-
-    const plusBtn = document.createElement("button");
-    plusBtn.className = "rtg-shop-cart-qty-btn";
-    plusBtn.textContent = "+";
-    plusBtn.addEventListener("click", () => changeCartQty(product.id, 1));
-
-    qtyWrap.appendChild(minusBtn);
-    qtyWrap.appendChild(qtyText);
-    qtyWrap.appendChild(plusBtn);
-
-    const lineTotal = product.price * item.qty;
-    total += lineTotal;
-
-    const price = document.createElement("div");
-    price.textContent = `$${lineTotal.toFixed(2)}`;
-
-    row.appendChild(name);
-    row.appendChild(qtyWrap);
-    row.appendChild(price);
+    minusBtn.onclick = () => changeQty(idx, -1);
+    plusBtn.onclick = () => changeQty(idx, 1);
+    removeBtn.onclick = () => removeFromCart(idx);
 
     cartItemsEl.appendChild(row);
   });
 
   cartTotalEl.textContent = total.toFixed(2);
+  cartCountEl.textContent = count;
 }
 
+/* ============================================================
+   CART DRAWER TOGGLE
+============================================================ */
 function openCart() {
-  cartDrawerEl.classList.add("open");
-  cartOverlayEl.classList.add("visible");
+  cartDrawer.classList.add("open");
+  cartOverlay.classList.add("visible");
 }
 
-function closeCart() {
-  cartDrawerEl.classList.remove("open");
-  cartOverlayEl.classList.remove("visible");
+function closeCartDrawer() {
+  cartDrawer.classList.remove("open");
+  cartOverlay.classList.remove("visible");
 }
 
-productSearchEl.addEventListener("input", e => {
-  searchTerm = e.target.value || "";
-  renderProducts();
-});
+cartButton.onclick = openCart;
+closeCart.onclick = closeCartDrawer;
+cartOverlay.onclick = closeCartDrawer;
 
-cartButtonEl.addEventListener("click", openCart);
-closeCartEl.addEventListener("click", closeCart);
-cartOverlayEl.addEventListener("click", closeCart);
+/* ============================================================
+   LOGO UPLOAD (OPTIONAL)
+============================================================ */
+logoFileInput.onchange = e => {
+  const file = e.target.files[0];
+  if (!file) {
+    logoDataUrl = null;
+    logoPreview.style.backgroundImage = "";
+    return;
+  }
 
-checkoutButtonEl.addEventListener("click", () => {
-  if (!cart.length) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    logoDataUrl = reader.result;
+    logoPreview.style.backgroundImage = `url('${logoDataUrl}')`;
+  };
+  reader.readAsDataURL(file);
+};
 
-  const orderPayload = cart.map(item => {
-    const product = shopData.products.find(p => p.id === item.productId);
-    return {
-      product_id: product.id,
-      name: product.name,
+/* ============================================================
+   CHECKOUT FLOW
+============================================================ */
+checkoutButton.onclick = () => {
+  if (!cart.length) {
+    alert("Your cart is empty.");
+    return;
+  }
+  checkoutModal.classList.remove("hidden");
+};
+
+cancelCheckout.onclick = () => {
+  checkoutModal.classList.add("hidden");
+};
+
+confirmCheckout.onclick = async () => {
+  if (!cart.length) {
+    alert("Your cart is empty.");
+    return;
+  }
+
+  const name = custName.value.trim();
+  const email = custEmail.value.trim();
+  const phone = custPhone.value.trim();
+  const address = custAddress.value.trim();
+
+  if (!name || !email || !address) {
+    alert("Name, email, and address are required.");
+    return;
+  }
+
+  // Build payload for backend
+  const payload = {
+    customer: {
+      name,
+      email,
+      phone,
+      address
+    },
+    items: cart.map(item => ({
+      product_id: item.product.id,
+      external_id: item.product.external_id || null,
       qty: item.qty,
-      unit_price: product.price,
-      cheapest_vendor: product.cheapest_vendor
-    };
-  });
+      allow_logo: !!item.product.allow_logo
+    })),
+    logoDataUrl // may be null
+  };
 
-  console.log("REAL TREE GUY ORDER PAYLOAD:", orderPayload);
-  alert("Order captured under Real Tree Guy brand. Wire this payload to your backend or vendor scripts.");
-});
+  try {
+    const res = await fetch("/api/printful/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-loadShopData();
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Order error:", text);
+      alert("There was an issue placing your order. Please try again.");
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Order created:", data);
+
+    alert("Order placed successfully! You’ll receive an email shortly.");
+    cart = [];
+    updateCartUI();
+    checkoutModal.classList.add("hidden");
+    closeCartDrawer();
+  } catch (err) {
+    console.error(err);
+    alert("Network error placing order.");
+  }
+};
+
+/* ============================================================
+   INIT
+============================================================ */
+loadProducts();
