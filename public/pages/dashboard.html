@@ -30,7 +30,7 @@
     <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
   </nav>
 
-  <!-- TOP BAR (MUST BE DIRECTLY AFTER SIDEBAR) -->
+  <!-- TOP BAR -->
   <div class="rtg-topbar">
 
     <div class="rtg-topbar-left">
@@ -44,7 +44,6 @@
     <div class="rtg-topbar-right">
       <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
 
-      <!-- BURGER (FORCED HIDDEN UNTIL SIDEBAR OPENS) -->
       <button id="rtgBurger" class="rtg-burger" type="button">
         <span></span><span></span><span></span>
       </button>
@@ -82,6 +81,53 @@
     <p>Real Tree Guy • Modular Static App</p>
   </footer>
 
+
+  <!-- ============================================================
+       FLOATING CLIENT MODULE (INSERTED HERE)
+  ============================================================= -->
+
+  <!-- Floating Button -->
+  <div id="rtgClientBtn">👤 Client</div>
+
+  <!-- Floating Panel -->
+  <div id="rtgClientPanel">
+    <div class="rtg-client-card">
+
+      <h2>Quick Client Add</h2>
+
+      <label>Name</label>
+      <input id="qcName" placeholder="Full name">
+
+      <label>Phone</label>
+      <input id="qcPhone" placeholder="(555) 000-0000">
+
+      <label>Email</label>
+      <input id="qcEmail" placeholder="email@example.com">
+
+      <label>Address</label>
+      <textarea id="qcAddress" placeholder="Full address"></textarea>
+
+      <label>Notes</label>
+      <textarea id="qcNotes" placeholder="Job notes, estimate info…"></textarea>
+
+      <button id="qcSave" class="rtg-btn-green">Save Client</button>
+
+      <div class="rtg-client-links">
+        <button id="qcToClients" class="rtg-btn-orange">Open Clients</button>
+        <button id="qcToContracts" class="rtg-btn-orange">Open Contracts</button>
+        <button id="qcToEstimates" class="rtg-btn-orange">New Estimate</button>
+        <button id="qcToProposals" class="rtg-btn-orange">New Proposal</button>
+        <button id="qcToInvoices" class="rtg-btn-orange">New Invoice</button>
+      </div>
+
+      <button id="qcClose" class="rtg-btn-red">Close</button>
+
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
   <script src="/pages/assets/js/dashboard.js"></script>
+  <script type="module" src="/pages/assets/js/client-module.js"></script>
+
 </body>
 </html>
