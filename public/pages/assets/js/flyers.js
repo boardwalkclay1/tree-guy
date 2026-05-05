@@ -1,6 +1,6 @@
 // ============================================================
 // REAL TREE GUY OS — FLYERS / CARDS / DOOR HANGERS STUDIO
-// FULL REBUILD (IndexedDB + Profile Auto‑Populate)
+// FULL REBUILD (IndexedDB + Profile Auto‑Populate + Export)
 // ============================================================
 
 import { initDB, save, getAll } from "./db.js";
@@ -248,3 +248,67 @@ document.getElementById("shareFlyer").onclick = async () => {
 document.getElementById("fullscreenFlyer").onclick = () => {
   if (preview.requestFullscreen) preview.requestFullscreen();
 };
+
+/* ============================================================
+   EXPORT PREVIEW AS IMAGE (PNG DATA URL)
+============================================================ */
+export async function exportPreviewAsImageUrl() {
+  const node = document.getElementById("preview");
+
+  const rect = node.getBoundingClientRect();
+  const canvas = document.createElement("canvas");
+  canvas.width = rect.width * 2;
+  canvas.height = rect.height * 2;
+
+  const ctx = canvas.getContext("2d");
+  ctx.scale(2, 2);
+
+  const clone = node.cloneNode(true);
+  clone.style.transform = "scale(1)";
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+  clone.style.top = "-9999px";
+  document.body.appendChild(clone);
+
+  const bg = window.getComputedStyle(node).backgroundImage;
+  if (bg && bg !== "none") clone.style.backgroundImage = bg;
+
+  const bgNode = clone.querySelector("#previewBg");
+  if (bgNode) {
+    const bgStyle = window.getComputedStyle(document.getElementById("previewBg"));
+    bgNode.style.backgroundImage = bgStyle.backgroundImage;
+    bgNode.style.opacity = bgStyle.opacity;
+  }
+
+  const logoNode = clone.querySelector("#previewLogo");
+  if (logoNode) {
+    const logoStyle = window.getComputedStyle(document.getElementById("previewLogo"));
+    logoNode.style.backgroundImage = logoStyle.backgroundImage;
+  }
+
+  const data = new XMLSerializer().serializeToString(clone);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}">
+      <foreignObject width="100%" height="100%">
+        ${data}
+      </foreignObject>
+    </svg>
+  `;
+
+  const img = new Image();
+  const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(svgBlob);
+
+  await new Promise(resolve => {
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      resolve();
+    };
+    img.src = url;
+  });
+
+  clone.remove();
+
+  return canvas.toDataURL("image/png");
+}
