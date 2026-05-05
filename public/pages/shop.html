@@ -18,7 +18,7 @@
   <header class="rtg-shop-header">
     <div class="rtg-shop-brand">
       <h1>REAL TREE SHOP</h1>
-      <p>Curated tree gear from the cheapest sources — under the Real Tree Guy brand.</p>
+      <p>Curated Real Tree Guy print products and gear, ready to order.</p>
     </div>
     <div class="rtg-shop-cart">
       <button id="cartButton" class="rtg-shop-cart-btn">
@@ -41,7 +41,7 @@
         <input
           id="productSearch"
           type="search"
-          placeholder="Search tree gear…"
+          placeholder="Search products…"
           class="rtg-shop-search"
         >
       </div>
@@ -52,6 +52,7 @@
     </section>
   </main>
 
+  <!-- CART DRAWER -->
   <div id="cartDrawer" class="rtg-shop-cart-drawer">
     <div class="rtg-shop-cart-header">
       <h2>Your Cart</h2>
@@ -63,13 +64,51 @@
         Total: $<span id="cartTotal">0.00</span>
       </div>
       <button id="checkoutButton" class="rtg-shop-checkout-btn">
-        Review Order (Real Tree Guy)
+        Review & Place Order
       </button>
     </div>
   </div>
 
   <div id="cartOverlay" class="rtg-shop-cart-overlay"></div>
 
-  <script src="/pages/assets/js/real-tree-shop.js"></script>
+  <!-- CHECKOUT MODAL -->
+  <div id="checkoutModal" class="rtg-shop-modal hidden">
+    <div class="rtg-shop-modal-inner">
+      <h2>Checkout – Real Tree Guy</h2>
+
+      <div class="rtg-shop-checkout-grid">
+        <div>
+          <h3>Customer Info</h3>
+          <label>Name</label>
+          <input id="custName" placeholder="Full name">
+
+          <label>Email</label>
+          <input id="custEmail" placeholder="email@example.com">
+
+          <label>Phone</label>
+          <input id="custPhone" placeholder="(555) 000-0000">
+
+          <label>Address</label>
+          <textarea id="custAddress" placeholder="Full shipping address"></textarea>
+        </div>
+
+        <div>
+          <h3>Logo (optional)</h3>
+          <p>For products that allow custom logo, upload it here.</p>
+          <input type="file" id="logoFile" accept="image/*">
+          <div id="logoPreview" class="rtg-shop-logo-preview"></div>
+        </div>
+      </div>
+
+      <div class="rtg-shop-modal-actions">
+        <button id="cancelCheckout" class="rtg-shop-btn-secondary">Cancel</button>
+        <button id="confirmCheckout" class="rtg-shop-btn-primary">
+          Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/pages/assets/js/real-tree-shop.js"></script>
 </body>
 </html>
