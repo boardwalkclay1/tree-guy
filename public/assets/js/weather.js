@@ -33,12 +33,16 @@ function codeToText(code) {
   return map[code] || "Weather";
 }
 
-// GET GPS
+// GET GPS WITH PERMISSION HANDLING
 function getLocation() {
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => resolve({ lat: 34.0, lng: -84.0 }) // fallback ATL
+      err => {
+        console.warn("Location denied, using fallback.");
+        resolve({ lat: 34.0, lng: -84.0 }); // fallback ATL
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
     );
   });
 }
@@ -76,7 +80,7 @@ function renderForecast(data) {
 }
 
 // MAIN
-(async () => {
+async function loadWeather() {
   const { lat, lng } = await getLocation();
   const data = await getWeather(lat, lng);
 
@@ -86,4 +90,7 @@ function renderForecast(data) {
   // SEND WEATHER TO DASHBOARD + CALENDAR
   localStorage.setItem("rtgWeatherToday", JSON.stringify(data.current_weather));
   localStorage.setItem("rtgWeatherForecast", JSON.stringify(data.daily));
-})();
+}
+
+// RUN ON LOAD
+loadWeather();
