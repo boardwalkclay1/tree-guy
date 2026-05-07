@@ -1,6 +1,6 @@
 // ============================================================
-// REAL TREE GUY — MEASUREMENT TOOLS (UPGRADED AR VERSION)
-// Modes • Camera • Tree Detection • Pythagorean Overlay
+// REAL TREE GUY — AR MEASUREMENT OVERLAY
+// Floating Pythagorean Theorem + Tree Detection
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ============================================================
-  // CAMERA + CANVAS OVERLAY
+  // CAMERA + FLOATING CANVAS
   // ============================================================
   const video = document.getElementById("measureVideo");
   const canvas = document.getElementById("measureCanvas");
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   startCamera();
 
   // ============================================================
-  // LOAD TREE DETECTION MODEL (TensorFlow.js COCO-SSD)
+  // LOAD TREE DETECTION MODEL
   // ============================================================
   let model = null;
 
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadModel();
 
   // ============================================================
-  // DETECTION + OVERLAY LOOP
+  // DETECTION LOOP
   // ============================================================
   async function detectLoop() {
     if (model && video.readyState === 4) {
@@ -75,17 +75,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================================
-  // DRAW OVERLAY (TREE REACTIVE)
+  // FLOATING OVERLAY DRAWING
   // ============================================================
   function drawOverlay(predictions) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Find the largest detected tree
+    // Find largest detected tree
     const trees = predictions.filter(p => p.class === "tree");
     if (trees.length === 0) return;
 
     const tree = trees.sort((a, b) => b.bbox[2] * b.bbox[3] - a.bbox[2] * a.bbox[3])[0];
-
     const [x, y, w, h] = tree.bbox;
 
     // Faint overlay style
@@ -94,10 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "white";
     ctx.lineWidth = 2;
 
-    // Draw bounding box
+    // Bounding box
     ctx.strokeRect(x, y, w, h);
 
-    // Draw right triangle on the tree
+    // Triangle points
     const ax = x;
     const ay = y + h;
     const bx = x + w;
@@ -105,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cx = x;
     const cy = y;
 
+    // Triangle
     ctx.beginPath();
     ctx.moveTo(ax, ay);
     ctx.lineTo(bx, by);
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.closePath();
     ctx.stroke();
 
-    // Side lengths (pixels)
+    // Side lengths
     const a = Math.round(w);
     const b = Math.round(h);
     const c = Math.round(Math.sqrt(w * w + h * h));
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillText(`b = ${b}px`, ax + 10, (ay + cy) / 2);
     ctx.fillText(`c = ${c}px`, (bx + cx) / 2, (by + cy) / 2);
 
-    // Pythagorean theorem
+    // Theorem floating above tree
     ctx.font = "28px Arial";
     ctx.fillText("a² + b² = c²", x, y - 10);
   }
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ============================================================
-  // SIMPLE SAVES (localStorage)
+  // SIMPLE SAVES
   // ============================================================
   const MEASURE_KEY = "rtgMeasurement";
 
