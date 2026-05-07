@@ -7,8 +7,6 @@
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-  <!-- GLOBAL + DASHBOARD STYLES -->
-  <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/assets/css/dashboard.css">
 </head>
 
@@ -33,7 +31,7 @@
   <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
-      <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo" alt="Real Tree Guy Logo">
+      <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
       <div class="rtg-topbar-title">
         <div class="rtg-topbar-main">REAL TREE GUY OPS CENTER</div>
         <div class="rtg-topbar-sub">Field Command • Tree Work OS</div>
@@ -48,7 +46,7 @@
       <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
       <a href="/pages/map.html" class="rtg-topbar-link">Map</a>
 
-      <button id="rtgBurger" class="rtg-burger" type="button">
+      <button id="rtgBurger" class="rtg-burger">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -56,90 +54,70 @@
 
   <!-- MAIN -->
   <main class="rtg-main">
+
     <!-- QUICK ACTIONS -->
     <section class="rtg-quick-actions">
       <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ New Client</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/calendar.html'">📅 Schedule Job</button>
-      <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Open Weather</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Weather</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Job Map</button>
     </section>
 
-    <!-- GAUGES ROW -->
+    <!-- GAUGES -->
     <section class="rtg-gauge-row">
-      <!-- ARC GAUGE: WIND HAZARD -->
+
+      <!-- ARC GAUGE -->
       <div class="rtg-gauge-card">
         <h2>💨 Wind Hazard</h2>
-        <div class="arc-gauge" id="windGauge">
-          <div class="arc-gauge-inner">
-            <div class="arc-needle" id="windNeedle"></div>
-          </div>
+        <div class="arc-gauge">
+          <div class="arc-gauge-inner"></div>
+          <div class="arc-needle" id="windNeedle"></div>
         </div>
-        <div class="gauge-labels">
-          <span>Safe</span><span>Caution</span><span>Danger</span>
-        </div>
-        <div class="gauge-readout">
-          <span id="windSpeedReadout">-- mph</span>
-        </div>
+        <div class="gauge-readout" id="windSpeedReadout">-- mph</div>
       </div>
 
-      <!-- BAR GAUGE: TREE HAZARD -->
+      <!-- BAR GAUGE -->
       <div class="rtg-gauge-card">
         <h2>🌲 Tree Hazard Level</h2>
         <div class="bar-gauge">
           <div class="bar-gauge-fill" id="hazardBar"></div>
         </div>
-        <div class="gauge-labels bar-labels">
-          <span>Low</span><span>Moderate</span><span>High</span><span>Extreme</span>
-        </div>
-        <div class="gauge-readout">
-          <span id="hazardScoreReadout">Score: -- / 100</span>
-        </div>
+        <div class="gauge-readout" id="hazardScoreReadout">Score: --</div>
       </div>
+
     </section>
 
     <!-- WIDGETS -->
     <section class="rtg-widget">
-      <h2>Live Field Intel</h2>
 
       <!-- WEATHER CARD -->
-      <div class="rtg-dashboard-card" id="weatherCard">
+      <div class="rtg-dashboard-card">
         <div class="card-header">
           <span>🌤️ Weather Snapshot</span>
-          <a href="/pages/weather.html">Open Full Weather →</a>
+          <a href="/pages/weather.html">Full Weather →</a>
         </div>
         <div class="card-body weather-body">
           <div class="weather-main">
-            <div id="wxTemp" class="wx-temp">--°F</div>
-            <div id="wxCond" class="wx-cond">Waiting for data…</div>
+            <div id="dashWxTemp" class="wx-temp">--°F</div>
+            <div id="dashWxCond" class="wx-cond">Loading…</div>
           </div>
           <div class="weather-meta">
-            <div id="wxWind">Wind: --</div>
-            <div id="wxGust">Gusts: --</div>
+            <div id="dashWxWind">Wind: --</div>
+            <div id="dashWxGust">Gusts: --</div>
           </div>
         </div>
       </div>
 
-      <!-- PLACEHOLDER CARDS FOR OTHER MODULES -->
+      <!-- JOB CARD -->
       <div class="rtg-dashboard-card">
         <div class="card-header">
-          <span>📋 Today’s Jobs</span>
-          <a href="/pages/customers.html">Open Jobs →</a>
+          <span>📋 Today’s Job</span>
+          <a href="/pages/customers.html">Jobs →</a>
         </div>
-        <div class="card-body">
-          <p>Jobs summary will appear here.</p>
-        </div>
+        <div class="card-body" id="dashJobBody">Loading…</div>
       </div>
 
-      <div class="rtg-dashboard-card">
-        <div class="card-header">
-          <span>📅 Calendar Snapshot</span>
-          <a href="/pages/calendar.html">Open Calendar →</a>
-        </div>
-        <div class="card-body">
-          <p>Upcoming events will appear here.</p>
-        </div>
-      </div>
     </section>
 
     <!-- NAV GRID -->
@@ -154,88 +132,9 @@
       <a href="/pages/shop.html" class="rtg-card">Shop</a>
     </section>
 
-    <div class="rtg-bottom-buttons">
-      <a class="rtg-bottom-btn" href="/pages/shop.html">REAL TREE SHOP</a>
-      <a class="rtg-bottom-btn" href="/index.html">RTG ONLINE</a>
-    </div>
   </main>
 
-  <footer class="rtg-footer">
-    <p>Real Tree Guy • Modular Static App</p>
-  </footer>
-
-  <!-- FLOATING CLIENT MODULE -->
-  <div id="rtgClientBtn">👤 Client</div>
-
-  <div id="rtgClientPanel">
-    <div class="rtg-client-card">
-      <h2>Quick Client Add</h2>
-
-      <label>Name</label>
-      <input id="qcName" placeholder="Full name">
-
-      <label>Phone</label>
-      <input id="qcPhone" placeholder="(555) 000-0000">
-
-      <label>Email</label>
-      <input id="qcEmail" placeholder="email@example.com">
-
-      <label>Address</label>
-      <textarea id="qcAddress" placeholder="Full address"></textarea>
-
-      <label>Notes</label>
-      <textarea id="qcNotes" placeholder="Job notes, estimate info…"></textarea>
-
-      <button id="qcSave" class="rtg-btn-green">Save Client</button>
-
-      <div class="rtg-client-links">
-        <button id="qcToClients" class="rtg-btn-orange">Open Clients</button>
-        <button id="qcToContracts" class="rtg-btn-orange">Open Contracts</button>
-        <button id="qcToEstimates" class="rtg-btn-orange">New Estimate</button>
-        <button id="qcToProposals" class="rtg-btn-orange">New Proposal</button>
-        <button id="qcToInvoices" class="rtg-btn-orange">New Invoice</button>
-      </div>
-
-      <button id="qcClose" class="rtg-btn-red">Close</button>
-    </div>
-  </div>
-
-  <!-- SCRIPTS -->
-  <script src="/pages/assets/js/dashboard.js"></script>
-  <script type="module" src="/pages/assets/js/client-module.js"></script>
-
-  <!-- OPTIONAL: tiny inline hook to read weather + set gauges -->
-  <script>
-    (function () {
-      const today = JSON.parse(localStorage.getItem("rtgWeatherToday") || "null");
-      if (!today) return;
-
-      const tempEl = document.getElementById("wxTemp");
-      const condEl = document.getElementById("wxCond");
-      const windEl = document.getElementById("wxWind");
-      const gustEl = document.getElementById("wxGust");
-      const windReadout = document.getElementById("windSpeedReadout");
-      const windNeedle = document.getElementById("windNeedle");
-      const hazardBar = document.getElementById("hazardBar");
-      const hazardScoreReadout = document.getElementById("hazardScoreReadout");
-
-      tempEl.textContent = `${today.temperature}°F`;
-      condEl.textContent = `Code ${today.weathercode}`;
-      windEl.textContent = `Wind: ${today.windspeed ?? "--"} mph`;
-      gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
-      windReadout.textContent = `${today.windspeed ?? "--"} mph`;
-
-      const wind = today.windspeed || 0;
-      const gust = today.windgusts || wind;
-      const hazardScore = Math.min(100, Math.round((wind * 2 + gust) / 3));
-      hazardScoreReadout.textContent = `Score: ${hazardScore} / 100`;
-
-      const angle = Math.min(180, (wind / 50) * 180);
-      windNeedle.style.transform = `rotate(${angle - 90}deg)`;
-
-      hazardBar.style.width = `${hazardScore}%`;
-    })();
-  </script>
+  <script src="/assets/js/dashboard.js"></script>
 
 </body>
 </html>
