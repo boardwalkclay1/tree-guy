@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY — DASHBOARD JS (FINAL, LOCATION-AWARE VERSION)
+// REAL TREE GUY — DASHBOARD JS (FINAL WITH NOTIFICATIONS)
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -53,6 +53,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
+  // NOTIFICATION SYSTEM
+  // ============================================================
+  const notifList = document.getElementById("rtgNotifList");
+
+  function pushNotification(msg, type = "info") {
+    if (!notifList) return;
+
+    // Remove "No notifications" placeholder
+    const empty = notifList.querySelector(".notif-empty");
+    if (empty) empty.remove();
+
+    const div = document.createElement("div");
+    div.className = `notif-item notif-${type}`;
+    div.textContent = msg;
+
+    notifList.prepend(div);
+  }
+
+  // Make available globally
+  window.RTGnotify = pushNotification;
+
+
+  // ============================================================
   // GET REAL GPS
   // ============================================================
   async function getLocation() {
@@ -66,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // FETCH WEATHER (OPEN-METEO)
+  // FETCH WEATHER
   // ============================================================
   async function fetchWeather(lat, lon) {
     const url =
@@ -99,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // UPDATE DASHBOARD WEATHER + GAUGES
+  // UPDATE WEATHER UI + GAUGES
   // ============================================================
   function updateWeatherUI(today) {
     const tempEl = document.getElementById("dashWxTemp");
@@ -111,17 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const hazardBar = document.getElementById("hazardBar");
     const hazardScoreReadout = document.getElementById("hazardScoreReadout");
 
-    // Weather card
     tempEl.textContent = `${today.temperature}°F`;
     condEl.textContent = `Code ${today.weathercode}`;
     windEl.textContent = `Wind: ${today.windspeed} mph`;
     gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
     windReadout.textContent = `${today.windspeed} mph`;
 
-    // Background
     applyWeatherBackground(today.weathercode);
 
-    // Hazard score
     const wind = today.windspeed || 0;
     const gust = today.windgusts || wind;
     const score = Math.min(100, Math.max(0, Math.round((wind * 2 + gust) / 3)));
@@ -129,14 +149,17 @@ document.addEventListener("DOMContentLoaded", () => {
     hazardScoreReadout.textContent = `Score: ${score}`;
     hazardBar.style.width = `${score}%`;
 
-    // Arc gauge needle
     const angle = Math.min(180, Math.max(0, (wind / 50) * 180));
     windNeedle.style.transform = `rotate(${angle - 90}deg)`;
+
+    // Weather alerts
+    if (wind > 25) RTGnotify(`High winds detected (${wind} mph). Use caution.`, "warn");
+    if (gust > 35) RTGnotify(`Strong gusts detected (${gust} mph). Hazard increased.`, "danger");
   }
 
 
   // ============================================================
-  // LOAD WEATHER (REAL GPS → FETCH → SAVE → UPDATE UI)
+  // LOAD WEATHER (GPS → FETCH → SAVE → UI)
   // ============================================================
   async function loadWeather() {
     const { lat, lon } = await getLocation();
@@ -151,10 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       windgusts: data.hourly?.windgusts_10m?.[0] ?? data.current_weather.windspeed
     };
 
-    // Save for other pages
     Storage.set("rtgWeatherToday", today);
-
-    // Update UI
     updateWeatherUI(today);
   }
 
@@ -184,6 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <p><strong>Address:</strong> ${job.address || "N/A"}</p>
       <p><strong>Notes:</strong> ${job.notes || "None"}</p>
     `;
+
+    RTGnotify(`Job today: ${job.client}`, "info");
   }
 
   loadDashboardJob();
