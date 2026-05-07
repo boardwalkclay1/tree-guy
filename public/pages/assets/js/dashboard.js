@@ -1,10 +1,12 @@
 // ============================================================
-// REAL TREE GUY — DASHBOARD JS
+// REAL TREE GUY — DASHBOARD JS (FINAL, LOCATION-AWARE VERSION)
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  // ============================================================
   // CLOCK
+  // ============================================================
   const clockEl = document.getElementById("rtgClock");
   function updateClock() {
     if (!clockEl) return;
@@ -18,23 +20,28 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClock();
   setInterval(updateClock, 1000);
 
+
+  // ============================================================
   // SIDEBAR TOGGLE
+  // ============================================================
   const burger = document.getElementById("rtgBurger");
   const sidemenu = document.getElementById("rtgSidemenu");
   const logo = document.getElementById("rtgLogo");
 
   function toggleMenu() {
-    if (!sidemenu) return;
-    sidemenu.classList.toggle("open");
+    sidemenu?.classList.toggle("open");
   }
   burger?.addEventListener("click", toggleMenu);
   logo?.addEventListener("click", toggleMenu);
 
+
+  // ============================================================
   // STORAGE UTILS
+  // ============================================================
   const Storage = {
-    get(key, fallback = []) {
+    get(key, fallback = null) {
       try {
-        return JSON.parse(localStorage.getItem(key)) || fallback;
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
       } catch {
         return fallback;
       }
@@ -44,12 +51,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // WEATHER BACKGROUND (OPTIONAL)
+
+  // ============================================================
+  // GET REAL GPS
+  // ============================================================
+  async function getLocation() {
+    return new Promise(resolve => {
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => resolve({ lat: 34.0, lon: -84.0 }) // fallback ATL
+      );
+    });
+  }
+
+
+  // ============================================================
+  // FETCH WEATHER (OPEN-METEO)
+  // ============================================================
+  async function fetchWeather(lat, lon) {
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current_weather=true&hourly=windgusts_10m&timezone=auto`;
+
+    const res = await fetch(url);
+    return res.json();
+  }
+
+
+  // ============================================================
+  // WEATHER BACKGROUND
+  // ============================================================
   function applyWeatherBackground(code) {
     const bgLayer = document.getElementById("rtgBackground");
     if (!bgLayer) return;
 
-    let bg = "none";
+    let bg = "radial-gradient(circle at top, #1f5f2b 0, #061b06 55%, #020a02 100%)";
+
     if (code === 0 || code === 1) bg = "radial-gradient(circle at top, #3fa34d 0, #061b06 55%, #020a02 100%)";
     else if (code === 2) bg = "radial-gradient(circle at top, #2f6f3d 0, #061b06 55%, #020a02 100%)";
     else if (code === 3) bg = "radial-gradient(circle at top, #1f3f2b 0, #020a02 55%, #000 100%)";
@@ -60,11 +97,11 @@ document.addEventListener("DOMContentLoaded", () => {
     bgLayer.style.background = bg;
   }
 
-  // DASHBOARD WEATHER CARD + GAUGES
-  function loadDashboardWeatherAndHazard() {
-    const today = JSON.parse(localStorage.getItem("rtgWeatherToday") || "null");
-    if (!today) return;
 
+  // ============================================================
+  // UPDATE DASHBOARD WEATHER + GAUGES
+  // ============================================================
+  function updateWeatherUI(today) {
     const tempEl = document.getElementById("dashWxTemp");
     const condEl = document.getElementById("dashWxCond");
     const windEl = document.getElementById("dashWxWind");
@@ -74,38 +111,65 @@ document.addEventListener("DOMContentLoaded", () => {
     const hazardBar = document.getElementById("hazardBar");
     const hazardScoreReadout = document.getElementById("hazardScoreReadout");
 
-    if (tempEl) tempEl.textContent = `${today.temperature}°F`;
-    if (condEl) condEl.textContent = `Code ${today.weathercode}`;
-    if (windEl) windEl.textContent = `Wind: ${today.windspeed ?? "--"} mph`;
-    if (gustEl) gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
-    if (windReadout) windReadout.textContent = `${today.windspeed ?? "--"} mph`;
+    // Weather card
+    tempEl.textContent = `${today.temperature}°F`;
+    condEl.textContent = `Code ${today.weathercode}`;
+    windEl.textContent = `Wind: ${today.windspeed} mph`;
+    gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
+    windReadout.textContent = `${today.windspeed} mph`;
 
+    // Background
     applyWeatherBackground(today.weathercode);
 
+    // Hazard score
     const wind = today.windspeed || 0;
     const gust = today.windgusts || wind;
-    const score = Math.min(100, Math.round((wind * 2 + gust) / 3));
+    const score = Math.min(100, Math.max(0, Math.round((wind * 2 + gust) / 3)));
 
-    if (hazardScoreReadout) hazardScoreReadout.textContent = `Score: ${score}`;
-    if (hazardBar) hazardBar.style.width = `${score}%`;
+    hazardScoreReadout.textContent = `Score: ${score}`;
+    hazardBar.style.width = `${score}%`;
 
-    const angle = Math.min(180, (wind / 50) * 180);
-    if (windNeedle) windNeedle.style.transform = `rotate(${angle - 90}deg)`;
+    // Arc gauge needle
+    const angle = Math.min(180, Math.max(0, (wind / 50) * 180));
+    windNeedle.style.transform = `rotate(${angle - 90}deg)`;
   }
 
-  loadDashboardWeatherAndHazard();
 
+  // ============================================================
+  // LOAD WEATHER (REAL GPS → FETCH → SAVE → UPDATE UI)
+  // ============================================================
+  async function loadWeather() {
+    const { lat, lon } = await getLocation();
+    const data = await fetchWeather(lat, lon);
+
+    if (!data || !data.current_weather) return;
+
+    const today = {
+      temperature: data.current_weather.temperature,
+      weathercode: data.current_weather.weathercode,
+      windspeed: data.current_weather.windspeed,
+      windgusts: data.hourly?.windgusts_10m?.[0] ?? data.current_weather.windspeed
+    };
+
+    // Save for other pages
+    Storage.set("rtgWeatherToday", today);
+
+    // Update UI
+    updateWeatherUI(today);
+  }
+
+  loadWeather();
+
+
+  // ============================================================
   // TODAY'S JOB CARD
+  // ============================================================
   function loadDashboardJob() {
-    const jobs = Storage.get("rtgJobs");
+    const jobs = Storage.get("rtgJobs", []);
     const todayStr = new Date().toDateString();
-    const todaysJobs = jobs.filter(j => {
-      if (!j.date) return false;
-      return new Date(j.date).toDateString() === todayStr;
-    });
+    const todaysJobs = jobs.filter(j => j.date && new Date(j.date).toDateString() === todayStr);
 
     const body = document.getElementById("dashJobBody");
-    if (!body) return;
 
     if (todaysJobs.length === 0) {
       body.innerHTML = `<p>No jobs scheduled today.</p>`;
@@ -113,6 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const job = todaysJobs[0];
+
     body.innerHTML = `
       <h3>${job.client || "Unnamed Job"}</h3>
       <p><strong>Time:</strong> ${job.time || "N/A"}</p>
