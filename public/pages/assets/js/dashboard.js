@@ -1,15 +1,11 @@
 // ============================================================
-// REAL TREE GUY — DASHBOARD JS (CLEAN VERSION)
-// No CSS logic • No layout logic • Pure functionality only
+// REAL TREE GUY — DASHBOARD JS
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ============================================================
   // CLOCK
-  // ============================================================
   const clockEl = document.getElementById("rtgClock");
-
   function updateClock() {
     if (!clockEl) return;
     const now = new Date();
@@ -19,274 +15,112 @@ document.addEventListener("DOMContentLoaded", () => {
       second: "2-digit"
     });
   }
-
   updateClock();
   setInterval(updateClock, 1000);
 
-
-  // ============================================================
-  // SIDEBAR TOGGLE (LOGO + BURGER)
-  // ============================================================
+  // SIDEBAR TOGGLE
   const burger = document.getElementById("rtgBurger");
   const sidemenu = document.getElementById("rtgSidemenu");
-  const logo = document.querySelector(".rtg-logo");
+  const logo = document.getElementById("rtgLogo");
 
   function toggleMenu() {
     if (!sidemenu) return;
     sidemenu.classList.toggle("open");
   }
+  burger?.addEventListener("click", toggleMenu);
+  logo?.addEventListener("click", toggleMenu);
 
-  if (burger) burger.addEventListener("click", toggleMenu);
-  if (logo) logo.addEventListener("click", toggleMenu);
-
-
-  // ============================================================
-  // WEATHER (FREE API + REAL LOCATION)
-  // ============================================================
-  async function getLocation() {
-    return new Promise(resolve => {
-      navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () => resolve({ lat: 34.0, lon: -84.0 }) // fallback ATL
-      );
-    });
-  }
-
-  async function getWeather(lat, lon) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-    const res = await fetch(url);
-    return res.json();
-  }
-
-  function applyWeatherBackground(code) {
-    const bgLayer = document.getElementById("rtgBackground");
-    if (!bgLayer) return;
-
-    let bg = "/assets/img/weather/default.jpg";
-
-    if (code === 0 || code === 1) bg = "/assets/img/weather/sunny.jpg";
-    else if (code === 2) bg = "/assets/img/weather/partly.jpg";
-    else if (code === 3) bg = "/assets/img/weather/cloudy.jpg";
-    else if (code >= 51 && code <= 67) bg = "/assets/img/weather/rain.jpg";
-    else if (code >= 71 && code <= 77) bg = "/assets/img/weather/snow.jpg";
-    else if (code >= 95) bg = "/assets/img/weather/storm.jpg";
-
-    bgLayer.style.backgroundImage = `url('${bg}')`;
-  }
-
-  async function loadWeather() {
-    const { lat, lon } = await getLocation();
-    const data = await getWeather(lat, lon);
-    if (data && data.current_weather) {
-      applyWeatherBackground(data.current_weather.weathercode);
-    }
-  }
-
-  loadWeather();
-
-
-  // ============================================================
-  // COMPASS
-  // ============================================================
-  const compassEl = document.getElementById("rtgCompass");
-
-  if (compassEl && window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", e => {
-      if (e.webkitCompassHeading) {
-        compassEl.style.transform = `rotate(${e.webkitCompassHeading * -1}deg)`;
-      } else if (e.alpha !== null) {
-        compassEl.style.transform = `rotate(${e.alpha * -1}deg)`;
-      }
-    });
-  }
-
-
-  // ============================================================
   // STORAGE UTILS
-  // ============================================================
   const Storage = {
     get(key, fallback = []) {
-      return JSON.parse(localStorage.getItem(key)) || fallback;
+      try {
+        return JSON.parse(localStorage.getItem(key)) || fallback;
+      } catch {
+        return fallback;
+      }
     },
     set(key, value) {
       localStorage.setItem(key, JSON.stringify(value));
     }
   };
 
+  // WEATHER BACKGROUND (OPTIONAL)
+  function applyWeatherBackground(code) {
+    const bgLayer = document.getElementById("rtgBackground");
+    if (!bgLayer) return;
 
-  // ============================================================
-  // TODAY'S JOBS
-  // ============================================================
-  const JOB_KEY = "rtgJobs";
-  let jobIndex = 0;
+    let bg = "none";
+    if (code === 0 || code === 1) bg = "radial-gradient(circle at top, #3fa34d 0, #061b06 55%, #020a02 100%)";
+    else if (code === 2) bg = "radial-gradient(circle at top, #2f6f3d 0, #061b06 55%, #020a02 100%)";
+    else if (code === 3) bg = "radial-gradient(circle at top, #1f3f2b 0, #020a02 55%, #000 100%)";
+    else if (code >= 51 && code <= 67) bg = "radial-gradient(circle at top, #1f3f4f 0, #020a02 55%, #000 100%)";
+    else if (code >= 71 && code <= 77) bg = "radial-gradient(circle at top, #cfdfeF 0, #061b06 55%, #020a02 100%)";
+    else if (code >= 95) bg = "radial-gradient(circle at top, #4b1f1f 0, #020a02 55%, #000 100%)";
 
-  function loadJobs() {
-    const jobs = Storage.get(JOB_KEY);
-    return jobs.filter(j => isToday(j.date));
+    bgLayer.style.background = bg;
   }
 
-  function isToday(dateStr) {
-    const today = new Date();
-    const d = new Date(dateStr);
-    return d.toDateString() === today.toDateString();
+  // DASHBOARD WEATHER CARD + GAUGES
+  function loadDashboardWeatherAndHazard() {
+    const today = JSON.parse(localStorage.getItem("rtgWeatherToday") || "null");
+    if (!today) return;
+
+    const tempEl = document.getElementById("dashWxTemp");
+    const condEl = document.getElementById("dashWxCond");
+    const windEl = document.getElementById("dashWxWind");
+    const gustEl = document.getElementById("dashWxGust");
+    const windReadout = document.getElementById("windSpeedReadout");
+    const windNeedle = document.getElementById("windNeedle");
+    const hazardBar = document.getElementById("hazardBar");
+    const hazardScoreReadout = document.getElementById("hazardScoreReadout");
+
+    if (tempEl) tempEl.textContent = `${today.temperature}°F`;
+    if (condEl) condEl.textContent = `Code ${today.weathercode}`;
+    if (windEl) windEl.textContent = `Wind: ${today.windspeed ?? "--"} mph`;
+    if (gustEl) gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
+    if (windReadout) windReadout.textContent = `${today.windspeed ?? "--"} mph`;
+
+    applyWeatherBackground(today.weathercode);
+
+    const wind = today.windspeed || 0;
+    const gust = today.windgusts || wind;
+    const score = Math.min(100, Math.round((wind * 2 + gust) / 3));
+
+    if (hazardScoreReadout) hazardScoreReadout.textContent = `Score: ${score}`;
+    if (hazardBar) hazardBar.style.width = `${score}%`;
+
+    const angle = Math.min(180, (wind / 50) * 180);
+    if (windNeedle) windNeedle.style.transform = `rotate(${angle - 90}deg)`;
   }
 
-  function renderJob() {
-    const display = document.getElementById("jobDisplay");
-    if (!display) return;
+  loadDashboardWeatherAndHazard();
 
-    const jobs = loadJobs();
+  // TODAY'S JOB CARD
+  function loadDashboardJob() {
+    const jobs = Storage.get("rtgJobs");
+    const todayStr = new Date().toDateString();
+    const todaysJobs = jobs.filter(j => {
+      if (!j.date) return false;
+      return new Date(j.date).toDateString() === todayStr;
+    });
 
-    if (jobs.length === 0) {
-      display.innerHTML = `<p>No jobs scheduled today.</p>`;
+    const body = document.getElementById("dashJobBody");
+    if (!body) return;
+
+    if (todaysJobs.length === 0) {
+      body.innerHTML = `<p>No jobs scheduled today.</p>`;
       return;
     }
 
-    if (jobIndex < 0) jobIndex = jobs.length - 1;
-    if (jobIndex >= jobs.length) jobIndex = 0;
-
-    const job = jobs[jobIndex];
-
-    display.innerHTML = `
-      <h3>${job.client}</h3>
-      <p><strong>Time:</strong> ${job.time}</p>
-      <p><strong>Address:</strong> ${job.address}</p>
+    const job = todaysJobs[0];
+    body.innerHTML = `
+      <h3>${job.client || "Unnamed Job"}</h3>
+      <p><strong>Time:</strong> ${job.time || "N/A"}</p>
+      <p><strong>Address:</strong> ${job.address || "N/A"}</p>
       <p><strong>Notes:</strong> ${job.notes || "None"}</p>
-      <p><strong>Saved Location:</strong> ${job.savedLocation || "None"}</p>
     `;
   }
 
-  function markJobDone() {
-    const jobs = loadJobs();
-    jobs.splice(jobIndex, 1);
-    Storage.set(JOB_KEY, jobs);
-    jobIndex = 0;
-    renderJob();
-  }
-
-  function saveJobLocation() {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const jobs = loadJobs();
-      const job = jobs[jobIndex];
-      job.savedLocation = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-      Storage.set(JOB_KEY, jobs);
-      renderJob();
-    });
-  }
-
-  function addJobNote() {
-    const note = prompt("Add a note:");
-    if (!note) return;
-
-    const jobs = loadJobs();
-    jobs[jobIndex].notes = note;
-    Storage.set(JOB_KEY, jobs);
-    renderJob();
-  }
-
-  document.getElementById("jobPrev")?.addEventListener("click", () => {
-    jobIndex--;
-    renderJob();
-  });
-
-  document.getElementById("jobNext")?.addEventListener("click", () => {
-    jobIndex++;
-    renderJob();
-  });
-
-  document.getElementById("jobDone")?.addEventListener("click", markJobDone);
-  document.getElementById("jobSaveLoc")?.addEventListener("click", saveJobLocation);
-  document.getElementById("jobAddNote")?.addEventListener("click", addJobNote);
-
-  renderJob();
-
-
-  // ============================================================
-  // JOB TIMER
-  // ============================================================
-  let timerInterval;
-  let seconds = 0;
-
-  const timerDisplay = document.getElementById("timerDisplay");
-  const timerStart = document.getElementById("timerStart");
-  const timerStop = document.getElementById("timerStop");
-  const timerReset = document.getElementById("timerReset");
-
-  if (timerDisplay) {
-    timerStart?.addEventListener("click", () => {
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        seconds++;
-        timerDisplay.textContent = formatTime(seconds);
-      }, 1000);
-    });
-
-    timerStop?.addEventListener("click", () => clearInterval(timerInterval));
-
-    timerReset?.addEventListener("click", () => {
-      clearInterval(timerInterval);
-      seconds = 0;
-      timerDisplay.textContent = "00:00:00";
-    });
-  }
-
-  function formatTime(sec) {
-    const h = String(Math.floor(sec / 3600)).padStart(2, "0");
-    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
-    const s = String(sec % 60).padStart(2, "0");
-    return `${h}:${m}:${s}`;
-  }
-
-
-  // ============================================================
-  // PHOTO CAPTURE
-  // ============================================================
-  const photoVideo = document.getElementById("photoPreview");
-  const photoGallery = document.getElementById("photoGallery");
-  const takePhoto = document.getElementById("takePhoto");
-
-  if (photoVideo) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => photoVideo.srcObject = stream);
-
-    takePhoto?.addEventListener("click", () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = photoVideo.videoWidth;
-      canvas.height = photoVideo.videoHeight;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(photoVideo, 0, 0);
-
-      const img = document.createElement("img");
-      img.src = canvas.toDataURL("image/png");
-
-      photoGallery?.appendChild(img);
-    });
-  }
-
-
-  // ============================================================
-  // QUICK DIAL
-  // ============================================================
-  const quickDialList = document.getElementById("quickDialList");
-
-  if (quickDialList) {
-    const customers = Storage.get("rtgCustomers");
-
-    customers.forEach(c => {
-      const item = document.createElement("div");
-
-      item.innerHTML = `
-        <h3>${c.name}</h3>
-        <p>${c.phone}</p>
-        <p>${c.address}</p>
-        <button onclick="window.location.href='tel:${c.phone}'">Call</button>
-        <button onclick="window.location.href='sms:${c.phone}'">Text</button>
-        <button onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(c.address)}')">Map</button>
-      `;
-
-      quickDialList.appendChild(item);
-    });
-  }
+  loadDashboardJob();
 
 });
