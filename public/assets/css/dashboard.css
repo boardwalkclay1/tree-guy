@@ -250,6 +250,7 @@ body {
   background: #122012;
   overflow: hidden;
   border: 2px solid #2e6b33;
+  margin-top: 6px;
 }
 
 .bar-gauge-fill {
@@ -259,14 +260,6 @@ body {
   transition: width 0.4s ease;
 }
 
-.gauge-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: #9ddf9d;
-  margin-top: 6px;
-}
-
 .gauge-readout {
   margin-top: 8px;
   font-size: 0.9rem;
@@ -274,7 +267,7 @@ body {
 }
 
 /* ============================================================
-   WIDGETS
+   WIDGETS + CARDS
 ============================================================ */
 .rtg-widget {
   margin: 0 auto 24px;
@@ -289,7 +282,6 @@ body {
   color: #caffca;
 }
 
-/* DASHBOARD CARDS */
 .rtg-dashboard-card {
   background: rgba(0,0,0,0.85);
   border-radius: 10px;
@@ -370,98 +362,11 @@ body {
 }
 
 /* ============================================================
-   BOTTOM BUTTONS
-============================================================ */
-.rtg-bottom-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin-top: 10px;
-}
-
-.rtg-bottom-btn {
-  padding: 12px 22px;
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: 10px;
-  background: #0f3d0f;
-  color: #ff8c42;
-  border: 3px solid #ff8c42;
-  text-decoration: none;
-}
-
-/* ============================================================
-   FOOTER
+   FOOTER (IF YOU ADD IT BACK)
 ============================================================ */
 .rtg-footer {
   text-align: center;
   padding: 18px;
   color: #9ddf9d;
   font-size: 0.85rem;
-}
-
-/* ============================================================
-   FLOATING CLIENT MODULE
-============================================================ */
-#rtgClientBtn {
-  position: fixed;
-  bottom: 26px;
-  left: 26px;
-  background: #2e6b33;
-  color: #fff;
-  padding: 14px 20px;
-  border-radius: 50px;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 0 12px rgba(0,0,0,0.4);
-  z-index: 2000;
-  transition: transform 0.2s ease;
-}
-
-#rtgClientBtn:hover {
-  transform: scale(1.08);
-}
-
-#rtgClientPanel {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.65);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 3000;
-}
-
-.rtg-client-card {
-  width: 360px;
-  background: rgba(0,0,0,0.92);
-  border: 2px solid #2e6b33;
-  border-radius: 14px;
-  padding: 20px;
-  color: #fff;
-  box-shadow: 0 0 20px rgba(0,0,0,0.6);
-}
-
-.rtg-client-card h2 {
-  margin-top: 0;
-  color: #caffca;
-  text-align: center;
-}
-
-.rtg-client-card input,
-.rtg-client-card textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  background: #111;
-  color: #fff;
-}
-
-.rtg-client-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
 }
