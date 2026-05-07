@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (UPGRADED)
+// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (RAINVIEWER)
 // ============================================================
 
 // DOM TARGETS
@@ -21,7 +21,7 @@ const currentRain = document.getElementById("currentRain");
 const hourlyStrip = document.getElementById("hourlyStrip");
 const dailyStrip = document.getElementById("dailyStrip");
 
-// OPTIONAL ICON + RADAR (if present)
+// OPTIONAL ICON + RADAR
 const wxIcon = document.getElementById("wxIcon");
 const wxLabel = document.getElementById("wxLabel");
 const radarFrame = document.getElementById("rtgRadar");
@@ -95,7 +95,6 @@ function renderCurrent(data) {
   currentPressure.textContent = `Pressure: ${data.hourly.surface_pressure?.[0] ?? "--"} mb`;
   currentRain.textContent = `Rain: ${data.hourly.precipitation?.[0] ?? "--"} in`;
 
-  // ICON + LABEL
   if (wxIcon && wxLabel) {
     wxIcon.className = "wx-icon " + iconClassForCode(w.weathercode);
     wxLabel.textContent = codeToText(w.weathercode);
@@ -163,11 +162,11 @@ async function loadWeather(lat, lon) {
 
   localStorage.setItem("rtgWeatherForecast", JSON.stringify(data.daily));
 
-  // RADAR SYNC
+  // RAINVIEWER RADAR (loads instantly)
   if (radarFrame) {
     radarFrame.src =
-      `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}` +
-      `&zoom=7&level=surface&overlay=rain`;
+      `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
+      `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
   }
 }
 
