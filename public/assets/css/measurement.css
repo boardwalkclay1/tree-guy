@@ -1,3 +1,6 @@
+/* ============================================================
+   GLOBAL RESET
+   ============================================================ */
 *,
 *::before,
 *::after {
@@ -6,24 +9,34 @@
   padding: 0;
 }
 
+/* ============================================================
+   BODY
+   ============================================================ */
 body {
   background: #0d0f0d url("../../assets/icons/rtg-192.png")
     center center / 45% no-repeat fixed;
   color: #e8ffe8;
   font-family: system-ui, sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ============================================================
+   HEADER
+   ============================================================ */
 .rtg-header {
   text-align: center;
-  padding: 30px;
-  background: rgba(0,0,0,0.35);
+  padding: 30px 20px;
+  background: rgba(0, 0, 0, 0.35);
   border-bottom: 2px solid #2e6b33;
+  backdrop-filter: blur(4px);
 }
 
 .rtg-header h1 {
   font-size: 2.4rem;
   color: #caffca;
+  font-weight: 700;
 }
 
 .back-link {
@@ -31,8 +44,16 @@ body {
   margin-top: 10px;
   color: #a8ffa8;
   text-decoration: none;
+  font-weight: 600;
 }
 
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
 .measurement-shell {
   max-width: 900px;
   margin: 40px auto;
@@ -41,24 +62,39 @@ body {
   gap: 30px;
 }
 
+/* ============================================================
+   TOOL CARDS
+   ============================================================ */
 .tool-card {
-  background: rgba(20,35,20,0.85);
+  background: rgba(20, 35, 20, 0.85);
   border: 2px solid #2e6b33;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 0 18px rgba(0,0,0,0.4);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.55);
 }
 
 .tool-card h2 {
   color: #caffca;
   margin-bottom: 10px;
+  font-size: 1.6rem;
 }
 
 .tool-card p {
   color: #d8ffd8;
   margin-bottom: 20px;
+  line-height: 1.4;
 }
 
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 .rtg-btn {
   display: inline-block;
   padding: 12px 20px;
@@ -68,8 +104,47 @@ body {
   font-weight: 700;
   text-decoration: none;
   border: 2px solid #3fa63f;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .rtg-btn:hover {
   background: #3fa63f;
+  transform: translateY(-1px);
+}
+
+.rtg-btn:active {
+  transform: translateY(1px);
+}
+
+/* ============================================================
+   CAMERA + AR OVERLAY SUPPORT
+   ============================================================ */
+#measureVideo {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+  z-index: 1;
+}
+
+#measureCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+  opacity: 0.85;
+  will-change: transform;
+}
+
+/* Ensures the camera container holds both layers */
+.rtg-measure-camera {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
