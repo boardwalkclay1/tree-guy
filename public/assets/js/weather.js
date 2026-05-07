@@ -1,8 +1,8 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER ENGINE (OPEN-METEO)
+// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (OPEN-METEO)
 // ============================================================
 
-// DOM TARGETS (your new HTML uses different IDs)
+// DOM TARGETS
 const useGPSBtn = document.getElementById("useGPS");
 const setManualBtn = document.getElementById("setManual");
 const locationStatus = document.getElementById("locationStatus");
@@ -45,7 +45,13 @@ function codeToText(code) {
 
 // GET WEATHER
 async function getWeather(lat, lon) {
-  const url = `${API}?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&temperature_unit=fahrenheit&timezone=auto`;
+  const url =
+    `${API}?latitude=${lat}&longitude=${lon}` +
+    `&current_weather=true` +
+    `&hourly=temperature_2m,weathercode,windgusts_10m,precipitation,surface_pressure` +
+    `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
+    `&temperature_unit=fahrenheit&timezone=auto`;
+
   const res = await fetch(url);
   return res.json();
 }
@@ -54,11 +60,8 @@ async function getWeather(lat, lon) {
 function getLocation() {
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
-      pos => {
-        resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-      },
-      err => {
-        console.warn("Location denied, using fallback.");
+      pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      () => {
         locationStatus.textContent = "GPS denied — using fallback (Atlanta)";
         resolve({ lat: 34.0, lon: -84.0 });
       },
@@ -73,9 +76,9 @@ function renderCurrent(data) {
 
   currentTemp.textContent = `${w.temperature}°F`;
   currentWind.textContent = `Wind: ${w.windspeed} mph`;
-  currentGust.textContent = `Gusts: ${w.windgusts ?? "--"} mph`;
-  currentPressure.textContent = `Pressure: ${data.hourly?.surface_pressure?.[0] ?? "--"} mb`;
-  currentRain.textContent = `Rain: ${data.hourly?.precipitation?.[0] ?? "--"} in`;
+  currentGust.textContent = `Gusts: ${data.hourly.windgusts_10m?.[0] ?? "--"} mph`;
+  currentPressure.textContent = `Pressure: ${data.hourly.surface_pressure?.[0] ?? "--"} mb`;
+  currentRain.textContent = `Rain: ${data.hourly.precipitation?.[0] ?? "--"} in`;
 }
 
 // RENDER HOURLY FORECAST (12 hours)
@@ -130,25 +133,37 @@ async function loadWeather(lat, lon) {
   locationStatus.textContent = `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
   // SYNC TO DASHBOARD
-  localStorage.setItem("rtgWeatherToday", JSON.stringify(data.current_weather));
+  localStorage.setItem("rtgWeatherToday", JSON.stringify({
+    temperature: data.current_weather.temperature,
+    weathercode: data.current_weather.weathercode,
+    windspeed: data.current_weather.windspeed,
+    windgusts: data.hourly.windgusts_10m?.[0] ?? data.current_weather.windspeed
+  }));
+
   localStorage.setItem("rtgWeatherForecast", JSON.stringify(data.daily));
 }
 
 // AUTO‑LOAD ON PAGE OPEN
-(async () => {
+async function initWeather() {
   const { lat, lon } = await getLocation();
-  loadWeather(lat, lon);
-})();
+  await loadWeather(lat, lon);
+}
+
+// RUN IMMEDIATELY
+initWeather();
+
+// REFRESH EVERY 5 MINUTES (REAL‑TIME)
+setInterval(initWeather, 5 * 60 * 1000);
 
 // BUTTON: USE GPS
-useGPSBtn.addEventListener("click", async () => {
+useGPSBtn?.addEventListener("click", async () => {
   locationStatus.textContent = "Requesting GPS…";
   const { lat, lon } = await getLocation();
   loadWeather(lat, lon);
 });
 
 // BUTTON: MANUAL LOCATION
-setManualBtn.addEventListener("click", () => {
+setManualBtn?.addEventListener("click", () => {
   const lat = parseFloat(manualLat.value);
   const lon = parseFloat(manualLon.value);
 
