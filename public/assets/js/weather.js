@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (OPEN-METEO)
+// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (UPGRADED)
 // ============================================================
 
 // DOM TARGETS
@@ -21,6 +21,11 @@ const currentRain = document.getElementById("currentRain");
 const hourlyStrip = document.getElementById("hourlyStrip");
 const dailyStrip = document.getElementById("dailyStrip");
 
+// OPTIONAL ICON + RADAR (if present)
+const wxIcon = document.getElementById("wxIcon");
+const wxLabel = document.getElementById("wxLabel");
+const radarFrame = document.getElementById("rtgRadar");
+
 // OPEN-METEO API
 const API = "https://api.open-meteo.com/v1/forecast";
 
@@ -41,6 +46,16 @@ function codeToText(code) {
     95: "Thunderstorm"
   };
   return map[code] || "Weather";
+}
+
+// WEATHER CODE → ICON CLASS
+function iconClassForCode(code) {
+  if (code === 0 || code === 1) return "sunny";
+  if (code === 2 || code === 3 || code === 45 || code === 48) return "cloudy";
+  if (code >= 51 && code <= 67) return "rainy";
+  if (code >= 71 && code <= 77) return "snowy";
+  if (code >= 95) return "stormy";
+  return "cloudy";
 }
 
 // GET WEATHER
@@ -79,6 +94,12 @@ function renderCurrent(data) {
   currentGust.textContent = `Gusts: ${data.hourly.windgusts_10m?.[0] ?? "--"} mph`;
   currentPressure.textContent = `Pressure: ${data.hourly.surface_pressure?.[0] ?? "--"} mb`;
   currentRain.textContent = `Rain: ${data.hourly.precipitation?.[0] ?? "--"} in`;
+
+  // ICON + LABEL
+  if (wxIcon && wxLabel) {
+    wxIcon.className = "wx-icon " + iconClassForCode(w.weathercode);
+    wxLabel.textContent = codeToText(w.weathercode);
+  }
 }
 
 // RENDER HOURLY FORECAST (12 hours)
@@ -141,6 +162,13 @@ async function loadWeather(lat, lon) {
   }));
 
   localStorage.setItem("rtgWeatherForecast", JSON.stringify(data.daily));
+
+  // RADAR SYNC
+  if (radarFrame) {
+    radarFrame.src =
+      `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}` +
+      `&zoom=7&level=surface&overlay=rain`;
+  }
 }
 
 // AUTO‑LOAD ON PAGE OPEN
