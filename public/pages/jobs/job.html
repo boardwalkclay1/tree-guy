@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #05070b;
+      --card: #0d1117;
+      --accent: #2ecc71;
+      --accent-soft: rgba(46, 204, 113, 0.15);
+      --accent-warn: #f1c40f;
+      --accent-danger: #e74c3c;
+      --text: #ecf0f1;
+      --muted: #7f8c8d;
+      --border: #1f2933;
+      --chip-bg: #111827;
+      --chip-border: #374151;
+      --primary: #3498db;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #111827 0, #020308 55%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+    }
+
+    .job-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .job-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .job-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .job-status {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--chip-border);
+      background: var(--chip-bg);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .layout-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(3, 7, 18, 0.98));
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 14px 14px 12px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .card-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .gauges-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .gauges-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .gauge-card {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.6));
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gauge-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+
+    .gauge-value-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .gauge-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .gauge-tag {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+
+    .gauge-bar {
+      margin-top: 8px;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.9);
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #a3e635);
+      width: 0%;
+      transition: width 0.4s ease-out;
+    }
+
+    .gauge-fill.warn {
+      background: linear-gradient(90deg, #facc15, #f97316);
+    }
+
+    .gauge-fill.danger {
+      background: linear-gradient(90deg, #f97373, #ef4444);
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-action {
+      flex: 1 1 120px;
+      min-width: 120px;
+      border-radius: 12px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), rgba(15, 23, 42, 0.95));
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+    }
+
+    .quick-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.7);
+      border-color: rgba(96, 165, 250, 0.9);
+    }
+
+    .quick-action-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .quick-action-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .categories-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .category-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 0.75rem;
+      color: #9ca3af;
+      cursor: pointer;
+      white-space: nowrap;
+      background: rgba(15, 23, 42, 0.9);
+      transition: background 0.12s ease-out, border-color 0.12s ease-out, color 0.12s ease-out;
+    }
+
+    .category-pill.active {
+      border-color: rgba(59, 130, 246, 0.9);
+      background: radial-gradient(circle at top, rgba(37, 99, 235, 0.4), rgba(15, 23, 42, 0.98));
+      color: #e5e7eb;
+    }
+
+    .section-body {
+      margin-top: 8px;
+      font-size: 0.8rem;
+    }
+
+    .budget-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 0.8rem;
+    }
+
+    .budget-table th,
+    .budget-table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .budget-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+    }
+
+    .budget-role {
+      font-weight: 500;
+    }
+
+    .budget-person {
+      color: #9ca3af;
+      font-size: 0.75rem;
+    }
+
+    .budget-amount {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: #9ca3af;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .badge.pending .badge-dot {
+      background: var(--accent-warn);
+    }
+
+    .badge.none .badge-dot {
+      background: #4b5563;
+    }
+
+    .crew-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .crew-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(31, 41, 55, 0.9);
+    }
+
+    .crew-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .crew-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .crew-role {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .crew-amount {
+      font-size: 0.8rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .crew-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.12s ease-out, border-color 0.12s ease-out, transform 0.08s ease-out;
+    }
+
+    .btn:hover {
+      background: rgba(30, 64, 175, 0.9);
+      border-color: rgba(96, 165, 250, 0.9);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      border-color: rgba(96, 165, 250, 0.9);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, #16a34a);
+    }
+
+    .btn-ghost {
+      background: transparent;
+    }
+
+    .share-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .share-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .share-card {
+      border-radius: 12px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), rgba(15, 23, 42, 0.96));
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+    }
+
+    .share-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.7);
+      border-color: rgba(96, 165, 250, 0.9);
+    }
+
+    .share-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .share-meta {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .comms-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .comms-item {
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .comms-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .comms-text {
+      font-size: 0.78rem;
+    }
+
+    .comms-input-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .comms-input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 0.78rem;
+      padding: 6px 10px;
+      outline: none;
+    }
+
+    .comms-input::placeholder {
+      color: #6b7280;
+    }
+
+    .tag-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="job-header">
+      <div class="job-title-row">
+        <div class="job-title" id="jobTitle">Job Title</div>
+        <div class="job-status" id="jobStatus">Scheduled</div>
+      </div>
+      <div class="job-meta">
+        <span class="chip">
+          <span class="chip-dot"></span>
+          <span id="jobClient">Client Name</span>
+        </span>
+        <span class="chip" id="jobAddressChip">Address</span>
+        <span class="chip" id="jobDateChip">Date</span>
+        <span class="chip" id="jobWeatherChip">Weather</span>
+      </div>
+    </header>
+
+    <main class="layout-grid">
+      <!-- LEFT COLUMN -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Job Overview</div>
+            <div class="card-subtitle">Budget, splits, and live status for this job.</div>
+          </div>
+          <button class="btn btn-ghost" id="btnEditJob">
+            ✏️ Edit
+          </button>
+        </div>
+
+        <div class="gauges-row">
+          <div class="gauge-card">
+            <div class="gauge-label">Total Job</div>
+            <div class="gauge-value-row">
+              <div class="gauge-value" id="gaugeTotal">$0</div>
+              <div class="gauge-tag" id="gaugeTotalTag">Estimate</div>
+            </div>
+            <div class="gauge-bar">
+              <div class="gauge-fill" id="gaugeTotalFill" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-label">Allocated</div>
+            <div class="gauge-value-row">
+              <div class="gauge-value" id="gaugeAllocated">$0</div>
+              <div class="gauge-tag" id="gaugeAllocatedTag">To crew</div>
+            </div>
+            <div class="gauge-bar">
+              <div class="gauge-fill" id="gaugeAllocatedFill"></div>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-label">Remaining</div>
+            <div class="gauge-value-row">
+              <div class="gauge-value" id="gaugeRemaining">$0</div>
+              <div class="gauge-tag" id="gaugeRemainingTag">Unassigned</div>
+            </div>
+            <div class="gauge-bar">
+              <div class="gauge-fill" id="gaugeRemainingFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="quick-action" id="qaAddCrew">
+            <div class="quick-action-label">Add Crew</div>
+            <div class="quick-action-meta">Invite or assign people to this job.</div>
+          </button>
+          <button class="quick-action" id="qaOfferSplit">
+            <div class="quick-action-label">Offer Split</div>
+            <div class="quick-action-meta">Create a split and send it to a crew member.</div>
+          </button>
+          <button class="quick-action" id="qaMarkComplete">
+            <div class="quick-action-label">Mark Complete</div>
+            <div class="quick-action-meta">Close out this job and lock agreements.</div>
+          </button>
+        </div>
+
+        <div class="categories-row" id="categoriesRow">
+          <button class="category-pill active" data-section="budget">Budget</button>
+          <button class="category-pill" data-section="crew">Crew & Agreements</button>
+          <button class="category-pill" data-section="comms">Comms</button>
+          <button class="category-pill" data-section="share">Share</button>
+        </div>
+
+        <div class="section-body" id="sectionBudget">
+          <table class="budget-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Assigned</th>
+                <th style="text-align:right;">Amount</th>
+                <th style="text-align:right;">Agreement</th>
+              </tr>
+            </thead>
+            <tbody id="budgetTableBody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-body" id="sectionCrew" style="display:none;">
+          <div class="crew-list" id="crewList">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <div class="section-body" id="sectionComms" style="display:none;">
+          <div class="pill-row">
+            <span class="tag-pill">Job Chat</span>
+            <span class="tag-pill">Site Notes</span>
+            <span class="tag-pill">Hazards</span>
+          </div>
+          <div class="comms-list" id="commsList">
+            <!-- Filled by JS -->
+          </div>
+          <div class="comms-input-row">
+            <input type="text" class="comms-input" id="commsInput" placeholder="Drop a note for this job..." />
+            <button class="btn btn-primary" id="commsSend">Send</button>
+          </div>
+        </div>
+
+        <div class="section-body" id="sectionShare" style="display:none;">
+          <div class="pill-row">
+            <span class="pill">QR</span>
+            <span class="pill">Link</span>
+            <span class="pill">Copy Text</span>
+            <span class="pill">Nearby Drop</span>
+          </div>
+          <div class="share-grid">
+            <div class="share-card" id="shareQr">
+              <div class="share-title">Show QR for this job</div>
+              <div class="share-meta">Crew can scan to open job details and offers instantly.</div>
+            </div>
+            <div class="share-card" id="shareLink">
+              <div class="share-title">Copy job link</div>
+              <div class="share-meta">Paste into text, email, or any app.</div>
+            </div>
+            <div class="share-card" id="shareSummary">
+              <div class="share-title">Copy job summary text</div>
+              <div class="share-meta">Clean text block with job, location, and splits.</div>
+            </div>
+            <div class="share-card" id="shareSystem">
+              <div class="share-title">Share via phone…</div>
+              <div class="share-meta">Use the native share sheet (Messages, AirDrop, etc.).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Job Snapshot</div>
+            <div class="card-subtitle">Location, tags, and quick context.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div style="margin-bottom:8px;">
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:2px;">
+              Location
+            </div>
+            <div style="font-size:0.85rem;" id="snapshotAddress">Address</div>
+            <div style="font-size:0.75rem; color:#9ca3af;" id="snapshotMapHint">Tap to open in maps (future).</div>
+          </div>
+
+          <div style="margin-bottom:8px;">
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:2px;">
+              Tags
+            </div>
+            <div class="pill-row" id="snapshotTags">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+
+          <div style="margin-bottom:8px;">
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:2px;">
+              Weather
+            </div>
+            <div style="font-size:0.85rem;" id="snapshotWeather">Weather</div>
+          </div>
+
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:2px;">
+              Notes
+            </div>
+            <div style="font-size:0.8rem; color:#d1d5db;" id="snapshotNotes">
+              No notes yet. Use the Comms section to drop site notes and hazards.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/job-dashboard.js"></script>
+</body>
+</html>
