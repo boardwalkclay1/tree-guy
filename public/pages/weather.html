@@ -5,10 +5,7 @@
   <title>Weather – Real Tree Guy OS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Weather Styles -->
   <link rel="stylesheet" href="/assets/css/weather.css">
-
-  <!-- Weather Engine -->
   <script type="module" src="/assets/js/weather/weather.js" defer></script>
 </head>
 
@@ -22,7 +19,7 @@
 
   <main class="weather-shell">
 
-    <!-- LOCATION SELECTOR -->
+    <!-- LOCATION -->
     <section class="module-card location-card">
       <h2>📍 Location</h2>
 
@@ -39,11 +36,11 @@
     </section>
 
     <!-- CURRENT CONDITIONS -->
-    <section class="module-card" id="currentConditions">
+    <section class="module-card">
       <h2>🌤️ Current Conditions</h2>
 
       <div class="current-flex">
-        <div class="current-temp" id="currentTemp">--°</div>
+        <div id="currentTemp" class="current-temp">--°</div>
 
         <div class="current-details">
           <p id="currentWind">Wind: --</p>
@@ -53,17 +50,17 @@
         </div>
       </div>
 
-      <div class="ticker" id="stormTicker">Storm status loading…</div>
-      <div class="ticker hazard" id="hazardTicker">Hazard status loading…</div>
+      <div id="stormTicker" class="ticker">Storm status loading…</div>
+      <div id="hazardTicker" class="ticker hazard">Hazard status loading…</div>
     </section>
 
-    <!-- HOURLY FORECAST -->
+    <!-- HOURLY -->
     <section class="module-card">
       <h2>⏱️ Next 12 Hours</h2>
       <div id="hourlyStrip" class="hourly-strip"></div>
     </section>
 
-    <!-- DAILY FORECAST -->
+    <!-- DAILY -->
     <section class="module-card">
       <h2>📅 Next 7 Days</h2>
       <div id="dailyStrip" class="daily-strip"></div>
@@ -110,11 +107,15 @@
     <!-- RADAR -->
     <section class="module-card">
       <h2>📡 Live Radar</h2>
-      <iframe
-        class="radar-frame"
-        src="https://radar.weather.gov/?settings=v1_eyJ0eXBlIjoiYmFzaWMiLCJ6b29tIjoxMCwibGF0IjoxOC4yLCJsb24iOi04NC4zLCJvdmVybGF5cyI6WyJyYWRhciJdfQ=="
-        loading="lazy">
-      </iframe>
+
+      <div class="radar-container">
+        <iframe
+          id="rtgRadar"
+          class="radar-frame"
+          src="about:blank"
+          loading="lazy">
+        </iframe>
+      </div>
     </section>
 
   </main>
