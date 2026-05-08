@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/assets/css/measurement.css">
 </head>
 
-<body>
+<body class="rtg-dashboard">
 
   <!-- TOP BAR -->
   <div class="rtg-topbar">
@@ -47,68 +47,93 @@
   <!-- MAIN -->
   <main class="rtg-main rtg-measure-main">
     <h1 class="rtg-title">Measurement Tools</h1>
-    <p class="rtg-subtitle">Switch modes. Point camera. Capture what matters.</p>
+    <p class="rtg-subtitle">Full‑screen camera. Tap tree. See the triangle.</p>
 
     <!-- MODE SWITCHER -->
     <div class="rtg-measure-modes">
-      <button class="mode-btn active" data-mode="height">Height</button>
-      <button class="mode-btn" data-mode="diameter">Diameter</button>
-      <button class="mode-btn" data-mode="distance">Distance</button>
-      <button class="mode-btn" data-mode="notes">Notes</button>
-      <button class="mode-btn" data-mode="photo">Photo Only</button>
+      <button class="mode-btn active" data-mode="forms">Forms</button>
+      <button class="mode-btn" data-mode="ar">AR Rigging Mode</button>
     </div>
 
-    <!-- CAMERA PANEL -->
-    <section class="rtg-measure-camera">
-      <video id="measureVideo" autoplay playsinline></video>
-      <button id="captureFrame" class="rtg-bottom-btn">Capture Frame</button>
-      <canvas id="measureCanvas" class="hidden"></canvas>
+    <!-- FORMS PANEL (classic inputs) -->
+    <section id="mode-forms" class="rtg-mode-panel active">
+      <h2>Quick Logs</h2>
+
+      <section class="rtg-measure-forms">
+        <div class="rtg-form-card">
+          <h3>Height</h3>
+          <label>Estimated Height (ft)</label>
+          <input type="number" id="heightInput" class="rtg-input" placeholder="e.g. 45">
+          <button id="saveHeight" class="rtg-bottom-btn">Save Height</button>
+        </div>
+
+        <div class="rtg-form-card">
+          <h3>Diameter</h3>
+          <label>Diameter (inches)</label>
+          <input type="number" id="diameterInput" class="rtg-input" placeholder="e.g. 18">
+          <button id="saveDiameter" class="rtg-bottom-btn">Save Diameter</button>
+        </div>
+
+        <div class="rtg-form-card">
+          <h3>Distance</h3>
+          <label>Distance from truck/drop zone (ft)</label>
+          <input type="number" id="distanceInput" class="rtg-input" placeholder="e.g. 60">
+          <button id="saveDistance" class="rtg-bottom-btn">Save Distance</button>
+        </div>
+
+        <div class="rtg-form-card">
+          <h3>Notes</h3>
+          <textarea id="notesInput" class="rtg-textarea" placeholder="Cables, rot, lean, wires, access, etc."></textarea>
+          <button id="saveNotes" class="rtg-bottom-btn">Save Notes</button>
+        </div>
+
+        <div class="rtg-form-card">
+          <h3>Photo Log</h3>
+          <button id="captureFrame" class="rtg-bottom-btn">Capture Frame</button>
+          <div id="photoGallery" class="rtg-photo-gallery"></div>
+        </div>
+      </section>
     </section>
 
-    <!-- MODE PANELS -->
-    <section id="mode-height" class="rtg-mode-panel active">
-      <h2>Height Mode</h2>
-      <p>Use this mode to log estimated tree height.</p>
-      <label>Estimated Height (ft)</label>
-      <input type="number" id="heightInput" class="rtg-input" placeholder="e.g. 45">
-      <button id="saveHeight" class="rtg-bottom-btn">Save Height</button>
-    </section>
+    <!-- AR CAMERA PANEL (full‑screen mode) -->
+    <section id="mode-ar" class="rtg-mode-panel rtg-ar-panel">
+      <div class="rtg-ar-header-row">
+        <button id="enterFullscreen" class="rtg-bottom-btn">Full Screen Camera</button>
+        <div class="rtg-ar-legend">
+          <span class="dot base"></span> Base
+          <span class="dot tiein"></span> Tie‑In
+          <span class="dot rig"></span> Rigging
+        </div>
+      </div>
 
-    <section id="mode-diameter" class="rtg-mode-panel">
-      <h2>Diameter Mode</h2>
-      <p>Log trunk diameter at breast height (DBH).</p>
-      <label>Diameter (inches)</label>
-      <input type="number" id="diameterInput" class="rtg-input" placeholder="e.g. 18">
-      <button id="saveDiameter" class="rtg-bottom-btn">Save Diameter</button>
-    </section>
+      <div id="arContainer" class="rtg-ar-container">
+        <video id="measureVideo" autoplay playsinline></video>
+        <canvas id="measureCanvas"></canvas>
 
-    <section id="mode-distance" class="rtg-mode-panel">
-      <h2>Distance Mode</h2>
-      <p>Log distance from truck or drop zone.</p>
-      <label>Distance (ft)</label>
-      <input type="number" id="distanceInput" class="rtg-input" placeholder="e.g. 60">
-      <button id="saveDistance" class="rtg-bottom-btn">Save Distance</button>
-    </section>
+        <!-- HUD -->
+        <div class="rtg-ar-hud">
+          <div class="hud-line">a (horizontal): <span id="hudA">--</span></div>
+          <div class="hud-line">b (vertical): <span id="hudB">--</span></div>
+          <div class="hud-line">c (hypotenuse): <span id="hudC">--</span></div>
+          <div class="hud-line">a² + b² ≈ c²: <span id="hudCheck">--</span></div>
+          <div class="hud-line">Suggested tie‑in: <span id="hudTieIn">--</span></div>
+          <div class="hud-line">Suggested rigging: <span id="hudRig">--</span></div>
+        </div>
 
-    <section id="mode-notes" class="rtg-mode-panel">
-      <h2>Notes Mode</h2>
-      <textarea id="notesInput" class="rtg-textarea" placeholder="Cables, rot, lean, wires, access, etc."></textarea>
-      <button id="saveNotes" class="rtg-bottom-btn">Save Notes</button>
-    </section>
-
-    <section id="mode-photo" class="rtg-mode-panel">
-      <h2>Photo Mode</h2>
-      <p>Use this mode when you just need visual reference.</p>
-      <div id="photoGallery" class="rtg-photo-gallery"></div>
+        <!-- TAP HELP -->
+        <div class="rtg-ar-help">
+          Tap: 1) Base of trunk  2) Tie‑in point  3) Rigging point
+        </div>
+      </div>
     </section>
 
   </main>
 
   <footer class="rtg-footer">
-    <p>Real Tree Guy • Measurement Tools</p>
+    <p>Real Tree Guy • Measurement Tools (visual aid only, not a safety system)</p>
   </footer>
 
   <script src="/assets/js/dashboard.js"></script>
-  <script src="/pages/measurement/measurement.js"></script>
+  <script src="/assets/js/measurement-ar.js"></script>
 </body>
 </html>
