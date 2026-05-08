@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY — DASHBOARD JS (BURGER MENU FIXED)
+// REAL TREE GUY — DASHBOARD JS (WITH LIVE RADAR)
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   // SIDEBAR TOGGLE (FULLY OFF-SCREEN UNTIL CLICKED)
-  // ============================================================
+// ============================================================
   const burger = document.getElementById("rtgBurger");
   const sidemenu = document.getElementById("rtgSidemenu");
   const logo = document.getElementById("rtgLogo");
@@ -35,15 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
   burger.addEventListener("click", toggleMenu);
   logo.addEventListener("click", toggleMenu);
 
-  // OPTIONAL: Close menu when clicking outside
   document.addEventListener("click", (e) => {
     if (!sidemenu.classList.contains("open")) return;
-
-    const clickedInsideMenu = sidemenu.contains(e.target);
-    const clickedBurger = burger.contains(e.target);
-    const clickedLogo = logo.contains(e.target);
-
-    if (!clickedInsideMenu && !clickedBurger && !clickedLogo) {
+    const insideMenu = sidemenu.contains(e.target);
+    const onBurger = burger.contains(e.target);
+    const onLogo = logo.contains(e.target);
+    if (!insideMenu && !onBurger && !onLogo) {
       sidemenu.classList.remove("open");
     }
   });
@@ -88,7 +85,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================================
-  // WEATHER + GAUGES (LOCALSTORAGE SYNC ONLY)
+  // GPS + WEATHER FETCH (OPEN-METEO)
+// ============================================================
+  async function getLocation() {
+    return new Promise(resolve => {
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => resolve({ lat: 34.0, lon: -84.0 }), // fallback ATL
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    });
+  }
+
+  async function fetchWeather(lat, lon) {
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current_weather=true&hourly=windgusts_10m&temperature_unit=fahrenheit&timezone=auto`;
+    const res = await fetch(url);
+    return res.json();
+  }
+
+
+  // ============================================================
+  // WEATHER BACKGROUND
+  // ============================================================
+  function applyWeatherBackground(code) {
+    const bgLayer = document.getElementById("rtgBackground");
+    if (!bgLayer) return;
+
+    let bg = "radial-gradient(circle at top, #1f5f2b 0, #061b06 55%, #020a02 100%)";
+
+    if (code === 0 || code === 1) bg = "radial-gradient(circle at top, #3fa34d 0, #061b06 55%, #020a02 100%)";
+    else if (code === 2) bg = "radial-gradient(circle at top, #2f6f3d 0, #061b06 55%, #020a02 100%)";
+    else if (code === 3) bg = "radial-gradient(circle at top, #1f3f2b 0, #020a02 55%, #000 100%)";
+    else if (code >= 51 && code <= 67) bg = "radial-gradient(circle at top, #1f3f4f 0, #020a02 55%, #000 100%)";
+    else if (code >= 71 && code <= 77) bg = "radial-gradient(circle at top, #cfdfeF 0, #061b06 55%, #020a02 100%)";
+    else if (code >= 95) bg = "radial-gradient(circle at top, #4b1f1f 0, #020a02 55%, #000 100%)";
+
+    bgLayer.style.background = bg;
+  }
+
+
+  // ============================================================
+  // WEATHER UI + GAUGES
   // ============================================================
   function updateWeatherUI(today) {
     const tempEl = document.getElementById("dashWxTemp");
@@ -106,6 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
     gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
     windReadout.textContent = `${today.windspeed} mph`;
 
+    applyWeatherBackground(today.weathercode);
+
     const wind = today.windspeed || 0;
     const gust = today.windgusts || wind;
     const score = Math.min(100, Math.max(0, Math.round((wind * 2 + gust) / 3)));
@@ -115,14 +156,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const angle = Math.min(180, Math.max(0, (wind / 50) * 180));
     windNeedle.style.transform = `rotate(${angle - 90}deg)`;
+
+    if (wind > 25) RTGnotify(`High winds detected (${wind} mph). Use caution.`, "warn");
+    if (gust > 35) RTGnotify(`Strong gusts detected (${gust} mph). Hazard increased.`, "danger");
   }
 
-  function loadWeatherFromStorage() {
-    const today = Storage.get("rtgWeatherToday");
-    if (today) updateWeatherUI(today);
+
+  // ============================================================
+  // LIVE RADAR (RAINVIEWER)
+// ============================================================
+  const radarFrame = document.getElementById("rtgRadar");
+
+  function updateRadar(lat, lon) {
+    if (!radarFrame) return;
+    radarFrame.src =
+      `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
+      `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
   }
 
-  loadWeatherFromStorage();
+
+  // ============================================================
+  // LOAD WEATHER + RADAR
+  // ============================================================
+  async function loadWeatherAndRadar() {
+    const { lat, lon } = await getLocation();
+    const data = await fetchWeather(lat, lon);
+
+    if (!data || !data.current_weather) return;
+
+    const today = {
+      temperature: data.current_weather.temperature,
+      weathercode: data.current_weather.weathercode,
+      windspeed: data.current_weather.windspeed,
+      windgusts: data.hourly?.windgusts_10m?.[0] ?? data.current_weather.windspeed
+    };
+
+    Storage.set("rtgWeatherToday", today);
+    updateWeatherUI(today);
+    updateRadar(lat, lon);
+  }
+
+  loadWeatherAndRadar();
+  setInterval(loadWeatherAndRadar, 5 * 60 * 1000);
 
 
   // ============================================================
