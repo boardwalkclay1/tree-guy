@@ -4,13 +4,44 @@
 
 /* BACKGROUND + BASE */
 body.rtg-dashboard {
-  background:#0d0f0d url("./assets/icons/rtg-192.png") center center/cover no-repeat fixed;
+  background: #0d0f0d url("./assets/icons/rtg-192.png")
+    center center / cover no-repeat fixed;
   margin: 0;
   padding: 0;
   font-family: system-ui, sans-serif;
   color: #caffca;
   position: relative;
   z-index: 0;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   ORANGE SCROLLBAR — REAL TREE GUY OS
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.35);
+  border-left: 2px solid #2e6b33;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff7a00;
+  border-radius: 10px;
+  border: 2px solid #2e6b33;
+  box-shadow: 0 0 8px rgba(255,122,0,0.4);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff9d42;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ff7a00 rgba(0,0,0,0.35);
 }
 
 /* ============================================================
@@ -116,7 +147,7 @@ details p {
   margin-top: 120px;
   text-align: center;
   position: relative;
-  z-index: 9997; /* ABOVE TREE */
+  z-index: 9997;
 }
 
 .rtg-title {
@@ -135,8 +166,6 @@ details p {
 /* ============================================================
    CINEMATIC TREE SYSTEM
    ============================================================ */
-
-/* ROOT VARIABLES */
 :root {
   --leaf-green: #2e6b33;
   --leaf-dark: #1f4d24;
@@ -144,11 +173,10 @@ details p {
   --glow: rgba(0,255,0,0.18);
 }
 
-/* TREE WRAPPER — LIFTED UP */
 .tree-menu {
   display: flex;
   justify-content: center;
-  margin-top: -80px; /* LIFT TREE UP BUT KEEP TITLE ABOVE */
+  margin-top: -80px;
   padding-bottom: 220px;
   position: relative;
   overflow: visible;
