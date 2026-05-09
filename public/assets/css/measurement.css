@@ -1,51 +1,96 @@
-/* FULLSCREEN CAMERA */
-body, html {
+/* ============================================================
+   REAL TREE GUY — AR MEASUREMENT STYLE
+   Fullscreen Camera • Watermark Math HUD
+============================================================ */
+
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  background: black;
-  overflow: hidden;
 }
 
-.ar-container {
+body.rtg-measure-body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #fff;
+}
+
+/* CAMERA + CANVAS FULLSCREEN STACK */
+.rtg-video,
+.rtg-canvas {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
-}
-
-#arVideo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-  z-index: 1;
 }
 
-#arCanvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
+.rtg-canvas {
   pointer-events: none;
 }
 
 /* HUD WATERMARK */
-.ar-hud {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  z-index: 3;
-  opacity: 0.35;
-  font-family: system-ui, sans-serif;
-  color: white;
-  font-size: 1.1rem;
+.rtg-hud {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  font-size: 0.78rem;
   line-height: 1.4;
-  text-shadow: 0 0 8px rgba(0,0,0,0.8);
+  color: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
 }
 
-.hud-line {
-  margin-bottom: 4px;
+.hud-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.hud-label {
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.hud-value {
+  opacity: 0.9;
+}
+
+/* LOGO WATERMARK */
+.rtg-logo-mark {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.rtg-logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* OPTIONAL: subtle orange scrollbars if any scroll ever appears */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff8c42;
+  border-radius: 4px;
 }
