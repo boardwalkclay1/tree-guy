@@ -1,12 +1,6 @@
-// ============================================================
-// REAL TREE GUY — DASHBOARD JS (CLEAN BUILD, NO BURGER LOGIC)
-// ============================================================
-
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ============================================================
   // CLOCK
-  // ============================================================
   const clockEl = document.getElementById("rtgClock");
   function updateClock() {
     if (!clockEl) return;
@@ -20,10 +14,23 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClock();
   setInterval(updateClock, 1000);
 
+  // SIDEBAR TOGGLE (LOGO = BURGER)
+  const logo = document.getElementById("rtgLogo");
+  const sidemenu = document.getElementById("rtgSidemenu");
 
-  // ============================================================
-  // STORAGE UTILS
-  // ============================================================
+  if (logo && sidemenu) {
+    logo.addEventListener("click", () => {
+      sidemenu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!sidemenu.contains(e.target) && e.target !== logo) {
+        sidemenu.classList.remove("open");
+      }
+    });
+  }
+
+  // STORAGE
   const Storage = {
     get(key, fallback = null) {
       try {
@@ -37,36 +44,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-
-  // ============================================================
-  // NOTIFICATION SYSTEM
-  // ============================================================
+  // NOTIFICATIONS
   const notifList = document.getElementById("rtgNotifList");
-
   function RTGnotify(msg, type = "info") {
     if (!notifList) return;
-
     const empty = notifList.querySelector(".notif-empty");
     if (empty) empty.remove();
-
     const div = document.createElement("div");
     div.className = `notif-item notif-${type}`;
     div.textContent = msg;
-
     notifList.prepend(div);
   }
-
   window.RTGnotify = RTGnotify;
 
-
-  // ============================================================
-  // GPS + WEATHER FETCH (OPEN-METEO)
-  // ============================================================
+  // WEATHER + JOB LOGIC (unchanged)
+  // ------------------------------------------------------------
   async function getLocation() {
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
         pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () => resolve({ lat: 34.0, lon: -84.0 }), // fallback ATL
+        () => resolve({ lat: 34.0, lon: -84.0 }),
         { enableHighAccuracy: true, timeout: 8000 }
       );
     });
@@ -80,10 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return res.json();
   }
 
-
-  // ============================================================
-  // WEATHER BACKGROUND
-  // ============================================================
   function applyWeatherBackground(code) {
     const bgLayer = document.getElementById("rtgBackground");
     if (!bgLayer) return;
@@ -100,10 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     bgLayer.style.background = bg;
   }
 
-
-  // ============================================================
-  // WEATHER UI + GAUGES
-  // ============================================================
   function updateWeatherUI(today) {
     const tempEl = document.getElementById("dashWxTemp");
     const condEl = document.getElementById("dashWxCond");
@@ -136,23 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gust > 35) RTGnotify(`Strong gusts detected (${gust} mph). Hazard increased.`, "danger");
   }
 
-
-  // ============================================================
-  // LIVE RADAR (RAINVIEWER)
-  // ============================================================
-  const radarFrame = document.getElementById("rtgRadar");
-
-  function updateRadar(lat, lon) {
-    if (!radarFrame) return;
-    radarFrame.src =
-      `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
-      `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
-  }
-
-
-  // ============================================================
-  // LOAD WEATHER + RADAR
-  // ============================================================
   async function loadWeatherAndRadar() {
     const { lat, lon } = await getLocation();
     const data = await fetchWeather(lat, lon);
@@ -168,16 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     Storage.set("rtgWeatherToday", today);
     updateWeatherUI(today);
-    updateRadar(lat, lon);
   }
 
   loadWeatherAndRadar();
   setInterval(loadWeatherAndRadar, 5 * 60 * 1000);
 
-
-  // ============================================================
-  // TODAY'S JOB CARD
-  // ============================================================
   function loadDashboardJob() {
     const jobs = Storage.get("rtgJobs", []);
     const todayStr = new Date().toDateString();
