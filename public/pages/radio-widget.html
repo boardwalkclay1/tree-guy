@@ -1,0 +1,40 @@
+<div id="radio-widget" class="radio-widget">
+  <div class="radio-header">
+    <span class="radio-title">Crew Radio</span>
+    <span id="radio-status" class="radio-status radio-status--disconnected">
+      Disconnected
+    </span>
+  </div>
+
+  <div class="radio-body">
+    <div class="radio-row">
+      <label for="radio-channel" class="radio-label">Channel</label>
+      <select id="radio-channel" class="radio-select">
+        <option value="1">Channel 1</option>
+        <option value="2">Channel 2</option>
+        <option value="3">Channel 3</option>
+        <option value="4">Channel 4</option>
+      </select>
+    </div>
+
+    <div class="radio-row">
+      <button id="radio-connect" class="radio-btn radio-btn--primary">
+        Connect
+      </button>
+      <button id="radio-disconnect" class="radio-btn radio-btn--ghost" disabled>
+        Disconnect
+      </button>
+    </div>
+
+    <div class="radio-row radio-row--ptt">
+      <button id="radio-ptt" class="radio-ptt-btn" disabled>
+        Hold to Talk
+      </button>
+    </div>
+
+    <div class="radio-footer">
+      <span id="radio-channel-display">Channel: 1</span>
+      <span id="radio-log" class="radio-log">Ready.</span>
+    </div>
+  </div>
+</div>
