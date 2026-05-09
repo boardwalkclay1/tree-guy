@@ -1,6 +1,6 @@
 // ============================================================
-// REAL TREE GUY — PURE AR MODE
-// Auto Line Detection • Pythagorean Math • Rigging Suggestion
+// REAL TREE GUY — AR MODE v2
+// Sobel Edge Detection • Vertical Line Clustering • Real Math
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,7 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const hudTie = document.getElementById("hudTie");
   const hudRig = document.getElementById("hudRig");
 
-  // Start camera
+  // ============================================================
+  // CAMERA START
+  // ============================================================
   async function startCamera() {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: "environment" }
@@ -32,48 +34,86 @@ document.addEventListener("DOMContentLoaded", () => {
 
   startCamera();
 
-  // Simple vertical line detection using brightness sampling
-  function detectVerticalLines(frame) {
-    const { width, height } = canvas;
-    const data = frame.data;
+  // ============================================================
+  // SOBEL EDGE DETECTION (REAL EDGE MAP)
+  // ============================================================
+  function sobelEdge(frame, width, height) {
+    const gray = new Uint8ClampedArray(width * height);
+    const out = new Uint8ClampedArray(width * height);
 
-    let columns = [];
-
-    for (let x = 0; x < width; x += 10) {
-      let score = 0;
-
-      for (let y = 0; y < height; y += 10) {
-        const i = (y * width + x) * 4;
-        const r = data[i], g = data[i+1], b = data[i+2];
-        const brightness = (r + g + b) / 3;
-
-        // Dark vertical = trunk/limb
-        if (brightness < 90) score++;
-      }
-
-      columns.push({ x, score });
+    // grayscale
+    for (let i = 0; i < width * height; i++) {
+      const r = frame[i * 4];
+      const g = frame[i * 4 + 1];
+      const b = frame[i * 4 + 2];
+      gray[i] = (r + g + b) / 3;
     }
 
-    // strongest vertical line = trunk
-    columns.sort((a,b) => b.score - a.score);
-    return columns.slice(0, 3); // top 3 candidates
+    // sobel kernels
+    const gx = [-1,0,1,-2,0,2,-1,0,1];
+    const gy = [-1,-2,-1,0,0,0,1,2,1];
+
+    for (let y = 1; y < height - 1; y++) {
+      for (let x = 1; x < width - 1; x++) {
+        let px = 0, py = 0;
+        let idx = 0;
+
+        for (let ky = -1; ky <= 1; ky++) {
+          for (let kx = -1; kx <= 1; kx++) {
+            const val = gray[(y + ky) * width + (x + kx)];
+            px += val * gx[idx];
+            py += val * gy[idx];
+            idx++;
+          }
+        }
+
+        const mag = Math.sqrt(px * px + py * py);
+        out[y * width + x] = mag > 80 ? 255 : 0;
+      }
+    }
+
+    return out;
   }
 
+  // ============================================================
+  // VERTICAL LINE CLUSTERING
+  // ============================================================
+  function detectVerticalLines(edgeMap, width, height) {
+    const columnScores = [];
+
+    for (let x = 0; x < width; x += 4) {
+      let score = 0;
+      for (let y = 0; y < height; y += 4) {
+        if (edgeMap[y * width + x] === 255) score++;
+      }
+      columnScores.push({ x, score });
+    }
+
+    // sort strongest → weakest
+    columnScores.sort((a, b) => b.score - a.score);
+
+    return columnScores.slice(0, 5);
+  }
+
+  // ============================================================
+  // MAIN LOOP
+  // ============================================================
   function loop() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    // Draw video frame to canvas for pixel access
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    // Detect vertical lines
-    const lines = detectVerticalLines(frame);
+    const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const edgeMap = sobelEdge(frame.data, canvas.width, canvas.height);
+
+    const lines = detectVerticalLines(edgeMap, canvas.width, canvas.height);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     if (lines.length > 0) {
       const trunk = lines[0];
-      const limb = lines[1] || null;
+      const limb = lines.find(l => Math.abs(l.x - trunk.x) > 60);
 
-      // Draw trunk line
+      // Draw trunk
       ctx.globalAlpha = 0.25;
       ctx.strokeStyle = "white";
       ctx.lineWidth = 4;
@@ -82,44 +122,40 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.lineTo(trunk.x, canvas.height);
       ctx.stroke();
 
-      // Tie‑in point = highest strong part of trunk
-      const tieIn = { x: trunk.x, y: canvas.height * 0.25 };
+      // Tie-in = top 20% of trunk
+      const tieIn = { x: trunk.x, y: canvas.height * 0.20 };
 
-      // Rigging point = lower separate limb if available
-      let rig = null;
-      if (limb && Math.abs(limb.x - trunk.x) > 40) {
-        rig = { x: limb.x, y: canvas.height * 0.55 };
-      }
-
-      // Draw tie‑in
       ctx.globalAlpha = 0.8;
       ctx.fillStyle = "#00ff88";
       ctx.beginPath();
-      ctx.arc(tieIn.x, tieIn.y, 10, 0, Math.PI*2);
+      ctx.arc(tieIn.x, tieIn.y, 12, 0, Math.PI * 2);
       ctx.fill();
 
-      // Draw rigging
-      if (rig) {
+      // Rigging = lower limb if exists
+      let rig = null;
+      if (limb) {
+        rig = { x: limb.x, y: canvas.height * 0.55 };
+
         ctx.fillStyle = "#00aaff";
         ctx.beginPath();
-        ctx.arc(rig.x, rig.y, 10, 0, Math.PI*2);
+        ctx.arc(rig.x, rig.y, 12, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Pythagorean math between tie‑in and rigging (or trunk base)
+      // Pythagorean math (tie-in to base)
       const base = { x: trunk.x, y: canvas.height };
 
       const a = Math.abs(tieIn.x - base.x);
       const b = Math.abs(tieIn.y - base.y);
-      const c = Math.sqrt(a*a + b*b);
+      const c = Math.sqrt(a * a + b * b);
 
-      hudA.textContent = a.toFixed(0) + " px";
-      hudB.textContent = b.toFixed(0) + " px";
-      hudC.textContent = c.toFixed(0) + " px";
-      hudCheck.textContent = (a*a + b*b).toFixed(0);
+      hudA.textContent = `${a.toFixed(0)} px`;
+      hudB.textContent = `${b.toFixed(0)} px`;
+      hudC.textContent = `${c.toFixed(0)} px`;
+      hudCheck.textContent = `${(a * a + b * b).toFixed(0)}`;
 
-      hudTie.textContent = "Top quarter of trunk";
-      hudRig.textContent = rig ? "Lower separate limb" : "No limb detected";
+      hudTie.textContent = "Highest strong trunk section";
+      hudRig.textContent = rig ? "Lower separate limb" : "No safe limb detected";
     }
 
     requestAnimationFrame(loop);
