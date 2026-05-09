@@ -9,25 +9,23 @@
   <link rel="stylesheet" href="/assets/css/dashboard.css">
 </head>
 
-<body>
+<body class="rtg-dashboard">
 
   <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
 
   <!-- SIDEBAR -->
   <nav id="rtgSidemenu" class="rtg-sidemenu">
-    <a href="/pages/dashboard.html" class="rtg-menu-link">Home</a>
-    <a href="/pages/profile.html" class="rtg-menu-link">Profile</a>
-    <a href="/pages/customers.html" class="rtg-menu-link">Customers & Jobs</a>
-    <a href="/pages/measurement.html" class="rtg-menu-link">Tree Measurement</a>
-    <a href="/pages/contracts.html" class="rtg-menu-link">Contracts</a>
-    <a href="/pages/calendar.html" class="rtg-menu-link">Calendar</a>
-    <a href="/pages/flyers.html" class="rtg-menu-link">Cards & Flyers</a>
-    <a href="/pages/map.html" class="rtg-menu-link">Real Tree Map</a>
-    <a href="/pages/shop.html" class="rtg-menu-link">Shop</a>
-
-    <!-- NEW: JOB DASHBOARD LINK -->
-    <a href="/pages/jobs/job-dashboard.html" class="rtg-menu-link">Job Dashboard</a>
+    <a href="/pages/dashboard.html" class="rtg-menu-link">🏠 Home</a>
+    <a href="/pages/profile.html" class="rtg-menu-link">👤 Profile</a>
+    <a href="/pages/customers.html" class="rtg-menu-link">📁 Customers</a>
+    <a href="/pages/measurement.html" class="rtg-menu-link">📏 Measurement</a>
+    <a href="/pages/contracts.html" class="rtg-menu-link">📄 Contracts</a>
+    <a href="/pages/calendar.html" class="rtg-menu-link">📅 Calendar</a>
+    <a href="/pages/flyers.html" class="rtg-menu-link">🎴 Flyers</a>
+    <a href="/pages/map.html" class="rtg-menu-link">🗺️ Map</a>
+    <a href="/pages/shop.html" class="rtg-menu-link">🛒 Shop</a>
+    <a href="/pages/jobs/job-dashboard.html" class="rtg-menu-link">🪓 Jobs</a>
   </nav>
 
   <!-- TOP BAR -->
@@ -45,9 +43,10 @@
     </div>
 
     <div class="rtg-topbar-right">
-      <a href="/pages/weather.html" class="rtg-topbar-link">Weather</a>
-      <a href="/pages/map.html" class="rtg-topbar-link">Map</a>
+      <a href="/pages/weather.html" class="rtg-topbar-link">🌤️</a>
+      <a href="/pages/map.html" class="rtg-topbar-link">🗺️</a>
 
+      <!-- Hidden burger -->
       <button id="rtgBurger" class="rtg-burger">
         <span></span><span></span><span></span>
       </button>
@@ -59,16 +58,16 @@
 
     <!-- QUICK ACTIONS -->
     <section class="rtg-quick-actions">
-      <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ New Client</button>
-      <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
-      <button class="rtg-qa-btn" onclick="location.href='/pages/calendar.html'">📅 Schedule Job</button>
-      <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Weather</button>
-      <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Job Map</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/calendar.html'">📅</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️</button>
     </section>
 
     <!-- NOTIFICATIONS -->
     <section class="rtg-notifications">
-      <h2 class="notif-title">🔔 Notifications & Reminders</h2>
+      <h2 class="notif-title">🔔 Notifications</h2>
       <div id="rtgNotifList" class="notif-list">
         <p class="notif-empty">No notifications.</p>
       </div>
@@ -77,7 +76,6 @@
     <!-- GAUGES -->
     <section class="rtg-gauge-row">
 
-      <!-- ARC GAUGE -->
       <div class="rtg-gauge-card">
         <h2>💨 Wind Hazard</h2>
         <div class="arc-gauge">
@@ -87,9 +85,8 @@
         <div class="gauge-readout" id="windSpeedReadout">-- mph</div>
       </div>
 
-      <!-- BAR GAUGE -->
       <div class="rtg-gauge-card">
-        <h2>🌲 Tree Hazard Level</h2>
+        <h2>🌲 Tree Hazard</h2>
         <div class="bar-gauge">
           <div class="bar-gauge-fill" id="hazardBar"></div>
         </div>
@@ -98,14 +95,13 @@
 
     </section>
 
-    <!-- WIDGETS -->
+    <!-- DASHBOARD CARDS -->
     <section class="rtg-widget">
 
-      <!-- WEATHER CARD -->
       <div class="rtg-dashboard-card">
         <div class="card-header">
           <span>🌤️ Weather Snapshot</span>
-          <a href="/pages/weather.html">Full Weather →</a>
+          <a href="/pages/weather.html">→</a>
         </div>
         <div class="card-body weather-body">
           <div class="weather-main">
@@ -119,27 +115,26 @@
         </div>
       </div>
 
-      <!-- JOB CARD -->
       <div class="rtg-dashboard-card">
         <div class="card-header">
           <span>📋 Today’s Job</span>
-          <a href="/pages/customers.html">Jobs →</a>
+          <a href="/pages/customers.html">→</a>
         </div>
         <div class="card-body" id="dashJobBody">Loading…</div>
       </div>
 
     </section>
 
-    <!-- NAV GRID -->
+    <!-- EMOJI NAV GRID -->
     <section class="rtg-grid">
-      <a href="/pages/profile.html" class="rtg-card">Profile</a>
-      <a href="/pages/customers.html" class="rtg-card">Customers & Jobs</a>
-      <a href="/pages/measurement.html" class="rtg-card">Tree Measurement</a>
-      <a href="/pages/contracts.html" class="rtg-card">Contracts</a>
-      <a href="/pages/calendar.html" class="rtg-card">Calendar</a>
-      <a href="/pages/flyers.html" class="rtg-card">Cards & Flyers</a>
-      <a href="/pages/map.html" class="rtg-card">Real Tree Map</a>
-      <a href="/pages/shop.html" class="rtg-card">Shop</a>
+      <a href="/pages/profile.html" class="rtg-card">👤</a>
+      <a href="/pages/customers.html" class="rtg-card">📁</a>
+      <a href="/pages/measurement.html" class="rtg-card">📏</a>
+      <a href="/pages/contracts.html" class="rtg-card">📄</a>
+      <a href="/pages/calendar.html" class="rtg-card">📅</a>
+      <a href="/pages/flyers.html" class="rtg-card">🎴</a>
+      <a href="/pages/map.html" class="rtg-card">🗺️</a>
+      <a href="/pages/shop.html" class="rtg-card">🛒</a>
     </section>
 
   </main>
