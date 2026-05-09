@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY — DASHBOARD JS (WITH LIVE RADAR)
+// REAL TREE GUY — DASHBOARD JS (CLEAN BUILD, NO BURGER LOGIC)
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,31 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateClock();
   setInterval(updateClock, 1000);
-
-
-  // ============================================================
-  // SIDEBAR TOGGLE (FULLY OFF-SCREEN UNTIL CLICKED)
-// ============================================================
-  const burger = document.getElementById("rtgBurger");
-  const sidemenu = document.getElementById("rtgSidemenu");
-  const logo = document.getElementById("rtgLogo");
-
-  function toggleMenu() {
-    sidemenu.classList.toggle("open");
-  }
-
-  burger.addEventListener("click", toggleMenu);
-  logo.addEventListener("click", toggleMenu);
-
-  document.addEventListener("click", (e) => {
-    if (!sidemenu.classList.contains("open")) return;
-    const insideMenu = sidemenu.contains(e.target);
-    const onBurger = burger.contains(e.target);
-    const onLogo = logo.contains(e.target);
-    if (!insideMenu && !onBurger && !onLogo) {
-      sidemenu.classList.remove("open");
-    }
-  });
 
 
   // ============================================================
@@ -86,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   // GPS + WEATHER FETCH (OPEN-METEO)
-// ============================================================
+  // ============================================================
   async function getLocation() {
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
@@ -164,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   // LIVE RADAR (RAINVIEWER)
-// ============================================================
+  // ============================================================
   const radarFrame = document.getElementById("rtgRadar");
 
   function updateRadar(lat, lon) {
