@@ -2,29 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RTG – AR Measurement</title>
+  <title>REAL TREE GUY – AR Measurement</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
   <link rel="stylesheet" href="/assets/css/measurement.css">
 </head>
+<body class="rtg-measure-body">
 
-<body>
+  <!-- FULLSCREEN CAMERA LAYER -->
+  <video id="arVideo" class="rtg-video" autoplay playsinline></video>
+  <canvas id="arCanvas" class="rtg-canvas"></canvas>
 
-  <div id="arContainer" class="ar-container">
-    <video id="arVideo" autoplay playsinline></video>
-    <canvas id="arCanvas"></canvas>
-
-    <!-- HUD (watermark math) -->
-    <div class="ar-hud">
-      <div class="hud-line">a: <span id="hudA">--</span></div>
-      <div class="hud-line">b: <span id="hudB">--</span></div>
-      <div class="hud-line">c: <span id="hudC">--</span></div>
-      <div class="hud-line">a² + b² ≈ c²: <span id="hudCheck">--</span></div>
-      <div class="hud-line">Tie‑In: <span id="hudTie">--</span></div>
-      <div class="hud-line">Rigging: <span id="hudRig">--</span></div>
+  <!-- WATERMARK HUD OVERLAY -->
+  <div class="rtg-hud">
+    <div class="hud-row">
+      <span class="hud-label">a:</span><span id="hudA" class="hud-value">-- px</span>
+      <span class="hud-label">b:</span><span id="hudB" class="hud-value">-- px</span>
+      <span class="hud-label">c:</span><span id="hudC" class="hud-value">-- px</span>
+      <span class="hud-label">a²+b²:</span><span id="hudCheck" class="hud-value">--</span>
+    </div>
+    <div class="hud-row">
+      <span class="hud-label">Tie‑in:</span><span id="hudTie" class="hud-value">Scanning…</span>
+    </div>
+    <div class="hud-row">
+      <span class="hud-label">Rigging:</span><span id="hudRig" class="hud-value">Scanning…</span>
+    </div>
+    <div class="hud-row">
+      <span class="hud-label">Hazard:</span><span id="hudHazard" class="hud-value">--</span>
     </div>
   </div>
 
-  <script src="/assets/js/measurement.js"></script>
+  <!-- SMALL LOGO WATERMARK -->
+  <div class="rtg-logo-mark">
+    <img src="/assets/img/rtg-logo.jpg" alt="RTG" />
+  </div>
+
+  <script src="/assets/js/measurement-ar.js"></script>
 </body>
 </html>
