@@ -1,13 +1,11 @@
 // ============================================================
 // REAL TREE GUY — AR ENGINE (UNIFIED v3)
-// Vision • ML Hooks • Physics • Rigging • Reasoning
+// Vision • Physics • Rigging • Reasoning • HUD Watermark
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ------------------------------------------------------------
   // DOM HOOKS
-  // ------------------------------------------------------------
   const video = document.getElementById("arVideo");
   const canvas = document.getElementById("arCanvas");
   const ctx = canvas.getContext("2d");
@@ -20,27 +18,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const hudRig = document.getElementById("hudRig");
   const hudHazard = document.getElementById("hudHazard");
 
-  // ============================================================
-  // CAMERA START
-  // ============================================================
+  // CAMERA
   async function startCamera() {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" }
-    });
-    video.srcObject = stream;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
+      video.srcObject = stream;
 
-    video.addEventListener("loadedmetadata", () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      loop();
-    });
+      video.addEventListener("loadedmetadata", () => {
+        canvas.width = video.videoWidth || window.innerWidth;
+        canvas.height = video.videoHeight || window.innerHeight;
+        loop();
+      });
+    } catch (err) {
+      console.error("Camera error:", err);
+      if (hudTie) hudTie.textContent = "Camera blocked or denied";
+    }
   }
 
   startCamera();
 
-  // ============================================================
   // SOBEL EDGE DETECTION
-  // ============================================================
   function sobelEdge(frame, width, height) {
     const gray = new Uint8ClampedArray(width * height);
     const out = new Uint8ClampedArray(width * height);
@@ -76,9 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return out;
   }
 
-  // ============================================================
   // VERTICAL LINE CLUSTERING
-  // ============================================================
   function detectVerticalLines(edgeMap, width, height) {
     const columnScores = [];
 
@@ -94,30 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return columnScores.slice(0, 6);
   }
 
-  // ============================================================
-  // ML HOOKS (FUTURE READY)
-  // ============================================================
-  const ML = {
-    modelLoaded: false,
-    model: null,
-
-    async load() {
-      // Example:
-      // this.model = await tf.loadGraphModel("model-url");
-      this.modelLoaded = false;
-    },
-
-    async analyze(frame, width, height) {
-      if (!this.modelLoaded) return null;
-      return null;
-    }
-  };
-
-  ML.load();
-
-  // ============================================================
-  // PHYSICS LAYER
-  // ============================================================
+  // PHYSICS
   const Physics = {
     distance(p1, p2) {
       const dx = p2.x - p1.x;
@@ -129,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const center = width / 2;
       const dx = trunkX - center;
       const max = width / 2;
-      return (dx / max) * 30; // ±30° lean
+      return (dx / max) * 30; // ±30°
     },
 
     riggingLoadScore(tieIn, rig, base) {
@@ -141,18 +115,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // ============================================================
-  // REASONING LAYER
-  // ============================================================
+  // REASONING
   const Reasoning = {
     hazardScore({ leanDeg, loadScore, hasRig, hasSeparateLimb }) {
       let score = 0;
-
       score += loadScore * 0.6;
       score += Math.min(30, Math.abs(leanDeg)) * 1.0;
       if (!hasRig) score += 20;
       if (!hasSeparateLimb) score += 15;
-
       return Math.min(100, Math.max(0, Math.round(score)));
     },
 
@@ -164,9 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // ============================================================
   // MAIN LOOP
-  // ============================================================
   function loop() {
     if (!video.videoWidth) {
       requestAnimationFrame(loop);
@@ -186,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const trunk = lines[0];
       const limb = lines.find(l => Math.abs(l.x - trunk.x) > 60) || null;
 
-      // Draw trunk
+      // trunk line
       ctx.globalAlpha = 0.25;
       ctx.strokeStyle = "white";
       ctx.lineWidth = 4;
@@ -195,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.lineTo(trunk.x, canvas.height);
       ctx.stroke();
 
-      // Tie-in
+      // tie-in
       const tieIn = { x: trunk.x, y: canvas.height * 0.2 };
       ctx.globalAlpha = 0.8;
       ctx.fillStyle = "#00ff88";
@@ -203,14 +171,12 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.arc(tieIn.x, tieIn.y, 12, 0, Math.PI * 2);
       ctx.fill();
 
-      // Rigging
+      // rigging
       let rig = null;
       let hasSeparateLimb = false;
-
       if (limb) {
         hasSeparateLimb = true;
         rig = { x: limb.x, y: canvas.height * 0.55 };
-
         ctx.fillStyle = "#00aaff";
         ctx.beginPath();
         ctx.arc(rig.x, rig.y, 12, 0, Math.PI * 2);
@@ -219,20 +185,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const base = { x: trunk.x, y: canvas.height };
 
-      // Pythagorean math
+      // Pythagorean
       const a = Math.abs(tieIn.x - base.x);
       const b = Math.abs(tieIn.y - base.y);
       const c = Physics.distance(tieIn, base);
 
-      hudA.textContent = `${a.toFixed(0)} px`;
-      hudB.textContent = `${b.toFixed(0)} px`;
-      hudC.textContent = `${c.toFixed(0)} px`;
-      hudCheck.textContent = `${(a * a + b * b).toFixed(0)}`;
+      if (hudA) hudA.textContent = `${a.toFixed(0)} px`;
+      if (hudB) hudB.textContent = `${b.toFixed(0)} px`;
+      if (hudC) hudC.textContent = `${c.toFixed(0)} px`;
+      if (hudCheck) hudCheck.textContent = `${(a * a + b * b).toFixed(0)}`;
 
-      hudTie.textContent = "Tie-in: top strong trunk section";
-      hudRig.textContent = rig ? "Rigging: lower separate limb" : "Rigging: no safe limb detected";
+      if (hudTie) hudTie.textContent = "Tie‑in: top strong trunk section";
+      if (hudRig) hudRig.textContent = rig ? "Rigging: lower separate limb" : "Rigging: no safe limb detected";
 
-      // Physics + reasoning
       const leanDeg = Physics.leanAngle(trunk.x, canvas.width);
       const loadScore = Physics.riggingLoadScore(tieIn, rig, base);
       const hazardScore = Reasoning.hazardScore({
