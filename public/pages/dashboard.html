@@ -12,24 +12,10 @@
 
 <body class="rtg-dashboard">
 
-  <!-- BACKGROUND -->
+  <!-- FIXED BACKGROUND -->
   <div id="rtgBackground"></div>
 
-  <!-- SIDEBAR -->
-  <nav id="rtgSidemenu" class="rtg-sidemenu">
-    <a href="/pages/dashboard.html" class="rtg-menu-link">🏠 Home</a>
-    <a href="/pages/profile.html" class="rtg-menu-link">👤 Profile</a>
-    <a href="/pages/customers.html" class="rtg-menu-link">📁 Customers</a>
-    <a href="/pages/measurement.html" class="rtg-menu-link">📏 Measurement</a>
-    <a href="/pages/contracts.html" class="rtg-menu-link">📄 Contracts</a>
-    <a href="/pages/calendar.html" class="rtg-menu-link">📅 Calendar</a>
-    <a href="/pages/flyers.html" class="rtg-menu-link">🎴 Flyers</a>
-    <a href="/pages/map.html" class="rtg-menu-link">🗺️ Map</a>
-    <a href="/pages/shop.html" class="rtg-menu-link">🛒 Shop</a>
-    <a href="/pages/jobs/job-dashboard.html" class="rtg-menu-link">🪓 Jobs</a>
-  </nav>
-
-  <!-- TOP BAR -->
+  <!-- TOP BAR (NO BURGER, NO SIDEBAR) -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
@@ -66,9 +52,7 @@
       <div id="radio-widget" class="radio-widget">
         <div class="radio-header">
           <span class="radio-title">Crew Radio</span>
-          <span id="radio-status" class="radio-status radio-status--disconnected">
-            Disconnected
-          </span>
+          <span id="radio-status" class="radio-status radio-status--disconnected">Disconnected</span>
         </div>
 
         <div class="radio-body">
@@ -83,23 +67,17 @@
           </div>
 
           <div class="radio-row">
-            <button id="radio-connect" class="radio-btn radio-btn--primary">
-              Connect
-            </button>
-            <button id="radio-disconnect" class="radio-btn radio-btn--ghost" disabled>
-              Disconnect
-            </button>
+            <button id="radio-connect" class="radio-btn radio-btn--primary">Connect</button>
+            <button id="radio-disconnect" class="radio-btn radio-btn--ghost" disabled>Disconnect</button>
           </div>
 
           <div class="radio-row radio-row--ptt">
-            <button id="radio-ptt" class="radio-ptt-btn" disabled>
-              Hold to Talk
-            </button>
+            <button id="radio-ptt" class="radio-ptt-btn" disabled>Hold to Talk</button>
           </div>
 
           <div class="radio-footer">
             <span id="radio-channel-display">Channel: 1</span>
-            <span id="radio-log" class="radio-log">Ready.</span>
+            <div id="radio-log" class="radio-log"></div>
           </div>
         </div>
       </div>
@@ -165,40 +143,17 @@
 
     </section>
 
-    <!-- EMOJI + WORD NAV GRID -->
+    <!-- NAV GRID -->
     <section class="rtg-grid">
 
-      <a href="/pages/profile.html" class="rtg-card">
-        👤<span>Profile</span>
-      </a>
-
-      <a href="/pages/customers.html" class="rtg-card">
-        📁<span>Customers</span>
-      </a>
-
-      <a href="/pages/measurement.html" class="rtg-card">
-        📏<span>Measurement</span>
-      </a>
-
-      <a href="/pages/contracts.html" class="rtg-card">
-        📄<span>Contracts</span>
-      </a>
-
-      <a href="/pages/calendar.html" class="rtg-card">
-        📅<span>Calendar</span>
-      </a>
-
-      <a href="/pages/flyers.html" class="rtg-card">
-        🎴<span>Flyers</span>
-      </a>
-
-      <a href="/pages/map.html" class="rtg-card">
-        🗺️<span>Map</span>
-      </a>
-
-      <a href="/pages/shop.html" class="rtg-card">
-        🛒<span>Shop</span>
-      </a>
+      <a href="/pages/profile.html" class="rtg-card">👤<span>Profile</span></a>
+      <a href="/pages/customers.html" class="rtg-card">📁<span>Customers</span></a>
+      <a href="/pages/measurement.html" class="rtg-card">📏<span>Measurement</span></a>
+      <a href="/pages/contracts.html" class="rtg-card">📄<span>Contracts</span></a>
+      <a href="/pages/calendar.html" class="rtg-card">📅<span>Calendar</span></a>
+      <a href="/pages/flyers.html" class="rtg-card">🎴<span>Flyers</span></a>
+      <a href="/pages/map.html" class="rtg-card">🗺️<span>Map</span></a>
+      <a href="/pages/shop.html" class="rtg-card">🛒<span>Shop</span></a>
 
     </section>
 
