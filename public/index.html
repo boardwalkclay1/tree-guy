@@ -7,28 +7,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- FAVICON -->
-  <link rel="icon" type="image/png" href="assets/icons/rtg-192.png?v=3">
+  <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png?v=3">
 
   <!-- APPLE TOUCH ICON -->
-  <link rel="apple-touch-icon" href="assets/icons/rtg-192.png?v=3">
+  <link rel="apple-touch-icon" href="/assets/icons/rtg-192.png?v=3">
 
   <!-- MANIFEST -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/index.css">
+  <link rel="stylesheet" href="/assets/css/index.css">
 
   <style>
-    /* BACKGROUND IMAGE — FIXED PATH */
     body {
       margin: 0;
       padding: 0;
-      background: url("assets/img/rtg-logo.jpg") no-repeat center center fixed;
+      background: url("/assets/img/rtg-logo.jpg") no-repeat center center fixed;
       background-size: cover;
       position: relative;
     }
 
-    /* DARK OVERLAY FOR READABILITY */
     body::before {
       content: "";
       position: fixed;
@@ -40,28 +38,14 @@
       z-index: -1;
     }
 
-    /* GLOBAL LINK FIX — ORANGE LINKS */
     a {
       color: #ff8c42;
       text-decoration: none;
       font-weight: 700;
       transition: 0.25s ease;
     }
+    a:hover { color: #ffb673; text-shadow: 0 0 8px #ff8c42; }
 
-    a:hover {
-      color: #ffb673;
-      text-shadow: 0 0 8px #ff8c42;
-    }
-
-    a:visited {
-      color: #ff8c42;
-    }
-
-    a:active {
-      color: #ffb673;
-    }
-
-    /* SIDEBAR */
     #sidebar {
       position: fixed;
       top: 0;
@@ -75,10 +59,7 @@
       transition: left 0.3s ease;
       z-index: 9999;
     }
-
-    #sidebar.open {
-      left: 0;
-    }
+    #sidebar.open { left: 0; }
 
     #sidebar a {
       display: block;
@@ -97,7 +78,6 @@
       color: #caffca;
     }
 
-    /* NEW FEATURE LIST */
     .rtg-features {
       max-width: 700px;
       margin: 60px auto;
@@ -110,12 +90,6 @@
       font-size: 2rem;
       margin-bottom: 20px;
       text-shadow: 0 0 12px rgba(46,107,51,0.6);
-    }
-
-    .rtg-features ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
     }
 
     .rtg-features li {
@@ -134,10 +108,11 @@
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <h2>Menu</h2>
-    <a href="pages/login.html">Login</a>
-    <a href="pages/paywall.html">Unlock OS</a>
-    <a href="pages/why.html">Why Real Tree Guy?</a>
-    <a href="pages/support.html">Support</a>
+    <a href="/pages/login.html">Login</a>
+    <a href="/pages/signup-tree.html">Tree Guy Sign Up</a>
+    <a href="/pages/signup-client.html">Client Sign Up</a>
+    <a href="/pages/why.html">Why Real Tree Guy?</a>
+    <a href="/pages/support.html">Support</a>
   </nav>
 
   <!-- HERO -->
@@ -150,16 +125,17 @@
       Real Tree Guy OS is your entire business in your pocket.
     </p>
 
-    <a class="rtg-btn" href="pages/paywall.html">
-      Unlock Real Tree Guy OS – $30 One‑Time
+    <!-- DIRECT ENTRY TO OS (SAFE MODE) -->
+    <a class="rtg-btn" href="/pages/dashboard.html">
+      Enter Real Tree Guy OS
     </a>
 
-    <a class="rtg-btn login-small" href="pages/login.html">
+    <a class="rtg-btn login-small" href="/pages/login.html">
       Login
     </a>
   </header>
 
-  <!-- NEW FEATURE LIST -->
+  <!-- FEATURE LIST -->
   <section class="rtg-features">
     <h2>What’s Inside the OS</h2>
     <ul>
@@ -168,14 +144,16 @@
       <li>✔ Tree Measurement Tools</li>
       <li>✔ Flyers, Cards & Door Hangers</li>
       <li>✔ Customer & Job Management</li>
+      <li>✔ Real‑Time Crew Radio</li>
+      <li>✔ Printful Store + PayPal Checkout</li>
       <li>✔ Offline‑First, Works Anywhere</li>
     </ul>
   </section>
 
   <!-- BOTTOM LINKS -->
   <div class="rtg-bottom-links">
-    <a class="rtg-bottom-btn" href="pages/login.html">Already have an account?</a>
-    <a class="rtg-bottom-btn" href="pages/why.html">Why Real Tree Guy?</a>
+    <a class="rtg-bottom-btn" href="/pages/login.html">Already have an account?</a>
+    <a class="rtg-bottom-btn" href="/pages/why.html">Why Real Tree Guy?</a>
   </div>
 
   <footer>
@@ -196,6 +174,14 @@
         sidebar.classList.remove("open");
       }
     });
+
+    // AUTO‑REDIRECT IF ALREADY UNLOCKED
+    const unlocked = localStorage.getItem("rtg_unlocked");
+    const token = localStorage.getItem("rtgToken");
+
+    if (unlocked === "true" || token) {
+      window.location.href = "/pages/dashboard.html";
+    }
   </script>
 
 </body>
