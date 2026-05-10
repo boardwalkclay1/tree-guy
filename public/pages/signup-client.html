@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Client Sign Up – Real Tree Guy OS</title>
+  <link rel="stylesheet" href="/assets/css/sign-up.css">
+</head>
+
+<body>
+
+  <h1>Create Client Account</h1>
+
+  <div class="card">
+    <input id="name" type="text" placeholder="Full Name">
+    <input id="email" type="email" placeholder="Email">
+    <input id="phone" type="tel" placeholder="Phone Number">
+    <input id="password" type="password" placeholder="Password">
+
+    <button id="signupBtn">Create Account</button>
+  </div>
+
+  <script type="module">
+    import { signupClient } from "/assets/js/auth.js";
+
+    document.getElementById("signupBtn").onclick = async () => {
+      const name = name.value.trim();
+      const email = email.value.trim();
+      const phone = phone.value.trim();
+      const password = password.value.trim();
+
+      await signupClient({ name, email, phone, password });
+
+      window.location.href = "/pages/dashboard.html";
+    };
+  </script>
+
+</body>
+</html>
