@@ -1,0 +1,14 @@
+name = "rtg-app"
+main = "src/worker.js"
+compatibility_date = "2024-05-01"
+
+[vars]
+JWT_SECRET = "change_me_rtg_secret"
+PAYPAL_CLIENT_ID = "your_paypal_client_id"
+PAYPAL_CLIENT_SECRET = "your_paypal_client_secret"
+PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com" # or live
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rtg-db"
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
