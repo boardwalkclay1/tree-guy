@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart – Real Tree Guy OS</title>
+  <link rel="stylesheet" href="/assets/css/cart.css">
+</head>
+
+<body>
+
+  <h1>Your Cart</h1>
+
+  <div id="cartItems" class="cart-list"></div>
+
+  <div class="cart-footer">
+    <div id="cartTotal" class="cart-total">Total: $0.00</div>
+    <button id="checkoutBtn" class="cart-checkout-btn">Checkout with PayPal</button>
+  </div>
+
+  <script type="module">
+    import { loadCart, checkoutCart } from "/assets/js/cart.js";
+
+    loadCart();
+
+    document.getElementById("checkoutBtn").onclick = async () => {
+      await checkoutCart();
+    };
+  </script>
+
+</body>
+</html>
