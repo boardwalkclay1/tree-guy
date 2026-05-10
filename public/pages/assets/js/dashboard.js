@@ -1,6 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // ============================================================
+  // AUTH + API WRAPPER
+  // ============================================================
+  const API = {
+    token: localStorage.getItem("rtgToken") || null,
+
+    headers() {
+      return this.token
+        ? { "Authorization": `Bearer ${this.token}`, "Content-Type": "application/json" }
+        : { "Content-Type": "application/json" };
+    },
+
+    async get(path) {
+      const res = await fetch(path, { headers: this.headers() });
+      return res.json();
+    },
+
+    async post(path, body) {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: this.headers(),
+        body: JSON.stringify(body)
+      });
+      return res.json();
+    }
+  };
+
+  // If no token → redirect to login
+  if (!API.token) {
+    console.warn("No auth token found → redirecting to login");
+    window.location.href = "/pages/login.html";
+    return;
+  }
+
+  // ============================================================
   // CLOCK
+  // ============================================================
   const clockEl = document.getElementById("rtgClock");
   function updateClock() {
     if (!clockEl) return;
@@ -14,51 +50,51 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClock();
   setInterval(updateClock, 1000);
 
-  // SIDEBAR TOGGLE (LOGO = BURGER)
-  const logo = document.getElementById("rtgLogo");
-  const sidemenu = document.getElementById("rtgSidemenu");
-
-  if (logo && sidemenu) {
-    logo.addEventListener("click", () => {
-      sidemenu.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!sidemenu.contains(e.target) && e.target !== logo) {
-        sidemenu.classList.remove("open");
-      }
-    });
-  }
-
-  // STORAGE
-  const Storage = {
-    get(key, fallback = null) {
-      try {
-        return JSON.parse(localStorage.getItem(key)) ?? fallback;
-      } catch {
-        return fallback;
-      }
-    },
-    set(key, value) {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
-  };
-
+  // ============================================================
   // NOTIFICATIONS
+  // ============================================================
   const notifList = document.getElementById("rtgNotifList");
+
   function RTGnotify(msg, type = "info") {
     if (!notifList) return;
     const empty = notifList.querySelector(".notif-empty");
     if (empty) empty.remove();
+
     const div = document.createElement("div");
     div.className = `notif-item notif-${type}`;
     div.textContent = msg;
     notifList.prepend(div);
   }
+
   window.RTGnotify = RTGnotify;
 
-  // WEATHER + JOB LOGIC (unchanged)
-  // ------------------------------------------------------------
+  async function loadNotifications() {
+    try {
+      const data = await API.get("/api/notifications");
+      if (!data || !Array.isArray(data)) return;
+
+      notifList.innerHTML = "";
+      if (data.length === 0) {
+        notifList.innerHTML = `<p class="notif-empty">No notifications.</p>`;
+        return;
+      }
+
+      data.forEach(n => {
+        const div = document.createElement("div");
+        div.className = `notif-item notif-${n.type}`;
+        div.textContent = n.message;
+        notifList.appendChild(div);
+      });
+    } catch (err) {
+      console.error("Notif load error:", err);
+    }
+  }
+
+  loadNotifications();
+
+  // ============================================================
+  // WEATHER
+  // ============================================================
   async function getLocation() {
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
@@ -125,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gust > 35) RTGnotify(`Strong gusts detected (${gust} mph). Hazard increased.`, "danger");
   }
 
-  async function loadWeatherAndRadar() {
+  async function loadWeather() {
     const { lat, lon } = await getLocation();
     const data = await fetchWeather(lat, lon);
 
@@ -138,35 +174,41 @@ document.addEventListener("DOMContentLoaded", () => {
       windgusts: data.hourly?.windgusts_10m?.[0] ?? data.current_weather.windspeed
     };
 
-    Storage.set("rtgWeatherToday", today);
     updateWeatherUI(today);
   }
 
-  loadWeatherAndRadar();
-  setInterval(loadWeatherAndRadar, 5 * 60 * 1000);
+  loadWeather();
+  setInterval(loadWeather, 5 * 60 * 1000);
 
-  function loadDashboardJob() {
-    const jobs = Storage.get("rtgJobs", []);
-    const todayStr = new Date().toDateString();
-    const todaysJobs = jobs.filter(j => j.date && new Date(j.date).toDateString() === todayStr);
-
+  // ============================================================
+  // TODAY'S JOB (FROM WORKER, NOT LOCALSTORAGE)
+  // ============================================================
+  async function loadDashboardJob() {
     const body = document.getElementById("dashJobBody");
 
-    if (todaysJobs.length === 0) {
-      body.innerHTML = `<p>No jobs scheduled today.</p>`;
-      return;
+    try {
+      const data = await API.get("/api/jobs/today");
+
+      if (!data || !data.job) {
+        body.innerHTML = `<p>No jobs scheduled today.</p>`;
+        return;
+      }
+
+      const job = data.job;
+
+      body.innerHTML = `
+        <h3>${job.client_name || "Unnamed Job"}</h3>
+        <p><strong>Time:</strong> ${job.time || "N/A"}</p>
+        <p><strong>Address:</strong> ${job.address || "N/A"}</p>
+        <p><strong>Notes:</strong> ${job.notes || "None"}</p>
+      `;
+
+      RTGnotify(`📋 Job today: ${job.client_name}`, "info");
+
+    } catch (err) {
+      console.error("Job load error:", err);
+      body.innerHTML = `<p>Error loading job.</p>`;
     }
-
-    const job = todaysJobs[0];
-
-    body.innerHTML = `
-      <h3>${job.client || "Unnamed Job"}</h3>
-      <p><strong>Time:</strong> ${job.time || "N/A"}</p>
-      <p><strong>Address:</strong> ${job.address || "N/A"}</p>
-      <p><strong>Notes:</strong> ${job.notes || "None"}</p>
-    `;
-
-    RTGnotify(`📋 Job today: ${job.client}`, "info");
   }
 
   loadDashboardJob();
