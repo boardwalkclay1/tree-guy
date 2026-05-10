@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Messages – Real Tree Guy OS</title>
+  <link rel="stylesheet" href="/assets/css/messages.css">
+</head>
+
+<body>
+
+  <h1>Your Messages</h1>
+
+  <div id="threadList" class="thread-list"></div>
+
+  <script type="module">
+    import { loadThreads } from "/assets/js/messages.js";
+    loadThreads();
+  </script>
+
+</body>
+</html>
