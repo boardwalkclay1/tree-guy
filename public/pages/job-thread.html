@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Job Thread – Real Tree Guy OS</title>
+  <link rel="stylesheet" href="/assets/css/messages.css">
+</head>
+
+<body>
+
+  <h1 id="jobTitle">Job Thread</h1>
+
+  <div id="messageList" class="message-list"></div>
+
+  <div class="message-input">
+    <input id="msgBox" type="text" placeholder="Type a message…">
+    <button id="sendBtn">Send</button>
+  </div>
+
+  <script type="module">
+    import { loadJobThread, sendMessage } from "/assets/js/messages.js";
+
+    const params = new URLSearchParams(location.search);
+    const jobId = params.get("job");
+
+    loadJobThread(jobId);
+
+    document.getElementById("sendBtn").onclick = () => {
+      const text = msgBox.value.trim();
+      if (!text) return;
+      sendMessage(jobId, text);
+      msgBox.value = "";
+    };
+  </script>
+
+</body>
+</html>
