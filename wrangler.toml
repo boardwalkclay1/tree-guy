@@ -11,4 +11,5 @@ PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com" # or live
 [[d1_databases]]
 binding = "DB"
 database_name = "rtg-db"
-database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+database_id = "3592ad5b-c7a0-46b3-90ce-dfb8e7a67ff4"
+
