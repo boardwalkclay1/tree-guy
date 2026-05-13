@@ -5,10 +5,6 @@
   <title>Login – Real Tree Guy OS</title>
 
   <style>
-    /* ============================
-       REAL TREE GUY OS – LOGIN UI
-       ============================ */
-
     body {
       margin: 0;
       padding: 0;
@@ -52,10 +48,6 @@
       outline: none;
     }
 
-    .card input::placeholder {
-      color: #8fbf8f;
-    }
-
     button {
       width: 100%;
       padding: 14px;
@@ -66,27 +58,6 @@
       font-weight: bold;
       font-size: 1.1rem;
       cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #3c8a44;
-    }
-
-    p {
-      text-align: center;
-      margin-top: 18px;
-      color: #8fbf8f;
-    }
-
-    a {
-      color: #ff7a00;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: #ff9d42;
     }
   </style>
 </head>
@@ -96,15 +67,10 @@
   <h1>Tree Guy Login</h1>
 
   <div class="card">
-    <input id="email" type="email" placeholder="Email" autocomplete="email">
-    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
     <button id="loginBtn">Login</button>
-
-    <p>
-      Need access?
-      <a href="paywall.html">Unlock OS</a>
-    </p>
   </div>
 
   <script type="module">
@@ -119,7 +85,7 @@
       if (ok) {
         window.location.href = "dashboard.html";
       } else {
-        alert("Invalid login. If you haven't paid, unlock the OS first.");
+        alert("Invalid login.");
       }
     };
   </script>
