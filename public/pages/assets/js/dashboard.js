@@ -1,15 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
-  // AUTH + API WRAPPER
+  // SAFE MODE API WRAPPER — NO REDIRECTS, NO TOKEN REQUIRED
   // ============================================================
   const API = {
-    token: localStorage.getItem("rtgToken") || null,
-
     headers() {
-      return this.token
-        ? { "Authorization": `Bearer ${this.token}`, "Content-Type": "application/json" }
-        : { "Content-Type": "application/json" };
+      return { "Content-Type": "application/json" };
     },
 
     async get(path) {
@@ -27,12 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // If no token → redirect to login
-  if (!API.token) {
-    console.warn("No auth token found → redirecting to login");
-    window.location.href = "/pages/login.html";
-    return;
-  }
+  console.warn("SAFE MODE ENABLED — Dashboard will not redirect.");
 
   // ============================================================
   // CLOCK
@@ -71,10 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadNotifications() {
     try {
       const data = await API.get("/api/notifications");
-      if (!data || !Array.isArray(data)) return;
 
       notifList.innerHTML = "";
-      if (data.length === 0) {
+
+      if (!data || !Array.isArray(data) || data.length === 0) {
         notifList.innerHTML = `<p class="notif-empty">No notifications.</p>`;
         return;
       }
@@ -181,29 +172,27 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // TODAY'S JOB (FROM WORKER, NOT LOCALSTORAGE)
+  // TODAY'S JOB
   // ============================================================
   async function loadDashboardJob() {
     const body = document.getElementById("dashJobBody");
 
     try {
-      const data = await API.get("/api/jobs/today");
+      const job = await API.get("/api/dashboard/today");
 
-      if (!data || !data.job) {
+      if (!job || !job.id) {
         body.innerHTML = `<p>No jobs scheduled today.</p>`;
         return;
       }
 
-      const job = data.job;
-
       body.innerHTML = `
-        <h3>${job.client_name || "Unnamed Job"}</h3>
-        <p><strong>Time:</strong> ${job.time || "N/A"}</p>
-        <p><strong>Address:</strong> ${job.address || "N/A"}</p>
-        <p><strong>Notes:</strong> ${job.notes || "None"}</p>
+        <h3>${job.title}</h3>
+        <p><strong>Status:</strong> ${job.status}</p>
+        <p><strong>Location:</strong> ${job.location_city}, ${job.location_state}</p>
+        <p><strong>Description:</strong> ${job.description}</p>
       `;
 
-      RTGnotify(`📋 Job today: ${job.client_name}`, "info");
+      RTGnotify(`📋 Job today: ${job.title}`, "info");
 
     } catch (err) {
       console.error("Job load error:", err);
