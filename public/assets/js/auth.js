@@ -3,14 +3,13 @@
 // Offline, Local-Only, IndexedDB
 // ===============================
 
-// OWNER BYPASS (GitIgnore-style override)
+// OWNER BYPASS
 const OWNER_EMAIL = "boardwalkclay1@gmail.com";
 const OWNER_PASS = "Always/6";
 
 // ============================================================
 // SPECIAL CLIENTS — LOCAL JSON DATA
 // ============================================================
-
 const specialClientsData = {
   specialClients: [
     {
@@ -23,7 +22,6 @@ const specialClientsData = {
   ]
 };
 
-// Helper: find special client
 function getSpecialClient(email) {
   return specialClientsData.specialClients.find(
     client => client.email === email
@@ -33,8 +31,6 @@ function getSpecialClient(email) {
 // ============================================================
 // INDEXEDDB SETUP
 // ============================================================
-
-// Open or create DB
 export function openDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open("rtg_os", 1);
@@ -48,7 +44,6 @@ export function openDB() {
   });
 }
 
-// Save user (Signup)
 export async function saveUser(email, password) {
   const db = await openDB();
   const tx = db.transaction("auth", "readwrite");
@@ -61,7 +56,6 @@ export async function saveUser(email, password) {
   return tx.complete;
 }
 
-// Get user (Login)
 export async function getUser(email) {
   const db = await openDB();
   const tx = db.transaction("auth", "readonly");
@@ -69,24 +63,22 @@ export async function getUser(email) {
 }
 
 // ============================================================
-// LOGIN LOGIC (with special-client support)
+// LOGIN LOGIC (SAFE MODE TOKEN ADDED)
 // ============================================================
-
 export async function loginUser(email, password) {
 
   // 1. OWNER OVERRIDE
   if (email === OWNER_EMAIL && password === OWNER_PASS) {
     localStorage.setItem("rtg_unlocked", "true");
+    localStorage.setItem("rtgToken", "dev"); // SAFE MODE TOKEN
     return true;
   }
 
   // 2. SPECIAL CLIENT CHECK
   const special = getSpecialClient(email);
-
   if (special && special.canCreatePassword) {
-    // Redirect to password creation page
     window.location.href = "/pages/create-password.html";
-    return false; // stop normal login
+    return false;
   }
 
   // 3. NORMAL USER LOGIN
@@ -95,13 +87,13 @@ export async function loginUser(email, password) {
   if (user.password !== password) return false;
 
   localStorage.setItem("rtg_unlocked", "true");
+  localStorage.setItem("rtgToken", "dev"); // SAFE MODE TOKEN
   return true;
 }
 
 // ============================================================
 // CHECK UNLOCK
 // ============================================================
-
 export async function isUnlocked() {
   return localStorage.getItem("rtg_unlocked") === "true";
 }
