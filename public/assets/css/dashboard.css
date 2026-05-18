@@ -111,7 +111,7 @@ body {
 }
 
 /* ============================================================
-   SIDEBAR
+   SIDEBAR (kept for future use)
 ============================================================ */
 .rtg-sidemenu {
   position: fixed;
@@ -330,7 +330,7 @@ body {
 }
 
 /* ============================================================
-   EMOJI + WORD NAV GRID (FULL FIXED VERSION)
+   EMOJI + WORD NAV GRID
 ============================================================ */
 .rtg-grid {
   margin: 24px auto 20px;
@@ -367,4 +367,28 @@ body {
 .rtg-card:hover {
   background: rgba(0,0,0,0.9);
   transform: translateY(-4px);
+}
+
+/* ============================================================
+   RTG ONLINE — DOUBLE WIDE ORANGE CARD
+============================================================ */
+.rtg-card--xl {
+  grid-column: span 2;
+  padding: 32px 0 22px;
+  font-size: 2.4rem;
+}
+
+.rtg-card--orange {
+  background: linear-gradient(135deg, #ff7b00, #ff9f3f);
+  border-color: #ff7b00;
+  color: #fff;
+}
+
+.rtg-card--orange span {
+  color: #fff;
+}
+
+.rtg-card--orange:hover {
+  background: linear-gradient(135deg, #ffa64d, #ff7b00);
+  transform: scale(1.03);
 }
