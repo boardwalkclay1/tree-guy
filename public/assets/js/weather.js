@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (RAINVIEWER)
+// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (D1 VERSION)
 // ============================================================
 
 // DOM TARGETS
@@ -26,8 +26,21 @@ const wxIcon = document.getElementById("wxIcon");
 const wxLabel = document.getElementById("wxLabel");
 const radarFrame = document.getElementById("rtgRadar");
 
-// OPEN-METEO API
-const API = "https://api.open-meteo.com/v1/forecast";
+// API WRAPPER
+const API = {
+  async get(path) {
+    const r = await fetch(path);
+    return r.json();
+  },
+  async post(path, body) {
+    const r = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    return r.json();
+  }
+};
 
 // WEATHER CODE → TEXT
 function codeToText(code) {
@@ -61,7 +74,7 @@ function iconClassForCode(code) {
 // GET WEATHER
 async function getWeather(lat, lon) {
   const url =
-    `${API}?latitude=${lat}&longitude=${lon}` +
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
     `&current_weather=true` +
     `&hourly=temperature_2m,weathercode,windgusts_10m,precipitation,surface_pressure` +
     `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
@@ -71,15 +84,18 @@ async function getWeather(lat, lon) {
   return res.json();
 }
 
-// GET GPS WITH PERMISSION HANDLING
-function getLocation() {
+// GET LOCATION FROM PROFILE OR GPS
+async function getLocation() {
+  const profile = await API.get("/api/profile");
+
+  if (profile.lat && profile.lon) {
+    return { lat: profile.lat, lon: profile.lon };
+  }
+
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      () => {
-        locationStatus.textContent = "GPS denied — using fallback (Atlanta)";
-        resolve({ lat: 34.0, lon: -84.0 });
-      },
+      () => resolve({ lat: 34.0, lon: -84.0 }),
       { enableHighAccuracy: true, timeout: 8000 }
     );
   });
@@ -101,7 +117,7 @@ function renderCurrent(data) {
   }
 }
 
-// RENDER HOURLY FORECAST (12 hours)
+// RENDER HOURLY FORECAST
 function renderHourly(data) {
   hourlyStrip.innerHTML = "";
 
@@ -120,7 +136,7 @@ function renderHourly(data) {
   }
 }
 
-// RENDER DAILY FORECAST (7 days)
+// RENDER DAILY FORECAST
 function renderDaily(data) {
   dailyStrip.innerHTML = "";
 
@@ -152,17 +168,7 @@ async function loadWeather(lat, lon) {
 
   locationStatus.textContent = `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
-  // SYNC TO DASHBOARD
-  localStorage.setItem("rtgWeatherToday", JSON.stringify({
-    temperature: data.current_weather.temperature,
-    weathercode: data.current_weather.weathercode,
-    windspeed: data.current_weather.windspeed,
-    windgusts: data.hourly.windgusts_10m?.[0] ?? data.current_weather.windspeed
-  }));
-
-  localStorage.setItem("rtgWeatherForecast", JSON.stringify(data.daily));
-
-  // RAINVIEWER RADAR (loads instantly)
+  // RADAR
   if (radarFrame) {
     radarFrame.src =
       `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
@@ -170,32 +176,32 @@ async function loadWeather(lat, lon) {
   }
 }
 
-// AUTO‑LOAD ON PAGE OPEN
+// AUTO‑LOAD
 async function initWeather() {
   const { lat, lon } = await getLocation();
   await loadWeather(lat, lon);
 }
 
-// RUN IMMEDIATELY
 initWeather();
-
-// REFRESH EVERY 5 MINUTES (REAL‑TIME)
 setInterval(initWeather, 5 * 60 * 1000);
 
 // BUTTON: USE GPS
 useGPSBtn?.addEventListener("click", async () => {
-  locationStatus.textContent = "Requesting GPS…";
   const { lat, lon } = await getLocation();
   loadWeather(lat, lon);
 });
 
 // BUTTON: MANUAL LOCATION
-setManualBtn?.addEventListener("click", () => {
+setManualBtn?.addEventListener("click", async () => {
   const lat = parseFloat(manualLat.value);
   const lon = parseFloat(manualLon.value);
 
   if (!isNaN(lat) && !isNaN(lon)) {
-    locationStatus.textContent = "Using manual location…";
+    await API.post("/api/profile", {
+      id: "PROFILE",
+      lat,
+      lon
+    });
     loadWeather(lat, lon);
   } else {
     locationStatus.textContent = "Invalid coordinates.";
