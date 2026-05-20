@@ -12,17 +12,28 @@
 
 <body>
 
-  <header>
+  <header class="rtg-header">
     <h1>📅 Tree Guy Calendar</h1>
     <a class="back-link" href="../../pages/dashboard.html">← Back to Dashboard</a>
   </header>
 
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <button class="qa-btn" id="qaAdd">➕ Add Event</button>
+    <button class="qa-btn" onclick="location.href='../../pages/contracts.html'">📄 Contract</button>
+    <button class="qa-btn" onclick="location.href='../../pages/map.html'">🗺️ Map</button>
+    <button class="qa-btn" onclick="location.href='../../pages/weather.html'">🌤️ Weather</button>
+    <button class="qa-btn" onclick="window.location.href='tel:+15555555555'">📞 Call</button>
+  </div>
+
+  <!-- MONTH NAV -->
   <div class="cal-nav">
     <button id="prev">◀ Prev</button>
     <div id="monthLabel"></div>
     <button id="next">Next ▶</button>
   </div>
 
+  <!-- CALENDAR GRID -->
   <div class="cal-grid" id="calendarGrid"></div>
 
   <!-- EVENT MODAL -->
@@ -57,7 +68,7 @@
   <!-- DB ENGINE FIRST -->
   <script type="module" src="../assets/js/db.js"></script>
 
-  <!-- CALENDAR LOGIC SECOND (FIXED PATH) -->
+  <!-- CALENDAR LOGIC SECOND -->
   <script type="module" src="../pages/assets/js/calendar.js"></script>
 
 </body>
