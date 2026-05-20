@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
-  // SAFE MODE API WRAPPER — NO REDIRECTS, NO TOKEN REQUIRED
+  // SAFE MODE API WRAPPER — D1 BACKEND
   // ============================================================
   const API = {
     headers() {
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateClock, 1000);
 
   // ============================================================
-  // NOTIFICATIONS
+  // NOTIFICATIONS (D1)
   // ============================================================
   const notifList = document.getElementById("rtgNotifList");
 
@@ -84,9 +84,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadNotifications();
 
   // ============================================================
-  // WEATHER
+  // WEATHER (LIVE + D1 PROFILE LOCATION)
   // ============================================================
-  async function getLocation() {
+  async function getUserLocation() {
+    try {
+      const profile = await API.get("/api/profile");
+
+      if (profile && profile.lat && profile.lon) {
+        return { lat: profile.lat, lon: profile.lon };
+      }
+    } catch {}
+
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
         pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
@@ -153,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadWeather() {
-    const { lat, lon } = await getLocation();
+    const { lat, lon } = await getUserLocation();
     const data = await fetchWeather(lat, lon);
 
     if (!data || !data.current_weather) return;
@@ -172,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // TODAY'S JOB
+  // TODAY'S JOB (D1)
   // ============================================================
   async function loadDashboardJob() {
     const body = document.getElementById("dashJobBody");
