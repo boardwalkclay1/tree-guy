@@ -1,89 +1,191 @@
+/* ============================================================
+   REAL TREE GUY OS — CONTRACTS CENTER (UPGRADED)
+   Bigger • Cleaner • Phone Friendly • RTG Style
+============================================================ */
+
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #0b1b0b;
+  background: #071407;
   color: #fff;
 }
 
+/* HEADER */
 .rtg-header {
-  padding: 10px 16px;
+  padding: 14px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,0,0,0.85);
-  border-bottom: 1px solid #2e6b33;
+  background: rgba(0,0,0,0.9);
+  border-bottom: 2px solid #2e6b33;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
 }
 
 .back-link {
   color: #ff8c42;
   text-decoration: none;
-  font-weight: 600;
-}
-
-.contracts-shell {
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-}
-
-/* compact widget ~ small card */
-.contracts-widget {
-  width: 260px; /* ~2.7in on standard screens */
-  padding: 10px;
-  background: rgba(0,0,0,0.8);
-  border-radius: 10px;
-  border: 1px solid #ff8c42;
-  box-shadow: 0 0 10px rgba(0,0,0,0.6);
-  font-size: 0.85rem;
-}
-
-.contracts-widget h2 {
-  margin: 0 0 8px;
+  font-weight: 700;
   font-size: 1rem;
 }
 
+/* MAIN LAYOUT */
+.contracts-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px;
+  gap: 20px;
+}
+
+/* ============================================================
+   TEMPLATE CARD — BIGGER + PHONE FRIENDLY
+============================================================ */
+.contracts-widget {
+  width: 100%;
+  max-width: 480px; /* Bigger template */
+  padding: 16px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  border: 2px solid #ff8c42;
+  box-shadow: 0 0 18px rgba(0,0,0,0.7);
+  font-size: 1rem;
+}
+
+.contracts-widget h2 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  color: #ffcc99;
+  text-shadow: 0 0 6px #000;
+}
+
+/* AUTO-FILLED PROFILE INFO */
+.auto-info {
+  background: rgba(255,140,66,0.08);
+  border-left: 3px solid #ff8c42;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+/* INPUTS */
 .field-row {
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .field-row input,
 .field-row textarea {
   width: 100%;
-  padding: 4px 6px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  font-size: 0.8rem;
-  background: #111;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #2e6b33;
+  font-size: 1rem;
+  background: #0d1f0d;
   color: #fff;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
+.field-row textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+/* BUTTONS */
 .btn-row {
   display: flex;
-  gap: 6px;
-  margin: 6px 0;
+  gap: 10px;
+  margin: 12px 0;
 }
 
 .btn-row button {
   flex: 1;
-  padding: 4px 0;
-  font-size: 0.75rem;
-  border-radius: 6px;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   background: #ff8c42;
   color: #000;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+  transition: 0.2s ease;
+}
+
+.btn-row button:hover {
+  background: #ffa45f;
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   PREVIEW PANEL — FULL WIDTH BELOW TEMPLATE
+============================================================ */
+.preview-panel {
+  width: 100%;
+  max-width: 480px;
+  padding: 16px;
+  background: rgba(0,0,0,0.75);
+  border-radius: 14px;
+  border: 2px solid #2e6b33;
+  box-shadow: 0 0 18px rgba(0,0,0,0.7);
+}
+
+.preview-panel h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  color: #caffca;
 }
 
 .preview-box {
-  margin-top: 6px;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #333;
-  background: #050805;
-  max-height: 140px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #2e6b33;
+  background: #0a150a;
+  max-height: 260px;
   overflow-y: auto;
-  font-size: 0.75rem;
-  line-height: 1.2;
-  white-space: pre-wrap;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  white-space: normal;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+}
+
+/* PREVIEW LOGO */
+.preview-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #ff8c42;
+}
+
+/* ============================================================
+   TABS — RTG STYLE
+============================================================ */
+.contracts-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+}
+
+.tab-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 2px solid #2e6b33;
+  background: #0d1f0d;
+  color: #ffcc99;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.tab-btn.active {
+  background: #ff8c42;
+  color: #000;
+  border-color: #ff8c42;
+  box-shadow: 0 0 10px rgba(255,140,66,0.5);
+}
+
+.tab-btn:hover {
+  background: #143214;
 }
