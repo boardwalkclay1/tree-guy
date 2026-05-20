@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
-  // SAFE MODE API WRAPPER — D1 BACKEND
+  // SAFE MODE API WRAPPER — ALWAYS RETURNS JSON OR NULL
   // ============================================================
   const API = {
     headers() {
@@ -9,17 +9,41 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     async get(path) {
-      const res = await fetch(path, { headers: this.headers() });
-      return res.json();
+      try {
+        const res = await fetch(path, { headers: this.headers() });
+        const text = await res.text();
+
+        try {
+          return JSON.parse(text);
+        } catch {
+          console.warn("API returned non‑JSON at", path, text.slice(0, 120));
+          return null;
+        }
+      } catch (err) {
+        console.error("GET failed:", path, err);
+        return null;
+      }
     },
 
     async post(path, body) {
-      const res = await fetch(path, {
-        method: "POST",
-        headers: this.headers(),
-        body: JSON.stringify(body)
-      });
-      return res.json();
+      try {
+        const res = await fetch(path, {
+          method: "POST",
+          headers: this.headers(),
+          body: JSON.stringify(body)
+        });
+
+        const text = await res.text();
+        try {
+          return JSON.parse(text);
+        } catch {
+          console.warn("POST returned non‑JSON at", path, text.slice(0, 120));
+          return null;
+        }
+      } catch (err) {
+        console.error("POST failed:", path, err);
+        return null;
+      }
     }
   };
 
@@ -29,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // CLOCK
   // ============================================================
   const clockEl = document.getElementById("rtgClock");
+
   function updateClock() {
     if (!clockEl) return;
     const now = new Date();
@@ -38,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       second: "2-digit"
     });
   }
+
   updateClock();
   setInterval(updateClock, 1000);
 
@@ -48,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function RTGnotify(msg, type = "info") {
     if (!notifList) return;
+
     const empty = notifList.querySelector(".notif-empty");
     if (empty) empty.remove();
 
@@ -60,25 +87,21 @@ document.addEventListener("DOMContentLoaded", () => {
   window.RTGnotify = RTGnotify;
 
   async function loadNotifications() {
-    try {
-      const data = await API.get("/api/notifications");
+    const data = await API.get("/api/notifications");
 
-      notifList.innerHTML = "";
+    notifList.innerHTML = "";
 
-      if (!data || !Array.isArray(data) || data.length === 0) {
-        notifList.innerHTML = `<p class="notif-empty">No notifications.</p>`;
-        return;
-      }
-
-      data.forEach(n => {
-        const div = document.createElement("div");
-        div.className = `notif-item notif-${n.type}`;
-        div.textContent = n.message;
-        notifList.appendChild(div);
-      });
-    } catch (err) {
-      console.error("Notif load error:", err);
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      notifList.innerHTML = `<p class="notif-empty">No notifications.</p>`;
+      return;
     }
+
+    data.forEach(n => {
+      const div = document.createElement("div");
+      div.className = `notif-item notif-${n.type}`;
+      div.textContent = n.message;
+      notifList.appendChild(div);
+    });
   }
 
   loadNotifications();
@@ -87,13 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // WEATHER (LIVE + D1 PROFILE LOCATION)
   // ============================================================
   async function getUserLocation() {
-    try {
-      const profile = await API.get("/api/profile");
+    const profile = await API.get("/api/profile");
 
-      if (profile && profile.lat && profile.lon) {
-        return { lat: profile.lat, lon: profile.lon };
-      }
-    } catch {}
+    if (profile && profile.lat && profile.lon) {
+      return { lat: profile.lat, lon: profile.lon };
+    }
 
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
@@ -105,11 +126,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function fetchWeather(lat, lon) {
-    const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&current_weather=true&hourly=windgusts_10m&temperature_unit=fahrenheit&timezone=auto`;
-    const res = await fetch(url);
-    return res.json();
+    try {
+      const url =
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+        `&current_weather=true&hourly=windgusts_10m&temperature_unit=fahrenheit&timezone=auto`;
+
+      const res = await fetch(url);
+      return res.json();
+    } catch (err) {
+      console.error("Weather fetch failed:", err);
+      return null;
+    }
   }
 
   function applyWeatherBackground(code) {
@@ -185,27 +212,21 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadDashboardJob() {
     const body = document.getElementById("dashJobBody");
 
-    try {
-      const job = await API.get("/api/dashboard/today");
+    const job = await API.get("/api/dashboard/today");
 
-      if (!job || !job.id) {
-        body.innerHTML = `<p>No jobs scheduled today.</p>`;
-        return;
-      }
-
-      body.innerHTML = `
-        <h3>${job.title}</h3>
-        <p><strong>Status:</strong> ${job.status}</p>
-        <p><strong>Location:</strong> ${job.location_city}, ${job.location_state}</p>
-        <p><strong>Description:</strong> ${job.description}</p>
-      `;
-
-      RTGnotify(`📋 Job today: ${job.title}`, "info");
-
-    } catch (err) {
-      console.error("Job load error:", err);
-      body.innerHTML = `<p>Error loading job.</p>`;
+    if (!job || !job.id) {
+      body.innerHTML = `<p>No jobs scheduled today.</p>`;
+      return;
     }
+
+    body.innerHTML = `
+      <h3>${job.title}</h3>
+      <p><strong>Status:</strong> ${job.status}</p>
+      <p><strong>Location:</strong> ${job.location_city}, ${job.location_state}</p>
+      <p><strong>Description:</strong> ${job.description}</p>
+    `;
+
+    RTGnotify(`📋 Job today: ${job.title}`, "info");
   }
 
   loadDashboardJob();
