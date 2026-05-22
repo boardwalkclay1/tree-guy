@@ -14,107 +14,93 @@ const API = {
       body: JSON.stringify(body)
     });
     return r.json();
-  },
-  async delete(path) {
-    const r = await fetch(path, { method: "DELETE" });
-    return r.json();
   }
 };
 
-// DOM
-const tabButtons = document.querySelectorAll(".tab-btn");
-const tabSections = document.querySelectorAll(".tab-section");
-const previewBox = document.getElementById("previewContent");
-const userLogo = document.getElementById("userLogo");
+// LOAD USER PROFILE
+let userProfile = {};
+async function loadProfile() {
+  userProfile = await API.get("/api/profile");
+  document.getElementById("userLogo").src = userProfile.logo || "/assets/img/default-logo.png";
+}
+loadProfile();
+
+// LOAD PRESET + USER TEMPLATES
+let templates = {};
+async function loadTemplates() {
+  const rows = await API.get("/api/templates");
+  templates = rows.reduce((acc, t) => {
+    acc[t.type] = t.body;
+    return acc;
+  }, {});
+}
+loadTemplates();
 
 // TAB SWITCHING
-tabButtons.forEach(btn => {
+document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    const tab = btn.dataset.tab;
-
-    tabButtons.forEach(b => b.classList.remove("active"));
+    document.querySelector(".tab-btn.active").classList.remove("active");
     btn.classList.add("active");
 
-    tabSections.forEach(sec => {
-      sec.classList.toggle("active", sec.id === tab);
-    });
-
-    previewBox.innerHTML = "Fill fields and tap Preview.";
+    const type = btn.dataset.doc;
+    loadForm(type);
   });
 });
 
-// UNIVERSAL PREVIEW BUILDER
-function buildPreview(title, fields) {
-  return `
-    <div class="preview-doc">
-      <img src="${userLogo.src}" class="preview-logo">
-
-      <h2>${title}</h2>
-
-      <p><strong>Client:</strong> ${fields.name}</p>
-      <p><strong>Phone:</strong> ${fields.phone}</p>
-      <p><strong>Email:</strong> ${fields.email}</p>
-      <p><strong>Address:</strong> ${fields.address}</p>
-
-      <hr>
-
-      ${fields.scope ? `<p><strong>Scope:</strong> ${fields.scope}</p>` : ""}
-      ${fields.work ? `<p><strong>Work:</strong> ${fields.work}</p>` : ""}
-      ${fields.deliverables ? `<p><strong>Deliverables:</strong> ${fields.deliverables}</p>` : ""}
-
-      ${fields.price ? `<p><strong>Price:</strong> $${fields.price}</p>` : ""}
-      ${fields.labor ? `<p><strong>Labor:</strong> $${fields.labor}</p>` : ""}
-      ${fields.materials ? `<p><strong>Materials:</strong> $${fields.materials}</p>` : ""}
-      ${fields.amount ? `<p><strong>Amount Due:</strong> $${fields.amount}</p>` : ""}
-    </div>
-  `;
+// LOAD FORM
+function loadForm(type) {
+  const form = document.getElementById("docForm");
+  form.innerHTML = templates[type] || "<p>No template found.</p>";
 }
 
-// CONTRACT PREVIEW
-document.getElementById("cPreviewBtn").addEventListener("click", () => {
-  previewBox.innerHTML = buildPreview("Service Contract", {
-    name: cName.value,
-    phone: cPhone.value,
-    email: cEmail.value,
-    address: cAddress.value,
-    scope: cScope.value,
-    price: cPrice.value
+// PREVIEW
+function previewDoc(type) {
+  const fields = {};
+  document.querySelectorAll("#docForm input, #docForm textarea").forEach(f => {
+    fields[f.id] = f.value;
   });
-});
 
-// ESTIMATE PREVIEW
-document.getElementById("ePreviewBtn").addEventListener("click", () => {
-  previewBox.innerHTML = buildPreview("Estimate", {
-    name: eName.value,
-    phone: ePhone.value,
-    email: eEmail.value,
-    address: eAddress.value,
-    scope: eScope.value,
-    labor: eLabor.value,
-    materials: eMaterials.value
-  });
-});
+  const html = `
+    <h2>${type}</h2>
+    <p><strong>Name:</strong> ${userProfile.name}</p>
+    <p><strong>Phone:</strong> ${userProfile.phone}</p>
+    <p><strong>Email:</strong> ${userProfile.email}</p>
+    <p><strong>Address:</strong> ${userProfile.address}</p>
+    <hr>
+    ${Object.entries(fields).map(([k,v]) => `<p><strong>${k}:</strong> ${v}</p>`).join("")}
+  `;
 
-// PROPOSAL PREVIEW
-document.getElementById("pPreviewBtn").addEventListener("click", () => {
-  previewBox.innerHTML = buildPreview("Proposal", {
-    name: pName.value,
-    phone: pPhone.value,
-    email: pEmail.value,
-    address: pAddress.value,
-    scope: pScope.value,
-    deliverables: pDeliverables.value,
-    price: pPrice.value
-  });
-});
+  document.getElementById("previewContent").innerHTML = html;
+}
 
-// INVOICE PREVIEW
-document.getElementById("iPreviewBtn").addEventListener("click", () => {
-  previewBox.innerHTML = buildPreview("Invoice", {
-    name: iName.value,
-    phone: iPhone.value,
-    email: iEmail.value,
-    address: iAddress.value,
-    amount: iAmount.value
+// SAVE
+async function saveDoc(type) {
+  const fields = {};
+  document.querySelectorAll("#docForm input, #docForm textarea").forEach(f => {
+    fields[f.id] = f.value;
   });
-});
+
+  await API.post("/api/documents", {
+    type,
+    client_name: userProfile.name,
+    client_email: userProfile.email,
+    client_phone: userProfile.phone,
+    client_address: userProfile.address,
+    body: fields
+  });
+
+  alert(type + " saved!");
+}
+
+// EMAIL
+async function emailDoc(type) {
+  const html = document.getElementById("previewContent").innerHTML;
+
+  await API.post("/api/email", {
+    to: userProfile.email,
+    subject: type + " from Real Tree Guy OS",
+    body: html
+  });
+
+  alert(type + " emailed!");
+}
