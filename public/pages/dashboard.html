@@ -8,15 +8,55 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="stylesheet" href="/assets/css/dashboard.css">
   <link rel="stylesheet" href="/assets/css/radio.css">
+
+  <style>
+    /* FIX WHITE BOX AROUND LOGO */
+    #rtgLogo {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* BURGER MENU PANEL */
+    #rtgMenu {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transition: left 0.25s ease;
+      z-index: 9999;
+    }
+
+    #rtgMenu a {
+      color: white;
+      font-size: 1.2rem;
+      text-decoration: none;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #rtgMenu.open {
+      left: 0;
+    }
+
+    /* MAKE LOGO CLICKABLE */
+    #rtgLogo {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body class="rtg-dashboard">
 
-  <!-- FIXED BACKGROUND -->
-  <div id="rtgBackground"></div>
-
-  <!-- BURGER MENU -->
-  <div id="rtgMenu" class="rtg-menu hidden">
+  <!-- SLIDE-OUT MENU -->
+  <div id="rtgMenu">
     <a href="/pages/profile.html">👤 Profile</a>
     <a href="/pages/customers.html">📁 Customers</a>
     <a href="/pages/contracts.html">📄 Contracts</a>
@@ -28,14 +68,15 @@
     <a href="/pages/rtg-online.html">🟧 RTG Online</a>
   </div>
 
+  <!-- FIXED BACKGROUND -->
+  <div id="rtgBackground"></div>
+
   <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
 
-      <!-- LOGO NOW OPENS BURGER MENU -->
-      <button id="burgerBtn" class="burger-btn">
-        <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
-      </button>
+      <!-- LOGO NOW OPENS MENU -->
+      <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
 
       <div class="rtg-topbar-title">
         <div class="rtg-topbar-main">REAL TREE GUY OPS CENTER</div>
@@ -60,18 +101,9 @@
     <section class="rtg-quick-actions">
       <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ Add Customer</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
-      <button class="rtg-qa-btn" onclick="location.href='/pages/tree-id.html'">🌳 Tree Identifier</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/calendar.html'">📅 Schedule</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Weather</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
-    </section>
-
-    <!-- SUNRISE / SUNSET -->
-    <section class="rtg-sun-card">
-      <h2>🌅 Sun Data</h2>
-      <div class="sun-row">
-        <div>Sunrise: <span id="sunriseTime">--:--</span></div>
-        <div>Sunset: <span id="sunsetTime">--:--</span></div>
-      </div>
     </section>
 
     <!-- RADIO MODULE -->
@@ -108,6 +140,7 @@
           </div>
 
           <div id="radio-peers" class="radio-peers"></div>
+
         </div>
       </div>
     </section>
@@ -192,8 +225,16 @@
 
   </main>
 
+  <!-- FIXED PATHS -->
   <script src="/pages/assets/js/dashboard.js"></script>
   <script src="/pages/assets/js/radio.js"></script>
+
+  <!-- MENU JS -->
+  <script>
+    document.getElementById("rtgLogo").addEventListener("click", () => {
+      document.getElementById("rtgMenu").classList.toggle("open");
+    });
+  </script>
 
 </body>
 </html>
