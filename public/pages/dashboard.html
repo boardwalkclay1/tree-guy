@@ -15,14 +15,27 @@
   <!-- FIXED BACKGROUND -->
   <div id="rtgBackground"></div>
 
+  <!-- BURGER MENU -->
+  <div id="rtgMenu" class="rtg-menu hidden">
+    <a href="/pages/profile.html">👤 Profile</a>
+    <a href="/pages/customers.html">📁 Customers</a>
+    <a href="/pages/contracts.html">📄 Contracts</a>
+    <a href="/pages/tree-id.html">🌳 Tree Identifier</a>
+    <a href="/pages/weather.html">🌤️ Weather</a>
+    <a href="/pages/map.html">🗺️ Map</a>
+    <a href="/pages/calendar.html">📅 Calendar</a>
+    <a href="/pages/shop.html">🛒 Shop</a>
+    <a href="/pages/rtg-online.html">🟧 RTG Online</a>
+  </div>
+
   <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
 
-      <!-- LOGO NOW A FULL NAV BUTTON -->
-      <a href="/pages/dashboard.html" class="rtg-logo-link">
+      <!-- LOGO NOW OPENS BURGER MENU -->
+      <button id="burgerBtn" class="burger-btn">
         <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
-      </a>
+      </button>
 
       <div class="rtg-topbar-title">
         <div class="rtg-topbar-main">REAL TREE GUY OPS CENTER</div>
@@ -47,12 +60,18 @@
     <section class="rtg-quick-actions">
       <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ Add Customer</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
-
-      <!-- REPLACED SCHEDULE WITH TREE IDENTIFIER -->
       <button class="rtg-qa-btn" onclick="location.href='/pages/tree-id.html'">🌳 Tree Identifier</button>
-
       <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Weather</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
+    </section>
+
+    <!-- SUNRISE / SUNSET -->
+    <section class="rtg-sun-card">
+      <h2>🌅 Sun Data</h2>
+      <div class="sun-row">
+        <div>Sunrise: <span id="sunriseTime">--:--</span></div>
+        <div>Sunset: <span id="sunsetTime">--:--</span></div>
+      </div>
     </section>
 
     <!-- RADIO MODULE -->
