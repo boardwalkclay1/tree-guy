@@ -10,7 +10,7 @@ export default {
     const userId = "owner1";
 
     // ============================================================
-    // ROUTER
+    // HEALTH CHECK
     // ============================================================
     if (path === "/api/health") {
       return Response.json({ ok: true, time: Date.now() });
@@ -24,7 +24,7 @@ export default {
         "SELECT * FROM jobs WHERE client_id = ? ORDER BY created_at DESC"
       ).bind(userId).all();
 
-      return Response.json(results);
+      return Response.json(results || []);
     }
 
     // ============================================================
@@ -37,7 +37,7 @@ export default {
         "SELECT * FROM jobs WHERE id = ?"
       ).bind(jobId).all();
 
-      return Response.json(results[0] || {});
+      return Response.json(results?.[0] || {});
     }
 
     // ============================================================
@@ -99,7 +99,7 @@ export default {
         "SELECT * FROM jobs WHERE client_id = ? ORDER BY created_at DESC LIMIT 1"
       ).bind(userId).all();
 
-      return Response.json(results[0] || {});
+      return Response.json(results?.[0] || {});
     }
 
     // ============================================================
@@ -110,18 +110,18 @@ export default {
         "SELECT * FROM tree_profile WHERE user_id = ?"
       ).bind(userId).all();
 
-      return Response.json(results[0] || {});
+      return Response.json(results?.[0] || {});
     }
 
     // ============================================================
-    // CUSTOMERS (COMING SOON)
+    // CUSTOMERS
     // ============================================================
     if (path === "/api/customers" && request.method === "GET") {
       const { results } = await DB.prepare(
         "SELECT * FROM client_profile ORDER BY name ASC"
       ).all();
 
-      return Response.json(results);
+      return Response.json(results || []);
     }
 
     // ============================================================
