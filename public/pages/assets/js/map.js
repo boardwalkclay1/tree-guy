@@ -1,42 +1,26 @@
 // ============================================================
-// Real Tree Guy OS — FINAL GPS FIX (NO CACHE, NO RANDOM LOCATION)
+// REAL TREE GUY MAP ENGINE — MAPLIBRE + OSM + WORKER DATA
 // ============================================================
-
-const mapFrame = document.getElementById("mapFrame");
-const filterRow = document.getElementById("filterRow");
-const activeFilterLabel = document.getElementById("activeFilterLabel");
-const locationStatus = document.getElementById("locationStatus");
-const openInMaps = document.getElementById("openInMaps");
 
 let userLat = null;
 let userLng = null;
 
-// YOUR MAPBOX TOKEN (FREE)
-// Replace with your token from https://account.mapbox.com/
-const MAPBOX_TOKEN = "YOUR_MAPBOX_TOKEN_HERE";
+const locationStatus = document.getElementById("locationStatus");
+const filterRow = document.getElementById("filterRow");
+const activeFilterLabel = document.getElementById("activeFilterLabel");
 
 // ============================================================
-// GET REAL GPS — IGNORE FIRST (CACHED) LOCATION
+// GET REAL GPS
 // ============================================================
-function getRealLocation() {
+async function getRealLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       pos => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-
-        const isFresh = (Date.now() - pos.timestamp) < 5000;
-
-        if (!isFresh) {
-          locationStatus.textContent = "Locking GPS…";
-          return getRealLocation().then(resolve).catch(reject);
-        }
-
-        userLat = lat;
-        userLng = lng;
+        userLat = pos.coords.latitude;
+        userLng = pos.coords.longitude;
 
         locationStatus.textContent =
-          `GPS Locked: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+          `GPS Locked: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
 
         resolve();
       },
@@ -54,31 +38,52 @@ function getRealLocation() {
 }
 
 // ============================================================
-// UPDATE MAP — NOW USING MAPBOX STATIC MAP (ALWAYS WORKS)
+// INIT MAPLIBRE MAP
 // ============================================================
-function updateMap(filterText) {
-  if (userLat === null || userLng === null) return;
-
-  const marker = `pin-s+ff0000(${userLng},${userLat})`;
-
-  // Static map image (loads in ANY iframe)
-  mapFrame.src =
-    `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${marker}/${userLng},${userLat},13/600x600?access_token=${MAPBOX_TOKEN}`;
-
-  // Open in Mapbox full map
-  openInMaps.href =
-    `https://www.mapbox.com/maps/?zoom=14&center=${userLng},${userLat}`;
-}
-
-// ============================================================
-// INITIAL LOAD — WAIT FOR REAL GPS
-// ============================================================
-getRealLocation().then(() => {
-  updateMap("tree service supplies");
+const map = new maplibregl.Map({
+  container: "map",
+  style: "https://tiles.openfreemap.org/styles/bright",
+  center: [-84.39, 33.78], // Atlanta
+  zoom: 12
 });
 
 // ============================================================
-// FILTERS — WAIT FOR REAL GPS EVERY TIME
+// LOAD STORE DATA FROM CLOUDFLARE WORKER
+// ============================================================
+async function loadStores(filterType) {
+  const res = await fetch(`/api/map/stores?type=${filterType}`);
+  const geojson = await res.json();
+
+  if (map.getSource("rtg-stores")) {
+    map.getSource("rtg-stores").setData(geojson);
+    return;
+  }
+
+  map.addSource("rtg-stores", {
+    type: "geojson",
+    data: geojson
+  });
+
+  map.addLayer({
+    id: "rtg-stores-layer",
+    type: "circle",
+    source: "rtg-stores",
+    paint: {
+      "circle-radius": 6,
+      "circle-color": [
+        "match",
+        ["get", "brand"],
+        "Home Depot", "#ff6600",
+        "Lowe's", "#0066ff",
+        "Ace Hardware", "#00cc44",
+        "#00ff88"
+      ]
+    }
+  });
+}
+
+// ============================================================
+// FILTER BUTTONS
 // ============================================================
 filterRow.addEventListener("click", async e => {
   const btn = e.target.closest(".pill");
@@ -87,8 +92,12 @@ filterRow.addEventListener("click", async e => {
   const type = btn.dataset.type;
   activeFilterLabel.textContent = type;
 
-  locationStatus.textContent = "Getting GPS…";
+  await loadStores(type);
+});
 
-  await getRealLocation();
-  updateMap(type);
+// ============================================================
+// INITIAL LOAD
+// ============================================================
+getRealLocation().then(() => {
+  loadStores("home_depot");
 });
