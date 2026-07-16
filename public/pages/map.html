@@ -4,63 +4,52 @@
   <meta charset="UTF-8">
   <title>Real Tree Map</title>
 
-  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
+  <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 
   <link rel="stylesheet" href="../../assets/css/map.css">
 </head>
 
 <body>
 
-  <section class="shell">
+<section class="shell">
 
-    <!-- LEFT PANEL -->
-    <div class="left-panel">
-      <h2>Supply Finder</h2>
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <h2>Supply Finder</h2>
 
-      <!-- BACK BUTTON -->
-      <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
+    <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
 
-      <!-- GPS STATUS -->
-      <div id="locationStatus" class="status">Requesting location…</div>
+    <div id="locationStatus" class="status">Requesting location…</div>
 
-      <!-- FILTERS -->
-      <label>Supply Filters</label>
-      <div id="filterRow" class="pill-row">
-        <button class="pill" data-type="Home Depot">Home Depot</button>
-        <button class="pill" data-type="Lowe's">Lowe's</button>
-        <button class="pill" data-type="Ace Hardware">Ace Hardware</button>
-        <button class="pill" data-type="chainsaw repair shop">Chainsaw Shops</button>
-        <button class="pill" data-type="woodworking supply store">Woodworking Stores</button>
-        <button class="pill" data-type="wood dump site">Wood Dump Sites</button>
-        <button class="pill" data-type="sawmill">Sawmills</button>
-        <button class="pill" data-type="gas station">Gas Stations</button>
-      </div>
-
-      <!-- ADDRESS INPUT ONLY -->
-      <label>Search Any Address</label>
-      <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
-
-      <div class="status">
-        Filter: <span id="activeFilterLabel">None</span>
-      </div>
+    <label>Supply Filters</label>
+    <div id="filterRow" class="pill-row">
+      <button class="pill" data-type="home_depot">Home Depot</button>
+      <button class="pill" data-type="lowes">Lowe's</button>
+      <button class="pill" data-type="ace">Ace Hardware</button>
+      <button class="pill" data-type="chainsaw">Chainsaw Shops</button>
+      <button class="pill" data-type="woodworking">Woodworking Stores</button>
+      <button class="pill" data-type="dump">Wood Dump Sites</button>
+      <button class="pill" data-type="sawmill">Sawmills</button>
+      <button class="pill" data-type="gas">Gas Stations</button>
     </div>
 
-    <!-- MAP -->
-    <div class="map-wrap">
-      <iframe id="mapFrame" loading="lazy"></iframe>
+    <label>Search Any Address</label>
+    <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
 
-      <div class="map-footer">
-        <a id="openInMaps" href="https://www.google.com/maps" target="_blank">
-          Open in Google Maps
-        </a>
-      </div>
+    <div class="status">
+      Filter: <span id="activeFilterLabel">None</span>
     </div>
+  </div>
 
-  </section>
+  <!-- MAP -->
+  <div class="map-wrap">
+    <div id="map"></div>
+  </div>
 
-  <!-- JS -->
-  <script type="module" src="../pages/assets/js/map.js"></script>
+</section>
+
+<script type="module" src="../../assets/js/map.js"></script>
 
 </body>
 </html>
