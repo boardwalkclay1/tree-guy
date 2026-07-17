@@ -10,9 +10,9 @@ export async function handle(request, env) {
     const path = url.pathname;
 
     // ----------------------------------------------------------
-    // WEATHER FETCH (NO PROFILE, NO USER ID — JUST WEATHER)
+    // WEATHER FETCH (RTG API BASE)
     // ----------------------------------------------------------
-    if (path === "/api/weather" && request.method === "GET") {
+    if (path === "/rtg/api/weather" && request.method === "GET") {
       const lat = parseFloat(url.searchParams.get("lat"));
       const lon = parseFloat(url.searchParams.get("lon"));
 
