@@ -4,525 +4,187 @@
   <meta charset="UTF-8">
   <title>Contracts – Real Tree Guy OS</title>
 
+  <link rel="icon" type="image/png" href="/assets/icons/rtg-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="../../assets/icons/rtg-192.png">
 
   <link rel="stylesheet" href="/assets/css/contracts.css">
 </head>
 
-<body>
+<body class="rtg-contracts-body">
 
   <header class="rtg-header">
-    <h1>📄 Contracts Center</h1>
-    <a class="back-link" href="../dashboard.html">← Back to Dashboard</a>
+    <div class="rtg-header-left">
+      <img id="userLogo" class="rtg-logo" src="/assets/img/default-logo.png" alt="Logo">
+      <div class="rtg-title-block">
+        <h1>📄 Tree Guy Contracts Center</h1>
+        <p>Lock in jobs, protect yourself, and keep everyone clear on money and dates.</p>
+      </div>
+    </div>
+    <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
   </header>
 
-  <!-- USER LOGO -->
-  <div class="logo-box">
-    <img id="userLogo" src="/assets/img/default-logo.png" alt="User Logo">
-  </div>
+  <!-- TOP BAR: CLIENT + TEMPLATE -->
+  <section class="rtg-top-bar">
+    <div class="rtg-top-group">
+      <label for="clientSelect">Client / Contact</label>
+      <select id="clientSelect">
+        <option value="">Select client...</option>
+      </select>
+      <button id="newClientBtn" class="rtg-btn-secondary">➕ New Client</button>
+    </div>
 
-  <!-- TABS -->
-  <nav class="contracts-tabs">
-    <button class="tab-btn active" data-doc="contract">Contract</button>
-    <button class="tab-btn" data-doc="estimate">Estimate</button>
-    <button class="tab-btn" data-doc="proposal">Proposal</button>
-    <button class="tab-btn" data-doc="invoice">Invoice</button>
-  </nav>
-
-  <main class="contracts-shell">
-
-    <!-- DYNAMIC DOCUMENT FORM -->
-    <section id="docForm" class="contracts-widget">
-      <p class="placeholder-msg">Select a document type to begin.</p>
-    </section>
-
-    <!-- UNIVERSAL PREVIEW PANEL -->
-    <section class="preview-panel">
-      <h3>Preview</h3>
-      <div id="previewContent" class="preview-box">
-        Fill fields and tap Preview.
-      </div>
-    </section>
-
-  </main>
-
-  <!-- SAVED DOCUMENTS PANEL -->
-  <section class="saved-docs">
-    <h3>Saved Documents</h3>
-    <div id="savedDocsList">No documents yet.</div>
+    <div class="rtg-top-group">
+      <label for="templateSelect">Premade Contract / Agreement</label>
+      <select id="templateSelect">
+        <option value="">Choose template...</option>
+      </select>
+      <button id="customTemplateBtn" class="rtg-btn-secondary">📝 Save as Custom Template</button>
+    </div>
   </section>
 
-  <script>
-    /* ============================================================
-       PROFILE / ADMIN DATA (D1 READY)
-    ============================================================= */
-    const adminProfile = {
-      businessName: "Real Tree Guy Tree Service",
-      ownerName: "John Doe",
-      phone: "(555) 555-5555",
-      email: "john@example.com",
-      address: "123 Oak Street, Atlanta GA"
-    };
-
-    // Placeholder clients – replace with D1 fetch later
-    const mockClients = [
-      { id: "c1", name: "Jane Smith", phone: "(404) 111-2222", email: "jane@example.com", address: "45 Maple Dr, Atlanta GA" },
-      { id: "c2", name: "Bob Johnson", phone: "(404) 333-4444", email: "bob@example.com", address: "78 Pine Ln, Decatur GA" }
-    ];
-
-    /* ============================================================
-       UTILITIES
-    ============================================================= */
-    const todayISO = new Date().toISOString().split("T")[0];
-
-    function getClients() {
-      // Swap this to D1 later
-      const stored = localStorage.getItem("rtg_clients");
-      if (stored) return JSON.parse(stored);
-      return mockClients;
-    }
-
-    function getDocuments() {
-      const stored = localStorage.getItem("rtg_documents");
-      return stored ? JSON.parse(stored) : [];
-    }
-
-    function setDocuments(docs) {
-      localStorage.setItem("rtg_documents", JSON.stringify(docs));
-    }
-
-    function generateDocNumber(type) {
-      const docs = getDocuments();
-      const count = docs.filter(d => d.type === type).length + 1;
-      const prefix = type.substring(0, 3).toUpperCase();
-      return `${prefix}-${String(count).padStart(4, "0")}`;
-    }
-
-    /* ============================================================
-       DOCUMENT TEMPLATES
-    ============================================================= */
-    const templates = {
-      contract: () => `
-        <h2>Contract</h2>
-
-        <div class="auto-info">
-          <p><strong>Business:</strong> ${adminProfile.businessName}</p>
-          <p><strong>Owner:</strong> ${adminProfile.ownerName}</p>
-          <p><strong>Phone:</strong> ${adminProfile.phone}</p>
-          <p><strong>Email:</strong> ${adminProfile.email}</p>
-          <p><strong>Address:</strong> ${adminProfile.address}</p>
-        </div>
-
-        <div class="field-row">
-          <label>Client</label>
-          <select id="clientId"></select>
-        </div>
-
-        <div class="field-row">
-          <label>Document Date</label>
-          <input id="docDate" type="date" value="${todayISO}">
-        </div>
-
-        <div class="field-row">
-          <label>Job Date</label>
-          <input id="jobDate" type="date">
-        </div>
-
-        <div class="field-row">
-          <label>Document Number</label>
-          <input id="docNumber" type="text" value="${generateDocNumber('Contract')}" readonly>
-        </div>
-
-        <div class="field-row">
-          <label>Scope of Work</label>
-          <textarea id="scope" placeholder="Detailed scope of work"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Price</label>
-          <input id="price" placeholder="Total contract price">
-        </div>
-
-        <div class="field-row">
-          <label>Terms & Conditions</label>
-          <textarea id="terms" placeholder="Payment terms, schedule, responsibilities, etc."></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Client Signature Line</label>
-          <input id="clientSignature" placeholder="Client name / signature line">
-        </div>
-
-        <div class="field-row">
-          <label>Company Signature Line</label>
-          <input id="companySignature" placeholder="Company representative / signature line">
-        </div>
-
-        <div class="btn-row">
-          <button onclick="previewDoc('Contract')">Preview</button>
-          <button onclick="saveDoc('Contract')">Save</button>
-          <button onclick="emailDoc('Contract')">Email</button>
-        </div>
-      `,
-
-      estimate: () => `
-        <h2>Estimate</h2>
-
-        <div class="auto-info">
-          <p><strong>Business:</strong> ${adminProfile.businessName}</p>
-          <p><strong>Owner:</strong> ${adminProfile.ownerName}</p>
-          <p><strong>Phone:</strong> ${adminProfile.phone}</p>
-          <p><strong>Email:</strong> ${adminProfile.email}</p>
-          <p><strong>Address:</strong> ${adminProfile.address}</p>
-        </div>
-
-        <div class="field-row">
-          <label>Client</label>
-          <select id="clientId"></select>
-        </div>
-
-        <div class="field-row">
-          <label>Document Date</label>
-          <input id="docDate" type="date" value="${todayISO}">
-        </div>
-
-        <div class="field-row">
-          <label>Job Date</label>
-          <input id="jobDate" type="date">
-        </div>
-
-        <div class="field-row">
-          <label>Document Number</label>
-          <input id="docNumber" type="text" value="${generateDocNumber('Estimate')}" readonly>
-        </div>
-
-        <div class="field-row">
-          <label>Work Description</label>
-          <textarea id="scope" placeholder="Describe the work to be performed"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Labor Cost</label>
-          <input id="labor" placeholder="Labor cost">
-        </div>
-
-        <div class="field-row">
-          <label>Materials Cost</label>
-          <input id="materials" placeholder="Materials cost">
-        </div>
-
-        <div class="field-row">
-          <label>Valid Until</label>
-          <input id="validUntil" type="date">
-        </div>
-
-        <div class="btn-row">
-          <button onclick="previewDoc('Estimate')">Preview</button>
-          <button onclick="saveDoc('Estimate')">Save</button>
-          <button onclick="emailDoc('Estimate')">Email</button>
-        </div>
-      `,
-
-      proposal: () => `
-        <h2>Proposal</h2>
-
-        <div class="auto-info">
-          <p><strong>Business:</strong> ${adminProfile.businessName}</p>
-          <p><strong>Owner:</strong> ${adminProfile.ownerName}</p>
-          <p><strong>Phone:</strong> ${adminProfile.phone}</p>
-          <p><strong>Email:</strong> ${adminProfile.email}</p>
-          <p><strong>Address:</strong> ${adminProfile.address}</p>
-        </div>
-
-        <div class="field-row">
-          <label>Client</label>
-          <select id="clientId"></select>
-        </div>
-
-        <div class="field-row">
-          <label>Document Date</label>
-          <input id="docDate" type="date" value="${todayISO}">
-        </div>
-
-        <div class="field-row">
-          <label>Job Date</label>
-          <input id="jobDate" type="date">
-        </div>
-
-        <div class="field-row">
-          <label>Document Number</label>
-          <input id="docNumber" type="text" value="${generateDocNumber('Proposal')}" readonly>
-        </div>
-
-        <div class="field-row">
-          <label>Project Overview</label>
-          <textarea id="overview" placeholder="High-level description of the project"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Deliverables</label>
-          <textarea id="deliverables" placeholder="List of deliverables"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Timeline</label>
-          <textarea id="timeline" placeholder="Timeline / phases"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Total Price</label>
-          <input id="price" placeholder="Total proposed price">
-        </div>
-
-        <div class="field-row">
-          <label>Acceptance Notes</label>
-          <textarea id="acceptance" placeholder="Acceptance terms or notes"></textarea>
-        </div>
-
-        <div class="btn-row">
-          <button onclick="previewDoc('Proposal')">Preview</button>
-          <button onclick="saveDoc('Proposal')">Save</button>
-          <button onclick="emailDoc('Proposal')">Email</button>
-        </div>
-      `,
-
-      invoice: () => `
-        <h2>Invoice</h2>
-
-        <div class="auto-info">
-          <p><strong>Business:</strong> ${adminProfile.businessName}</p>
-          <p><strong>Owner:</strong> ${adminProfile.ownerName}</p>
-          <p><strong>Phone:</strong> ${adminProfile.phone}</p>
-          <p><strong>Email:</strong> ${adminProfile.email}</p>
-          <p><strong>Address:</strong> ${adminProfile.address}</p>
-        </div>
-
-        <div class="field-row">
-          <label>Client</label>
-          <select id="clientId"></select>
-        </div>
-
-        <div class="field-row">
-          <label>Document Date</label>
-          <input id="docDate" type="date" value="${todayISO}">
-        </div>
-
-        <div class="field-row">
-          <label>Job Date</label>
-          <input id="jobDate" type="date">
-        </div>
-
-        <div class="field-row">
-          <label>Document Number</label>
-          <input id="docNumber" type="text" value="${generateDocNumber('Invoice')}" readonly>
-        </div>
-
-        <div class="field-row">
-          <label>Work Performed</label>
-          <textarea id="work" placeholder="Summary of work performed"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Line Items</label>
-          <textarea id="lineItems" placeholder="Itemized charges"></textarea>
-        </div>
-
-        <div class="field-row">
-          <label>Amount Due</label>
-          <input id="amount" placeholder="Total amount due">
-        </div>
-
-        <div class="field-row">
-          <label>Due Date</label>
-          <input id="dueDate" type="date">
-        </div>
-
-        <div class="field-row">
-          <label>Payment Instructions</label>
-          <textarea id="paymentInstructions" placeholder="Payment methods, terms, etc."></textarea>
-        </div>
-
-        <div class="btn-row">
-          <button onclick="previewDoc('Invoice')">Preview</button>
-          <button onclick="saveDoc('Invoice')">Save</button>
-          <button onclick="emailDoc('Invoice')">Email</button>
-        </div>
-      `
-    };
-
-    /* ============================================================
-       TAB SWITCHING
-    ============================================================= */
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelector('.tab-btn.active').classList.remove('active');
-        btn.classList.add('active');
-
-        const doc = btn.dataset.doc;
-        loadTemplate(doc);
-      });
-    });
-
-    function loadTemplate(docKey) {
-      const form = document.getElementById('docForm');
-      form.innerHTML = templates[docKey]();
-      populateClientSelect();
-    }
-
-    function populateClientSelect() {
-      const clients = getClients();
-      const select = document.getElementById("clientId");
-      if (!select) return;
-
-      select.innerHTML = "";
-      clients.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c.id;
-        opt.textContent = `${c.name} (${c.phone})`;
-        select.appendChild(opt);
-      });
-    }
-
-    /* ============================================================
-       PREVIEW BUILDER
-    ============================================================= */
-    function previewDoc(type) {
-      const clients = getClients();
-      const clientId = document.getElementById("clientId")?.value;
-      const client = clients.find(c => c.id === clientId);
-
-      let html = `
-        <h2>${type}</h2>
-        <p><strong>Business:</strong> ${adminProfile.businessName}</p>
-        <p><strong>Owner:</strong> ${adminProfile.ownerName}</p>
-        <p><strong>Phone:</strong> ${adminProfile.phone}</p>
-        <p><strong>Email:</strong> ${adminProfile.email}</p>
-        <p><strong>Address:</strong> ${adminProfile.address}</p>
-        <hr>
-      `;
-
-      if (client) {
-        html += `
-          <p><strong>Client:</strong> ${client.name}</p>
-          <p><strong>Client Phone:</strong> ${client.phone}</p>
-          <p><strong>Client Email:</strong> ${client.email}</p>
-          <p><strong>Client Address:</strong> ${client.address}</p>
-          <hr>
-        `;
-      }
-
-      document.querySelectorAll('#docForm input, #docForm textarea, #docForm select').forEach(field => {
-        if (!field.id) return;
-        const label = field.previousElementSibling && field.previousElementSibling.tagName === "LABEL"
-          ? field.previousElementSibling.textContent
-          : field.placeholder || field.id;
-        html += `<p><strong>${label}:</strong> ${field.value}</p>`;
-      });
-
-      document.getElementById('previewContent').innerHTML = html;
-    }
-
-    /* ============================================================
-       SAVE / EMAIL
-    ============================================================= */
-    function saveDoc(type) {
-      const docs = getDocuments();
-
-      const doc = {
-        id: crypto.randomUUID(),
-        type,
-        clientId: document.getElementById("clientId")?.value || null,
-        docDate: document.getElementById("docDate")?.value || null,
-        jobDate: document.getElementById("jobDate")?.value || null,
-        docNumber: document.getElementById("docNumber")?.value || null,
-        fields: {},
-        createdAt: new Date().toISOString()
-      };
-
-      document.querySelectorAll('#docForm input, #docForm textarea, #docForm select').forEach(field => {
-        if (field.id && !["clientId", "docDate", "jobDate", "docNumber"].includes(field.id)) {
-          doc.fields[field.id] = field.value;
-        }
-      });
-
-      docs.push(doc);
-      setDocuments(docs);
-      renderSavedDocs();
-      alert(type + " saved!");
-    }
-
-    function emailDoc(type) {
-      // Placeholder – hook into actual email flow later
-      alert(type + " emailed (placeholder)!");
-    }
-
-    /* ============================================================
-       SAVED DOCUMENTS PANEL
-    ============================================================= */
-    function renderSavedDocs() {
-      const docs = getDocuments();
-      const box = document.getElementById("savedDocsList");
-
-      if (!docs.length) {
-        box.innerHTML = "No documents yet.";
-        return;
-      }
-
-      const clients = getClients();
-
-      box.innerHTML = docs.map(d => {
-        const client = clients.find(c => c.id === d.clientId);
-        const clientLabel = client ? client.name : "Unknown client";
-        return `
-          <div class="saved-doc-card">
-            <p><strong>${d.type}</strong> – ${new Date(d.createdAt).toLocaleDateString()}</p>
-            <p>Doc #: ${d.docNumber || "N/A"}</p>
-            <p>Client: ${clientLabel}</p>
-            <p>Job Date: ${d.jobDate || "N/A"}</p>
-            <button onclick="openSavedDoc('${d.id}')">Open</button>
+  <!-- MAIN LAYOUT -->
+  <main class="rtg-main">
+    <!-- LEFT: CONTRACT FORM -->
+    <section class="rtg-panel">
+      <div class="rtg-panel-header">
+        <h2>Contract Details</h2>
+        <p>Fill in names, scope, payment, and dates. Auto-fills from client + your profile.</p>
+      </div>
+
+      <form id="contractForm" class="rtg-form">
+        <!-- Parties -->
+        <div class="rtg-form-row">
+          <div class="rtg-field">
+            <label for="treeGuyName">Tree Guy / Company</label>
+            <input id="treeGuyName" placeholder="Your name or company">
           </div>
-        `;
-      }).join("");
-    }
+          <div class="rtg-field">
+            <label for="clientName">Client Name</label>
+            <input id="clientName" placeholder="Client full name">
+          </div>
+        </div>
 
-    function openSavedDoc(id) {
-      const docs = getDocuments();
-      const doc = docs.find(d => d.id === id);
-      if (!doc) return;
+        <div class="rtg-form-row">
+          <div class="rtg-field">
+            <label for="clientAddress">Client Address</label>
+            <input id="clientAddress" placeholder="Job site address">
+          </div>
+          <div class="rtg-field">
+            <label for="clientPhone">Client Phone</label>
+            <input id="clientPhone" placeholder="Client phone">
+          </div>
+        </div>
 
-      const typeKey = doc.type.toLowerCase();
-      const tabBtn = document.querySelector(`.tab-btn[data-doc="${typeKey}"]`);
-      if (tabBtn) tabBtn.click();
+        <!-- Scope -->
+        <div class="rtg-field">
+          <label for="scope">Scope of Work / Description</label>
+          <textarea id="scope" rows="4" placeholder="Example: Remove 2 oaks over house, grind stumps, clean up debris..."></textarea>
+        </div>
 
-      setTimeout(() => {
-        if (document.getElementById("clientId") && doc.clientId) {
-          document.getElementById("clientId").value = doc.clientId;
-        }
-        if (document.getElementById("docDate") && doc.docDate) {
-          document.getElementById("docDate").value = doc.docDate;
-        }
-        if (document.getElementById("jobDate") && doc.jobDate) {
-          document.getElementById("jobDate").value = doc.jobDate;
-        }
-        if (document.getElementById("docNumber") && doc.docNumber) {
-          document.getElementById("docNumber").value = doc.docNumber;
-        }
+        <!-- Money + Dates -->
+        <div class="rtg-form-row">
+          <div class="rtg-field">
+            <label for="totalPrice">Total Price ($)</label>
+            <input id="totalPrice" type="number" step="0.01" placeholder="0.00">
+          </div>
+          <div class="rtg-field">
+            <label for="deposit">Deposit ($)</label>
+            <input id="deposit" type="number" step="0.01" placeholder="0.00">
+          </div>
+        </div>
 
-        Object.keys(doc.fields || {}).forEach(key => {
-          const field = document.getElementById(key);
-          if (field) field.value = doc.fields[key];
-        });
-      }, 50);
-    }
+        <div class="rtg-form-row">
+          <div class="rtg-field">
+            <label for="paymentDueDate">Payment Due Date</label>
+            <input id="paymentDueDate" type="date">
+          </div>
+          <div class="rtg-field">
+            <label for="jobDate">Job Date</label>
+            <input id="jobDate" type="date">
+          </div>
+        </div>
 
-    /* ============================================================
-       INIT
-    ============================================================= */
-    renderSavedDocs();
-    // Load default tab
-    loadTemplate("contract");
-  </script>
+        <!-- Photos -->
+        <div class="rtg-field">
+          <label for="photoUpload">Attach Photos (before/after, hazards, etc.)</label>
+          <input id="photoUpload" type="file" multiple accept="image/*">
+          <div id="photoList" class="rtg-photo-list"></div>
+        </div>
 
+        <!-- Extra Terms -->
+        <div class="rtg-field">
+          <label for="extraTerms">Extra Terms / Notes</label>
+          <textarea id="extraTerms" rows="3" placeholder="Liability, cleanup, access, weather delays, etc."></textarea>
+        </div>
+
+        <!-- Signature -->
+        <div class="rtg-signature-block">
+          <h3>Signatures</h3>
+          <div class="rtg-form-row">
+            <div class="rtg-field">
+              <label for="clientSignature">Client Signature (typed)</label>
+              <input id="clientSignature" placeholder="Client full name">
+            </div>
+            <div class="rtg-field">
+              <label for="treeGuySignature">Tree Guy Signature (typed)</label>
+              <input id="treeGuySignature" placeholder="Your full name">
+            </div>
+          </div>
+          <div class="rtg-field">
+            <label>
+              <input type="checkbox" id="clientAgreed">
+              Client confirms they have read and agree to all terms.
+            </label>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="rtg-actions">
+          <button type="button" id="previewBtn" class="rtg-btn-primary">👁 Preview Contract</button>
+          <button type="button" id="saveBtn" class="rtg-btn-primary">💾 Save Contract</button>
+          <button type="button" id="emailBtn" class="rtg-btn-primary">📧 Email to Client</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RIGHT: PREVIEW -->
+    <section class="rtg-panel rtg-panel-preview">
+      <div class="rtg-panel-header">
+        <h2>Live Preview</h2>
+        <p>What the client will see in their email.</p>
+      </div>
+      <div id="previewContent" class="rtg-preview"></div>
+    </section>
+  </main>
+
+  <!-- MODAL: NEW CLIENT -->
+  <div class="rtg-modal-overlay" id="clientModal">
+    <div class="rtg-modal">
+      <h2>New Client / Contact</h2>
+      <div class="rtg-field">
+        <label for="modalClientName">Name</label>
+        <input id="modalClientName">
+      </div>
+      <div class="rtg-field">
+        <label for="modalClientEmail">Email</label>
+        <input id="modalClientEmail">
+      </div>
+      <div class="rtg-field">
+        <label for="modalClientPhone">Phone</label>
+        <input id="modalClientPhone">
+      </div>
+      <div class="rtg-field">
+        <label for="modalClientAddress">Address</label>
+        <input id="modalClientAddress">
+      </div>
+      <div class="rtg-modal-actions">
+        <button id="saveClientBtn" class="rtg-btn-primary">Save Client</button>
+        <button id="closeClientModal" class="rtg-btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DB / API ENGINE -->
+  <script type="module" src="/assets/js/contracts.js"></script>
 </body>
 </html>
