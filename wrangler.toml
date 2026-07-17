@@ -2,14 +2,11 @@ name = "rtg-app"
 main = "src/worker.js"
 compatibility_date = "2024-05-01"
 
-[vars]
-JWT_SECRET = "change_me_rtg_secret"
-PAYPAL_CLIENT_ID = "your_paypal_client_id"
-PAYPAL_CLIENT_SECRET = "your_paypal_client_secret"
-PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com" # or live
+# STATIC ASSETS (REQUIRED FOR JS/CSS/IMAGES TO LOAD)
+assets = { directory = "./public" }
 
+# D1 DATABASE
 [[d1_databases]]
 binding = "DB"
 database_name = "rtg-db"
 database_id = "3592ad5b-c7a0-46b3-90ce-dfb8e7a67ff4"
-
