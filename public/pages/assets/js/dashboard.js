@@ -1,18 +1,32 @@
+// ============================================================
+// REAL TREE GUY OS — DASHBOARD CORE (D1 + Worker APIs)
+// ============================================================
+
 document.addEventListener("DOMContentLoaded", () => {
+  // ============================================================
+  // AUTH CONTEXT → SENT TO WORKER AS HEADERS
+  // ============================================================
+  const rtgUserId = localStorage.getItem("rtgUserId") || "dev";
+  const rtgUserEmail = localStorage.getItem("rtgUserEmail") || "dev@local";
+  const rtgUserType = localStorage.getItem("rtgUserType") || "tree";
 
   // ============================================================
   // SAFE MODE API WRAPPER — ALWAYS RETURNS JSON OR NULL
   // ============================================================
   const API = {
     headers() {
-      return { "Content-Type": "application/json" };
+      return {
+        "Content-Type": "application/json",
+        "X-RTG-User": rtgUserId,
+        "X-RTG-Email": rtgUserEmail,
+        "X-RTG-Type": rtgUserType
+      };
     },
 
     async get(path) {
       try {
         const res = await fetch(path, { headers: this.headers() });
         const text = await res.text();
-
         try {
           return JSON.parse(text);
         } catch {
@@ -32,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: this.headers(),
           body: JSON.stringify(body)
         });
-
         const text = await res.text();
         try {
           return JSON.parse(text);
@@ -47,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  console.warn("SAFE MODE ENABLED — Dashboard will not redirect.");
+  console.warn("SAFE MODE ENABLED — Dashboard using D1 + Worker APIs.");
 
   // ============================================================
   // CLOCK
@@ -68,8 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateClock, 1000);
 
   // ============================================================
-  // NOTIFICATIONS (D1)
-  // ============================================================
+  // NOTIFICATIONS (D1 via /api/notifications)
+// ============================================================
   const notifList = document.getElementById("rtgNotifList");
 
   function RTGnotify(msg, type = "info") {
@@ -98,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     data.forEach(n => {
       const div = document.createElement("div");
-      div.className = `notif-item notif-${n.type}`;
+      div.className = `notif-item notif-${n.type || "info"}`;
       div.textContent = n.message;
       notifList.appendChild(div);
     });
@@ -107,15 +120,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadNotifications();
 
   // ============================================================
-  // WEATHER (LIVE + D1 PROFILE LOCATION)
+  // WEATHER (D1 + Worker: /api/weather + /api/weather/profile)
   // ============================================================
   async function getUserLocation() {
-    const profile = await API.get("/api/profile");
+    // Use weather profile (D1) first
+    const profile = await API.get("/api/weather/profile");
 
     if (profile && profile.lat && profile.lon) {
       return { lat: profile.lat, lon: profile.lon };
     }
 
+    // Fallback to browser GPS
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
         pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
@@ -125,32 +140,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  async function fetchWeather(lat, lon) {
-    try {
-      const url =
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-        `&current_weather=true&hourly=windgusts_10m&temperature_unit=fahrenheit&timezone=auto`;
-
-      const res = await fetch(url);
-      return res.json();
-    } catch (err) {
-      console.error("Weather fetch failed:", err);
-      return null;
-    }
-  }
-
   function applyWeatherBackground(code) {
     const bgLayer = document.getElementById("rtgBackground");
     if (!bgLayer) return;
 
     let bg = "radial-gradient(circle at top, #1f5f2b 0, #061b06 55%, #020a02 100%)";
 
-    if (code === 0 || code === 1) bg = "radial-gradient(circle at top, #3fa34d 0, #061b06 55%, #020a02 100%)";
-    else if (code === 2) bg = "radial-gradient(circle at top, #2f6f3d 0, #061b06 55%, #020a02 100%)";
-    else if (code === 3) bg = "radial-gradient(circle at top, #1f3f2b 0, #020a02 55%, #000 100%)";
-    else if (code >= 51 && code <= 67) bg = "radial-gradient(circle at top, #1f3f4f 0, #020a02 55%, #000 100%)";
-    else if (code >= 71 && code <= 77) bg = "radial-gradient(circle at top, #cfdfeF 0, #061b06 55%, #020a02 100%)";
-    else if (code >= 95) bg = "radial-gradient(circle at top, #4b1f1f 0, #020a02 55%, #000 100%)";
+    if (code === 0 || code === 1)
+      bg = "radial-gradient(circle at top, #3fa34d 0, #061b06 55%, #020a02 100%)";
+    else if (code === 2)
+      bg = "radial-gradient(circle at top, #2f6f3d 0, #061b06 55%, #020a02 100%)";
+    else if (code === 3)
+      bg = "radial-gradient(circle at top, #1f3f2b 0, #020a02 55%, #000 100%)";
+    else if (code >= 51 && code <= 67)
+      bg = "radial-gradient(circle at top, #1f3f4f 0, #020a02 55%, #000 100%)";
+    else if (code >= 71 && code <= 77)
+      bg = "radial-gradient(circle at top, #cfdfeF 0, #061b06 55%, #020a02 100%)";
+    else if (code >= 95)
+      bg = "radial-gradient(circle at top, #4b1f1f 0, #020a02 55%, #000 100%)";
 
     bgLayer.style.background = bg;
   }
@@ -165,23 +172,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const hazardBar = document.getElementById("hazardBar");
     const hazardScoreReadout = document.getElementById("hazardScoreReadout");
 
+    if (!tempEl || !condEl || !windEl || !gustEl) return;
+
     tempEl.textContent = `${today.temperature}°F`;
-    condEl.textContent = `Code ${today.weathercode}`;
-    windEl.textContent = `Wind: ${today.windspeed} mph`;
-    gustEl.textContent = `Gusts: ${today.windgusts ?? "--"} mph`;
-    windReadout.textContent = `${today.windspeed} mph`;
+    condEl.textContent = `Code ${today.code}`;
+    windEl.textContent = `Wind: ${today.wind} mph`;
+    gustEl.textContent = `Gusts: ${today.gust ?? "--"} mph`;
+    if (windReadout) windReadout.textContent = `${today.wind} mph`;
 
-    applyWeatherBackground(today.weathercode);
+    applyWeatherBackground(today.code);
 
-    const wind = today.windspeed || 0;
-    const gust = today.windgusts || wind;
+    const wind = today.wind || 0;
+    const gust = today.gust || wind;
     const score = Math.min(100, Math.max(0, Math.round((wind * 2 + gust) / 3)));
 
-    hazardScoreReadout.textContent = `Score: ${score}`;
-    hazardBar.style.width = `${score}%`;
+    if (hazardScoreReadout) hazardScoreReadout.textContent = `Score: ${score}`;
+    if (hazardBar) hazardBar.style.width = `${score}%`;
 
-    const angle = Math.min(180, Math.max(0, (wind / 50) * 180));
-    windNeedle.style.transform = `rotate(${angle - 90}deg)`;
+    if (windNeedle) {
+      const angle = Math.min(180, Math.max(0, (wind / 50) * 180));
+      windNeedle.style.transform = `rotate(${angle - 90}deg)`;
+    }
 
     if (wind > 25) RTGnotify(`High winds detected (${wind} mph). Use caution.`, "warn");
     if (gust > 35) RTGnotify(`Strong gusts detected (${gust} mph). Hazard increased.`, "danger");
@@ -189,15 +200,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadWeather() {
     const { lat, lon } = await getUserLocation();
-    const data = await fetchWeather(lat, lon);
+    const data = await API.get(`/api/weather?lat=${lat}&lon=${lon}`);
 
-    if (!data || !data.current_weather) return;
+    if (!data || !data.current) return;
 
     const today = {
-      temperature: data.current_weather.temperature,
-      weathercode: data.current_weather.weathercode,
-      windspeed: data.current_weather.windspeed,
-      windgusts: data.hourly?.windgusts_10m?.[0] ?? data.current_weather.windspeed
+      temperature: data.current.temperature,
+      code: data.current.code,
+      wind: data.current.wind,
+      gust: data.current.gust
     };
 
     updateWeatherUI(today);
@@ -207,10 +218,26 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // TODAY'S JOB (D1)
+  // RADIO PRESENCE (D1 via /api/radio/presence)
+// ============================================================
+  async function pingRadio() {
+    await API.post("/api/radio/presence", {
+      user_id: rtgUserId,
+      email: rtgUserEmail,
+      type: rtgUserType,
+      ts: Date.now()
+    });
+  }
+
+  pingRadio();
+  setInterval(pingRadio, 30 * 1000);
+
   // ============================================================
+  // TODAY'S JOB (D1 via /api/dashboard/today)
+// ============================================================
   async function loadDashboardJob() {
     const body = document.getElementById("dashJobBody");
+    if (!body) return;
 
     const job = await API.get("/api/dashboard/today");
 
@@ -230,5 +257,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadDashboardJob();
-
 });
