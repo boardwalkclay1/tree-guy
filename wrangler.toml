@@ -2,7 +2,7 @@ name = "rtg-app"
 main = "src/worker.js"
 compatibility_date = "2024-05-01"
 
-# STATIC ASSETS (REQUIRED FOR JS/CSS/IMAGES TO LOAD)
+# STATIC ASSETS
 assets = { directory = "./public" }
 
 # D1 DATABASE
@@ -10,3 +10,14 @@ assets = { directory = "./public" }
 binding = "DB"
 database_name = "rtg-db"
 database_id = "3592ad5b-c7a0-46b3-90ce-dfb8e7a67ff4"
+
+# ============================================================
+# ROUTES — RTG OS IS NOW LIVE AT rtg.chainsawclay.com
+# ============================================================
+routes = [
+  # All API + pages under /rtg/*
+  { pattern = "rtg.chainsawclay.com/rtg/*", zone_name = "chainsawclay.com" }
+]
+
+# NODE COMPAT
+node_compat = true
