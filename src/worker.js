@@ -34,6 +34,7 @@ export default {
       return WeatherLogic.handle(request, env);
     }
 
-    return new Response("Not found", { status: 404 });
+    // STATIC ASSETS (JS, CSS, IMAGES, HTML)
+    return env.ASSETS.fetch(request);
   }
 };
