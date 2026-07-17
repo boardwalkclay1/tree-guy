@@ -2,179 +2,174 @@
 // REAL TREE GUY OS — CUSTOMERS & JOBS (D1 VERSION)
 // ============================================================
 
-// ============================================================
+// -----------------------------
 // API HELPERS
-// ============================================================
-
+// -----------------------------
 async function apiGetCustomers() {
-    const r = await fetch("/api/customers");
-    return await r.json();
+  const r = await fetch("/api/customers");
+  return await r.json();
 }
 
 async function apiAddCustomer(cust) {
-    await fetch("/api/customers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cust)
-    });
+  await fetch("/api/customers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cust)
+  });
 }
 
 async function apiDeleteCustomer(id) {
-    await fetch(`/api/customers?id=${id}`, { method: "DELETE" });
+  await fetch(`/api/customers?id=${id}`, { method: "DELETE" });
 }
 
 async function apiGetJobs() {
-    const r = await fetch("/api/jobs");
-    return await r.json();
+  const r = await fetch("/api/jobs");
+  return await r.json();
 }
 
 async function apiAddJob(job) {
-    await fetch("/api/jobs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(job)
-    });
+  await fetch("/api/jobs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(job)
+  });
 }
 
 async function apiDeleteJob(id) {
-    await fetch(`/api/jobs?id=${id}`, { method: "DELETE" });
+  await fetch(`/api/jobs?id=${id}`, { method: "DELETE" });
 }
 
-// ============================================================
+// -----------------------------
 // TABS
-// ============================================================
-
+// -----------------------------
 document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
-    });
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+  });
 });
 
 // Escape HTML
 function esc(str) {
-    const d = document.createElement("div");
-    d.textContent = str || "";
-    return d.innerHTML;
+  const d = document.createElement("div");
+  d.textContent = str || "";
+  return d.innerHTML;
 }
 
-// ============================================================
+// -----------------------------
 // CUSTOMERS
-// ============================================================
-
+// -----------------------------
 async function renderCustomers() {
-    const ul = document.getElementById("custList");
-    const customers = await apiGetCustomers();
+  const ul = document.getElementById("custList");
+  const customers = await apiGetCustomers();
 
-    if (!customers.length) {
-        ul.innerHTML = `<li class="empty-note">No customers saved yet.</li>`;
-        return;
-    }
+  if (!customers.length) {
+    ul.innerHTML = `<li class="empty-note">No customers saved yet.</li>`;
+    return;
+  }
 
-    ul.innerHTML = customers.map(c => `
-        <li>
-            <button class="del-btn" data-id="${c.id}" data-type="cust">✕</button>
-            <div class="cust-name">${esc(c.name)}</div>
-            <div class="cust-details">
-                ${esc(c.phone)} · ${esc(c.email)}<br>
-                ${esc(c.address)}<br>
-                ${esc(c.notes)}
-            </div>
-        </li>
-    `).join("");
+  ul.innerHTML = customers.map(c => `
+    <li>
+      <button class="del-btn" data-id="${c.id}" data-type="cust">✕</button>
+      <div class="cust-name">${esc(c.name)}</div>
+      <div class="cust-details">
+        ${esc(c.phone)} · ${esc(c.email)}<br>
+        ${esc(c.address)}<br>
+        ${esc(c.notes)}
+      </div>
+    </li>
+  `).join("");
 
-    ul.querySelectorAll(".del-btn").forEach(btn => {
-        btn.onclick = async () => {
-            await apiDeleteCustomer(btn.dataset.id);
-            renderCustomers();
-        };
-    });
+  ul.querySelectorAll(".del-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await apiDeleteCustomer(btn.dataset.id);
+      renderCustomers();
+    };
+  });
 }
 
 document.getElementById("addCust").onclick = async () => {
-    const name = document.getElementById("custName").value.trim();
-    if (!name) return alert("Name required.");
+  const name = document.getElementById("custName").value.trim();
+  if (!name) return alert("Name required.");
 
-    const customer = {
-        id: crypto.randomUUID(),
-        name,
-        phone: document.getElementById("custPhone").value.trim(),
-        email: document.getElementById("custEmail").value.trim(),
-        address: document.getElementById("custAddress").value.trim(),
-        notes: document.getElementById("custNotes").value.trim()
-    };
+  const customer = {
+    id: crypto.randomUUID(),
+    name,
+    phone: document.getElementById("custPhone").value.trim(),
+    email: document.getElementById("custEmail").value.trim(),
+    address: document.getElementById("custAddress").value.trim(),
+    notes: document.getElementById("custNotes").value.trim()
+  };
 
-    await apiAddCustomer(customer);
-    renderCustomers();
+  await apiAddCustomer(customer);
+  renderCustomers();
 
-    ["custName","custPhone","custEmail","custAddress","custNotes"]
-        .forEach(id => document.getElementById(id).value = "");
+  ["custName","custPhone","custEmail","custAddress","custNotes"]
+    .forEach(id => document.getElementById(id).value = "");
 };
 
-// ============================================================
+// -----------------------------
 // JOBS
-// ============================================================
-
+// -----------------------------
 async function renderJobs() {
-    const ul = document.getElementById("jobList");
-    const jobs = await apiGetJobs();
+  const ul = document.getElementById("jobList");
+  const jobs = await apiGetJobs();
 
-    if (!jobs.length) {
-        ul.innerHTML = `<li class="empty-note">No jobs saved yet.</li>`;
-        return;
-    }
+  if (!jobs.length) {
+    ul.innerHTML = `<li class="empty-note">No jobs saved yet.</li>`;
+    return;
+  }
 
-    ul.innerHTML = jobs.map(j => `
-        <li>
-            <button class="del-btn" data-id="${j.id}" data-type="job">✕</button>
+  ul.innerHTML = jobs.map(j => `
+    <li>
+      <button class="del-btn" data-id="${j.id}" data-type="job">✕</button>
 
-            <div class="job-title">
-                ${esc(j.title)}
-                <span class="badge badge-${j.status}">${j.status}</span>
-            </div>
+      <div class="job-title">
+        ${esc(j.title)}
+        <span class="badge badge-${j.status}">${j.status}</span>
+      </div>
 
-            <div class="job-details">
-                ${j.customer ? `Customer: ${esc(j.customer)} · ` : ""}
-                ${esc(j.date)} · ${esc(j.price)}
-                <br>${esc(j.notes)}
-            </div>
-        </li>
-    `).join("");
+      <div class="job-details">
+        ${j.customer ? `Customer: ${esc(j.customer)} · ` : ""}
+        ${esc(j.date)} · ${esc(j.price)}
+        <br>${esc(j.notes)}
+      </div>
+    </li>
+  `).join("");
 
-    ul.querySelectorAll(".del-btn").forEach(btn => {
-        btn.onclick = async () => {
-            await apiDeleteJob(btn.dataset.id);
-            renderJobs();
-        };
-    });
+  ul.querySelectorAll(".del-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await apiDeleteJob(btn.dataset.id);
+      renderJobs();
+    };
+  });
 }
 
 document.getElementById("addJob").onclick = async () => {
-    const title = document.getElementById("jobTitle").value.trim();
-    if (!title) return alert("Job title required.");
+  const title = document.getElementById("jobTitle").value.trim();
+  if (!title) return alert("Job title required.");
 
-    const job = {
-        id: crypto.randomUUID(),
-        title,
-        customer: document.getElementById("jobCust").value.trim(),
-        date: document.getElementById("jobDate").value,
-        price: document.getElementById("jobPrice").value.trim(),
-        status: document.getElementById("jobStatus").value,
-        notes: document.getElementById("jobNotes").value.trim()
-    };
+  const job = {
+    id: crypto.randomUUID(),
+    title,
+    customer: document.getElementById("jobCust").value.trim(),
+    date: document.getElementById("jobDate").value,
+    price: document.getElementById("jobPrice").value.trim(),
+    status: document.getElementById("jobStatus").value,
+    notes: document.getElementById("jobNotes").value.trim()
+  };
 
-    await apiAddJob(job);
-    renderJobs();
+  await apiAddJob(job);
+  renderJobs();
 
-    ["jobTitle","jobCust","jobDate","jobPrice","jobStatus","jobNotes"]
-        .forEach(id => document.getElementById(id).value = "");
+  ["jobTitle","jobCust","jobDate","jobPrice","jobStatus","jobNotes"]
+    .forEach(id => document.getElementById(id).value = "");
 };
 
-// ============================================================
+// -----------------------------
 // INITIAL RENDER
-// ============================================================
-
+// -----------------------------
 renderCustomers();
 renderJobs();
