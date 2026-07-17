@@ -3,6 +3,8 @@ import * as CalendarLogic from "./work-calendar.js";
 import * as ContractLogic from "./work-contracts.js";
 import * as RadioLogic from "./work-radio.js";
 import * as WeatherLogic from "./work-weather.js";
+import * as CustomerLogic from "./work-customers.js";
+import * as JobLogic from "./work-jobs.js";
 
 export default {
   async fetch(request, env) {
@@ -29,9 +31,19 @@ export default {
       return RadioLogic.handle(request, env);
     }
 
-    // WEATHER (profile + cached forecast)
+    // WEATHER
     if (path.startsWith("/api/weather")) {
       return WeatherLogic.handle(request, env);
+    }
+
+    // CUSTOMERS
+    if (path.startsWith("/api/customers")) {
+      return CustomerLogic.handle(request, env);
+    }
+
+    // JOBS
+    if (path.startsWith("/api/jobs")) {
+      return JobLogic.handle(request, env);
     }
 
     // STATIC ASSETS (JS, CSS, IMAGES, HTML)
