@@ -6,47 +6,49 @@ import * as WeatherLogic from "./work-weather.js";
 import * as CustomerLogic from "./work-customers.js";
 import * as JobLogic from "./work-jobs.js";
 
+export const API_BASE = "/rtg/api";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
     // MAP
-    if (path.startsWith("/rtg/api/map")) {
+    if (path.startsWith(`${API_BASE}/map`)) {
       return MapLogic.handle(request, env);
     }
 
     // CALENDAR
-    if (path.startsWith("/rtg/api/calendar")) {
+    if (path.startsWith(`${API_BASE}/calendar`)) {
       return CalendarLogic.handle(request, env);
     }
 
     // CONTRACTS
-    if (path.startsWith("/rtg/api/contracts")) {
+    if (path.startsWith(`${API_BASE}/contracts`)) {
       return ContractLogic.handle(request, env);
     }
 
-    // RADIO (signaling + presence)
-    if (path.startsWith("/rtg/api/radio")) {
+    // RADIO
+    if (path.startsWith(`${API_BASE}/radio`)) {
       return RadioLogic.handle(request, env);
     }
 
     // WEATHER
-    if (path.startsWith("/rtg/api/weather")) {
+    if (path.startsWith(`${API_BASE}/weather`)) {
       return WeatherLogic.handle(request, env);
     }
 
     // CUSTOMERS
-    if (path.startsWith("/rtg/api/customers")) {
+    if (path.startsWith(`${API_BASE}/customers`)) {
       return CustomerLogic.handle(request, env);
     }
 
     // JOBS
-    if (path.startsWith("/rtg/api/jobs")) {
+    if (path.startsWith(`${API_BASE}/jobs`)) {
       return JobLogic.handle(request, env);
     }
 
-    // STATIC ASSETS (JS, CSS, IMAGES, HTML)
+    // STATIC ASSETS
     return env.ASSETS.fetch(request);
   }
 };
