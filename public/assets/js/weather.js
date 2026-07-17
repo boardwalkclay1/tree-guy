@@ -2,6 +2,8 @@
 // REAL TREE GUY OS — WEATHER (WORKER + D1 VERSION)
 // ============================================================
 
+const API_BASE = "/rtg/api/weather";
+
 const el = {
   useGPSBtn: document.getElementById("useGPS"),
   setManualBtn: document.getElementById("setManual"),
@@ -26,11 +28,11 @@ const el = {
 // API WRAPPER (calls your Worker)
 const API = {
   async get(path) {
-    const r = await fetch(path);
+    const r = await fetch(`/rtg/api${path}`);
     return r.json();
   },
   async post(path, body) {
-    const r = await fetch(path, {
+    const r = await fetch(`/rtg/api${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
@@ -61,7 +63,7 @@ function iconClassForCode(code) {
 
 // GET LOCATION (profile → GPS fallback)
 async function getLocation() {
-  const profile = await API.get("/api/weather/profile");
+  const profile = await API.get(`/weather/profile`);
 
   if (profile.lat && profile.lon) {
     return { lat: profile.lat, lon: profile.lon };
@@ -126,7 +128,7 @@ function renderDaily(data) {
 async function loadWeather(lat, lon) {
   el.locationStatus.textContent = "Loading weather…";
 
-  const data = await API.get(`/api/weather?lat=${lat}&lon=${lon}`);
+  const data = await API.get(`/weather?lat=${lat}&lon=${lon}`);
 
   renderCurrent(data);
   renderHourly(data);
@@ -163,7 +165,7 @@ el.setManualBtn?.addEventListener("click", async () => {
   const lon = parseFloat(el.manualLon.value);
 
   if (!isNaN(lat) && !isNaN(lon)) {
-    await API.post("/api/weather/profile", { lat, lon });
+    await API.post(`/weather/profile`, { lat, lon });
     loadWeather(lat, lon);
   } else {
     el.locationStatus.textContent = "Invalid coordinates.";
