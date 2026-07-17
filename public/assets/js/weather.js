@@ -1,32 +1,29 @@
 // ============================================================
-// REAL TREE GUY OS — REAL‑TIME WEATHER ENGINE (D1 VERSION)
+// REAL TREE GUY OS — WEATHER (WORKER + D1 VERSION)
 // ============================================================
 
-// DOM TARGETS
-const useGPSBtn = document.getElementById("useGPS");
-const setManualBtn = document.getElementById("setManual");
-const locationStatus = document.getElementById("locationStatus");
+const el = {
+  useGPSBtn: document.getElementById("useGPS"),
+  setManualBtn: document.getElementById("setManual"),
+  locationStatus: document.getElementById("locationStatus"),
+  manualLat: document.getElementById("manualLat"),
+  manualLon: document.getElementById("manualLon"),
 
-const manualLat = document.getElementById("manualLat");
-const manualLon = document.getElementById("manualLon");
+  currentTemp: document.getElementById("currentTemp"),
+  currentWind: document.getElementById("currentWind"),
+  currentGust: document.getElementById("currentGust"),
+  currentPressure: document.getElementById("currentPressure"),
+  currentRain: document.getElementById("currentRain"),
 
-// CURRENT CONDITIONS
-const currentTemp = document.getElementById("currentTemp");
-const currentWind = document.getElementById("currentWind");
-const currentGust = document.getElementById("currentGust");
-const currentPressure = document.getElementById("currentPressure");
-const currentRain = document.getElementById("currentRain");
+  hourlyStrip: document.getElementById("hourlyStrip"),
+  dailyStrip: document.getElementById("dailyStrip"),
 
-// FORECAST STRIPS
-const hourlyStrip = document.getElementById("hourlyStrip");
-const dailyStrip = document.getElementById("dailyStrip");
+  wxIcon: document.getElementById("wxIcon"),
+  wxLabel: document.getElementById("wxLabel"),
+  radarFrame: document.getElementById("rtgRadar")
+};
 
-// OPTIONAL ICON + RADAR
-const wxIcon = document.getElementById("wxIcon");
-const wxLabel = document.getElementById("wxLabel");
-const radarFrame = document.getElementById("rtgRadar");
-
-// API WRAPPER
+// API WRAPPER (calls your Worker)
 const API = {
   async get(path) {
     const r = await fetch(path);
@@ -45,48 +42,26 @@ const API = {
 // WEATHER CODE → TEXT
 function codeToText(code) {
   const map = {
-    0: "Clear",
-    1: "Mainly Clear",
-    2: "Partly Cloudy",
-    3: "Cloudy",
-    45: "Fog",
-    48: "Fog",
-    51: "Light Drizzle",
-    61: "Rain",
-    63: "Rain",
-    65: "Heavy Rain",
-    71: "Snow",
-    95: "Thunderstorm"
+    0: "Clear", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Cloudy",
+    45: "Fog", 48: "Fog", 51: "Light Drizzle", 61: "Rain",
+    63: "Rain", 65: "Heavy Rain", 71: "Snow", 95: "Thunderstorm"
   };
   return map[code] || "Weather";
 }
 
 // WEATHER CODE → ICON CLASS
 function iconClassForCode(code) {
-  if (code === 0 || code === 1) return "sunny";
-  if (code === 2 || code === 3 || code === 45 || code === 48) return "cloudy";
-  if (code >= 51 && code <= 67) return "rainy";
-  if (code >= 71 && code <= 77) return "snowy";
+  if (code <= 1) return "sunny";
+  if (code <= 48) return "cloudy";
+  if (code <= 67) return "rainy";
+  if (code <= 77) return "snowy";
   if (code >= 95) return "stormy";
   return "cloudy";
 }
 
-// GET WEATHER
-async function getWeather(lat, lon) {
-  const url =
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-    `&current_weather=true` +
-    `&hourly=temperature_2m,weathercode,windgusts_10m,precipitation,surface_pressure` +
-    `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
-    `&temperature_unit=fahrenheit&timezone=auto`;
-
-  const res = await fetch(url);
-  return res.json();
-}
-
-// GET LOCATION FROM PROFILE OR GPS
+// GET LOCATION (profile → GPS fallback)
 async function getLocation() {
-  const profile = await API.get("/api/profile");
+  const profile = await API.get("/api/weather/profile");
 
   if (profile.lat && profile.lon) {
     return { lat: profile.lat, lon: profile.lon };
@@ -103,34 +78,30 @@ async function getLocation() {
 
 // RENDER CURRENT CONDITIONS
 function renderCurrent(data) {
-  const w = data.current_weather;
+  const w = data.current;
 
-  currentTemp.textContent = `${w.temperature}°F`;
-  currentWind.textContent = `Wind: ${w.windspeed} mph`;
-  currentGust.textContent = `Gusts: ${data.hourly.windgusts_10m?.[0] ?? "--"} mph`;
-  currentPressure.textContent = `Pressure: ${data.hourly.surface_pressure?.[0] ?? "--"} mb`;
-  currentRain.textContent = `Rain: ${data.hourly.precipitation?.[0] ?? "--"} in`;
+  el.currentTemp.textContent = `${w.temperature}°F`;
+  el.currentWind.textContent = `Wind: ${w.wind} mph`;
+  el.currentGust.textContent = `Gusts: ${w.gust ?? "--"} mph`;
+  el.currentPressure.textContent = `Pressure: ${w.pressure ?? "--"} mb`;
+  el.currentRain.textContent = `Rain: ${w.rain ?? "--"} in`;
 
-  if (wxIcon && wxLabel) {
-    wxIcon.className = "wx-icon " + iconClassForCode(w.weathercode);
-    wxLabel.textContent = codeToText(w.weathercode);
+  if (el.wxIcon && el.wxLabel) {
+    el.wxIcon.className = "wx-icon " + iconClassForCode(w.code);
+    el.wxLabel.textContent = codeToText(w.code);
   }
 }
 
 // RENDER HOURLY FORECAST
 function renderHourly(data) {
-  hourlyStrip.innerHTML = "";
+  el.hourlyStrip.innerHTML = "";
 
-  for (let i = 0; i < 12; i++) {
-    const temp = data.hourly.temperature_2m[i];
-    const code = data.hourly.weathercode[i];
-    const time = data.hourly.time[i].split("T")[1];
-
-    hourlyStrip.innerHTML += `
+  for (const h of data.hourly.slice(0, 12)) {
+    el.hourlyStrip.innerHTML += `
       <div class="hour-card">
-        <div class="h-time">${time}</div>
-        <div class="h-temp">${temp}°</div>
-        <div class="h-cond">${codeToText(code)}</div>
+        <div class="h-time">${h.time}</div>
+        <div class="h-temp">${h.temp}°</div>
+        <div class="h-cond">${codeToText(h.code)}</div>
       </div>
     `;
   }
@@ -138,19 +109,14 @@ function renderHourly(data) {
 
 // RENDER DAILY FORECAST
 function renderDaily(data) {
-  dailyStrip.innerHTML = "";
+  el.dailyStrip.innerHTML = "";
 
-  for (let i = 0; i < data.daily.time.length; i++) {
-    const day = data.daily.time[i];
-    const hi = data.daily.temperature_2m_max[i];
-    const lo = data.daily.temperature_2m_min[i];
-    const cond = codeToText(data.daily.weathercode[i]);
-
-    dailyStrip.innerHTML += `
+  for (const d of data.daily) {
+    el.dailyStrip.innerHTML += `
       <div class="day-card">
-        <div class="d-day">${day}</div>
-        <div class="d-temp">${hi}° / ${lo}°</div>
-        <div class="d-cond">${cond}</div>
+        <div class="d-day">${d.day}</div>
+        <div class="d-temp">${d.hi}° / ${d.lo}°</div>
+        <div class="d-cond">${codeToText(d.code)}</div>
       </div>
     `;
   }
@@ -158,19 +124,19 @@ function renderDaily(data) {
 
 // MAIN LOADER
 async function loadWeather(lat, lon) {
-  locationStatus.textContent = "Loading weather…";
+  el.locationStatus.textContent = "Loading weather…";
 
-  const data = await getWeather(lat, lon);
+  const data = await API.get(`/api/weather?lat=${lat}&lon=${lon}`);
 
   renderCurrent(data);
   renderHourly(data);
   renderDaily(data);
 
-  locationStatus.textContent = `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+  el.locationStatus.textContent =
+    `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
-  // RADAR
-  if (radarFrame) {
-    radarFrame.src =
+  if (el.radarFrame) {
+    el.radarFrame.src =
       `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
       `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
   }
@@ -186,24 +152,20 @@ initWeather();
 setInterval(initWeather, 5 * 60 * 1000);
 
 // BUTTON: USE GPS
-useGPSBtn?.addEventListener("click", async () => {
+el.useGPSBtn?.addEventListener("click", async () => {
   const { lat, lon } = await getLocation();
   loadWeather(lat, lon);
 });
 
 // BUTTON: MANUAL LOCATION
-setManualBtn?.addEventListener("click", async () => {
-  const lat = parseFloat(manualLat.value);
-  const lon = parseFloat(manualLon.value);
+el.setManualBtn?.addEventListener("click", async () => {
+  const lat = parseFloat(el.manualLat.value);
+  const lon = parseFloat(el.manualLon.value);
 
   if (!isNaN(lat) && !isNaN(lon)) {
-    await API.post("/api/profile", {
-      id: "PROFILE",
-      lat,
-      lon
-    });
+    await API.post("/api/weather/profile", { lat, lon });
     loadWeather(lat, lon);
   } else {
-    locationStatus.textContent = "Invalid coordinates.";
+    el.locationStatus.textContent = "Invalid coordinates.";
   }
 });
