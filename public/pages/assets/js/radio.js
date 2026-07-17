@@ -1,6 +1,7 @@
 // ============================================================
 // REAL TREE GUY — RADIO JS
 // Jobsite Radio • Channel State • Peer Presence • PTT
+// Cloudflare Worker-backed signaling + presence
 // ============================================================
 
 (function () {
@@ -15,7 +16,6 @@
     peers: document.getElementById("radio-peers")
   };
 
-  // Operator identity (from data-attribute or fallback)
   const operatorName =
     (document.body && document.body.dataset.radioName) ||
     "Operator";
@@ -24,41 +24,27 @@
     connected: false,
     channel: el.channelSelect ? el.channelSelect.value : "1",
     talking: false,
-    peers: new Map(), // id -> { name, channel, lastSeen }
-    selfId: `${operatorName}-${Math.random().toString(36).slice(2, 8)}`
+    peers: new Map(),
+    selfId: `${operatorName}-${Math.random().toString(36).slice(2, 8)}`,
+    ws: null
   };
 
-  // BroadcastChannel for presence + events (multi-tab / multi-device)
-  const radioBus = "BroadcastChannel" in window
-    ? new BroadcastChannel("rtg-radio")
-    : null;
-
-  // ----------------------------------------------------------
-  // LOGGING
-  // ----------------------------------------------------------
   function appendLog(message, type = "info") {
     if (!el.log) return;
-
     const ts = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit"
     });
-
     const line = document.createElement("div");
     line.className = `radio-log-line radio-log-line--${type}`;
     line.textContent = `[${ts}] ${message}`;
-
     el.log.appendChild(line);
     el.log.scrollTop = el.log.scrollHeight;
   }
 
-  // ----------------------------------------------------------
-  // PEER LIST RENDER
-  // ----------------------------------------------------------
   function renderPeers() {
     if (!el.peers) return;
-
     el.peers.innerHTML = "";
 
     const entries = Array.from(state.peers.values())
@@ -90,9 +76,6 @@
     }
   }
 
-  // ----------------------------------------------------------
-  // STATUS + CHANNEL
-  // ----------------------------------------------------------
   function setStatus(connected) {
     state.connected = connected;
 
@@ -110,16 +93,8 @@
       appendLog(`Radio connected on channel ${state.channel}`, "ok");
     } else {
       appendLog("Radio disconnected", "warn");
-    }
-
-    if (radioBus) {
-      radioBus.postMessage({
-        type: connected ? "join" : "leave",
-        id: state.selfId,
-        name: operatorName,
-        channel: state.channel,
-        ts: Date.now()
-      });
+      state.peers.clear();
+      renderPeers();
     }
   }
 
@@ -130,20 +105,16 @@
     }
     appendLog(`Switched to channel ${channel}`, "info");
 
-    if (radioBus && state.connected) {
-      radioBus.postMessage({
+    if (state.connected && state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
         type: "channel-change",
         id: state.selfId,
         name: operatorName,
-        channel,
-        ts: Date.now()
-      });
+        channel
+      }));
     }
   }
 
-  // ----------------------------------------------------------
-  // TALK / PTT
-  // ----------------------------------------------------------
   function startTalking() {
     if (!state.connected || state.talking) return;
     state.talking = true;
@@ -155,17 +126,16 @@
 
     appendLog(`Transmitting on channel ${state.channel}`, "tx");
 
-    if (radioBus) {
-      radioBus.postMessage({
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
         type: "tx-start",
         id: state.selfId,
         name: operatorName,
-        channel: state.channel,
-        ts: Date.now()
-      });
+        channel: state.channel
+      }));
     }
 
-    // 🔗 HOOK: start sending audio
+    // 🔗 HOOK: start sending audio via WebRTC
     // radioTransport.startTx()
   }
 
@@ -180,82 +150,134 @@
 
     appendLog("Stopped transmitting", "tx");
 
-    if (radioBus) {
-      radioBus.postMessage({
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
         type: "tx-stop",
         id: state.selfId,
         name: operatorName,
-        channel: state.channel,
-        ts: Date.now()
-      });
+        channel: state.channel
+      }));
     }
 
-    // 🔗 HOOK: stop sending audio
+    // 🔗 HOOK: stop sending audio via WebRTC
     // radioTransport.stopTx()
   }
 
-  // ----------------------------------------------------------
-  // CONNECT / DISCONNECT
-  // ----------------------------------------------------------
-  function connect() {
-    setStatus(true);
-    // 🔗 HOOK: radioTransport.connect()
+  async function connect() {
+    if (state.connected) return;
+
+    try {
+      const res = await fetch("/api/radio/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: state.selfId,
+          name: operatorName,
+          channel: state.channel
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        appendLog(data.error || "Failed to connect radio", "warn");
+        return;
+      }
+
+      const wsUrl = data.wsUrl;
+      if (!wsUrl) {
+        appendLog("No signaling URL from radio worker", "warn");
+        return;
+      }
+
+      const ws = new WebSocket(wsUrl);
+      state.ws = ws;
+
+      ws.onopen = () => {
+        setStatus(true);
+        ws.send(JSON.stringify({
+          type: "join",
+          id: state.selfId,
+          name: operatorName,
+          channel: state.channel
+        }));
+      };
+
+      ws.onmessage = (event) => {
+        let msg;
+        try {
+          msg = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+        if (!msg || msg.id === state.selfId) return;
+
+        switch (msg.type) {
+          case "join":
+            state.peers.set(msg.id, {
+              name: msg.name,
+              channel: msg.channel,
+              lastSeen: Date.now()
+            });
+            appendLog(`${msg.name} connected on CH ${msg.channel}`, "peer");
+            break;
+
+          case "leave":
+            state.peers.delete(msg.id);
+            appendLog(`${msg.name} disconnected`, "peer");
+            break;
+
+          case "channel-change":
+            state.peers.set(msg.id, {
+              name: msg.name,
+              channel: msg.channel,
+              lastSeen: Date.now()
+            });
+            appendLog(`${msg.name} moved to CH ${msg.channel}`, "peer");
+            break;
+
+          case "tx-start":
+            appendLog(`${msg.name} talking on CH ${msg.channel}`, "peer-tx");
+            break;
+
+          case "tx-stop":
+            appendLog(`${msg.name} stopped talking`, "peer-tx");
+            break;
+        }
+
+        renderPeers();
+      };
+
+      ws.onclose = () => {
+        stopTalking();
+        setStatus(false);
+        state.ws = null;
+      };
+
+      ws.onerror = () => {
+        appendLog("Radio signaling error", "warn");
+      };
+    } catch (err) {
+      appendLog("Radio connect failed", "warn");
+    }
   }
 
   function disconnect() {
     stopTalking();
+
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: "leave",
+        id: state.selfId,
+        name: operatorName,
+        channel: state.channel
+      }));
+      state.ws.close();
+    }
+
+    state.ws = null;
     setStatus(false);
-    // 🔗 HOOK: radioTransport.disconnect()
   }
 
-  // ----------------------------------------------------------
-  // BROADCAST HANDLING (PEERS / EVENTS)
-  // ----------------------------------------------------------
-  if (radioBus) {
-    radioBus.onmessage = (event) => {
-      const msg = event.data;
-      if (!msg || msg.id === state.selfId) return;
-
-      switch (msg.type) {
-        case "join":
-          state.peers.set(msg.id, {
-            name: msg.name,
-            channel: msg.channel,
-            lastSeen: msg.ts
-          });
-          appendLog(`${msg.name} connected on CH ${msg.channel}`, "peer");
-          break;
-
-        case "leave":
-          state.peers.delete(msg.id);
-          appendLog(`${msg.name} disconnected`, "peer");
-          break;
-
-        case "channel-change":
-          state.peers.set(msg.id, {
-            name: msg.name,
-            channel: msg.channel,
-            lastSeen: msg.ts
-          });
-          appendLog(`${msg.name} moved to CH ${msg.channel}`, "peer");
-          break;
-
-        case "tx-start":
-          appendLog(`${msg.name} talking on CH ${msg.channel}`, "peer-tx");
-          break;
-
-        case "tx-stop":
-          appendLog(`${msg.name} stopped talking`, "peer-tx");
-          break;
-      }
-
-      renderPeers();
-    };
-  }
-
-  // ----------------------------------------------------------
-  // EVENTS
-  // ----------------------------------------------------------
   function bindEvents() {
     if (el.channelSelect) {
       el.channelSelect.addEventListener("change", (e) => {
@@ -290,7 +312,6 @@
       });
     }
 
-    // Spacebar PTT
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
         if (!state.talking) startTalking();
@@ -303,9 +324,6 @@
     });
   }
 
-  // ----------------------------------------------------------
-  // PUBLIC API
-  // ----------------------------------------------------------
   window.RTGRadio = {
     connect,
     disconnect,
@@ -317,9 +335,6 @@
     }
   };
 
-  // ----------------------------------------------------------
-  // INIT
-  // ----------------------------------------------------------
   if (el.channelSelect) {
     setChannel(el.channelSelect.value);
   }
