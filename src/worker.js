@@ -12,37 +12,37 @@ export default {
     const path = url.pathname;
 
     // MAP
-    if (path.startsWith("/api/map")) {
+    if (path.startsWith("/rtg/api/map")) {
       return MapLogic.handle(request, env);
     }
 
     // CALENDAR
-    if (path.startsWith("/api/calendar")) {
+    if (path.startsWith("/rtg/api/calendar")) {
       return CalendarLogic.handle(request, env);
     }
 
     // CONTRACTS
-    if (path.startsWith("/api/contracts")) {
+    if (path.startsWith("/rtg/api/contracts")) {
       return ContractLogic.handle(request, env);
     }
 
     // RADIO (signaling + presence)
-    if (path.startsWith("/api/radio")) {
+    if (path.startsWith("/rtg/api/radio")) {
       return RadioLogic.handle(request, env);
     }
 
     // WEATHER
-    if (path.startsWith("/api/weather")) {
+    if (path.startsWith("/rtg/api/weather")) {
       return WeatherLogic.handle(request, env);
     }
 
     // CUSTOMERS
-    if (path.startsWith("/api/customers")) {
+    if (path.startsWith("/rtg/api/customers")) {
       return CustomerLogic.handle(request, env);
     }
 
     // JOBS
-    if (path.startsWith("/api/jobs")) {
+    if (path.startsWith("/rtg/api/jobs")) {
       return JobLogic.handle(request, env);
     }
 
