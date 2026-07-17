@@ -1,6 +1,5 @@
 // ============================================================
-// REAL TREE GUY — WEATHER WORKER (D1 + Open‑Meteo)
-// FINAL FIXED VERSION — NEVER RETURNS HTML
+// REAL TREE GUY — WEATHER WORKER (FINAL FIXED VERSION)
 // ============================================================
 
 export async function handle(request, env) {
@@ -11,46 +10,7 @@ export async function handle(request, env) {
     const path = url.pathname;
 
     // ----------------------------------------------------------
-    // GET PROFILE LOCATION (D1)
-    // ----------------------------------------------------------
-    if (path === "/api/weather/profile" && request.method === "GET") {
-      try {
-        const row = await DB.prepare(
-          "SELECT lat, lon FROM profile_location LIMIT 1"
-        ).first();
-
-        return Response.json(row || {});
-      } catch (err) {
-        return Response.json({ error: "DB read failed", details: err.message }, { status: 500 });
-      }
-    }
-
-    // ----------------------------------------------------------
-    // SET PROFILE LOCATION (D1)
-    // ----------------------------------------------------------
-    if (path === "/api/weather/profile" && request.method === "POST") {
-      try {
-        const body = await request.json();
-
-        if (!body.lat || !body.lon) {
-          return Response.json({ error: "lat/lon required" }, { status: 400 });
-        }
-
-        await DB.prepare("DELETE FROM profile_location").run();
-        await DB.prepare(
-          "INSERT INTO profile_location (lat, lon, updated_at) VALUES (?, ?, ?)"
-        )
-          .bind(body.lat, body.lon, Date.now())
-          .run();
-
-        return Response.json({ ok: true });
-      } catch (err) {
-        return Response.json({ error: "DB write failed", details: err.message }, { status: 500 });
-      }
-    }
-
-    // ----------------------------------------------------------
-    // WEATHER FETCH (Open‑Meteo + D1 Cache)
+    // WEATHER FETCH (NO PROFILE, NO USER ID — JUST WEATHER)
     // ----------------------------------------------------------
     if (path === "/api/weather" && request.method === "GET") {
       const lat = parseFloat(url.searchParams.get("lat"));
@@ -62,13 +22,11 @@ export async function handle(request, env) {
 
       const cacheKey = `${lat.toFixed(3)},${lon.toFixed(3)}`;
 
-      // Try cache
+      // Try cache safely
       try {
         const cached = await DB.prepare(
           "SELECT data, ts FROM weather_cache WHERE key = ?"
-        )
-          .bind(cacheKey)
-          .first();
+        ).bind(cacheKey).first();
 
         if (cached) {
           const age = Date.now() - cached.ts;
@@ -77,8 +35,7 @@ export async function handle(request, env) {
           }
         }
       } catch (err) {
-        // Cache read failure should NOT break weather
-        console.warn("Weather cache read failed:", err.message);
+        console.warn("Cache read failed:", err.message);
       }
 
       // Fetch from Open‑Meteo safely
@@ -92,9 +49,9 @@ export async function handle(request, env) {
           `&temperature_unit=fahrenheit&timezone=auto`;
 
         const res = await fetch(wxUrl);
-
-        // If Open‑Meteo returns HTML → prevent crash
         const text = await res.text();
+
+        // Prevent "<!DOCTYPE" crash
         try {
           raw = JSON.parse(text);
         } catch {
@@ -104,7 +61,10 @@ export async function handle(request, env) {
           );
         }
       } catch (err) {
-        return Response.json({ error: "Weather API failed", details: err.message }, { status: 500 });
+        return Response.json(
+          { error: "Weather API failed", details: err.message },
+          { status: 500 }
+        );
       }
 
       // Format weather
@@ -138,7 +98,7 @@ export async function handle(request, env) {
           .bind(cacheKey, JSON.stringify(formatted), Date.now())
           .run();
       } catch (err) {
-        console.warn("Weather cache write failed:", err.message);
+        console.warn("Cache write failed:", err.message);
       }
 
       return Response.json(formatted);
@@ -150,7 +110,6 @@ export async function handle(request, env) {
     return Response.json({ error: "Weather route not found" }, { status: 404 });
 
   } catch (err) {
-    // NEVER return HTML — always JSON
-    return Response.json({ error: "Worker crashed", details: err.message }, { status: 500 });
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
