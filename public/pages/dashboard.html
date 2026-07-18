@@ -55,19 +55,19 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* PURE IMAGE TILE — NO TEXT, NO BOX, NO OVERLAY */
-    .rtg-card--rtgonline {
-      padding: 0 !important;
-      background: none !important;
-      border: none !important;
-      overflow: hidden;
-    }
-
-    .rtg-card--rtgonline img {
+    /* RTG ONLINE IMAGE TILE — NO BOX, NO TEXT */
+    .rtg-online-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
+      border-radius: 12px;
+    }
+
+    .rtg-card--rtgonline {
+      padding: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      border: none !important;
     }
   </style>
 </head>
@@ -217,9 +217,9 @@
       <a href="/pages/map.html" class="rtg-card">🗺️<span>Map</span></a>
       <a href="/pages/shop.html" class="rtg-card">🛒<span>Shop</span></a>
 
-      <!-- PURE IMAGE TILE — NO TEXT, NO BOX -->
-      <a href="/pages/rtg-online.html" class="rtg-card rtg-card--rtgonline">
-        <img src="/assets/img/logos/rtg-online-logo.jpg" alt="RTG Online">
+      <!-- RTG ONLINE IMAGE — NO BOX, NO TEXT, DOUBLE SIZE -->
+      <a href="/pages/rtg-online.html" class="rtg-card rtg-card--xl rtg-card--rtgonline">
+        <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-online-img">
       </a>
     </section>
 
