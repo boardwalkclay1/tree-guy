@@ -11,12 +11,9 @@ binding = "DB"
 database_name = "rtg-db"
 database_id = "3592ad5b-c7a0-46b3-90ce-dfb8e7a67ff4"
 
-# ============================================================
-# ROUTES — RTG OS IS NOW LIVE AT rtg.chainsawclay.com
-# ============================================================
+# ROUTES — RTG OS LIVE AT rtg.chainsawclay.com
 routes = [
-  # All API + pages under /rtg/*
-  { pattern = "rtg.chainsawclay.com/rtg/*", zone_name = "chainsawclay.com" }
+  { pattern = "rtg.chainsawclay.com/*", zone_name = "chainsawclay.com" }
 ]
 
 # NODE COMPAT
