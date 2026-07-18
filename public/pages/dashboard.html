@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/assets/css/radio.css">
 
   <style>
+    /* LOGO BUTTON */
     #rtgLogo {
       background: transparent !important;
       border: none !important;
@@ -28,7 +29,7 @@
       z-index: -1;
     }
 
-    /* SIDE MENU (FORCED PARTIAL SHOW) */
+    /* SIDE MENU */
     #rtgMenu {
       position: fixed;
       top: 0;
@@ -46,7 +47,7 @@
     }
 
     #rtgMenu.open {
-      left: -40px; /* ONLY SHOW 40PX */
+      left: -40px;
     }
 
     #rtgMenu a {
@@ -56,11 +57,43 @@
       padding: 10px 0;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
+
+    /* RTG ONLINE IMAGE TILE */
+    .rtg-card--image {
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      border-radius: 12px;
+      padding: 0;
+    }
+
+    .rtg-online-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: opacity 0.25s ease;
+    }
+
+    .rtg-card--image:hover .rtg-online-img {
+      opacity: 1;
+    }
+
+    .rtg-card--image span {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 6px black;
+    }
   </style>
 </head>
 
 <body class="rtg-dashboard">
 
+  <!-- SIDE MENU -->
   <div id="rtgMenu">
     <a href="/pages/profile.html">👤 Profile</a>
     <a href="/pages/customers.html">📁 Customers</a>
@@ -73,8 +106,10 @@
     <a href="/pages/rtg-online.html">🟧 RTG Online</a>
   </div>
 
+  <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
 
+  <!-- TOPBAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
@@ -96,6 +131,7 @@
 
   <main class="rtg-main">
 
+    <!-- QUICK ACTIONS -->
     <section class="rtg-quick-actions">
       <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ Add Customer</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
@@ -104,6 +140,7 @@
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
     </section>
 
+    <!-- RADIO MODULE -->
     <section class="rtg-radio-module">
       <div id="radio-widget" class="radio-widget">
         <div class="radio-header">
@@ -141,6 +178,7 @@
       </div>
     </section>
 
+    <!-- NOTIFICATIONS -->
     <section class="rtg-notifications">
       <h2 class="notif-title">🔔 Notifications</h2>
       <div id="rtgNotifList" class="notif-list">
@@ -148,6 +186,7 @@
       </div>
     </section>
 
+    <!-- GAUGES -->
     <section class="rtg-gauge-row">
       <div class="rtg-gauge-card">
         <h2>💨 Wind Hazard</h2>
@@ -167,6 +206,7 @@
       </div>
     </section>
 
+    <!-- WEATHER + JOB SNAPSHOT -->
     <section class="rtg-widget">
       <div class="rtg-dashboard-card">
         <div class="card-header">
@@ -194,6 +234,7 @@
       </div>
     </section>
 
+    <!-- GRID -->
     <section class="rtg-grid">
       <a href="/pages/profile.html" class="rtg-card">👤<span>Profile</span></a>
       <a href="/pages/customers.html" class="rtg-card">📁<span>Customers</span></a>
@@ -203,8 +244,11 @@
       <a href="/pages/flyers.html" class="rtg-card">🎴<span>Flyers</span></a>
       <a href="/pages/map.html" class="rtg-card">🗺️<span>Map</span></a>
       <a href="/pages/shop.html" class="rtg-card">🛒<span>Shop</span></a>
-      <a href="/pages/rtg-online.html" class="rtg-card rtg-card--xl rtg-card--orange">
-        🟧<span>RTG Online</span>
+
+      <!-- RTG ONLINE IMAGE TILE -->
+      <a href="/pages/rtg-online.html" class="rtg-card rtg-card--xl rtg-card--image">
+        <img src="/assets/img/rtg-online.jpg" alt="RTG Online" class="rtg-online-img">
+        <span>RTG Online</span>
       </a>
     </section>
 
