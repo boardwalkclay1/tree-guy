@@ -1,17 +1,32 @@
 // ============================================================
-// REAL TREE GUY OS — CUSTOMERS & JOBS (D1 VERSION)
+// REAL TREE GUY OS — CUSTOMERS & JOBS (D1 VERSION, UPGRADED)
 // ============================================================
 
 // -----------------------------
-// API HELPERS
+// API HELPERS (Safe Mode)
 // -----------------------------
+async function safeFetch(url, opts = {}) {
+  try {
+    const res = await fetch(url, opts);
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      console.warn("Non‑JSON from", url, text.slice(0, 120));
+      return null;
+    }
+  } catch (err) {
+    console.error("Fetch failed:", url, err);
+    return null;
+  }
+}
+
 async function apiGetCustomers() {
-  const r = await fetch("/api/customers");
-  return await r.json();
+  return await safeFetch("/api/customers") || [];
 }
 
 async function apiAddCustomer(cust) {
-  await fetch("/api/customers", {
+  return await safeFetch("/api/customers", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cust)
@@ -19,16 +34,15 @@ async function apiAddCustomer(cust) {
 }
 
 async function apiDeleteCustomer(id) {
-  await fetch(`/api/customers?id=${id}`, { method: "DELETE" });
+  return await safeFetch(`/api/customers?id=${id}`, { method: "DELETE" });
 }
 
 async function apiGetJobs() {
-  const r = await fetch("/api/jobs");
-  return await r.json();
+  return await safeFetch("/api/jobs") || [];
 }
 
 async function apiAddJob(job) {
-  await fetch("/api/jobs", {
+  return await safeFetch("/api/jobs", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(job)
@@ -36,18 +50,32 @@ async function apiAddJob(job) {
 }
 
 async function apiDeleteJob(id) {
-  await fetch(`/api/jobs?id=${id}`, { method: "DELETE" });
+  return await safeFetch(`/api/jobs?id=${id}`, { method: "DELETE" });
 }
 
 // -----------------------------
-// TABS
+// TABS (Upgraded for dual-panel layout)
 // -----------------------------
-document.querySelectorAll(".tab-btn").forEach(btn => {
+const tabButtons = document.querySelectorAll(".tab-btn");
+const panels = {
+  customers: ["tab-customers", "tab-customers-list"],
+  jobs: ["tab-jobs", "tab-jobs-list"]
+};
+
+tabButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    tabButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+
+    const target = btn.dataset.tab;
+
+    Object.values(panels).flat().forEach(id => {
+      document.getElementById(id).classList.remove("active");
+    });
+
+    panels[target].forEach(id => {
+      document.getElementById(id).classList.add("active");
+    });
   });
 });
 
@@ -58,9 +86,9 @@ function esc(str) {
   return d.innerHTML;
 }
 
-// -----------------------------
-// CUSTOMERS
-// -----------------------------
+// ============================================================
+// CUSTOMERS (Upgraded)
+// ============================================================
 async function renderCustomers() {
   const ul = document.getElementById("custList");
   const customers = await apiGetCustomers();
@@ -79,13 +107,41 @@ async function renderCustomers() {
         ${esc(c.address)}<br>
         ${esc(c.notes)}
       </div>
+
+      <div class="link-row">
+        <button class="btn-link-calendar" data-id="${c.id}" data-name="${esc(c.name)}">Calendar</button>
+        <button class="btn-link-contract" data-id="${c.id}" data-name="${esc(c.name)}">Contract</button>
+      </div>
     </li>
   `).join("");
 
+  // Delete buttons
   ul.querySelectorAll(".del-btn").forEach(btn => {
     btn.onclick = async () => {
       await apiDeleteCustomer(btn.dataset.id);
       renderCustomers();
+    };
+  });
+
+  // Calendar linking
+  ul.querySelectorAll(".btn-link-calendar").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const name = btn.dataset.name;
+      localStorage.setItem("rtgCalendarCustomer", id);
+      localStorage.setItem("rtgCalendarCustomerName", name);
+      window.location.href = "../../pages/calendar.html";
+    };
+  });
+
+  // Contract linking
+  ul.querySelectorAll(".btn-link-contract").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const name = btn.dataset.name;
+      localStorage.setItem("rtgContractCustomer", id);
+      localStorage.setItem("rtgContractCustomerName", name);
+      window.location.href = "../../pages/contracts.html";
     };
   });
 }
@@ -110,9 +166,9 @@ document.getElementById("addCust").onclick = async () => {
     .forEach(id => document.getElementById(id).value = "");
 };
 
-// -----------------------------
-// JOBS
-// -----------------------------
+// ============================================================
+// JOBS (Upgraded)
+// ============================================================
 async function renderJobs() {
   const ul = document.getElementById("jobList");
   const jobs = await apiGetJobs();
@@ -136,13 +192,41 @@ async function renderJobs() {
         ${esc(j.date)} · ${esc(j.price)}
         <br>${esc(j.notes)}
       </div>
+
+      <div class="link-row">
+        <button class="btn-link-calendar" data-id="${j.id}" data-title="${esc(j.title)}">Calendar</button>
+        <button class="btn-link-contract" data-id="${j.id}" data-title="${esc(j.title)}">Contract</button>
+      </div>
     </li>
   `).join("");
 
+  // Delete buttons
   ul.querySelectorAll(".del-btn").forEach(btn => {
     btn.onclick = async () => {
       await apiDeleteJob(btn.dataset.id);
       renderJobs();
+    };
+  });
+
+  // Calendar linking
+  ul.querySelectorAll(".btn-link-calendar").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const title = btn.dataset.title;
+      localStorage.setItem("rtgCalendarJob", id);
+      localStorage.setItem("rtgCalendarJobTitle", title);
+      window.location.href = "../../pages/calendar.html";
+    };
+  });
+
+  // Contract linking
+  ul.querySelectorAll(".btn-link-contract").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const title = btn.dataset.title;
+      localStorage.setItem("rtgContractJob", id);
+      localStorage.setItem("rtgContractJobTitle", title);
+      window.location.href = "../../pages/contracts.html";
     };
   });
 }
@@ -168,8 +252,8 @@ document.getElementById("addJob").onclick = async () => {
     .forEach(id => document.getElementById(id).value = "");
 };
 
-// -----------------------------
+// ============================================================
 // INITIAL RENDER
-// -----------------------------
+// ============================================================
 renderCustomers();
 renderJobs();
