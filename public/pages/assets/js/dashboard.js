@@ -48,6 +48,25 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("POST failed:", path, err);
         return null;
       }
+    },
+
+    async get(path) {
+      try {
+        const res = await fetch(`${API_BASE}${path}`, {
+          headers: this.headers()
+        });
+
+        const text = await res.text();
+        try {
+          return JSON.parse(text);
+        } catch {
+          console.warn("GET returned non‑JSON at", path, text.slice(0, 120));
+          return null;
+        }
+      } catch (err) {
+        console.error("GET failed:", path, err);
+        return null;
+      }
     }
   };
 
