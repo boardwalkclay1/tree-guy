@@ -20,6 +20,8 @@
     (document.body && document.body.dataset.radioName) ||
     "Operator";
 
+  const API_BASE = "https://api.realtreeguy.com/api/radio";
+
   const state = {
     connected: false,
     channel: el.channelSelect ? el.channelSelect.value : "1",
@@ -134,9 +136,6 @@
         channel: state.channel
       }));
     }
-
-    // 🔗 HOOK: start sending audio via WebRTC
-    // radioTransport.startTx()
   }
 
   function stopTalking() {
@@ -158,16 +157,13 @@
         channel: state.channel
       }));
     }
-
-    // 🔗 HOOK: stop sending audio via WebRTC
-    // radioTransport.stopTx()
   }
 
   async function connect() {
     if (state.connected) return;
 
     try {
-      const res = await fetch("/api/radio/connect", {
+      const res = await fetch(`${API_BASE}/connect`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -189,7 +185,7 @@
         return;
       }
 
-      const ws = new WebSocket(wsUrl);
+      const ws = new WebSocket(wsUrl.replace(/^http/, "ws"));
       state.ws = ws;
 
       ws.onopen = () => {
