@@ -15,6 +15,3 @@ database_id = "3592ad5b-c7a0-46b3-90ce-dfb8e7a67ff4"
 routes = [
   { pattern = "rtg.chainsawclay.com/*", zone_name = "chainsawclay.com" }
 ]
-
-# NODE COMPAT
-node_compat = true
