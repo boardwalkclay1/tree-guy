@@ -6,7 +6,7 @@ import * as WeatherLogic from "./work-weather.js";
 import * as CustomerLogic from "./work-customers.js";
 import * as JobLogic from "./work-jobs.js";
 
-export const API_BASE = "/rtg/api";
+export const API_BASE = "/api";
 
 export default {
   async fetch(request, env) {
