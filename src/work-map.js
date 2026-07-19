@@ -1,6 +1,18 @@
 // ============================================================
-// REAL TREE GUY OS — MAP WORKER (D1 + Overpass)
+// REAL TREE GUY — MAP WORKER (FINAL WITH CORS)
 // ============================================================
+
+function cors(json, status = 200) {
+  return new Response(JSON.stringify(json), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
+    }
+  });
+}
 
 export async function handle(request, env) {
   const url = new URL(request.url);
@@ -8,18 +20,31 @@ export async function handle(request, env) {
   const DB = env.DB;
 
   // ============================================================
-  // SAVED LOCATIONS (GET ALL)
+  // CORS PRE-FLIGHT
+  // ============================================================
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+      }
+    });
+  }
+
+  // ============================================================
+  // SAVED LOCATIONS (GET)
   // ============================================================
   if (path === "/api/map/saved" && request.method === "GET") {
     const { results } = await DB.prepare(
       "SELECT * FROM saved_locations ORDER BY created_at DESC"
     ).all();
-
-    return Response.json(results || []);
+    return cors(results || []);
   }
 
   // ============================================================
-  // SAVED LOCATIONS (ADD)
+  // SAVED LOCATIONS (POST)
   // ============================================================
   if (path === "/api/map/saved" && request.method === "POST") {
     const body = await request.json();
@@ -30,7 +55,7 @@ export async function handle(request, env) {
       VALUES (?, ?, ?, ?, ?)
     `).bind(id, body.label, body.lat, body.lng, Date.now()).run();
 
-    return Response.json({ success: true, id });
+    return cors({ success: true, id });
   }
 
   // ============================================================
@@ -39,9 +64,8 @@ export async function handle(request, env) {
   if (path === "/api/map/stores" && request.method === "GET") {
     const type = url.searchParams.get("type");
 
-    // Map your filter types to Overpass search terms
     const brandMap = {
-      "home_depot": 'The Home Depot',
+      "home_depot": "The Home Depot",
       "lowes": "Lowe's",
       "ace": "Ace Hardware",
       "gas": "gas",
@@ -53,7 +77,6 @@ export async function handle(request, env) {
 
     const brand = brandMap[type] || "The Home Depot";
 
-    // Overpass query — using Atlanta metro area bounding box
     const query = `
       [out:json][timeout:25];
       (
@@ -74,10 +97,7 @@ export async function handle(request, env) {
       );
       data = await res.json();
     } catch (err) {
-      return Response.json(
-        { error: "Overpass API failed", details: err.message },
-        { status: 500 }
-      );
+      return cors({ error: "Overpass API failed", details: err.message }, 500);
     }
 
     const features = (data.elements || []).map(e => ({
@@ -93,24 +113,27 @@ export async function handle(request, env) {
       }
     }));
 
-    return Response.json({
+    return cors({
       type: "FeatureCollection",
       features
     });
   }
 
   // ============================================================
-  // BELTLINE TRAIL (STATIC GEOJSON)
+  // BELTLINE TRAIL
   // ============================================================
   if (path === "/api/map/beltline") {
     const file = await env.ASSETS.fetch("/beltline.geojson");
     return new Response(file.body, {
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
     });
   }
 
   // ============================================================
   // FALLBACK
   // ============================================================
-  return Response.json({ error: "Map route not found" }, { status: 404 });
+  return cors({ error: "Map route not found" }, 404);
 }
