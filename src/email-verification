@@ -1,0 +1,28 @@
+export function buildWelcomeEmail(verifyUrl, userName = "there") {
+  return {
+    subject: "Welcome to Real Tree Guy OS — Verify Your Email",
+    body: `
+Hi ${userName},
+
+Thanks for signing up with Real Tree Guy OS.
+
+Before you get started, please verify your email by clicking the link below:
+
+${verifyUrl}
+
+Once verified, your RTG dashboard unlocks everything:
+- Auto-filled contracts and agreements
+- Digital signatures and instant send-back
+- Photo attachments for bids and hazards
+- Organized jobs, dates, pricing, and clients
+- Zero lost paperwork, zero confusion
+
+Most people running tree work without RTG are juggling texts, paper contracts, random notes, and memory. You won’t be. RTG keeps everything tight, backed up, and ready to send with one tap.
+
+Thanks again for joining Real Tree Guy OS.
+You're already ahead of anyone still doing tree work the old way.
+
+— Real Tree Guy OS
+`
+  };
+}
