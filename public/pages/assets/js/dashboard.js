@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const rtgUserType = localStorage.getItem("rtgUserType") || "tree";
 
   // ============================================================
+  // FIXED: API BASE → YOUR WORKER DOMAIN
+  // ============================================================
+  const API_BASE = "https://api.realtreeguy.com/api";
+
+  // ============================================================
   // SAFE MODE API WRAPPER — ALWAYS RETURNS JSON OR NULL
   // ============================================================
   const API = {
@@ -26,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async post(path, body) {
       try {
-        const res = await fetch(path, {
+        const res = await fetch(`${API_BASE}${path}`, {
           method: "POST",
           headers: this.headers(),
           body: JSON.stringify(body)
@@ -68,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   // WEATHER (GPS ONLY — until weather worker is provided)
-// ============================================================
+  // ============================================================
   async function getUserLocation() {
     return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
@@ -82,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadWeather() {
     const { lat, lon } = await getUserLocation();
 
-    // TEMPORARY: direct Open‑Meteo fetch until you show me your weather worker
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
       `&current_weather=true&temperature_unit=fahrenheit&timezone=auto`;
@@ -121,9 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   // RADIO PRESENCE (Worker route exists)
-// ============================================================
+  // ============================================================
   async function pingRadio() {
-    await API.post("/api/radio/presence", {
+    await API.post("/radio/presence", {
       user_id: rtgUserId,
       email: rtgUserEmail,
       type: rtgUserType,
