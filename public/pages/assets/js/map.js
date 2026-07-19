@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY MAP ENGINE — MAPLIBRE + OSM + WORKER DATA
+// REAL TREE GUY MAP ENGINE — MAPLIBRE + WORKER DATA
 // ============================================================
 
 let userLat = null;
@@ -8,6 +8,11 @@ let userLng = null;
 const locationStatus = document.getElementById("locationStatus");
 const filterRow = document.getElementById("filterRow");
 const activeFilterLabel = document.getElementById("activeFilterLabel");
+
+// ============================================================
+// API BASE — YOUR WORKER DOMAIN
+// ============================================================
+const API_BASE = "https://api.realtreeguy.com/api/map";
 
 // ============================================================
 // GET REAL GPS
@@ -47,11 +52,16 @@ const map = new maplibregl.Map({
   zoom: 12
 });
 
+// Wait for map to load
+map.on("load", () => {
+  console.log("MapLibre ready.");
+});
+
 // ============================================================
-// LOAD STORE DATA FROM CLOUDFLARE WORKER
+// LOAD STORE DATA FROM WORKER
 // ============================================================
 async function loadStores(filterType) {
-  const res = await fetch(`/api/map/stores?type=${filterType}`);
+  const res = await fetch(`${API_BASE}/stores?type=${filterType}`);
   const geojson = await res.json();
 
   if (map.getSource("rtg-stores")) {
@@ -73,9 +83,12 @@ async function loadStores(filterType) {
       "circle-color": [
         "match",
         ["get", "brand"],
-        "Home Depot", "#ff6600",
+        "The Home Depot", "#ff6600",
         "Lowe's", "#0066ff",
         "Ace Hardware", "#00cc44",
+        "sawmill", "#aa5500",
+        "chainsaw", "#ff0000",
+        "wood dump", "#663300",
         "#00ff88"
       ]
     }
