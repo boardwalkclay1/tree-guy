@@ -10,13 +10,15 @@
   <link rel="stylesheet" href="/assets/css/radio.css">
 
   <style>
+    /* LOGO */
     #rtgLogo {
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
-      cursor: default !important;
+      cursor: pointer !important;
     }
 
+    /* BACKGROUND */
     #rtgBackground {
       position: fixed;
       top: 0;
@@ -25,6 +27,44 @@
       height: 100%;
       background: url("/assets/img/backgrounds/rtg-dash-back.jpg") center center / cover no-repeat;
       z-index: -1;
+    }
+
+    /* SIDE MENU — HIDDEN BY DEFAULT */
+    #rtgMenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+
+      /* Hidden state */
+      transform: translateX(-260px);
+      opacity: 0;
+      pointer-events: none;
+
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      z-index: 9999;
+    }
+
+    /* Visible state */
+    #rtgMenu.open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #rtgMenu a {
+      color: white;
+      font-size: 1.2rem;
+      text-decoration: none;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     /* RTG ONLINE IMAGE TILE — NO BOX, NO TEXT */
@@ -45,6 +85,19 @@
 </head>
 
 <body class="rtg-dashboard">
+
+  <!-- SIDE MENU -->
+  <div id="rtgMenu">
+    <a href="/pages/profile.html">👤 Profile</a>
+    <a href="/pages/customers.html">📁 Customers</a>
+    <a href="/pages/contracts.html">📄 Contracts</a>
+    <a href="/pages/tree-id.html">🌳 Tree Identifier</a>
+    <a href="/pages/weather.html">🌤️ Weather</a>
+    <a href="/pages/map.html">🗺️ Map</a>
+    <a href="/pages/calendar.html">📅 Calendar</a>
+    <a href="/pages/shop.html">🛒 Shop</a>
+    <a href="/pages/rtg-online.html">🟧 RTG Online</a>
+  </div>
 
   <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
@@ -195,6 +248,13 @@
 
   <script src="/pages/assets/js/dashboard.js"></script>
   <script src="/pages/assets/js/radio.js"></script>
+
+  <script>
+    // Toggle menu on logo click
+    document.getElementById("rtgLogo").addEventListener("click", () => {
+      document.getElementById("rtgMenu").classList.toggle("open");
+    });
+  </script>
 
 </body>
 </html>
