@@ -14,7 +14,7 @@
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
-      cursor: pointer;
+      cursor: default !important;
     }
 
     #rtgBackground {
@@ -25,34 +25,6 @@
       height: 100%;
       background: url("/assets/img/backgrounds/rtg-dash-back.jpg") center center / cover no-repeat;
       z-index: -1;
-    }
-
-    #rtgMenu {
-      position: fixed;
-      top: 0;
-      left: -260px;
-      width: 260px;
-      height: 100vh;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      transition: left 0.25s ease;
-      z-index: 9999;
-    }
-
-    #rtgMenu.open {
-      left: -40px;
-    }
-
-    #rtgMenu a {
-      color: white;
-      font-size: 1.2rem;
-      text-decoration: none;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     /* RTG ONLINE IMAGE TILE — NO BOX, NO TEXT */
@@ -74,20 +46,10 @@
 
 <body class="rtg-dashboard">
 
-  <div id="rtgMenu">
-    <a href="/pages/profile.html">👤 Profile</a>
-    <a href="/pages/customers.html">📁 Customers</a>
-    <a href="/pages/contracts.html">📄 Contracts</a>
-    <a href="/pages/tree-id.html">🌳 Tree Identifier</a>
-    <a href="/pages/weather.html">🌤️ Weather</a>
-    <a href="/pages/map.html">🗺️ Map</a>
-    <a href="/pages/calendar.html">📅 Calendar</a>
-    <a href="/pages/shop.html">🛒 Shop</a>
-    <a href="/pages/rtg-online.html">🟧 RTG Online</a>
-  </div>
-
+  <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
 
+  <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
@@ -109,6 +71,7 @@
 
   <main class="rtg-main">
 
+    <!-- QUICK ACTIONS -->
     <section class="rtg-quick-actions">
       <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ Add Customer</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
@@ -117,6 +80,7 @@
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
     </section>
 
+    <!-- RADIO MODULE -->
     <section class="rtg-radio-module">
       <div id="radio-widget" class="radio-widget">
         <div class="radio-header">
@@ -154,6 +118,7 @@
       </div>
     </section>
 
+    <!-- NOTIFICATIONS -->
     <section class="rtg-notifications">
       <h2 class="notif-title">🔔 Notifications</h2>
       <div id="rtgNotifList" class="notif-list">
@@ -161,6 +126,7 @@
       </div>
     </section>
 
+    <!-- GAUGES -->
     <section class="rtg-gauge-row">
       <div class="rtg-gauge-card">
         <h2>💨 Wind Hazard</h2>
@@ -180,6 +146,7 @@
       </div>
     </section>
 
+    <!-- WEATHER + JOB -->
     <section class="rtg-widget">
       <div class="rtg-dashboard-card">
         <div class="card-header">
@@ -207,6 +174,7 @@
       </div>
     </section>
 
+    <!-- GRID -->
     <section class="rtg-grid">
       <a href="/pages/profile.html" class="rtg-card">👤<span>Profile</span></a>
       <a href="/pages/customers.html" class="rtg-card">📁<span>Customers</span></a>
@@ -227,12 +195,6 @@
 
   <script src="/pages/assets/js/dashboard.js"></script>
   <script src="/pages/assets/js/radio.js"></script>
-
-  <script>
-    document.getElementById("rtgLogo").addEventListener("click", () => {
-      document.getElementById("rtgMenu").classList.toggle("open");
-    });
-  </script>
 
 </body>
 </html>
