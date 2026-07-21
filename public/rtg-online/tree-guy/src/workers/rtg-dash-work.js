@@ -1,3 +1,5 @@
+import * as MessageLogic from "./rtg-work-message.js";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -26,12 +28,18 @@ export default {
     }
 
     // ============================================================
+    // RTG ONLINE — MESSAGING ROUTES
+    // ============================================================
+    if (path.startsWith("/rtg/api/messages")) {
+      return MessageLogic.handle(request, env);
+    }
+
+    // ============================================================
     // DASHBOARD LOAD
     // ============================================================
     if (path === "/api/rtg-online/tree-guy/dashboard" && request.method === "GET") {
       const treeGuyId = url.searchParams.get("id");
 
-      // USER PROFILE
       const user = await env.DB.prepare(`
         SELECT id, name, email, phone, avatar_url, address, city, state, zip,
                lat, lng, bio, subscription_status, tree_role
@@ -39,17 +47,14 @@ export default {
         WHERE id = ? AND type = 'tree'
       `).bind(treeGuyId).first();
 
-      // CUSTOMERS
       const customers = await env.DB.prepare(`
         SELECT * FROM customers ORDER BY created_at DESC
       `).all();
 
-      // JOB POSTS (RTG Online)
       const jobPosts = await env.DB.prepare(`
         SELECT * FROM job_posts ORDER BY created_at DESC
       `).all();
 
-      // POSTS (SOCIAL FEED)
       const posts = await env.DB.prepare(`
         SELECT 
           p.id,
@@ -64,7 +69,6 @@ export default {
         ORDER BY p.created_at DESC
       `).all();
 
-      // COMMENTS
       const comments = await env.DB.prepare(`
         SELECT 
           c.id,
@@ -78,7 +82,6 @@ export default {
         ORDER BY c.created_at ASC
       `).all();
 
-      // MESSAGES
       const messages = await env.DB.prepare(`
         SELECT 
           m.id,
@@ -92,7 +95,6 @@ export default {
         ORDER BY m.created_at DESC
       `).bind(treeGuyId).all();
 
-      // FRIENDS
       const friends = await env.DB.prepare(`
         SELECT 
           f.id,
@@ -103,21 +105,18 @@ export default {
         WHERE f.user_id = ?
       `).bind(treeGuyId).all();
 
-      // SKILLS
       const skills = await env.DB.prepare(`
         SELECT id, name, level 
         FROM skills 
         WHERE user_id = ?
       `).bind(treeGuyId).all();
 
-      // EQUIPMENT
       const equipment = await env.DB.prepare(`
         SELECT id, name, years 
         FROM equipment 
         WHERE user_id = ?
       `).bind(treeGuyId).all();
 
-      // Attach comments to posts
       const postsWithComments = posts.results.map(p => ({
         ...p,
         comments: comments.results.filter(c => c.post_id === p.id)
