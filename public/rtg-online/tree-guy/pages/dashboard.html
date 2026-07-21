@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>RTG Online — Tree Guy Dashboard</title>
   <link rel="stylesheet" href="/rtg-online/tree-guy/css/dashboard.css">
 </head>
@@ -9,43 +10,74 @@
 
 <header class="tg-header">
   <img id="tgAvatar" class="tg-avatar">
-  <div class="tg-info">
+  <div class="tg-header-info">
     <h1 id="tgName"></h1>
-    <p id="tgAddress"></p>
-    <p id="tgBio"></p>
+    <p id="tgHeaderMsg"></p>
+    <p id="tgRole"></p>
+    <p id="tgLocation"></p>
   </div>
 </header>
 
 <main class="tg-main">
 
-  <section>
-    <h2>Customers</h2>
-    <div id="customersList"></div>
+  <!-- LEFT: MAP + CLIENTS -->
+  <section class="tg-left">
+    <h2>Clients & Map</h2>
+    <div id="tgMapList"></div>
   </section>
 
-  <section>
-    <h2>Jobs</h2>
-    <div id="jobsList"></div>
-  </section>
-
-  <section>
-    <h2>Calendar</h2>
-    <div id="eventsList"></div>
-  </section>
-
-  <section>
-    <h2>Saved Map Locations</h2>
-    <div id="mapList"></div>
-  </section>
-
-  <section>
-    <h2>Nearby Clients</h2>
-    <div id="nearbyList"></div>
-  </section>
-
-  <section>
+  <!-- CENTER: SOCIAL FEED + POST FORM -->
+  <section class="tg-center">
     <h2>Social Feed</h2>
-    <div id="socialFeed"></div>
+    <div id="tgFeed" class="tg-feed"></div>
+
+    <h3>Create Post</h3>
+    <form id="tgPostForm">
+      <textarea id="tgPostContent" placeholder="Share a video, photo, or update..."></textarea>
+      <input id="tgPostMediaUrl" type="text" placeholder="Media URL (optional)">
+      <select id="tgPostType">
+        <option value="text">Text</option>
+        <option value="photo">Photo</option>
+        <option value="video">Video</option>
+      </select>
+      <button type="submit">Post</button>
+    </form>
+  </section>
+
+  <!-- RIGHT: MESSAGES, FRIENDS, PROFILE EDIT, SKILLS, EQUIPMENT -->
+  <section class="tg-right">
+    <h2>Messages</h2>
+    <div id="tgMessages"></div>
+
+    <h2>Friends</h2>
+    <div id="tgFriends"></div>
+
+    <h2>Profile</h2>
+    <form id="tgProfileForm">
+      <input id="tgProfileName" type="text" placeholder="Name" required>
+      <input id="tgProfileRole" type="text" placeholder="Role (Groundsman, Climber, Salesman)" required>
+      <input id="tgProfileCity" type="text" placeholder="City" required>
+      <input id="tgProfileState" type="text" placeholder="State" required>
+      <input id="tgProfileAvatar" type="text" placeholder="Avatar URL (optional)">
+      <textarea id="tgProfileBio" placeholder="Header message / bio (optional)"></textarea>
+      <button type="submit">Save Profile</button>
+    </form>
+
+    <h2>Skills</h2>
+    <ul id="tgSkills"></ul>
+    <form id="tgSkillForm">
+      <input id="tgSkillName" type="text" placeholder="Skill (e.g. Climber)" required>
+      <input id="tgSkillLevel" type="text" placeholder="Level (Beginner/Intermediate/Expert)" required>
+      <button type="submit">Add Skill</button>
+    </form>
+
+    <h2>Equipment</h2>
+    <ul id="tgEquipment"></ul>
+    <form id="tgEquipmentForm">
+      <input id="tgEquipmentName" type="text" placeholder="Equipment (e.g. Bucket truck)" required>
+      <input id="tgEquipmentYears" type="number" placeholder="Years of experience" required>
+      <button type="submit">Add Equipment</button>
+    </form>
   </section>
 
 </main>
