@@ -1,0 +1,253 @@
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: url("/public/assets/img/logos/rtg-online-logo.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  min-height: 100vh;
+  backdrop-filter: blur(6px);
+}
+
+/* Glass UI panels */
+.tg-main section,
+.tg-header {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 14px;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.tg-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.tg-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #00ff88;
+}
+
+.tg-header-info h1 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.tg-header-info p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+
+.tg-main {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* ============================================================
+   LEFT PANEL — MAP + CLIENTS
+   ============================================================ */
+
+#tgMapList .map-item {
+  background: rgba(255,255,255,0.08);
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border-left: 4px solid #00ff88;
+}
+
+/* ============================================================
+   CENTER PANEL — SOCIAL FEED
+   ============================================================ */
+
+.tg-feed {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.feed-item {
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+}
+
+.feed-header {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.feed-content {
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.feed-media img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.feed-actions {
+  margin-top: 10px;
+}
+
+.like-btn {
+  background: #00ff88;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #000;
+}
+
+.feed-comments {
+  margin-top: 15px;
+}
+
+.comment {
+  background: rgba(255,255,255,0.05);
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.comment-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+}
+
+.comment-form button {
+  background: #00ff88;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #000;
+}
+
+/* ============================================================
+   POST FORM
+   ============================================================ */
+
+#tgPostForm {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#tgPostForm textarea,
+#tgPostForm input,
+#tgPostForm select {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+#tgPostForm button {
+  background: #00ff88;
+  border: none;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #000;
+}
+
+/* ============================================================
+   RIGHT PANEL — MESSAGES, FRIENDS, PROFILE, SKILLS, EQUIPMENT
+   ============================================================ */
+
+#tgMessages .msg-item,
+#tgFriends .friend-item {
+  background: rgba(255,255,255,0.08);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+#tgProfileForm,
+#tgSkillForm,
+#tgEquipmentForm {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#tgProfileForm input,
+#tgProfileForm textarea,
+#tgSkillForm input,
+#tgEquipmentForm input {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+#tgProfileForm button,
+#tgSkillForm button,
+#tgEquipmentForm button {
+  background: #00ff88;
+  border: none;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #000;
+}
+
+#tgSkills li,
+#tgEquipment li {
+  background: rgba(255,255,255,0.08);
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  .tg-main {
+    grid-template-columns: 1fr;
+  }
+}
