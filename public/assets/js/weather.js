@@ -1,9 +1,18 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER (WORKER + D1 VERSION)
+// REAL TREE GUY OS — WEATHER (FINAL VERSION)
 // ============================================================
 
-const API_BASE = "/rtg/api/weather";
+// All weather API calls go through your Worker at:
+// /rtg/api/weather
+const API = {
+  async get(path) {
+    const r = await fetch(`/rtg/api/weather${path}`);
+    if (!r.ok) throw new Error("Weather API error");
+    return r.json();
+  }
+};
 
+// DOM ELEMENTS
 const el = {
   useGPSBtn: document.getElementById("useGPS"),
   setManualBtn: document.getElementById("setManual"),
@@ -20,25 +29,7 @@ const el = {
   hourlyStrip: document.getElementById("hourlyStrip"),
   dailyStrip: document.getElementById("dailyStrip"),
 
-  wxIcon: document.getElementById("wxIcon"),
-  wxLabel: document.getElementById("wxLabel"),
   radarFrame: document.getElementById("rtgRadar")
-};
-
-// API WRAPPER (calls your Worker)
-const API = {
-  async get(path) {
-    const r = await fetch(`/rtg/api${path}`);
-    return r.json();
-  },
-  async post(path, body) {
-    const r = await fetch(`/rtg/api${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-    return r.json();
-  }
 };
 
 // WEATHER CODE → TEXT
@@ -61,18 +52,23 @@ function iconClassForCode(code) {
   return "cloudy";
 }
 
-// GET LOCATION (profile → GPS fallback)
+// GET LOCATION (User → GPS fallback)
 async function getLocation() {
-  const profile = await API.get(`/weather/profile`);
-
-  if (profile.lat && profile.lon) {
-    return { lat: profile.lat, lon: profile.lon };
+  // 1. Try user profile location from Worker
+  try {
+    const userLoc = await API.get(`/location`);
+    if (userLoc?.lat && userLoc?.lon) {
+      return { lat: userLoc.lat, lon: userLoc.lon };
+    }
+  } catch (e) {
+    console.warn("User location not found, falling back to GPS.");
   }
 
+  // 2. GPS fallback
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      () => resolve({ lat: 34.0, lon: -84.0 }),
+      () => resolve({ lat: 34.0, lon: -84.0 }), // fallback default
       { enableHighAccuracy: true, timeout: 8000 }
     );
   });
@@ -87,11 +83,6 @@ function renderCurrent(data) {
   el.currentGust.textContent = `Gusts: ${w.gust ?? "--"} mph`;
   el.currentPressure.textContent = `Pressure: ${w.pressure ?? "--"} mb`;
   el.currentRain.textContent = `Rain: ${w.rain ?? "--"} in`;
-
-  if (el.wxIcon && el.wxLabel) {
-    el.wxIcon.className = "wx-icon " + iconClassForCode(w.code);
-    el.wxLabel.textContent = codeToText(w.code);
-  }
 }
 
 // RENDER HOURLY FORECAST
@@ -124,11 +115,11 @@ function renderDaily(data) {
   }
 }
 
-// MAIN LOADER
+// MAIN WEATHER LOADER
 async function loadWeather(lat, lon) {
   el.locationStatus.textContent = "Loading weather…";
 
-  const data = await API.get(`/weather?lat=${lat}&lon=${lon}`);
+  const data = await API.get(`?lat=${lat}&lon=${lon}`);
 
   renderCurrent(data);
   renderHourly(data);
@@ -137,11 +128,10 @@ async function loadWeather(lat, lon) {
   el.locationStatus.textContent =
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
-  if (el.radarFrame) {
-    el.radarFrame.src =
-      `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
-      `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
-  }
+  // FULL COUNTRY RADAR (RainViewer)
+  el.radarFrame.src =
+    `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
+    `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
 }
 
 // AUTO‑LOAD
@@ -165,7 +155,6 @@ el.setManualBtn?.addEventListener("click", async () => {
   const lon = parseFloat(el.manualLon.value);
 
   if (!isNaN(lat) && !isNaN(lon)) {
-    await API.post(`/weather/profile`, { lat, lon });
     loadWeather(lat, lon);
   } else {
     el.locationStatus.textContent = "Invalid coordinates.";
