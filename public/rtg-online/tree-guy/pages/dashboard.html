@@ -23,80 +23,100 @@
 
 <body>
 
-<header class="tg-header">
-  <img id="tgAvatar" class="tg-avatar">
-  <div class="tg-header-info">
-    <h1 id="tgName"></h1>
-    <p id="tgHeaderMsg"></p>
-    <p id="tgRole"></p>
-    <p id="tgLocation"></p>
+  <!-- BACKGROUND IMAGE (shifted down 1 inch) -->
+  <div id="rtgBackground"></div>
+
+  <!-- TOP BAR (matches offline ops center style) -->
+  <div class="rtg-topbar">
+    <div class="rtg-topbar-left">
+      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-logo">
+      <div class="rtg-topbar-title">
+        <div class="rtg-topbar-main">RTG ONLINE — TREE GUY HUB</div>
+        <div class="rtg-topbar-sub">Social • Squads • Jobs • Messaging</div>
+      </div>
+    </div>
   </div>
-</header>
 
-<main class="tg-main">
+  <!-- MAIN LAYOUT -->
+  <main class="tg-main">
 
-  <!-- LEFT: MAP + CLIENTS -->
-  <section class="tg-left">
-    <h2>Clients & Map</h2>
-    <div id="tgMapList"></div>
-  </section>
+    <!-- HEADER: PROFILE SUMMARY -->
+    <header class="tg-header">
+      <img id="tgAvatar" class="tg-avatar">
+      <div class="tg-header-info">
+        <h1 id="tgName"></h1>
+        <p id="tgHeaderMsg"></p>
+        <p id="tgRole"></p>
+        <p id="tgLocation"></p>
+      </div>
+    </header>
 
-  <!-- CENTER: SOCIAL FEED + POST FORM -->
-  <section class="tg-center">
-    <h2>Social Feed</h2>
-    <div id="tgFeed" class="tg-feed"></div>
+    <!-- GRID LAYOUT: LEFT / CENTER / RIGHT -->
+    <div class="tg-grid">
 
-    <h3>Create Post</h3>
-    <form id="tgPostForm">
-      <textarea id="tgPostContent" placeholder="Share a video, photo, or update..."></textarea>
-      <input id="tgPostMediaUrl" type="text" placeholder="Media URL (optional)">
-      <select id="tgPostType">
-        <option value="text">Text</option>
-        <option value="photo">Photo</option>
-        <option value="video">Video</option>
-      </select>
-      <button type="submit">Post</button>
-    </form>
-  </section>
+      <!-- LEFT: MAP + CLIENTS -->
+      <section class="tg-left glass-card">
+        <h2>Clients & Map</h2>
+        <div id="tgMapList"></div>
+      </section>
 
-  <!-- RIGHT: MESSAGES, FRIENDS, PROFILE EDIT, SKILLS, EQUIPMENT -->
-  <section class="tg-right">
-    <h2>Messages</h2>
-    <div id="tgMessages"></div>
+      <!-- CENTER: SOCIAL FEED + POST FORM -->
+      <section class="tg-center glass-card">
+        <h2>Social Feed</h2>
+        <div id="tgFeed" class="tg-feed"></div>
 
-    <h2>Friends</h2>
-    <div id="tgFriends"></div>
+        <h3>Create Post</h3>
+        <form id="tgPostForm">
+          <textarea id="tgPostContent" placeholder="Share a video, photo, or update..."></textarea>
+          <input id="tgPostMediaUrl" type="text" placeholder="Media URL (optional)">
+          <select id="tgPostType">
+            <option value="text">Text</option>
+            <option value="photo">Photo</option>
+            <option value="video">Video</option>
+          </select>
+          <button type="submit">Post</button>
+        </form>
+      </section>
 
-    <h2>Profile</h2>
-    <form id="tgProfileForm">
-      <input id="tgProfileName" type="text" placeholder="Name" required>
-      <input id="tgProfileRole" type="text" placeholder="Role (Groundsman, Climber, Salesman)" required>
-      <input id="tgProfileCity" type="text" placeholder="City" required>
-      <input id="tgProfileState" type="text" placeholder="State" required>
-      <input id="tgProfileAvatar" type="text" placeholder="Avatar URL (optional)">
-      <textarea id="tgProfileBio" placeholder="Header message / bio (optional)"></textarea>
-      <button type="submit">Save Profile</button>
-    </form>
+      <!-- RIGHT: MESSAGES, FRIENDS, PROFILE, SKILLS, EQUIPMENT -->
+      <section class="tg-right glass-card">
+        <h2>Messages</h2>
+        <div id="tgMessages"></div>
 
-    <h2>Skills</h2>
-    <ul id="tgSkills"></ul>
-    <form id="tgSkillForm">
-      <input id="tgSkillName" type="text" placeholder="Skill (e.g. Climber)" required>
-      <input id="tgSkillLevel" type="text" placeholder="Level (Beginner/Intermediate/Expert)" required>
-      <button type="submit">Add Skill</button>
-    </form>
+        <h2>Friends</h2>
+        <div id="tgFriends"></div>
 
-    <h2>Equipment</h2>
-    <ul id="tgEquipment"></ul>
-    <form id="tgEquipmentForm">
-      <input id="tgEquipmentName" type="text" placeholder="Equipment (e.g. Bucket truck)" required>
-      <input id="tgEquipmentYears" type="number" placeholder="Years of experience" required>
-      <button type="submit">Add Equipment</button>
-    </form>
-  </section>
+        <h2>Profile</h2>
+        <form id="tgProfileForm">
+          <input id="tgProfileName" type="text" placeholder="Name" required>
+          <input id="tgProfileRole" type="text" placeholder="Role (Groundsman, Climber, Salesman)" required>
+          <input id="tgProfileCity" type="text" placeholder="City" required>
+          <input id="tgProfileState" type="text" placeholder="State" required>
+          <input id="tgProfileAvatar" type="text" placeholder="Avatar URL (optional)">
+          <textarea id="tgProfileBio" placeholder="Header message / bio (optional)"></textarea>
+          <button type="submit">Save Profile</button>
+        </form>
 
-</main>
+        <h2>Skills</h2>
+        <ul id="tgSkills"></ul>
+        <form id="tgSkillForm">
+          <input id="tgSkillName" type="text" placeholder="Skill (e.g. Climber)" required>
+          <input id="tgSkillLevel" type="text" placeholder="Level (Beginner/Intermediate/Expert)" required>
+          <button type="submit">Add Skill</button>
+        </form>
 
-<script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
+        <h2>Equipment</h2>
+        <ul id="tgEquipment"></ul>
+        <form id="tgEquipmentForm">
+          <input id="tgEquipmentName" type="text" placeholder="Equipment (e.g. Bucket truck)" required>
+          <input id="tgEquipmentYears" type="number" placeholder="Years of experience" required>
+          <button type="submit">Add Equipment</button>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
 </body>
 </html>
