@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RTG Online – Client Dashboard</title>
+
+  <!-- SOCIAL PREVIEW -->
+  <meta property="og:title" content="RTG Online – Client Dashboard">
+  <meta property="og:description" content="Manage your tree job listings, messages, contracts, billing, and settings.">
+  <meta property="og:image" content="/public/assets/img/rtg-logo.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rtg.realtreeguy.com/client/dashboard">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RTG Online – Client Dashboard">
+  <meta name="twitter:description" content="Your control center for posting and managing tree jobs.">
+  <meta name="twitter:image" content="/public/assets/img/rtg-logo.jpg">
+
+  <!-- FAVICON -->
+  <link rel="icon" type="image/jpeg" href="/public/assets/img/rtg-logo.jpg">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- BACKGROUND + LAYOUT -->
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: url("/public/assets/img/rtg-logo.jpg") center center / cover no-repeat fixed;
+      color: #f5f5f5;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    aside {
+      width: 240px;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    aside a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: block;
+    }
+
+    main {
+      flex: 1;
+      padding: 30px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .overview-grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .overview-card {
+      background: rgba(255,255,255,0.08);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside>
+    <a href="dashboard.html">Overview</a>
+    <a href="post-job.html">Post Job</a>
+    <a href="jobs.html">My Jobs</a>
+    <a href="messages.html">Messages</a>
+    <a href="contracts.html">Contracts</a>
+    <a href="billing.html">Billing</a>
+    <a href="settings.html">Settings</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <h1>Client Overview</h1>
+
+    <div class="overview-grid">
+      <div class="overview-card">Open Jobs</div>
+      <div class="overview-card">Active Tree Guys</div>
+      <div class="overview-card">Pending Contracts</div>
+    </div>
+  </main>
+
+</body>
+</html>
