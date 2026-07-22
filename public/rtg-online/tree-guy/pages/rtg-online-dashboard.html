@@ -9,114 +9,163 @@
 
   <!-- Social Preview -->
   <meta property="og:title" content="RTG Online — Tree Guy Dashboard">
-  <meta property="og:description" content="Your full RTG Online dashboard — social feed, clients, map, profile, skills, equipment, and team building.">
-  <meta property="og:image" content="/assets/img/logos/rtg-online-logo.jpg">
+  <meta property="og:description" content="Online hub for tree guys — clients, radio, weather, radar, settings, ads, squads.">
+  <meta property="og:image" content="/public/assets/img/logos/rtg-online-logo.jpg">
   <meta property="og:type" content="website">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="RTG Online — Tree Guy Dashboard">
-  <meta name="twitter:image" content="/assets/img/logos/rtg-online-logo.jpg">
+  <meta name="twitter:image" content="/public/assets/img/logos/rtg-online-logo.jpg">
 
-  <!-- CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Main Dashboard CSS -->
   <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-dashboard.css">
 </head>
-
 <body>
 
-  <!-- BACKGROUND IMAGE (shifted down 1 inch) -->
+  <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
 
-  <!-- TOP BAR (matches offline ops center style) -->
+  <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
-      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-logo">
+      <img src="/public/assets/img/logos/rtg-online-logo.jpg" class="rtg-logo">
       <div class="rtg-topbar-title">
         <div class="rtg-topbar-main">RTG ONLINE — TREE GUY HUB</div>
-        <div class="rtg-topbar-sub">Social • Squads • Jobs • Messaging</div>
+        <div class="rtg-topbar-sub">Clients • Radio • Weather • Radar • Squads</div>
       </div>
     </div>
   </div>
 
-  <!-- MAIN LAYOUT -->
-  <main class="tg-main">
+  <!-- MAIN -->
+  <div class="rtg-main">
 
-    <!-- HEADER: PROFILE SUMMARY -->
-    <header class="tg-header">
-      <img id="tgAvatar" class="tg-avatar">
-      <div class="tg-header-info">
-        <h1 id="tgName"></h1>
-        <p id="tgHeaderMsg"></p>
-        <p id="tgRole"></p>
-        <p id="tgLocation"></p>
-      </div>
-    </header>
-
-    <!-- GRID LAYOUT: LEFT / CENTER / RIGHT -->
-    <div class="tg-grid">
-
-      <!-- LEFT: MAP + CLIENTS -->
-      <section class="tg-left glass-card">
-        <h2>Clients & Map</h2>
-        <div id="tgMapList"></div>
-      </section>
-
-      <!-- CENTER: SOCIAL FEED + POST FORM -->
-      <section class="tg-center glass-card">
-        <h2>Social Feed</h2>
-        <div id="tgFeed" class="tg-feed"></div>
-
-        <h3>Create Post</h3>
-        <form id="tgPostForm">
-          <textarea id="tgPostContent" placeholder="Share a video, photo, or update..."></textarea>
-          <input id="tgPostMediaUrl" type="text" placeholder="Media URL (optional)">
-          <select id="tgPostType">
-            <option value="text">Text</option>
-            <option value="photo">Photo</option>
-            <option value="video">Video</option>
-          </select>
-          <button type="submit">Post</button>
-        </form>
-      </section>
-
-      <!-- RIGHT: MESSAGES, FRIENDS, PROFILE, SKILLS, EQUIPMENT -->
-      <section class="tg-right glass-card">
-        <h2>Messages</h2>
-        <div id="tgMessages"></div>
-
-        <h2>Friends</h2>
-        <div id="tgFriends"></div>
-
-        <h2>Profile</h2>
-        <form id="tgProfileForm">
-          <input id="tgProfileName" type="text" placeholder="Name" required>
-          <input id="tgProfileRole" type="text" placeholder="Role (Groundsman, Climber, Salesman)" required>
-          <input id="tgProfileCity" type="text" placeholder="City" required>
-          <input id="tgProfileState" type="text" placeholder="State" required>
-          <input id="tgProfileAvatar" type="text" placeholder="Avatar URL (optional)">
-          <textarea id="tgProfileBio" placeholder="Header message / bio (optional)"></textarea>
-          <button type="submit">Save Profile</button>
-        </form>
-
-        <h2>Skills</h2>
-        <ul id="tgSkills"></ul>
-        <form id="tgSkillForm">
-          <input id="tgSkillName" type="text" placeholder="Skill (e.g. Climber)" required>
-          <input id="tgSkillLevel" type="text" placeholder="Level (Beginner/Intermediate/Expert)" required>
-          <button type="submit">Add Skill</button>
-        </form>
-
-        <h2>Equipment</h2>
-        <ul id="tgEquipment"></ul>
-        <form id="tgEquipmentForm">
-          <input id="tgEquipmentName" type="text" placeholder="Equipment (e.g. Bucket truck)" required>
-          <input id="tgEquipmentYears" type="number" placeholder="Years of experience" required>
-          <button type="submit">Add Equipment</button>
-        </form>
-      </section>
-
+    <!-- QUICK ACTIONS (BASE NAV FOR DEEP PAGES) -->
+    <div class="rtg-quick-actions">
+      <button class="rtg-qa-btn" id="qaClients">Clients</button>
+      <button class="rtg-qa-btn" id="qaRadio">Radio</button>
+      <button class="rtg-qa-btn" id="qaWeather">Weather & Radar</button>
+      <button class="rtg-qa-btn" id="qaSettings">Settings</button>
+      <button class="rtg-qa-btn" id="qaAds">Pay for Ads</button>
+      <button class="rtg-qa-btn" id="qaProfile">Profile Page</button>
+      <button class="rtg-qa-btn" id="qaGlobalFeed">Global Lumberjack Feed</button>
     </div>
-  </main>
 
-  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
+    <!-- GAUGE ROW (HIGH-LEVEL STATUS) -->
+    <div class="rtg-gauge-row">
+      <div class="rtg-gauge-card">
+        <h3>Active Clients</h3>
+        <div id="dashClientsCount"></div>
+      </div>
+      <div class="rtg-gauge-card">
+        <h3>Online Tree Guys</h3>
+        <div id="dashOnlineGuys"></div>
+      </div>
+      <div class="rtg-gauge-card">
+        <h3>Active Radio Channels</h3>
+        <div id="dashRadioChannels"></div>
+      </div>
+    </div>
+
+    <!-- WIDGET: TIME + WEATHER + RADAR -->
+    <div class="rtg-widget">
+      <h2>Time & Weather</h2>
+      <div class="rtg-dashboard-card">
+        <div id="rtgClock"></div>
+        <div id="dashWxTemp"></div>
+        <div id="dashWxCond"></div>
+        <div id="dashWxWind"></div>
+        <div id="dashWxGust"></div>
+      </div>
+
+      <div class="rtg-dashboard-card">
+        <h3>Radar</h3>
+        <div id="dashRadarPreview"></div>
+        <button id="dashRadarExpand">Expand Radar</button>
+      </div>
+    </div>
+
+    <!-- WIDGET: CLIENTS QUICK VIEW (LINKS TO FULL CLIENT PAGE) -->
+    <div class="rtg-widget">
+      <h2>Clients Overview</h2>
+      <div class="rtg-dashboard-card" id="dashClientsQuick">
+        <!-- small list / summary -->
+      </div>
+      <button id="dashClientsOpen">Open Clients Page</button>
+    </div>
+
+    <!-- WIDGET: RADIO (BASE CONTROLS, FULL SYSTEM ON RADIO PAGE) -->
+    <div class="rtg-widget">
+      <h2>Jobsite Radio</h2>
+      <div class="rtg-dashboard-card">
+        <div id="radio-status" class="radio-status radio-status--disconnected">Disconnected</div>
+
+        <div class="radio-controls">
+          <label>
+            Channel
+            <select id="radio-channel">
+              <option value="1">Channel 1</option>
+              <option value="2">Channel 2</option>
+              <option value="3">Channel 3</option>
+            </select>
+          </label>
+
+          <button id="radio-connect">Connect</button>
+          <button id="radio-disconnect" disabled>Disconnect</button>
+          <button id="radio-ptt" disabled>Hold to Talk</button>
+        </div>
+
+        <div id="radio-channel-display"></div>
+        <div id="radio-log" class="radio-log"></div>
+        <div id="radio-peers" class="radio-peers"></div>
+      </div>
+
+      <button id="dashRadioOpen">Open Full Radio Page</button>
+    </div>
+
+    <!-- WIDGET: LUMBERJACK FRIENDS (SCROLLABLE, ACTIONS ONLY) -->
+    <div class="rtg-widget">
+      <h2>Lumberjack Friends</h2>
+      <div class="rtg-dashboard-card">
+        <div id="dashFriendsList"></div>
+      </div>
+      <button id="dashFriendsOpen">Open Friends & Squads Page</button>
+    </div>
+
+    <!-- WIDGET: ADS / CLIENT VISIBILITY -->
+    <div class="rtg-widget">
+      <h2>Client Visibility & Ads</h2>
+      <div class="rtg-dashboard-card">
+        <p>Pay to display your page to clients browsing RTG Online.</p>
+        <button id="dashAdsPurchase">Purchase Ad Slot</button>
+        <button id="dashAdsManage">Manage Ads</button>
+      </div>
+    </div>
+
+    <!-- WIDGET: PROFILE / GLOBAL FEED ENTRY POINTS (NO EDITING HERE) -->
+    <div class="rtg-widget">
+      <h2>Profile & Global Feed</h2>
+      <div class="rtg-dashboard-card">
+        <p>This dashboard is what other tree guys see.</p>
+        <button id="dashProfileOpen">Edit Profile Page</button>
+        <button id="dashGlobalFeedOpen">Open Global Lumberjack Feed</button>
+      </div>
+    </div>
+
+    <!-- WIDGET: SETTINGS -->
+    <div class="rtg-widget">
+      <h2>Settings</h2>
+      <div class="rtg-dashboard-card" id="dashSettingsQuick">
+        <!-- quick toggles / summary -->
+      </div>
+      <button id="dashSettingsOpen">Open Full Settings Page</button>
+    </div>
+
+  </div>
+
+  <!-- JS: main dash + radio + weather -->
+  <script src="/rtg-online/tree-guy/js/dashboard.js"></script>
+  <script src="/rtg-online/tree-guy/js/radio.js"></script>
 </body>
 </html>
