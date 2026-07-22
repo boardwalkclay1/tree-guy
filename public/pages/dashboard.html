@@ -2,13 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RTG Online — Tree Guy Dashboard</title>
+  <title>REAL TREE GUY – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="icon" href="/public/assets/img/logos/rtg-online-logo.jpg" type="image/jpeg">
-  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-dashboard.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+  <link rel="stylesheet" href="/assets/css/radio.css">
+
+  <style>
+    /* LOGO */
+    #rtgLogo {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      cursor: pointer !important;
+    }
+
+    /* BACKGROUND */
+    #rtgBackground {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("/assets/img/backgrounds/rtg-dash-back.jpg") center center / cover no-repeat;
+      z-index: -1;
+    }
+
+    /* SIDE MENU — HIDDEN BY DEFAULT */
+    #rtgMenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+
+      /* Hidden state */
+      transform: translateX(-260px);
+      opacity: 0;
+      pointer-events: none;
+
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      z-index: 9999;
+    }
+
+    /* Visible state */
+    #rtgMenu.open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #rtgMenu a {
+      color: white;
+      font-size: 1.2rem;
+      text-decoration: none;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* RTG ONLINE IMAGE TILE — NO BOX, NO TEXT */
+    .rtg-online-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .rtg-card--rtgonline {
+      padding: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+  </style>
 </head>
 
-<body>
+<body class="rtg-dashboard">
+
+  <!-- SIDE MENU -->
+  <div id="rtgMenu">
+    <a href="/pages/profile.html">👤 Profile</a>
+    <a href="/pages/customers.html">📁 Customers</a>
+    <a href="/pages/contracts.html">📄 Contracts</a>
+    <a href="/pages/tree-id.html">🌳 Tree Identifier</a>
+    <a href="/pages/weather.html">🌤️ Weather</a>
+    <a href="/pages/map.html">🗺️ Map</a>
+    <a href="/pages/calendar.html">📅 Calendar</a>
+    <a href="/pages/shop.html">🛒 Shop</a>
+    <a href="/pages/rtg-online.html">🟧 RTG Online</a>
+  </div>
 
   <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
@@ -16,127 +105,156 @@
   <!-- TOP BAR -->
   <div class="rtg-topbar">
     <div class="rtg-topbar-left">
-      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-logo">
+      <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
       <div class="rtg-topbar-title">
-        <div class="rtg-topbar-main">RTG ONLINE</div>
-        <div class="rtg-topbar-sub">Tree Guy Social • Squads • Messaging • Jobs</div>
+        <div class="rtg-topbar-main">REAL TREE GUY OPS CENTER</div>
+        <div class="rtg-topbar-sub">Field Command • Tree Work OS</div>
       </div>
+    </div>
+
+    <div class="rtg-topbar-center">
+      <div id="rtgClock" class="rtg-clock">--:--:--</div>
     </div>
 
     <div class="rtg-topbar-right">
-      <button class="rtg-top-btn" id="openSettings">⚙️</button>
-      <button class="rtg-top-btn" id="openNotifications">🔔</button>
-      <button class="rtg-top-btn" id="openMessages">💬</button>
+      <a href="/pages/weather.html" class="rtg-topbar-link">🌤️</a>
+      <a href="/pages/map.html" class="rtg-topbar-link">🗺️</a>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <main class="tg-main">
+  <main class="rtg-main">
 
-    <!-- PROFILE HEADER -->
-    <header class="tg-header glass-card">
-      <img id="tgAvatar" class="tg-avatar">
-      <div class="tg-header-info">
-        <h1 id="tgName"></h1>
-        <p id="tgHeaderMsg"></p>
-        <p id="tgRole"></p>
-        <p id="tgLocation"></p>
-      </div>
-    </header>
+    <!-- QUICK ACTIONS -->
+    <section class="rtg-quick-actions">
+      <button class="rtg-qa-btn" onclick="location.href='/pages/customers.html'">➕ Add Customer</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/contracts.html'">📄 New Contract</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/calendar.html'">📅 Schedule</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Weather</button>
+      <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
+    </section>
 
-    <!-- GRID -->
-    <div class="tg-grid">
-
-      <!-- LEFT COLUMN -->
-      <section class="tg-left glass-card">
-        <h2>Clients</h2>
-        <div id="tgClientsList"></div>
-
-        <h2>Map</h2>
-        <div id="tgMapList"></div>
-
-        <h2>Squads</h2>
-        <div id="tgSquadList"></div>
-
-        <button id="createSquadBtn" class="rtg-btn">➕ Create Squad</button>
-      </section>
-
-      <!-- CENTER COLUMN (FULL SOCIAL MEDIA FEED) -->
-      <section class="tg-center glass-card">
-
-        <!-- POST CREATOR -->
-        <div class="tg-create-post">
-          <textarea id="tgPostContent" placeholder="Share a video, photo, or update..."></textarea>
-          <input id="tgPostMediaUrl" type="text" placeholder="Media URL (optional)">
-          <select id="tgPostType">
-            <option value="text">Text</option>
-            <option value="photo">Photo</option>
-            <option value="video">Video</option>
-          </select>
-          <button id="tgPostSubmit" class="rtg-btn">Post</button>
+    <!-- RADIO MODULE -->
+    <section class="rtg-radio-module">
+      <div id="radio-widget" class="radio-widget">
+        <div class="radio-header">
+          <span class="radio-title">Crew Radio</span>
+          <span id="radio-status" class="radio-status radio-status--disconnected">Disconnected</span>
         </div>
 
-        <!-- FEED -->
-        <div id="tgFeed" class="tg-feed"></div>
+        <div class="radio-body">
+          <div class="radio-row">
+            <label for="radio-channel" class="radio-label">Channel</label>
+            <select id="radio-channel" class="radio-select">
+              <option value="1">Channel 1</option>
+              <option value="2">Channel 2</option>
+              <option value="3">Channel 3</option>
+              <option value="4">Channel 4</option>
+            </select>
+          </div>
 
-      </section>
+          <div class="radio-row">
+            <button id="radio-connect" class="radio-btn radio-btn--primary">Connect</button>
+            <button id="radio-disconnect" class="radio-btn radio-btn--ghost" disabled>Disconnect</button>
+          </div>
 
-      <!-- RIGHT COLUMN -->
-      <section class="tg-right glass-card">
+          <div class="radio-row radio-row--ptt">
+            <button id="radio-ptt" class="radio-ptt-btn" disabled>Hold to Talk</button>
+          </div>
 
-        <h2>Messages</h2>
-        <div id="tgMessages"></div>
+          <div class="radio-footer">
+            <span id="radio-channel-display">Channel: 1</span>
+            <div id="radio-log" class="radio-log"></div>
+          </div>
 
-        <h2>Friends</h2>
-        <div id="tgFriends"></div>
+          <div id="radio-peers" class="radio-peers"></div>
+        </div>
+      </div>
+    </section>
 
-        <h2>Skills</h2>
-        <ul id="tgSkills"></ul>
-        <form id="tgSkillForm">
-          <input id="tgSkillName" type="text" placeholder="Skill" required>
-          <input id="tgSkillLevel" type="text" placeholder="Level" required>
-          <button class="rtg-btn">Add Skill</button>
-        </form>
+    <!-- NOTIFICATIONS -->
+    <section class="rtg-notifications">
+      <h2 class="notif-title">🔔 Notifications</h2>
+      <div id="rtgNotifList" class="notif-list">
+        <p class="notif-empty">No notifications.</p>
+      </div>
+    </section>
 
-        <h2>Equipment</h2>
-        <ul id="tgEquipment"></ul>
-        <form id="tgEquipmentForm">
-          <input id="tgEquipmentName" type="text" placeholder="Equipment" required>
-          <input id="tgEquipmentYears" type="number" placeholder="Years" required>
-          <button class="rtg-btn">Add Equipment</button>
-        </form>
+    <!-- GAUGES -->
+    <section class="rtg-gauge-row">
+      <div class="rtg-gauge-card">
+        <h2>💨 Wind Hazard</h2>
+        <div class="arc-gauge">
+          <div class="arc-gauge-inner"></div>
+          <div class="arc-needle" id="windNeedle"></div>
+        </div>
+        <div class="gauge-readout" id="windSpeedReadout">-- mph</div>
+      </div>
 
-      </section>
+      <div class="rtg-gauge-card">
+        <h2>🌲 Tree Hazard</h2>
+        <div class="bar-gauge">
+          <div class="bar-gauge-fill" id="hazardBar"></div>
+        </div>
+        <div class="gauge-readout" id="hazardScoreReadout">Score: --</div>
+      </div>
+    </section>
 
-    </div>
+    <!-- WEATHER + JOB -->
+    <section class="rtg-widget">
+      <div class="rtg-dashboard-card">
+        <div class="card-header">
+          <span>🌤️ Weather Snapshot</span>
+          <a href="/pages/weather.html">→</a>
+        </div>
+        <div class="card-body weather-body">
+          <div class="weather-main">
+            <div id="dashWxTemp" class="wx-temp">--°F</div>
+            <div id="dashWxCond" class="wx-cond">Loading…</div>
+          </div>
+          <div class="weather-meta">
+            <div id="dashWxWind">Wind: --</div>
+            <div id="dashWxGust">Gusts: --</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rtg-dashboard-card">
+        <div class="card-header">
+          <span>📋 Today’s Job</span>
+          <a href="/pages/customers.html">→</a>
+        </div>
+        <div class="card-body" id="dashJobBody">Loading…</div>
+      </div>
+    </section>
+
+    <!-- GRID -->
+    <section class="rtg-grid">
+      <a href="/pages/profile.html" class="rtg-card">👤<span>Profile</span></a>
+      <a href="/pages/customers.html" class="rtg-card">📁<span>Customers</span></a>
+      <a href="/pages/measurement.html" class="rtg-card">📏<span>Measurement</span></a>
+      <a href="/pages/contracts.html" class="rtg-card">📄<span>Contracts</span></a>
+      <a href="/pages/calendar.html" class="rtg-card">📅<span>Calendar</span></a>
+      <a href="/pages/flyers.html" class="rtg-card">🎴<span>Flyers</span></a>
+      <a href="/pages/map.html" class="rtg-card">🗺️<span>Map</span></a>
+      <a href="/pages/shop.html" class="rtg-card">🛒<span>Shop</span></a>
+
+      <!-- RTG ONLINE IMAGE — NO BOX, NO TEXT, DOUBLE SIZE -->
+      <a href="/rtg-online/tree-guy/pages/dashboard.html" class="rtg-card rtg-card--xl rtg-card--rtgonline">
+        <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-online-img">
+      </a>
+    </section>
+
   </main>
 
-  <!-- SETTINGS PANEL -->
-  <div id="tgSettingsPanel" class="tg-panel glass-card hidden">
-    <h2>Settings</h2>
-    <form id="tgProfileForm">
-      <input id="tgProfileName" type="text" placeholder="Name" required>
-      <input id="tgProfileRole" type="text" placeholder="Role" required>
-      <input id="tgProfileCity" type="text" placeholder="City" required>
-      <input id="tgProfileState" type="text" placeholder="State" required>
-      <input id="tgProfileAvatar" type="text" placeholder="Avatar URL">
-      <textarea id="tgProfileBio" placeholder="Bio"></textarea>
-      <button class="rtg-btn">Save</button>
-    </form>
-  </div>
+  <script src="/pages/assets/js/dashboard.js"></script>
+  <script src="/pages/assets/js/radio.js"></script>
 
-  <!-- NOTIFICATIONS PANEL -->
-  <div id="tgNotificationsPanel" class="tg-panel glass-card hidden">
-    <h2>Notifications</h2>
-    <div id="tgNotifications"></div>
-  </div>
+  <script>
+    // Toggle menu on logo click
+    document.getElementById("rtgLogo").addEventListener("click", () => {
+      document.getElementById("rtgMenu").classList.toggle("open");
+    });
+  </script>
 
-  <!-- MESSAGES PANEL -->
-  <div id="tgMessagesPanel" class="tg-panel glass-card hidden">
-    <h2>Messages</h2>
-    <div id="tgMessageThreads"></div>
-  </div>
-
-  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
 </body>
 </html>
