@@ -1,341 +1,428 @@
 // ============================================================
-// REAL TREE GUY — RADIO JS
-// Jobsite Radio • Channel State • Peer Presence • PTT
-// Cloudflare Worker-backed signaling + presence
+// REAL TREE GUY OS — CONTRACTS CENTER (FINAL FIXED VERSION)
 // ============================================================
 
-(function () {
-  const el = {
-    status: document.getElementById("radio-status"),
-    channelSelect: document.getElementById("radio-channel"),
-    connectBtn: document.getElementById("radio-connect"),
-    disconnectBtn: document.getElementById("radio-disconnect"),
-    pttBtn: document.getElementById("radio-ptt"),
-    channelDisplay: document.getElementById("radio-channel-display"),
-    log: document.getElementById("radio-log"),
-    peers: document.getElementById("radio-peers")
-  };
+// ALWAYS hit your Worker domain directly
+const API_BASE = "https://api.realtreeguy.com/api";
 
-  const operatorName =
-    (document.body && document.body.dataset.radioName) ||
-    "Operator";
+// ============================================================
+// SAFE JSON WRAPPER — NEVER CRASHES
+// ============================================================
+async function safeJson(res, url) {
+  const text = await res.text();
 
-  const API_BASE = "https://api.realtreeguy.com/api/radio";
-
-  const state = {
-    connected: false,
-    channel: el.channelSelect ? el.channelSelect.value : "1",
-    talking: false,
-    peers: new Map(),
-    selfId: `${operatorName}-${Math.random().toString(36).slice(2, 8)}`,
-    ws: null
-  };
-
-  function appendLog(message, type = "info") {
-    if (!el.log) return;
-    const ts = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    });
-    const line = document.createElement("div");
-    line.className = `radio-log-line radio-log-line--${type}`;
-    line.textContent = `[${ts}] ${message}`;
-    el.log.appendChild(line);
-    el.log.scrollTop = el.log.scrollHeight;
+  // If Worker returned HTML, do NOT crash
+  if (!text || text.trim().startsWith("<")) {
+    console.error("❌ API returned HTML instead of JSON:", url);
+    return null;
   }
 
-  function renderPeers() {
-    if (!el.peers) return;
-    el.peers.innerHTML = "";
-
-    const entries = Array.from(state.peers.values())
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    if (entries.length === 0) {
-      const li = document.createElement("div");
-      li.className = "radio-peer-empty";
-      li.textContent = "No other operators connected.";
-      el.peers.appendChild(li);
-      return;
-    }
-
-    for (const peer of entries) {
-      const li = document.createElement("div");
-      li.className = "radio-peer";
-
-      const name = document.createElement("span");
-      name.className = "radio-peer-name";
-      name.textContent = peer.name;
-
-      const chan = document.createElement("span");
-      chan.className = "radio-peer-channel";
-      chan.textContent = `CH ${peer.channel}`;
-
-      li.appendChild(name);
-      li.appendChild(chan);
-      el.peers.appendChild(li);
-    }
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("❌ JSON parse failed at:", url, err);
+    return null;
   }
+}
 
-  function setStatus(connected) {
-    state.connected = connected;
-
-    if (el.status) {
-      el.status.textContent = connected ? "Connected" : "Disconnected";
-      el.status.classList.toggle("radio-status--connected", connected);
-      el.status.classList.toggle("radio-status--disconnected", !connected);
-    }
-
-    if (el.connectBtn) el.connectBtn.disabled = connected;
-    if (el.disconnectBtn) el.disconnectBtn.disabled = !connected;
-    if (el.pttBtn) el.pttBtn.disabled = !connected;
-
-    if (connected) {
-      appendLog(`Radio connected on channel ${state.channel}`, "ok");
-    } else {
-      appendLog("Radio disconnected", "warn");
-      state.peers.clear();
-      renderPeers();
-    }
-  }
-
-  function setChannel(channel) {
-    state.channel = channel;
-    if (el.channelDisplay) {
-      el.channelDisplay.textContent = `Channel: ${channel}`;
-    }
-    appendLog(`Switched to channel ${channel}`, "info");
-
-    if (state.connected && state.ws && state.ws.readyState === WebSocket.OPEN) {
-      state.ws.send(JSON.stringify({
-        type: "channel-change",
-        id: state.selfId,
-        name: operatorName,
-        channel
-      }));
-    }
-  }
-
-  function startTalking() {
-    if (!state.connected || state.talking) return;
-    state.talking = true;
-
-    if (el.pttBtn) {
-      el.pttBtn.classList.add("radio-ptt-btn--active");
-      el.pttBtn.textContent = "Talking…";
-    }
-
-    appendLog(`Transmitting on channel ${state.channel}`, "tx");
-
-    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-      state.ws.send(JSON.stringify({
-        type: "tx-start",
-        id: state.selfId,
-        name: operatorName,
-        channel: state.channel
-      }));
-    }
-  }
-
-  function stopTalking() {
-    if (!state.talking) return;
-    state.talking = false;
-
-    if (el.pttBtn) {
-      el.pttBtn.classList.remove("radio-ptt-btn--active");
-      el.pttBtn.textContent = "Hold to Talk";
-    }
-
-    appendLog("Stopped transmitting", "tx");
-
-    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-      state.ws.send(JSON.stringify({
-        type: "tx-stop",
-        id: state.selfId,
-        name: operatorName,
-        channel: state.channel
-      }));
-    }
-  }
-
-  async function connect() {
-    if (state.connected) return;
-
+// ============================================================
+// API WRAPPER
+// ============================================================
+const API = {
+  async get(path) {
+    const url = `${API_BASE}${path}`;
     try {
-      const res = await fetch(`${API_BASE}/connect`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: state.selfId,
-          name: operatorName,
-          channel: state.channel
-        })
+      const res = await fetch(url, {
+        headers: { "Accept": "application/json" }
       });
-
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        appendLog(data.error || "Failed to connect radio", "warn");
-        return;
-      }
-
-      const wsUrl = data.wsUrl;
-      if (!wsUrl) {
-        appendLog("No signaling URL from radio worker", "warn");
-        return;
-      }
-
-      const ws = new WebSocket(wsUrl.replace(/^http/, "ws"));
-      state.ws = ws;
-
-      ws.onopen = () => {
-        setStatus(true);
-        ws.send(JSON.stringify({
-          type: "join",
-          id: state.selfId,
-          name: operatorName,
-          channel: state.channel
-        }));
-      };
-
-      ws.onmessage = (event) => {
-        let msg;
-        try {
-          msg = JSON.parse(event.data);
-        } catch {
-          return;
-        }
-        if (!msg || msg.id === state.selfId) return;
-
-        switch (msg.type) {
-          case "join":
-            state.peers.set(msg.id, {
-              name: msg.name,
-              channel: msg.channel,
-              lastSeen: Date.now()
-            });
-            appendLog(`${msg.name} connected on CH ${msg.channel}`, "peer");
-            break;
-
-          case "leave":
-            state.peers.delete(msg.id);
-            appendLog(`${msg.name} disconnected`, "peer");
-            break;
-
-          case "channel-change":
-            state.peers.set(msg.id, {
-              name: msg.name,
-              channel: msg.channel,
-              lastSeen: Date.now()
-            });
-            appendLog(`${msg.name} moved to CH ${msg.channel}`, "peer");
-            break;
-
-          case "tx-start":
-            appendLog(`${msg.name} talking on CH ${msg.channel}`, "peer-tx");
-            break;
-
-          case "tx-stop":
-            appendLog(`${msg.name} stopped talking`, "peer-tx");
-            break;
-        }
-
-        renderPeers();
-      };
-
-      ws.onclose = () => {
-        stopTalking();
-        setStatus(false);
-        state.ws = null;
-      };
-
-      ws.onerror = () => {
-        appendLog("Radio signaling error", "warn");
-      };
+      return await safeJson(res, url);
     } catch (err) {
-      appendLog("Radio connect failed", "warn");
+      console.error("❌ GET failed:", url, err);
+      return null;
+    }
+  },
+
+  async post(path, body) {
+    const url = `${API_BASE}${path}`;
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+      return await safeJson(res, url);
+    } catch (err) {
+      console.error("❌ POST failed:", url, err);
+      return null;
     }
   }
+};
 
-  function disconnect() {
-    stopTalking();
+// ============================================================
+// STATE
+// ============================================================
+let userProfile = {};
+let templates = [];
+let clients = [];
+let attachedPhotos = [];
 
-    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
-      state.ws.send(JSON.stringify({
-        type: "leave",
-        id: state.selfId,
-        name: operatorName,
-        channel: state.channel
-      }));
-      state.ws.close();
-    }
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  loadProfile();
+  loadTemplates();
+  loadClients();
+  wireEvents();
+});
 
-    state.ws = null;
-    setStatus(false);
+// ============================================================
+// LOAD USER PROFILE
+// ============================================================
+async function loadProfile() {
+  const data = await API.get("/profile");
+  if (!data) {
+    console.warn("⚠ Profile load failed — using fallback");
+    return;
   }
 
-  function bindEvents() {
-    if (el.channelSelect) {
-      el.channelSelect.addEventListener("change", (e) => {
-        setChannel(e.target.value);
-      });
-    }
+  userProfile = data;
 
-    if (el.connectBtn) {
-      el.connectBtn.addEventListener("click", connect);
-    }
+  document.getElementById("userLogo").src =
+    userProfile.logo || "/assets/img/default-logo.png";
 
-    if (el.disconnectBtn) {
-      el.disconnectBtn.addEventListener("click", disconnect);
-    }
+  document.getElementById("treeGuyName").value =
+    userProfile.name || "";
+}
 
-    if (el.pttBtn) {
-      el.pttBtn.addEventListener("mousedown", startTalking);
-      el.pttBtn.addEventListener("mouseup", stopTalking);
-      el.pttBtn.addEventListener("mouseleave", stopTalking);
-
-      el.pttBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        startTalking();
-      });
-      el.pttBtn.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        stopTalking();
-      });
-      el.pttBtn.addEventListener("touchcancel", (e) => {
-        e.preventDefault();
-        stopTalking();
-      });
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Space") {
-        if (!state.talking) startTalking();
-      }
-    });
-    document.addEventListener("keyup", (e) => {
-      if (e.code === "Space") {
-        stopTalking();
-      }
-    });
+// ============================================================
+// LOAD TEMPLATES
+// ============================================================
+async function loadTemplates() {
+  const data = await API.get("/templates");
+  if (!data) {
+    console.warn("⚠ Templates load failed — using empty list");
+    return;
   }
 
-  window.RTGRadio = {
-    connect,
-    disconnect,
-    setChannel,
-    startTalking,
-    stopTalking,
-    getState() {
-      return { ...state, peers: Array.from(state.peers.values()) };
-    }
+  templates = data;
+
+  const select = document.getElementById("templateSelect");
+  select.innerHTML = `<option value="">Choose template...</option>` +
+    templates.map(t =>
+      `<option value="${t.id}">${t.type} – ${t.name}</option>`
+    ).join("");
+}
+
+// ============================================================
+// LOAD CLIENTS
+// ============================================================
+async function loadClients() {
+  const data = await API.get("/clients");
+  if (!data) {
+    console.warn("⚠ Clients load failed — using empty list");
+    return;
+  }
+
+  clients = data;
+
+  const select = document.getElementById("clientSelect");
+  select.innerHTML = `<option value="">Select client...</option>` +
+    clients.map(c =>
+      `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
+    ).join("");
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+function wireEvents() {
+  document.getElementById("templateSelect")
+    .addEventListener("change", onTemplateChange);
+
+  document.getElementById("clientSelect")
+    .addEventListener("change", onClientChange);
+
+  document.getElementById("previewBtn")
+    .addEventListener("click", () => previewDoc("Contract"));
+
+  document.getElementById("saveBtn")
+    .addEventListener("click", () => saveDoc("Contract"));
+
+  document.getElementById("emailBtn")
+    .addEventListener("click", () => emailDoc("Contract"));
+
+  document.getElementById("photoUpload")
+    .addEventListener("change", onPhotoUpload);
+
+  document.getElementById("newClientBtn")
+    .addEventListener("click", openClientModal);
+
+  document.getElementById("closeClientModal")
+    .addEventListener("click", closeClientModal);
+
+  document.getElementById("saveClientBtn")
+    .addEventListener("click", saveClient);
+
+  document.getElementById("customTemplateBtn")
+    .addEventListener("click", saveCurrentAsTemplate);
+}
+
+// ============================================================
+// TEMPLATE CHANGE
+// ============================================================
+function onTemplateChange(e) {
+  const id = e.target.value;
+  if (!id) return;
+
+  const t = templates.find(t => String(t.id) === String(id));
+  if (!t) return;
+
+  document.getElementById("scope").value = t.scope || "";
+  document.getElementById("extraTerms").value = t.body || "";
+}
+
+// ============================================================
+// CLIENT CHANGE
+// ============================================================
+function onClientChange(e) {
+  const id = e.target.value;
+  if (!id) return;
+
+  const c = clients.find(c => String(c.id) === String(id));
+  if (!c) return;
+
+  document.getElementById("clientName").value = c.name || "";
+  document.getElementById("clientAddress").value = c.address || "";
+  document.getElementById("clientPhone").value = c.phone || "";
+}
+
+// ============================================================
+// PHOTO UPLOAD
+// ============================================================
+async function onPhotoUpload(e) {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+
+  for (const file of files) {
+    const uploaded = await uploadPhoto(file);
+    if (uploaded) attachedPhotos.push(uploaded);
+  }
+
+  renderPhotoList();
+}
+
+async function uploadPhoto(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const url = `${API_BASE}/upload-photo`;
+
+  try {
+    const res = await fetch(url, { method: "POST", body: formData });
+    return await safeJson(res, url);
+  } catch (err) {
+    console.error("❌ Photo upload failed:", err);
+    return null;
+  }
+}
+
+function renderPhotoList() {
+  const list = document.getElementById("photoList");
+
+  if (!attachedPhotos.length) {
+    list.textContent = "No photos attached.";
+    return;
+  }
+
+  list.innerHTML = attachedPhotos.map(p =>
+    `<span>📷 ${p.name || "Photo"} (${p.id})</span>`
+  ).join(" ");
+}
+
+// ============================================================
+// COLLECT FIELDS
+// ============================================================
+function collectFields() {
+  return {
+    treeGuyName: document.getElementById("treeGuyName").value,
+    clientName: document.getElementById("clientName").value,
+    clientAddress: document.getElementById("clientAddress").value,
+    clientPhone: document.getElementById("clientPhone").value,
+    scope: document.getElementById("scope").value,
+    totalPrice: document.getElementById("totalPrice").value,
+    deposit: document.getElementById("deposit").value,
+    paymentDueDate: document.getElementById("paymentDueDate").value,
+    jobDate: document.getElementById("jobDate").value,
+    extraTerms: document.getElementById("extraTerms").value,
+    clientSignature: document.getElementById("clientSignature").value,
+    treeGuySignature: document.getElementById("treeGuySignature").value,
+    clientAgreed: document.getElementById("clientAgreed").checked
+  };
+}
+
+// ============================================================
+// PREVIEW
+// ============================================================
+function previewDoc(type) {
+  const fields = collectFields();
+
+  const photosHtml = attachedPhotos.length
+    ? `<h3>Attached Photos</h3>
+       <ul>${attachedPhotos.map(p =>
+         `<li><a href="${p.url}" target="_blank">${p.name || p.id}</a></li>`
+       ).join("")}</ul>`
+    : "";
+
+  const html = `
+    <h2>${type}</h2>
+    <p><strong>Tree Guy / Company:</strong> ${fields.treeGuyName}</p>
+    <p><strong>Client:</strong> ${fields.clientName}</p>
+    <p><strong>Address:</strong> ${fields.clientAddress}</p>
+    <p><strong>Phone:</strong> ${fields.clientPhone}</p>
+    <hr>
+    <h3>Scope of Work</h3>
+    <p>${escapeHtml(fields.scope).replace(/\n/g, "<br>")}</p>
+    <h3>Payment</h3>
+    <p><strong>Total Price:</strong> $${fields.totalPrice || "0.00"}</p>
+    <p><strong>Deposit:</strong> $${fields.deposit || "0.00"}</p>
+    <p><strong>Payment Due Date:</strong> ${fields.paymentDueDate || "N/A"}</p>
+    <p><strong>Job Date:</strong> ${fields.jobDate || "N/A"}</p>
+    <h3>Extra Terms</h3>
+    <p>${escapeHtml(fields.extraTerms).replace(/\n/g, "<br>")}</p>
+    ${photosHtml}
+    <hr>
+    <h3>Signatures</h3>
+    <p><strong>Client Signature:</strong> ${fields.clientSignature}</p>
+    <p><strong>Tree Guy Signature:</strong> ${fields.treeGuySignature}</p>
+    <p><strong>Client Agreed:</strong> ${fields.clientAgreed ? "Yes" : "No"}</p>
+  `;
+
+  document.getElementById("previewContent").innerHTML = html;
+}
+
+// ============================================================
+// SAVE CONTRACT
+// ============================================================
+async function saveDoc(type) {
+  const fields = collectFields();
+  const clientId = document.getElementById("clientSelect").value || null;
+  const templateId = document.getElementById("templateSelect").value || null;
+
+  await API.post("/documents", {
+    type,
+    client_id: clientId,
+    template_id: templateId,
+    body: fields,
+    photos: attachedPhotos,
+    created_by: userProfile.id || null
+  });
+
+  alert(type + " saved!");
+}
+
+// ============================================================
+// EMAIL CONTRACT
+// ============================================================
+async function emailDoc(type) {
+  const clientId = document.getElementById("clientSelect").value;
+  const client = clients.find(c => String(c.id) === String(clientId));
+
+  if (!client || !client.email) {
+    alert("Client must have an email to send contract.");
+    return;
+  }
+
+  previewDoc(type);
+  const html = document.getElementById("previewContent").innerHTML;
+
+  await API.post("/email", {
+    to: client.email,
+    subject: type + " from Real Tree Guy OS",
+    body: html
+  });
+
+  alert(type + " emailed to " + client.email + "!");
+}
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+function escapeHtml(str = "") {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// ============================================================
+// CLIENT MODAL
+// ============================================================
+function openClientModal() {
+  document.getElementById("clientModal").style.display = "flex";
+}
+
+function closeClientModal() {
+  document.getElementById("clientModal").style.display = "none";
+}
+
+// ============================================================
+// SAVE CLIENT
+// ============================================================
+async function saveClient() {
+  const name = document.getElementById("modalClientName").value.trim();
+  const email = document.getElementById("modalClientEmail").value.trim();
+  const phone = document.getElementById("modalClientPhone").value.trim();
+  const address = document.getElementById("modalClientAddress").value.trim();
+
+  if (!name) {
+    alert("Client name is required.");
+    return;
+  }
+
+  const saved = await API.post("/clients", {
+    name, email, phone, address
+  });
+
+  if (!saved) {
+    alert("Client save failed.");
+    return;
+  }
+
+  clients.push(saved);
+  closeClientModal();
+  await loadClients();
+
+  const select = document.getElementById("clientSelect");
+  select.value = saved.id;
+  onClientChange({ target: select });
+}
+
+// ============================================================
+// SAVE CURRENT AS TEMPLATE
+// ============================================================
+async function saveCurrentAsTemplate() {
+  const fields = collectFields();
+  const name = prompt("Template name:");
+  if (!name) return;
+
+  const payload = {
+    name,
+    type: "Tree Work Contract",
+    scope: fields.scope,
+    body: fields.extraTerms
   };
 
-  if (el.channelSelect) {
-    setChannel(el.channelSelect.value);
+  const saved = await API.post("/templates", payload);
+  if (!saved) {
+    alert("Template save failed.");
+    return;
   }
-  setStatus(false);
-  bindEvents();
-  renderPeers();
-  appendLog(`Radio widget ready as ${operatorName}`, "info");
-})();
+
+  templates.push(saved);
+  await loadTemplates();
+  alert("Template saved!");
+}
