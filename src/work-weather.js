@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER WORKER (FINAL VERSION)
+// REAL TREE GUY OS — WEATHER WORKER (FIXED + CORRECT PATHS)
 // ============================================================
 
 export async function handle(request, env) {
@@ -10,7 +10,7 @@ export async function handle(request, env) {
   // ----------------------------------------------------------
   // GET USER LOCATION (from users table)
   // ----------------------------------------------------------
-  if (path === "/rtg/api/weather/location" && request.method === "GET") {
+  if (path === "/api/weather/location" && request.method === "GET") {
     try {
       const userId = url.searchParams.get("user");
 
@@ -38,7 +38,7 @@ export async function handle(request, env) {
   // ----------------------------------------------------------
   // MAIN WEATHER FETCH
   // ----------------------------------------------------------
-  if (path === "/rtg/api/weather" && request.method === "GET") {
+  if (path === "/api/weather" && request.method === "GET") {
     const lat = parseFloat(url.searchParams.get("lat"));
     const lon = parseFloat(url.searchParams.get("lon"));
 
