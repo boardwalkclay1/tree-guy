@@ -1,201 +1,286 @@
+// rtg-dash.js
+// FULL SOCIAL + CLIENT + PROFILE + SKILLS + EQUIPMENT WIRING
+
 const API_BASE = "/api/rtg-online/tree-guy";
-const DASH_API = `${API_BASE}/dashboard`;
-const PROFILE_API = `${API_BASE}/profile`;
-const POST_API = `${API_BASE}/post`;
-const LIKE_API = `${API_BASE}/like`;
-const COMMENT_API = `${API_BASE}/comment`;
-const SKILL_API = `${API_BASE}/skill`;
-const EQUIPMENT_API = `${API_BASE}/equipment`;
+const treeGuyId = new URLSearchParams(window.location.search).get("id");
+
+// ---------- UTIL ----------
+const $ = sel => document.querySelector(sel);
+const create = (tag, cls) => {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  return el;
+};
 
 async function apiGet(path) {
-  const treeGuyId = localStorage.getItem("rtg_user_id");
-  const res = await fetch(`${path}?id=${treeGuyId}`);
+  const res = await fetch(`${API_BASE}/${path}?id=${encodeURIComponent(treeGuyId)}`);
+  if (!res.ok) throw new Error(`GET ${path} failed`);
   return res.json();
 }
 
 async function apiPost(path, body) {
-  const treeGuyId = localStorage.getItem("rtg_user_id");
-  const res = await fetch(path, {
+  const res = await fetch(`${API_BASE}/${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...body, id: treeGuyId })
+    body: JSON.stringify(body)
   });
+  if (!res.ok) throw new Error(`POST ${path} failed`);
   return res.json();
 }
 
+// ---------- DASHBOARD LOAD ----------
 async function loadDashboard() {
-  const data = await apiGet(DASH_API);
+  const data = await apiGet("dashboard");
 
-  renderProfile(data.user, data.skills, data.equipment);
-  renderMap(data.customers, data.jobPosts);
-  renderSocialFeed(data.posts);
-  renderMessages(data.messages);
-  renderFriends(data.friends);
+  // PROFILE
+  if (data.user) {
+    $("#tgAvatar").src = data.user.avatar_url || "/assets/img/logos/rtg-online-logo.jpg";
+    $("#tgName").textContent = data.user.name || "Tree Guy";
+    $("#tgHeaderMsg").textContent = data.user.bio || "";
+    $("#tgRole").textContent = data.user.tree_role || "";
+    $("#tgLocation").textContent = `${data.user.city || ""}, ${data.user.state || ""}`.trim();
+    // preload profile form
+    $("#tgProfileName").value = data.user.name || "";
+    $("#tgProfileRole").value = data.user.tree_role || "";
+    $("#tgProfileCity").value = data.user.city || "";
+    $("#tgProfileState").value = data.user.state || "";
+    $("#tgProfileAvatar").value = data.user.avatar_url || "";
+    $("#tgProfileBio").value = data.user.bio || "";
+  }
+
+  // CLIENTS + MAP
+  renderMapList(data.customers || []);
+
+  // FEED
+  renderFeed(data.posts || []);
+
+  // MESSAGES
+  renderMessages(data.messages || []);
+
+  // FRIENDS
+  renderFriends(data.friends || []);
+
+  // SKILLS
+  renderSkills(data.skills || []);
+
+  // EQUIPMENT
+  renderEquipment(data.equipment || []);
 }
 
-function renderProfile(user, skills, equipment) {
-  document.getElementById("tgName").textContent = user.name;
-  document.getElementById("tgAvatar").src =
-    user.avatar_url || "/assets/default-avatar.png";
-  document.getElementById("tgHeaderMsg").textContent = user.bio || "";
-  document.getElementById("tgRole").textContent = user.tree_role || "";
-  document.getElementById("tgLocation").textContent =
-    `${user.city || ""}, ${user.state || ""}`;
-
-  // Prefill profile form
-  document.getElementById("tgProfileName").value = user.name || "";
-  document.getElementById("tgProfileRole").value = user.tree_role || "";
-  document.getElementById("tgProfileCity").value = user.city || "";
-  document.getElementById("tgProfileState").value = user.state || "";
-  document.getElementById("tgProfileAvatar").value = user.avatar_url || "";
-  document.getElementById("tgProfileBio").value = user.bio || "";
-
-  // Skills
-  const skillsEl = document.getElementById("tgSkills");
-  skillsEl.innerHTML = skills
-    .map(s => `<li>${s.name} — ${s.level}</li>`)
-    .join("");
-
-  // Equipment
-  const equipEl = document.getElementById("tgEquipment");
-  equipEl.innerHTML = equipment
-    .map(e => `<li>${e.name} (${e.years} yrs)</li>`)
-    .join("");
-}
-
-function renderMap(customers, jobPosts) {
-  const el = document.getElementById("tgMapList");
-  el.innerHTML = "";
-
-  [...customers, ...jobPosts].forEach(c => {
-    el.innerHTML += `<div class="map-item">
-      ${c.name || c.title} — ${c.address || ""} 
-    </div>`;
+// ---------- MAP + CLIENTS ----------
+function renderMapList(customers) {
+  const container = $("#tgMapList");
+  container.innerHTML = "";
+  customers.forEach(c => {
+    const item = create("div", "map-item");
+    item.innerHTML = `
+      <div><strong>${c.name || "Client"}</strong></div>
+      <div>${c.address || ""}</div>
+      <div>${c.city || ""}, ${c.state || ""}</div>
+    `;
+    container.appendChild(item);
   });
 }
 
-function renderSocialFeed(posts) {
-  const el = document.getElementById("tgFeed");
-  el.innerHTML = posts
-    .map(
-      p => `<div class="feed-item" data-post-id="${p.id}">
-        <div class="feed-header">${p.user_name}</div>
-        <div class="feed-content">${p.content}</div>
-        ${p.media_url ? `<div class="feed-media"><img src="${p.media_url}"></div>` : ""}
-        <div class="feed-actions">
-          <button class="like-btn">Like (${p.like_count || 0})</button>
-        </div>
-        <div class="feed-comments">
-          ${(p.comments || [])
-            .map(c => `<div class="comment"><strong>${c.user_name}</strong>: ${c.text}</div>`)
-            .join("")}
-          <form class="comment-form">
-            <input type="text" name="comment" placeholder="Add a comment...">
-            <button type="submit">Send</button>
-          </form>
-        </div>
-      </div>`
-    )
-    .join("");
+// ---------- FEED ----------
+function renderFeed(posts) {
+  const feed = $("#tgFeed");
+  feed.innerHTML = "";
+  posts.forEach(p => {
+    const item = create("div", "feed-item");
 
-  // Attach like + comment handlers
-  el.querySelectorAll(".like-btn").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      const postEl = e.target.closest(".feed-item");
-      const postId = postEl.dataset.postId;
-      await apiPost(LIKE_API, { post_id: postId });
-      loadDashboard();
+    const header = create("div", "feed-header");
+    header.textContent = `${p.user_name || "Tree Guy"} • ${p.type || "post"}`;
+
+    const content = create("div", "feed-content");
+    content.textContent = p.content || "";
+
+    item.appendChild(header);
+    item.appendChild(content);
+
+    if (p.media_url) {
+      const media = create("div", "feed-media");
+      const img = create("img");
+      img.src = p.media_url;
+      media.appendChild(img);
+      item.appendChild(media);
+    }
+
+    const actions = create("div", "feed-actions");
+    const likeBtn = create("button", "like-btn");
+    likeBtn.textContent = `Like (${p.like_count || 0})`;
+    likeBtn.addEventListener("click", () => likePost(p.id));
+    actions.appendChild(likeBtn);
+    item.appendChild(actions);
+
+    const commentsWrap = create("div", "feed-comments");
+    (p.comments || []).forEach(c => {
+      const cEl = create("div", "comment");
+      cEl.textContent = `${c.user_name || "User"}: ${c.text}`;
+      commentsWrap.appendChild(cEl);
     });
-  });
 
-  el.querySelectorAll(".comment-form").forEach(form => {
-    form.addEventListener("submit", async (e) => {
+    const form = create("form", "comment-form");
+    const input = create("input");
+    input.placeholder = "Add a comment...";
+    const btn = create("button");
+    btn.type = "submit";
+    btn.textContent = "Comment";
+    form.appendChild(input);
+    form.appendChild(btn);
+
+    form.addEventListener("submit", async e => {
       e.preventDefault();
-      const postEl = e.target.closest(".feed-item");
-      const postId = postEl.dataset.postId;
-      const text = e.target.comment.value.trim();
+      const text = input.value.trim();
       if (!text) return;
-      await apiPost(COMMENT_API, { post_id: postId, text });
-      e.target.comment.value = "";
-      loadDashboard();
+      await commentPost(p.id, text);
+      await reloadFeedOnly();
     });
+
+    commentsWrap.appendChild(form);
+    item.appendChild(commentsWrap);
+
+    feed.appendChild(item);
   });
 }
 
+async function reloadFeedOnly() {
+  const data = await apiGet("dashboard");
+  renderFeed(data.posts || []);
+}
+
+async function likePost(postId) {
+  await apiPost("like", { id: treeGuyId, post_id: postId });
+  await reloadFeedOnly();
+}
+
+async function commentPost(postId, text) {
+  await apiPost("comment", { id: treeGuyId, post_id: postId, text });
+}
+
+// ---------- MESSAGES ----------
 function renderMessages(messages) {
-  const el = document.getElementById("tgMessages");
-  el.innerHTML = messages
-    .map(
-      m => `<div class="msg-item">
-        <strong>${m.from_name}</strong>: ${m.text}
-      </div>`
-    )
-    .join("");
+  const container = $("#tgMessages");
+  container.innerHTML = "";
+  messages.forEach(m => {
+    const item = create("div", "msg-item");
+    item.innerHTML = `
+      <div><strong>${m.from_name || "Unknown"}</strong></div>
+      <div>${m.text || ""}</div>
+    `;
+    container.appendChild(item);
+  });
 }
 
+// ---------- FRIENDS ----------
 function renderFriends(friends) {
-  const el = document.getElementById("tgFriends");
-  el.innerHTML = friends
-    .map(f => `<div class="friend-item">${f.friend_name}</div>`)
-    .join("");
+  const container = $("#tgFriends");
+  container.innerHTML = "";
+  friends.forEach(f => {
+    const item = create("div", "friend-item");
+    item.textContent = f.friend_name || "Friend";
+    container.appendChild(item);
+  });
 }
 
-// Profile form
-document.getElementById("tgProfileForm").addEventListener("submit", async (e) => {
+// ---------- SKILLS ----------
+function renderSkills(skills) {
+  const list = $("#tgSkills");
+  list.innerHTML = "";
+  skills.forEach(s => {
+    const li = create("li");
+    li.textContent = `${s.name} — ${s.level}`;
+    list.appendChild(li);
+  });
+}
+
+// ---------- EQUIPMENT ----------
+function renderEquipment(equipment) {
+  const list = $("#tgEquipment");
+  list.innerHTML = "";
+  equipment.forEach(e => {
+    const li = create("li");
+    li.textContent = `${e.name} — ${e.years} years`;
+    list.appendChild(li);
+  });
+}
+
+// ---------- FORM HANDLERS ----------
+
+// PROFILE UPDATE
+$("#tgProfileForm").addEventListener("submit", async e => {
   e.preventDefault();
   const body = {
-    name: document.getElementById("tgProfileName").value.trim(),
-    tree_role: document.getElementById("tgProfileRole").value.trim(),
-    city: document.getElementById("tgProfileCity").value.trim(),
-    state: document.getElementById("tgProfileState").value.trim(),
-    avatar_url: document.getElementById("tgProfileAvatar").value.trim(),
-    bio: document.getElementById("tgProfileBio").value.trim()
+    id: treeGuyId,
+    name: $("#tgProfileName").value.trim(),
+    tree_role: $("#tgProfileRole").value.trim(),
+    city: $("#tgProfileCity").value.trim(),
+    state: $("#tgProfileState").value.trim(),
+    avatar_url: $("#tgProfileAvatar").value.trim(),
+    bio: $("#tgProfileBio").value.trim()
   };
-  await apiPost(PROFILE_API, body);
-  loadDashboard();
+  await apiPost("profile", body);
+  await loadDashboard();
 });
 
-// Post form
-document.getElementById("tgPostForm").addEventListener("submit", async (e) => {
+// CREATE POST
+$("#tgPostForm").addEventListener("submit", async e => {
   e.preventDefault();
+  const content = $("#tgPostContent").value.trim();
+  if (!content) return;
   const body = {
-    content: document.getElementById("tgPostContent").value.trim(),
-    media_url: document.getElementById("tgPostMediaUrl").value.trim(),
-    type: document.getElementById("tgPostType").value
+    id: treeGuyId,
+    content,
+    media_url: $("#tgPostMediaUrl").value.trim(),
+    type: $("#tgPostType").value
   };
-  if (!body.content) return;
-  await apiPost(POST_API, body);
-  document.getElementById("tgPostContent").value = "";
-  document.getElementById("tgPostMediaUrl").value = "";
-  loadDashboard();
+  await apiPost("post", body);
+  $("#tgPostContent").value = "";
+  $("#tgPostMediaUrl").value = "";
+  await reloadFeedOnly();
 });
 
-// Skill form
-document.getElementById("tgSkillForm").addEventListener("submit", async (e) => {
+// ADD SKILL
+$("#tgSkillForm").addEventListener("submit", async e => {
   e.preventDefault();
   const body = {
-    name: document.getElementById("tgSkillName").value.trim(),
-    level: document.getElementById("tgSkillLevel").value.trim()
+    id: treeGuyId,
+    name: $("#tgSkillName").value.trim(),
+    level: $("#tgSkillLevel").value.trim()
   };
   if (!body.name || !body.level) return;
-  await apiPost(SKILL_API, body);
-  document.getElementById("tgSkillName").value = "";
-  document.getElementById("tgSkillLevel").value = "";
-  loadDashboard();
+  await apiPost("skill", body);
+  const data = await apiGet("dashboard");
+  renderSkills(data.skills || []);
+  $("#tgSkillName").value = "";
+  $("#tgSkillLevel").value = "";
 });
 
-// Equipment form
-document.getElementById("tgEquipmentForm").addEventListener("submit", async (e) => {
+// ADD EQUIPMENT
+$("#tgEquipmentForm").addEventListener("submit", async e => {
   e.preventDefault();
   const body = {
-    name: document.getElementById("tgEquipmentName").value.trim(),
-    years: parseInt(document.getElementById("tgEquipmentYears").value, 10) || 0
+    id: treeGuyId,
+    name: $("#tgEquipmentName").value.trim(),
+    years: Number($("#tgEquipmentYears").value || 0)
   };
   if (!body.name) return;
-  await apiPost(EQUIPMENT_API, body);
-  document.getElementById("tgEquipmentName").value = "";
-  document.getElementById("tgEquipmentYears").value = "";
-  loadDashboard();
+  await apiPost("equipment", body);
+  const data = await apiGet("dashboard");
+  renderEquipment(data.equipment || []);
+  $("#tgEquipmentName").value = "";
+  $("#tgEquipmentYears").value = "";
 });
 
-loadDashboard();
+// ---------- INIT ----------
+(async () => {
+  if (!treeGuyId) {
+    console.error("Missing ?id= in URL for tree guy dashboard.");
+    return;
+  }
+  try {
+    await loadDashboard();
+  } catch (err) {
+    console.error("Dashboard load failed:", err);
+  }
+})();
