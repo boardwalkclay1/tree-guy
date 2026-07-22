@@ -1,16 +1,19 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER (FINAL VERSION)
+// REAL TREE GUY OS — WEATHER (FIXED FOR USER‑SPECIFIC LOCATION)
 // ============================================================
 
 // All weather API calls go through your Worker at:
-// /rtg/api/weather
+// /api/weather
 const API = {
   async get(path) {
-    const r = await fetch(`/rtg/api/weather${path}`);
+    const r = await fetch(`/api/weather${path}`);
     if (!r.ok) throw new Error("Weather API error");
     return r.json();
   }
 };
+
+// Logged‑in user ID (from dashboard.js)
+const rtgUserId = localStorage.getItem("rtgUserId");
 
 // DOM ELEMENTS
 const el = {
@@ -32,31 +35,11 @@ const el = {
   radarFrame: document.getElementById("rtgRadar")
 };
 
-// WEATHER CODE → TEXT
-function codeToText(code) {
-  const map = {
-    0: "Clear", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Cloudy",
-    45: "Fog", 48: "Fog", 51: "Light Drizzle", 61: "Rain",
-    63: "Rain", 65: "Heavy Rain", 71: "Snow", 95: "Thunderstorm"
-  };
-  return map[code] || "Weather";
-}
-
-// WEATHER CODE → ICON CLASS
-function iconClassForCode(code) {
-  if (code <= 1) return "sunny";
-  if (code <= 48) return "cloudy";
-  if (code <= 67) return "rainy";
-  if (code <= 77) return "snowy";
-  if (code >= 95) return "stormy";
-  return "cloudy";
-}
-
 // GET LOCATION (User → GPS fallback)
 async function getLocation() {
   // 1. Try user profile location from Worker
   try {
-    const userLoc = await API.get(`/location`);
+    const userLoc = await API.get(`/location?user=${rtgUserId}`);
     if (userLoc?.lat && userLoc?.lon) {
       return { lat: userLoc.lat, lon: userLoc.lon };
     }
@@ -68,7 +51,7 @@ async function getLocation() {
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      () => resolve({ lat: 34.0, lon: -84.0 }), // fallback default
+      () => resolve({ lat: 34.0, lon: -84.0 }),
       { enableHighAccuracy: true, timeout: 8000 }
     );
   });
