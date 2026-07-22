@@ -21,8 +21,13 @@ const CORS = {
     "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
 };
 
-// Wrap ANY response in CORS
+// Wrap ANY HTTP response in CORS (NOT WebSockets)
 function wrap(response) {
+  // If WebSocket upgrade → DO NOT TOUCH IT
+  if (response.status === 101 || response.webSocket) {
+    return response;
+  }
+
   const newHeaders = new Headers(response.headers);
   Object.entries(CORS).forEach(([k, v]) => newHeaders.set(k, v));
 
@@ -61,7 +66,7 @@ export default {
     try {
 
       // ============================================================
-      // RTG ONLINE TREE GUY DASHBOARD (SOCIAL + PROFILE + MAP + LEADS)
+      // RTG ONLINE TREE GUY DASHBOARD
       // ============================================================
       if (path.startsWith(`${API_BASE}/rtg-online/tree-guy`)) {
         const res = await rtgDashWork.fetch(request, env);
@@ -69,7 +74,7 @@ export default {
       }
 
       // ============================================================
-      // MAP (OFFLINE TREE GUY OS)
+      // MAP
       // ============================================================
       if (path.startsWith(`${API_BASE}/map`)) {
         const res = await MapLogic.handle(request, env);
@@ -77,7 +82,7 @@ export default {
       }
 
       // ============================================================
-      // CALENDAR (OFFLINE TREE GUY OS)
+      // CALENDAR
       // ============================================================
       if (path.startsWith(`${API_BASE}/calendar`)) {
         const res = await CalendarLogic.handle(request, env);
@@ -85,7 +90,7 @@ export default {
       }
 
       // ============================================================
-      // CONTRACTS (OFFLINE TREE GUY OS)
+      // CONTRACTS
       // ============================================================
       if (path.startsWith(`${API_BASE}/contracts`)) {
         const res = await ContractLogic.handle(request, env);
@@ -93,15 +98,21 @@ export default {
       }
 
       // ============================================================
-      // RADIO (OFFLINE TREE GUY OS)
+      // RADIO (WebSocket + HTTP)
       // ============================================================
       if (path.startsWith(`${API_BASE}/radio`)) {
         const res = await RadioLogic.handle(request, env);
+
+        // If WebSocket upgrade → return raw response
+        if (res.status === 101 || res.webSocket) {
+          return res;
+        }
+
         return wrap(res);
       }
 
       // ============================================================
-      // WEATHER (OFFLINE TREE GUY OS)
+      // WEATHER
       // ============================================================
       if (path.startsWith(`${API_BASE}/weather`)) {
         const res = await WeatherLogic.handle(request, env);
@@ -109,7 +120,7 @@ export default {
       }
 
       // ============================================================
-      // CUSTOMERS (OFFLINE TREE GUY OS)
+      // CUSTOMERS
       // ============================================================
       if (path.startsWith(`${API_BASE}/customers`)) {
         const res = await CustomerLogic.handle(request, env);
@@ -117,7 +128,7 @@ export default {
       }
 
       // ============================================================
-      // JOBS (OFFLINE TREE GUY OS)
+      // JOBS
       // ============================================================
       if (path.startsWith(`${API_BASE}/jobs`)) {
         const res = await JobLogic.handle(request, env);
@@ -125,7 +136,7 @@ export default {
       }
 
       // ============================================================
-      // STATIC ASSETS (Pages, JS, CSS)
+      // STATIC ASSETS
       // ============================================================
       const assetRes = await env.ASSETS.fetch(request);
       return wrap(assetRes);
