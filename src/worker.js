@@ -11,15 +11,34 @@ import rtgDashWork from "../public/rtg-online/tree-guy/src/workers/rtg-dash-work
 
 export const API_BASE = "/api";
 
-function corsResponse(body, status = 200) {
+// ============================================================
+// GLOBAL CORS HEADERS
+// ============================================================
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
+};
+
+// Wrap ANY response in CORS
+function wrap(response) {
+  const newHeaders = new Headers(response.headers);
+  Object.entries(CORS).forEach(([k, v]) => newHeaders.set(k, v));
+
+  return new Response(response.body, {
+    status: response.status,
+    headers: newHeaders
+  });
+}
+
+// Wrap JSON safely
+function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers":
-        "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
+      ...CORS
     }
   });
 }
@@ -35,82 +54,85 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers":
-            "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
-        }
+        headers: CORS
       });
     }
 
-    // ============================================================
-    // RTG ONLINE TREE GUY DASHBOARD (SOCIAL + PROFILE + MAP + LEADS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/rtg-online/tree-guy`)) {
-      // All routes like:
-      // /api/rtg-online/tree-guy/dashboard
-      // /api/rtg-online/tree-guy/profile
-      // /api/rtg-online/tree-guy/post
-      // /api/rtg-online/tree-guy/like
-      // /api/rtg-online/tree-guy/comment
-      // /api/rtg-online/tree-guy/skill
-      // /api/rtg-online/tree-guy/equipment
-      return rtgDashWork.fetch(request, env);
-    }
+    try {
 
-    // ============================================================
-    // MAP (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/map`)) {
-      return MapLogic.handle(request, env);
-    }
+      // ============================================================
+      // RTG ONLINE TREE GUY DASHBOARD (SOCIAL + PROFILE + MAP + LEADS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/rtg-online/tree-guy`)) {
+        const res = await rtgDashWork.fetch(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // CALENDAR (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/calendar`)) {
-      return CalendarLogic.handle(request, env);
-    }
+      // ============================================================
+      // MAP (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/map`)) {
+        const res = await MapLogic.handle(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // CONTRACTS (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/contracts`)) {
-      return ContractLogic.handle(request, env);
-    }
+      // ============================================================
+      // CALENDAR (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/calendar`)) {
+        const res = await CalendarLogic.handle(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // RADIO (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/radio`)) {
-      return RadioLogic.handle(request, env);
-    }
+      // ============================================================
+      // CONTRACTS (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/contracts`)) {
+        const res = await ContractLogic.handle(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // WEATHER (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/weather`)) {
-      return WeatherLogic.handle(request, env);
-    }
+      // ============================================================
+      // RADIO (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/radio`)) {
+        const res = await RadioLogic.handle(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // CUSTOMERS (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/customers`)) {
-      return CustomerLogic.handle(request, env);
-    }
+      // ============================================================
+      // WEATHER (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/weather`)) {
+        const res = await WeatherLogic.handle(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // JOBS (OFFLINE TREE GUY OS)
-    // ============================================================
-    if (path.startsWith(`${API_BASE}/jobs`)) {
-      return JobLogic.handle(request, env);
-    }
+      // ============================================================
+      // CUSTOMERS (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/customers`)) {
+        const res = await CustomerLogic.handle(request, env);
+        return wrap(res);
+      }
 
-    // ============================================================
-    // STATIC ASSETS (Pages, JS, CSS)
-    // ============================================================
-    return env.ASSETS.fetch(request);
+      // ============================================================
+      // JOBS (OFFLINE TREE GUY OS)
+      // ============================================================
+      if (path.startsWith(`${API_BASE}/jobs`)) {
+        const res = await JobLogic.handle(request, env);
+        return wrap(res);
+      }
+
+      // ============================================================
+      // STATIC ASSETS (Pages, JS, CSS)
+      // ============================================================
+      const assetRes = await env.ASSETS.fetch(request);
+      return wrap(assetRes);
+
+    } catch (err) {
+      console.error("Worker error:", err);
+      return json({ error: "Worker crashed", detail: String(err) }, 500);
+    }
   }
 };
