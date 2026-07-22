@@ -1,4 +1,4 @@
-name = "rtg-app"
+name = "rtg"
 main = "src/worker.js"
 compatibility_date = "2024-05-01"
 
