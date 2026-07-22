@@ -1,6 +1,5 @@
 // ============================================================
-// REAL TREE GUY — RADIO WORKER
-// Signaling + Presence for Jobsite Radio
+// REAL TREE GUY — RADIO WORKER (FIXED)
 // ============================================================
 
 function cors(json, status = 200) {
@@ -34,7 +33,7 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // RADIO PRESENCE (Dashboard heartbeat)
+  // RADIO PRESENCE
   // ============================================================
   if (path === "/api/radio/presence" && request.method === "POST") {
     try {
@@ -44,12 +43,7 @@ export async function handle(request, env) {
         await env.DB.prepare(
           "INSERT INTO radio_presence (user_id, email, type, ts) VALUES (?, ?, ?, ?)"
         )
-          .bind(
-            body.user_id || null,
-            body.email || null,
-            body.type || null,
-            Date.now()
-          )
+          .bind(body.user_id || null, body.email || null, body.type || null, Date.now())
           .run();
       }
 
@@ -69,7 +63,6 @@ export async function handle(request, env) {
     const name = body.name || "Operator";
     const channel = body.channel || "1";
 
-    // IMPORTANT: use api.realtreeguy.com (your Worker domain)
     const wsUrl =
       `wss://api.realtreeguy.com/api/radio/signal` +
       `?channel=${encodeURIComponent(channel)}` +
@@ -80,7 +73,7 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // RADIO SIGNAL (WebSocket echo)
+  // RADIO SIGNAL (WebSocket)
   // ============================================================
   if (path === "/api/radio/signal" &&
       request.headers.get("Upgrade") === "websocket") {
@@ -107,14 +100,12 @@ export async function handle(request, env) {
       msg.id = msg.id || id;
       msg.name = msg.name || name;
 
-      // Echo back (Durable Objects later)
       server.send(JSON.stringify(msg));
     });
 
-    server.addEventListener("close", () => {
-      // Cleanup later if needed
-    });
+    server.addEventListener("close", () => {});
 
+    // IMPORTANT: DO NOT ADD HEADERS HERE
     return new Response(null, {
       status: 101,
       webSocket: client
