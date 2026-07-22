@@ -1,28 +1,49 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS CENTER (D1 VERSION, ENHANCED)
+// REAL TREE GUY OS — CONTRACTS CENTER (FIXED FOR api.realtreeguy.com)
 // ============================================================
+
+// ALWAYS hit your Worker domain directly
+const API_BASE = "https://api.realtreeguy.com/api";
 
 const API = {
   async get(path) {
-    const r = await fetch(path);
-    if (!r.ok) throw new Error("GET " + path + " failed");
-    return r.json();
+    const url = `${API_BASE}${path}`;
+    const r = await fetch(url, { headers: { "Accept": "application/json" } });
+
+    const text = await r.text();
+
+    // If HTML is returned, force fail instead of JSON.parse blowing up
+    if (text.trim().startsWith("<")) {
+      console.error("GET returned HTML instead of JSON:", url);
+      throw new Error("Invalid JSON response");
+    }
+
+    return JSON.parse(text);
   },
+
   async post(path, body) {
-    const r = await fetch(path, {
+    const url = `${API_BASE}${path}`;
+    const r = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(body)
     });
-    if (!r.ok) throw new Error("POST " + path + " failed");
-    return r.json();
+
+    const text = await r.text();
+
+    if (text.trim().startsWith("<")) {
+      console.error("POST returned HTML instead of JSON:", url);
+      throw new Error("Invalid JSON response");
+    }
+
+    return JSON.parse(text);
   }
 };
 
 let userProfile = {};
-let templates = [];      // full rows from /api/templates
-let clients = [];        // from /api/clients
-let attachedPhotos = []; // { id, url, name }
+let templates = [];
+let clients = [];
+let attachedPhotos = [];
 
 // INIT
 document.addEventListener("DOMContentLoaded", () => {
@@ -35,27 +56,30 @@ document.addEventListener("DOMContentLoaded", () => {
 // LOAD USER PROFILE
 async function loadProfile() {
   try {
-    userProfile = await API.get("/api/profile");
+    userProfile = await API.get("/profile");
+
     document.getElementById("userLogo").src =
       userProfile.logo || "/assets/img/default-logo.png";
 
-    // Auto-fill tree guy name
     document.getElementById("treeGuyName").value =
       userProfile.name || "";
+
   } catch (e) {
     console.error("Profile load error", e);
   }
 }
 
-// LOAD TEMPLATES (PREMADE + CUSTOM)
+// LOAD TEMPLATES
 async function loadTemplates() {
   try {
-    templates = await API.get("/api/templates");
+    templates = await API.get("/templates");
+
     const select = document.getElementById("templateSelect");
     select.innerHTML = `<option value="">Choose template...</option>` +
       templates.map(t =>
         `<option value="${t.id}">${t.type} – ${t.name}</option>`
       ).join("");
+
   } catch (e) {
     console.error("Templates load error", e);
   }
@@ -64,18 +88,20 @@ async function loadTemplates() {
 // LOAD CLIENTS
 async function loadClients() {
   try {
-    clients = await API.get("/api/clients");
+    clients = await API.get("/clients");
+
     const select = document.getElementById("clientSelect");
     select.innerHTML = `<option value="">Select client...</option>` +
       clients.map(c =>
         `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
       ).join("");
+
   } catch (e) {
     console.error("Clients load error", e);
   }
 }
 
-// WIRE EVENTS
+// EVENTS
 function wireEvents() {
   document.getElementById("templateSelect")
     .addEventListener("change", onTemplateChange);
@@ -116,8 +142,6 @@ function onTemplateChange(e) {
   const t = templates.find(t => String(t.id) === String(id));
   if (!t) return;
 
-  // t.body is assumed to be a text block with placeholders
-  // We can drop it into scope/extraTerms or use it as base terms.
   document.getElementById("scope").value = t.scope || "";
   document.getElementById("extraTerms").value = t.body || "";
 }
@@ -147,19 +171,22 @@ async function onPhotoUpload(e) {
   renderPhotoList();
 }
 
-// Upload photo via Worker (you’ll implement /api/upload-photo)
+// Upload photo
 async function uploadPhoto(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const r = await fetch("/api/upload-photo", {
+  const r = await fetch(`${API_BASE}/upload-photo`, {
     method: "POST",
     body: formData
   });
-  if (!r.ok) throw new Error("Photo upload failed");
-  const data = await r.json();
-  // Expect { id, url, name }
-  return data;
+
+  const text = await r.text();
+  if (text.trim().startsWith("<")) {
+    throw new Error("Photo upload returned HTML");
+  }
+
+  return JSON.parse(text);
 }
 
 function renderPhotoList() {
@@ -173,9 +200,9 @@ function renderPhotoList() {
   ).join(" ");
 }
 
-// COLLECT FORM FIELDS
+// COLLECT FIELDS
 function collectFields() {
-  const fields = {
+  return {
     treeGuyName: document.getElementById("treeGuyName").value,
     clientName: document.getElementById("clientName").value,
     clientAddress: document.getElementById("clientAddress").value,
@@ -190,7 +217,6 @@ function collectFields() {
     treeGuySignature: document.getElementById("treeGuySignature").value,
     clientAgreed: document.getElementById("clientAgreed").checked
   };
-  return fields;
 }
 
 // PREVIEW
@@ -237,7 +263,7 @@ async function saveDoc(type) {
   const clientId = document.getElementById("clientSelect").value || null;
   const templateId = document.getElementById("templateSelect").value || null;
 
-  await API.post("/api/documents", {
+  await API.post("/documents", {
     type,
     client_id: clientId,
     template_id: templateId,
@@ -253,16 +279,16 @@ async function saveDoc(type) {
 async function emailDoc(type) {
   const clientId = document.getElementById("clientSelect").value;
   const client = clients.find(c => String(c.id) === String(clientId));
+
   if (!client || !client.email) {
     alert("Client must have an email to send contract.");
     return;
   }
 
-  // Ensure preview is up to date
   previewDoc(type);
   const html = document.getElementById("previewContent").innerHTML;
 
-  await API.post("/api/email", {
+  await API.post("/email", {
     to: client.email,
     subject: type + " from Real Tree Guy OS",
     body: html
@@ -300,7 +326,7 @@ async function saveClient() {
     return;
   }
 
-  const saved = await API.post("/api/clients", {
+  const saved = await API.post("/clients", {
     name, email, phone, address
   });
 
@@ -308,7 +334,6 @@ async function saveClient() {
   closeClientModal();
   await loadClients();
 
-  // Auto-select new client
   const select = document.getElementById("clientSelect");
   select.value = saved.id;
   onClientChange({ target: select });
@@ -317,7 +342,7 @@ async function saveClient() {
 // SAVE CURRENT AS TEMPLATE
 async function saveCurrentAsTemplate() {
   const fields = collectFields();
-  const name = prompt("Template name (e.g. 'Standard Removal Contract'):");
+  const name = prompt("Template name:");
   if (!name) return;
 
   const payload = {
@@ -327,7 +352,7 @@ async function saveCurrentAsTemplate() {
     body: fields.extraTerms
   };
 
-  const saved = await API.post("/api/templates", payload);
+  const saved = await API.post("/templates", payload);
   templates.push(saved);
   await loadTemplates();
   alert("Template saved!");
