@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER (USER-CENTRIC, DETAILED VERSION)
+// REAL TREE GUY OS — WEATHER (USER-CENTRIC, DETAILED, FIXED)
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api";
@@ -8,7 +8,8 @@ const API_BASE = "https://api.realtreeguy.com/api";
 const rtgUserId = localStorage.getItem("rtgUserId");
 const rtgUserEmail = localStorage.getItem("rtgUserEmail");
 const rtgUserType = localStorage.getItem("rtgUserType");
-const rtgUserName = localStorage.getItem("rtgUserName") || rtgUserEmail || "Tree Guy";
+const rtgUserName =
+  localStorage.getItem("rtgUserName") || rtgUserEmail || "Tree Guy";
 
 // WEATHER CODE → TEXT + EMOJI
 function codeToText(code) {
@@ -41,7 +42,7 @@ const API = {
   async get(path) {
     const r = await fetch(`${API_BASE}/weather${path}`, {
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "X-RTG-User": rtgUserId,
         "X-RTG-Email": rtgUserEmail,
         "X-RTG-Type": rtgUserType
@@ -88,40 +89,23 @@ const el = {
   hourlyStrip: document.getElementById("hourlyStrip"),
   dailyStrip: document.getElementById("dailyStrip"),
 
+  // risk / hazard
+  stormTicker: document.getElementById("stormTicker"),
+  hazardTicker: document.getElementById("hazardTicker"),
+  windSpeed: document.getElementById("windSpeed"),
+  windGust: document.getElementById("windGust"),
+  windDir: document.getElementById("windDir"),
+  gustRatio: document.getElementById("gustRatio"),
+  pressure: document.getElementById("pressure"),
+  pressureTrend: document.getElementById("pressureTrend"),
+  stormRisk: document.getElementById("stormRisk"),
+  stormNotes: document.getElementById("stormNotes"),
+  hazardScore: document.getElementById("hazardScore"),
+  hazardNotes: document.getElementById("hazardNotes"),
+
   // radar
   radarFrame: document.getElementById("rtgRadar")
 };
-
-// REVERSE GEOCODE FOR DISPLAY LOCATION
-async function getDisplayLocation(lat, lon) {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-      { headers: { "User-Agent": "RealTreeGuyOS/1.0" } }
-    );
-    const data = await res.json();
-    const city =
-      data.address.city ||
-      data.address.town ||
-      data.address.village ||
-      data.address.hamlet ||
-      "";
-    const state = data.address.state || data.address.region || "";
-    const country = data.address.country_code
-      ? data.address.country_code.toUpperCase()
-      : "";
-
-    let label = "";
-    if (city && state) label = `${city}, ${state}`;
-    else if (state) label = state;
-    else if (city) label = city;
-    else label = `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-
-    return { label, country };
-  } catch {
-    return { label: `${lat.toFixed(3)}, ${lon.toFixed(3)}`, country: "" };
-  }
-}
 
 // GET LOCATION (User → DB → GPS fallback)
 async function getLocation() {
@@ -144,55 +128,88 @@ async function getLocation() {
 }
 
 // UPDATE HEADER (user + location + condition)
-async function updateHeader(data) {
-  const { lat, lon } = data.location || { lat: null, lon: null };
+function updateHeader(data) {
+  const loc = data.location || {};
+  const current = data.current || {};
 
-  el.userLabel && (el.userLabel.textContent = rtgUserName);
+  if (el.userLabel) el.userLabel.textContent = rtgUserName;
 
-  if (lat != null && lon != null) {
-    const loc = await getDisplayLocation(lat, lon);
-    if (el.locationLabel) {
-      el.locationLabel.textContent = loc.label;
-    }
+  if (el.locationLabel) {
+    el.locationLabel.textContent =
+      loc.name ||
+      (loc.lat != null && loc.lon != null
+        ? `${loc.lat.toFixed(3)}, ${loc.lon.toFixed(3)}`
+        : "Unknown location");
   }
 
-  const condText = codeToText(data.current.code);
   if (el.conditionLabel) {
-    el.conditionLabel.textContent = condText;
+    el.conditionLabel.textContent = codeToText(current.code);
   }
 }
 
-// RENDER CURRENT CONDITIONS (highly detailed)
+// RENDER CURRENT CONDITIONS
 function renderCurrent(data) {
   const w = data.current;
 
-  el.currentTemp.textContent = `${w.temperature}°F`;
-  el.currentWind.textContent = `Wind: ${w.wind} mph`;
-  el.currentGust.textContent = `Gusts: ${w.gust ?? "--"} mph`;
-  el.currentPressure.textContent = `Pressure: ${w.pressure ?? "--"} mb`;
-  el.currentRain.textContent = `Rain: ${w.rain ?? "--"} in`;
+  el.currentTemp.textContent =
+    w.temperature != null ? `${w.temperature}°F` : "--°F";
+  el.currentWind.textContent = `Wind: ${
+    w.wind != null ? `${w.wind} mph` : "--"
+  }`;
+  el.currentGust.textContent = `Gusts: ${
+    w.gust != null ? `${w.gust} mph` : "--"
+  }`;
+  el.currentPressure.textContent = `Pressure: ${
+    w.pressure != null ? `${w.pressure} mb` : "--`
+  }`;
+  el.currentRain.textContent = `Rain: ${
+    w.rain != null ? `${w.rain} in` : "--`
+  }`;
 
-  if (el.currentHumidity)
-    el.currentHumidity.textContent = `Humidity: ${w.humidity ?? "--"}%`;
-  if (el.currentFeelsLike)
-    el.currentFeelsLike.textContent = `Feels like: ${w.feels_like ?? "--"}°F`;
-  if (el.currentDewpoint)
-    el.currentDewpoint.textContent = `Dewpoint: ${w.dewpoint ?? "--"}°F`;
-  if (el.currentVisibility)
-    el.currentVisibility.textContent = `Visibility: ${w.visibility ?? "--"} mi`;
-  if (el.currentUV)
-    el.currentUV.textContent = `UV Index: ${w.uv ?? "--"}`;
+  el.currentHumidity.textContent = `Humidity: ${
+    w.humidity != null ? `${w.humidity}%` : "--"
+  }`;
+  el.currentFeelsLike.textContent = `Feels Like: ${
+    w.feels_like != null ? `${w.feels_like}°F` : "--"
+  }`;
+  el.currentDewpoint.textContent = `Dewpoint: ${
+    w.dewpoint != null ? `${w.dewpoint}°F` : "--"
+  }`;
+
+  const visMiles =
+    w.visibility != null ? (w.visibility / 1609.34).toFixed(1) : null;
+  el.currentVisibility.textContent = `Visibility: ${
+    visMiles != null ? `${visMiles} mi` : "--"
+  }`;
+
+  el.currentUV.textContent = `UV Index: ${
+    w.uv_index != null ? w.uv_index : "--"
+  }`;
 }
 
-// RENDER HOURLY FORECAST
+// RENDER HOURLY FORECAST (start at current hour)
 function renderHourly(data) {
   el.hourlyStrip.innerHTML = "";
 
-  for (const h of data.hourly.slice(0, 12)) {
+  const hourly = data.hourly || [];
+  if (!hourly.length) return;
+
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  let startIndex = hourly.findIndex(h => {
+    const hour = parseInt(h.time.split(":")[0], 10);
+    return hour === currentHour;
+  });
+  if (startIndex < 0) startIndex = 0;
+
+  const nextHours = hourly.slice(startIndex, startIndex + 12);
+
+  for (const h of nextHours) {
     el.hourlyStrip.innerHTML += `
       <div class="hour-card">
         <div class="h-time">${h.time}</div>
-        <div class="h-temp">${h.temp}°</div>
+        <div class="h-temp">${h.temp != null ? `${h.temp}°` : "--"}</div>
         <div class="h-cond">${codeToText(h.code)}</div>
       </div>
     `;
@@ -203,27 +220,105 @@ function renderHourly(data) {
 function renderDaily(data) {
   el.dailyStrip.innerHTML = "";
 
-  for (const d of data.daily) {
+  const daily = data.daily || [];
+  for (const d of daily) {
     el.dailyStrip.innerHTML += `
       <div class="day-card">
         <div class="d-day">${d.day}</div>
-        <div class="d-temp">${d.hi}° / ${d.lo}°</div>
+        <div class="d-temp">${
+          d.hi != null ? `${d.hi}°` : "--"
+        } / ${d.lo != null ? `${d.lo}°` : "--"}</div>
         <div class="d-cond">${codeToText(d.code)}</div>
       </div>
     `;
   }
 }
 
-// MAIN WEATHER LOADER
+// RENDER WIND / PRESSURE / RISK / HAZARD
+function renderIntelligence(data) {
+  const cur = data.current || {};
+  const hourly = data.hourly || [];
+  const storm = data.storm || {};
+  const hazard = data.hazard || {};
+
+  // Wind Intelligence
+  if (el.windSpeed)
+    el.windSpeed.textContent =
+      cur.wind != null ? `${cur.wind} mph` : "--";
+  if (el.windGust)
+    el.windGust.textContent =
+      cur.gust != null ? `${cur.gust} mph` : "--";
+
+  // Direction not provided by worker yet → placeholder
+  if (el.windDir) el.windDir.textContent = "--";
+
+  if (el.gustRatio) {
+    if (cur.wind && cur.gust) {
+      el.gustRatio.textContent = (cur.gust / cur.wind).toFixed(2);
+    } else {
+      el.gustRatio.textContent = "--";
+    }
+  }
+
+  // Pressure + trend
+  if (el.pressure)
+    el.pressure.textContent =
+      cur.pressure != null ? `${cur.pressure} mb` : "--`;
+
+  let trend = "--";
+  if (hourly.length >= 4) {
+    const p0 = hourly[0].pressure;
+    const p3 = hourly[3].pressure;
+    if (p0 != null && p3 != null) {
+      trend = p3 > p0 ? "Rising" : p3 < p0 ? "Falling" : "Steady";
+    }
+  }
+  if (el.pressureTrend) el.pressureTrend.textContent = trend;
+
+  // Storm Risk
+  if (el.stormRisk) el.stormRisk.textContent = storm.level || "--";
+  if (el.stormNotes) el.stormNotes.textContent = storm.notes || "--";
+
+  if (el.stormTicker) {
+    el.stormTicker.textContent =
+      storm.level === "Extreme"
+        ? "⛈ Extreme storm risk — high chance of damage."
+        : storm.level === "High"
+        ? "🌩 High storm risk — stay ready for emergency calls."
+        : storm.level === "Moderate"
+        ? "🌦 Moderate storm risk — monitor conditions."
+        : "🌤 Low storm risk — normal operations.";
+  }
+
+  // Tree Hazard
+  if (el.hazardScore)
+    el.hazardScore.textContent =
+      hazard.score != null ? hazard.score : "--";
+  if (el.hazardNotes) el.hazardNotes.textContent = hazard.notes || "--";
+
+  if (el.hazardTicker) {
+    el.hazardTicker.textContent =
+      hazard.level === "Critical"
+        ? "🌲⚠️ Critical tree hazard — expect significant failures."
+        : hazard.level === "Risk"
+        ? "🌲⚠️ Elevated tree hazard — limbs and uproots likely."
+        : hazard.level === "Watch"
+        ? "🌲 Watch — some trees may be stressed."
+        : "🌲 Stable — trees generally holding.";
+  }
+}
+
+// MAIN WEATHER LOADER (lat/lon)
 async function loadWeatherByLatLon(lat, lon) {
   el.locationStatus.textContent = "Loading weather…";
 
   const data = await API.get(`?lat=${lat}&lon=${lon}`);
 
-  await updateHeader(data);
+  updateHeader(data);
   renderCurrent(data);
   renderHourly(data);
   renderDaily(data);
+  renderIntelligence(data);
 
   el.locationStatus.textContent =
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
@@ -233,16 +328,17 @@ async function loadWeatherByLatLon(lat, lon) {
     `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
 }
 
-// LOAD BY ADDRESS (any place in America)
+// LOAD BY ADDRESS (any place)
 async function loadWeatherByAddress(address) {
   el.locationStatus.textContent = `Looking up "${address}"…`;
 
   const data = await API.get(`?address=${encodeURIComponent(address)}`);
 
-  await updateHeader(data);
+  updateHeader(data);
   renderCurrent(data);
   renderHourly(data);
   renderDaily(data);
+  renderIntelligence(data);
 
   const { lat, lon } = data.location;
   el.locationStatus.textContent =
@@ -280,7 +376,7 @@ el.setManualBtn?.addEventListener("click", async () => {
   }
 });
 
-// BUTTON: ADDRESS SEARCH (any US location)
+// BUTTON: ADDRESS SEARCH
 el.manualAddressBtn?.addEventListener("click", async () => {
   const addr = el.manualAddress.value.trim();
   if (!addr) {
