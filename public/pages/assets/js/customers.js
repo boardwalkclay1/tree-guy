@@ -1,32 +1,44 @@
 // ============================================================
-// REAL TREE GUY OS — CUSTOMERS & JOBS (D1 VERSION, UPGRADED)
+// REAL TREE GUY OS — CUSTOMERS & JOBS (FINAL VERSION)
 // ============================================================
 
-// -----------------------------
-// API HELPERS (Safe Mode)
-// -----------------------------
-async function safeFetch(url, opts = {}) {
+// ------------------------------------------------------------
+// API BASE — ALWAYS HIT YOUR WORKER DOMAIN
+// ------------------------------------------------------------
+const API_BASE = "https://api.realtreeguy.com/api";
+
+// ------------------------------------------------------------
+// SAFE JSON FETCH (HTML → null)
+// ------------------------------------------------------------
+async function safeFetch(path, opts = {}) {
+  const url = `${API_BASE}${path}`;
+
   try {
     const res = await fetch(url, opts);
     const text = await res.text();
-    try {
-      return JSON.parse(text);
-    } catch {
+
+    // If HTML is returned → Worker route failed → return null
+    if (text.trim().startsWith("<")) {
       console.warn("Non‑JSON from", url, text.slice(0, 120));
       return null;
     }
+
+    return JSON.parse(text);
   } catch (err) {
     console.error("Fetch failed:", url, err);
     return null;
   }
 }
 
+// ------------------------------------------------------------
+// API WRAPPERS
+// ------------------------------------------------------------
 async function apiGetCustomers() {
-  return await safeFetch("/api/customers") || [];
+  return (await safeFetch("/customers")) || [];
 }
 
 async function apiAddCustomer(cust) {
-  return await safeFetch("/api/customers", {
+  return await safeFetch("/customers", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cust)
@@ -34,15 +46,15 @@ async function apiAddCustomer(cust) {
 }
 
 async function apiDeleteCustomer(id) {
-  return await safeFetch(`/api/customers?id=${id}`, { method: "DELETE" });
+  return await safeFetch(`/customers?id=${id}`, { method: "DELETE" });
 }
 
 async function apiGetJobs() {
-  return await safeFetch("/api/jobs") || [];
+  return (await safeFetch("/jobs")) || [];
 }
 
 async function apiAddJob(job) {
-  return await safeFetch("/api/jobs", {
+  return await safeFetch("/jobs", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(job)
@@ -50,12 +62,12 @@ async function apiAddJob(job) {
 }
 
 async function apiDeleteJob(id) {
-  return await safeFetch(`/api/jobs?id=${id}`, { method: "DELETE" });
+  return await safeFetch(`/jobs?id=${id}`, { method: "DELETE" });
 }
 
-// -----------------------------
-// TABS (Upgraded for dual-panel layout)
-// -----------------------------
+// ------------------------------------------------------------
+// TABS (Dual‑Panel Layout)
+// ------------------------------------------------------------
 const tabButtons = document.querySelectorAll(".tab-btn");
 const panels = {
   customers: ["tab-customers", "tab-customers-list"],
@@ -87,20 +99,21 @@ function esc(str) {
 }
 
 // ============================================================
-// CUSTOMERS (Upgraded)
+// CUSTOMERS — RENDER
 // ============================================================
 async function renderCustomers() {
   const ul = document.getElementById("custList");
   const customers = await apiGetCustomers();
 
-  if (!customers.length) {
+  if (!customers || !customers.length) {
     ul.innerHTML = `<li class="empty-note">No customers saved yet.</li>`;
     return;
   }
 
   ul.innerHTML = customers.map(c => `
     <li>
-      <button class="del-btn" data-id="${c.id}" data-type="cust">✕</button>
+      <button class="del-btn" data-id="${c.id}">✕</button>
+
       <div class="cust-name">${esc(c.name)}</div>
       <div class="cust-details">
         ${esc(c.phone)} · ${esc(c.email)}<br>
@@ -115,7 +128,7 @@ async function renderCustomers() {
     </li>
   `).join("");
 
-  // Delete buttons
+  // Delete
   ul.querySelectorAll(".del-btn").forEach(btn => {
     btn.onclick = async () => {
       await apiDeleteCustomer(btn.dataset.id);
@@ -123,29 +136,26 @@ async function renderCustomers() {
     };
   });
 
-  // Calendar linking
+  // Calendar link
   ul.querySelectorAll(".btn-link-calendar").forEach(btn => {
     btn.onclick = () => {
-      const id = btn.dataset.id;
-      const name = btn.dataset.name;
-      localStorage.setItem("rtgCalendarCustomer", id);
-      localStorage.setItem("rtgCalendarCustomerName", name);
+      localStorage.setItem("rtgCalendarCustomer", btn.dataset.id);
+      localStorage.setItem("rtgCalendarCustomerName", btn.dataset.name);
       window.location.href = "../../pages/calendar.html";
     };
   });
 
-  // Contract linking
+  // Contract link
   ul.querySelectorAll(".btn-link-contract").forEach(btn => {
     btn.onclick = () => {
-      const id = btn.dataset.id;
-      const name = btn.dataset.name;
-      localStorage.setItem("rtgContractCustomer", id);
-      localStorage.setItem("rtgContractCustomerName", name);
+      localStorage.setItem("rtgContractCustomer", btn.dataset.id);
+      localStorage.setItem("rtgContractCustomerName", btn.dataset.name);
       window.location.href = "../../pages/contracts.html";
     };
   });
 }
 
+// Add Customer
 document.getElementById("addCust").onclick = async () => {
   const name = document.getElementById("custName").value.trim();
   if (!name) return alert("Name required.");
@@ -167,20 +177,20 @@ document.getElementById("addCust").onclick = async () => {
 };
 
 // ============================================================
-// JOBS (Upgraded)
+// JOBS — RENDER
 // ============================================================
 async function renderJobs() {
   const ul = document.getElementById("jobList");
   const jobs = await apiGetJobs();
 
-  if (!jobs.length) {
+  if (!jobs || !jobs.length) {
     ul.innerHTML = `<li class="empty-note">No jobs saved yet.</li>`;
     return;
   }
 
   ul.innerHTML = jobs.map(j => `
     <li>
-      <button class="del-btn" data-id="${j.id}" data-type="job">✕</button>
+      <button class="del-btn" data-id="${j.id}">✕</button>
 
       <div class="job-title">
         ${esc(j.title)}
@@ -200,7 +210,7 @@ async function renderJobs() {
     </li>
   `).join("");
 
-  // Delete buttons
+  // Delete
   ul.querySelectorAll(".del-btn").forEach(btn => {
     btn.onclick = async () => {
       await apiDeleteJob(btn.dataset.id);
@@ -208,29 +218,26 @@ async function renderJobs() {
     };
   });
 
-  // Calendar linking
+  // Calendar link
   ul.querySelectorAll(".btn-link-calendar").forEach(btn => {
     btn.onclick = () => {
-      const id = btn.dataset.id;
-      const title = btn.dataset.title;
-      localStorage.setItem("rtgCalendarJob", id);
-      localStorage.setItem("rtgCalendarJobTitle", title);
+      localStorage.setItem("rtgCalendarJob", btn.dataset.id);
+      localStorage.setItem("rtgCalendarJobTitle", btn.dataset.title);
       window.location.href = "../../pages/calendar.html";
     };
   });
 
-  // Contract linking
+  // Contract link
   ul.querySelectorAll(".btn-link-contract").forEach(btn => {
     btn.onclick = () => {
-      const id = btn.dataset.id;
-      const title = btn.dataset.title;
-      localStorage.setItem("rtgContractJob", id);
-      localStorage.setItem("rtgContractJobTitle", title);
+      localStorage.setItem("rtgContractJob", btn.dataset.id);
+      localStorage.setItem("rtgContractJobTitle", btn.dataset.title);
       window.location.href = "../../pages/contracts.html";
     };
   });
 }
 
+// Add Job
 document.getElementById("addJob").onclick = async () => {
   const title = document.getElementById("jobTitle").value.trim();
   if (!title) return alert("Job title required.");
@@ -253,7 +260,7 @@ document.getElementById("addJob").onclick = async () => {
 };
 
 // ============================================================
-// INITIAL RENDER
+// INITIAL LOAD
 // ============================================================
 renderCustomers();
 renderJobs();
