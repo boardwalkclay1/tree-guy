@@ -15,16 +15,17 @@ body.rtg-weather {
 
 @keyframes bgPulse {
   0% { background-color: #0d0f0d; }
-  100% { background-color: #0b0d0b; }
+  100% { background-color: #050605; }
 }
 
 /* HEADER */
 .weather-header {
   text-align: center;
   padding: 30px 20px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.4));
   border-bottom: 2px solid #2e6b33;
   box-shadow: 0 0 25px rgba(46,107,51,0.4);
+  position: relative;
 }
 
 .weather-header h1 {
@@ -48,6 +49,36 @@ body.rtg-weather {
   opacity: 0.85;
 }
 
+.user-info {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #caffca;
+}
+
+#rtgUserLabel {
+  color: #ff8c42;
+  font-weight: 800;
+}
+
+#rtgLocationLabel {
+  color: #9ddf9d;
+  font-weight: 600;
+}
+
+#rtgConditionLabel {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 1.05rem;
+  color: #ffebc2;
+  text-shadow: 0 0 10px rgba(255, 200, 120, 0.7);
+  animation: condGlow 2.8s infinite alternate;
+}
+
+@keyframes condGlow {
+  0% { opacity: 0.8; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(-1px); }
+}
+
 .back-link {
   display: inline-block;
   margin-top: 12px;
@@ -64,9 +95,9 @@ body.rtg-weather {
 
 /* MAIN SHELL */
 .weather-shell {
-  max-width: 900px;
+  max-width: 980px;
   margin: 30px auto;
-  padding: 0 20px;
+  padding: 0 20px 40px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -74,13 +105,23 @@ body.rtg-weather {
 
 /* MODULE CARDS */
 .module-card {
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.65);
   border: 2px solid #2e6b33;
   border-radius: 14px;
   padding: 22px;
   box-shadow: 0 0 18px rgba(46, 107, 51, 0.4);
   backdrop-filter: blur(4px);
   transition: 0.3s ease;
+  position: relative;
+}
+
+.module-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.03);
+  pointer-events: none;
 }
 
 .module-card:hover {
@@ -94,9 +135,16 @@ body.rtg-weather {
   font-size: 1.5rem;
   color: #caffca;
   text-shadow: 0 0 8px #1f5f2b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* LOCATION SELECTOR */
+.location-card h2::before {
+  content: "📍";
+}
+
 .location-row {
   display: flex;
   gap: 10px;
@@ -104,18 +152,21 @@ body.rtg-weather {
 }
 
 .location-row input {
-  width: 90px;
-  padding: 6px;
+  flex: 0 0 auto;
+  min-width: 90px;
+  padding: 6px 8px;
   border-radius: 6px;
   border: 2px solid #ff8c42;
   background: #000;
   color: #fff;
   transition: 0.25s ease;
+  font-size: 0.95rem;
 }
 
 .location-row input:focus {
   border-color: #ffb673;
   box-shadow: 0 0 10px #ff8c42;
+  outline: none;
 }
 
 .rtg-btn.small {
@@ -127,6 +178,7 @@ body.rtg-weather {
   font-weight: 700;
   cursor: pointer;
   transition: 0.25s ease;
+  font-size: 0.95rem;
 }
 
 .rtg-btn.small:hover {
@@ -135,7 +187,17 @@ body.rtg-weather {
   box-shadow: 0 0 12px #ff8c42;
 }
 
+#locationStatus {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #9ddf9d;
+}
+
 /* CURRENT CONDITIONS */
+.module-card:nth-of-type(2) h2::before {
+  content: "🌤️";
+}
+
 .current-flex {
   display: flex;
   align-items: center;
@@ -143,7 +205,7 @@ body.rtg-weather {
 }
 
 .current-temp {
-  font-size: 3.6rem;
+  font-size: 3.8rem;
   font-weight: 900;
   color: #ff8c42;
   text-shadow: 0 0 18px #ff8c42;
@@ -151,13 +213,13 @@ body.rtg-weather {
 }
 
 @keyframes tempPulse {
-  0% { text-shadow: 0 0 12px #ff8c42; }
-  100% { text-shadow: 0 0 22px #ffb673; }
+  0% { text-shadow: 0 0 12px #ff8c42; transform: scale(1); }
+  100% { text-shadow: 0 0 22px #ffb673; transform: scale(1.03); }
 }
 
 .current-details p {
-  margin: 4px 0;
-  font-size: 1rem;
+  margin: 3px 0;
+  font-size: 0.98rem;
   opacity: 0.9;
 }
 
@@ -169,6 +231,7 @@ body.rtg-weather {
   border-left: 4px solid #ff8c42;
   font-weight: 700;
   animation: tickerPulse 3s infinite alternate;
+  font-size: 0.95rem;
 }
 
 @keyframes tickerPulse {
@@ -188,6 +251,10 @@ body.rtg-weather {
 }
 
 /* HOURLY STRIP */
+.module-card:nth-of-type(3) h2::before {
+  content: "⏱️";
+}
+
 .hourly-strip {
   display: flex;
   overflow-x: auto;
@@ -195,15 +262,34 @@ body.rtg-weather {
   padding-bottom: 6px;
 }
 
+.hourly-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.hourly-strip::-webkit-scrollbar-thumb {
+  background: #2e6b33;
+  border-radius: 4px;
+}
+
 .hour-card {
   min-width: 90px;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0,0,0,0.65);
   border: 1px solid #2e6b33;
   border-radius: 10px;
   padding: 10px;
   text-align: center;
   box-shadow: 0 0 10px rgba(46,107,51,0.3);
   transition: 0.25s ease;
+  position: relative;
+}
+
+.hour-card::before {
+  content: "🌡️";
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 0.8rem;
+  opacity: 0.7;
 }
 
 .hour-card:hover {
@@ -212,22 +298,26 @@ body.rtg-weather {
 }
 
 .h-time {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   opacity: 0.8;
 }
 
 .h-temp {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #ff8c42;
 }
 
 .h-cond {
   font-size: 0.9rem;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 /* DAILY STRIP */
+.module-card:nth-of-type(4) h2::before {
+  content: "📅";
+}
+
 .daily-strip {
   display: flex;
   flex-direction: column;
@@ -235,12 +325,15 @@ body.rtg-weather {
 }
 
 .day-card {
-  background: rgba(0,0,0,0.55);
+  background: rgba(0,0,0,0.65);
   border: 1px solid #2e6b33;
   border-radius: 10px;
   padding: 12px;
   box-shadow: 0 0 10px rgba(46,107,51,0.3);
   transition: 0.25s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .day-card:hover {
@@ -260,9 +353,50 @@ body.rtg-weather {
 
 .d-cond {
   opacity: 0.85;
+  font-size: 0.95rem;
+}
+
+/* INFO GRID (Wind / Pressure / Risk / Hazard) */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 14px;
+  font-size: 0.95rem;
+}
+
+.info-grid div span {
+  color: #ffebc2;
+}
+
+/* WIND INTELLIGENCE */
+.module-card:nth-of-type(5) h2::before {
+  content: "💨";
+}
+
+/* PRESSURE TREND */
+.module-card:nth-of-type(6) h2::before {
+  content: "📉";
+}
+
+/* STORM RISK */
+.module-card:nth-of-type(7) h2::before {
+  content: "⚠️";
+}
+
+/* TREE HAZARD */
+.module-card:nth-of-type(8) h2::before {
+  content: "🌲";
 }
 
 /* RADAR */
+.module-card:nth-of-type(9) h2::before {
+  content: "📡";
+}
+
+.radar-container {
+  margin-top: 8px;
+}
+
 .radar-frame {
   width: 100%;
   height: 420px;
@@ -294,5 +428,9 @@ body.rtg-weather {
 
   .radar-frame {
     height: 300px;
+  }
+
+  .weather-shell {
+    padding: 0 14px 30px;
   }
 }
