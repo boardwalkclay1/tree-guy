@@ -1,11 +1,27 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER WORKER (FIXED + CORRECT PATHS)
+// REAL TREE GUY OS — WEATHER WORKER (UPDATED + CORS + CORRECT PATHS)
 // ============================================================
 
 export async function handle(request, env) {
   const DB = env.DB;
   const url = new URL(request.url);
   const path = url.pathname;
+
+  // ----------------------------------------------------------
+  // CORS HEADERS
+  // ----------------------------------------------------------
+  const CORS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
+  };
+
+  // ----------------------------------------------------------
+  // OPTIONS (CORS preflight)
+  // ----------------------------------------------------------
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS });
+  }
 
   // ----------------------------------------------------------
   // GET USER LOCATION (from users table)
@@ -15,7 +31,10 @@ export async function handle(request, env) {
       const userId = url.searchParams.get("user");
 
       if (!userId) {
-        return Response.json({ error: "Missing user ID" }, { status: 400 });
+        return new Response(JSON.stringify({ error: "Missing user ID" }), {
+          status: 400,
+          headers: CORS
+        });
       }
 
       const user = await DB.prepare(`
@@ -23,15 +42,21 @@ export async function handle(request, env) {
       `).bind(userId).first();
 
       if (!user) {
-        return Response.json({ lat: null, lon: null });
+        return new Response(JSON.stringify({ lat: null, lon: null }), {
+          headers: CORS
+        });
       }
 
-      return Response.json({
+      return new Response(JSON.stringify({
         lat: user.lat || null,
         lon: user.lng || null
-      });
+      }), { headers: CORS });
+
     } catch (err) {
-      return Response.json({ error: err.message }, { status: 500 });
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: CORS
+      });
     }
   }
 
@@ -43,7 +68,10 @@ export async function handle(request, env) {
     const lon = parseFloat(url.searchParams.get("lon"));
 
     if (isNaN(lat) || isNaN(lon)) {
-      return Response.json({ error: "Missing lat/lon" }, { status: 400 });
+      return new Response(JSON.stringify({ error: "Missing lat/lon" }), {
+        status: 400,
+        headers: CORS
+      });
     }
 
     const cacheKey = `${lat.toFixed(3)},${lon.toFixed(3)}`;
@@ -59,7 +87,7 @@ export async function handle(request, env) {
       if (cached) {
         const age = Date.now() - cached.ts;
         if (age < 5 * 60 * 1000) {
-          return Response.json(JSON.parse(cached.data));
+          return new Response(cached.data, { headers: CORS });
         }
       }
     } catch (err) {
@@ -84,16 +112,17 @@ export async function handle(request, env) {
       try {
         raw = JSON.parse(text);
       } catch {
-        return Response.json(
-          { error: "Weather API returned non‑JSON", raw: text.slice(0, 200) },
-          { status: 502 }
-        );
+        return new Response(JSON.stringify({
+          error: "Weather API returned non‑JSON",
+          raw: text.slice(0, 200)
+        }), { status: 502, headers: CORS });
       }
+
     } catch (err) {
-      return Response.json(
-        { error: "Weather API failed", details: err.message },
-        { status: 500 }
-      );
+      return new Response(JSON.stringify({
+        error: "Weather API failed",
+        details: err.message
+      }), { status: 500, headers: CORS });
     }
 
     // ----------------------------------------------------------
@@ -135,11 +164,14 @@ export async function handle(request, env) {
       console.warn("Weather cache write failed:", err.message);
     }
 
-    return Response.json(formatted);
+    return new Response(JSON.stringify(formatted), { headers: CORS });
   }
 
   // ----------------------------------------------------------
   // FALLBACK
   // ----------------------------------------------------------
-  return Response.json({ error: "Weather route not found" }, { status: 404 });
+  return new Response(JSON.stringify({ error: "Weather route not found" }), {
+    status: 404,
+    headers: CORS
+  });
 }
