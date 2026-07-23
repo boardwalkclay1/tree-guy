@@ -1,0 +1,39 @@
+{
+  "id": "tmpl-residential-treework",
+  "name": "Residential Tree Work Contract",
+  "type": "client_contract",
+  "role": "client",
+  "scope": "Tree removal, pruning, debris removal, stump grinding, and cleanup for residential properties.",
+  "sections": [
+    {
+      "key": "work_scope",
+      "title": "Scope of Work",
+      "body": "Contractor will perform tree work as described in the attached scope, including removal, pruning, debris cleanup, and stump grinding if selected."
+    },
+    {
+      "key": "property_access",
+      "title": "Property Access",
+      "body": "Client agrees to provide access to the work area, including gates, driveways, and any locked areas."
+    },
+    {
+      "key": "liability",
+      "title": "Liability & Insurance",
+      "body": "Contractor carries full liability insurance. Contractor is not responsible for pre-existing damage or hidden defects."
+    },
+    {
+      "key": "payment_terms",
+      "title": "Payment Terms",
+      "body": "Payment is due upon job completion unless otherwise agreed. Deposits and credit card fees may apply."
+    }
+  ],
+  "fields": [
+    { "key": "total_price", "label": "Total Price", "type": "money" },
+    { "key": "deposit", "label": "Deposit Amount", "type": "money" },
+    { "key": "job_date", "label": "Job Date", "type": "date" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": true
+  }
+}
