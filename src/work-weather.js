@@ -20,7 +20,6 @@ export async function handle(request, env) {
     return new Response(null, { status: 204, headers: CORS });
   }
 
-  // JSON helper
   const json = (data, status = 200) =>
     new Response(JSON.stringify(data), {
       status,
@@ -28,22 +27,40 @@ export async function handle(request, env) {
     });
 
   // ============================================================
-  // GET USER LOCATION
+  // ADDRESS → COORDINATES (Nominatim)
+  // ============================================================
+  async function geocode(address) {
+    const geoUrl =
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+    const res = await fetch(geoUrl, {
+      headers: { "User-Agent": "RealTreeGuyOS/1.0" }
+    });
+
+    const data = await res.json();
+    if (!data.length) return null;
+
+    return {
+      lat: parseFloat(data[0].lat),
+      lon: parseFloat(data[0].lon)
+    };
+  }
+
+  // ============================================================
+  // GET USER LOCATION FROM DB
   // ============================================================
   if (path === "/api/weather/location" && request.method === "GET") {
     try {
       const userId = url.searchParams.get("user");
       if (!userId) return json({ error: "Missing user ID" }, 400);
 
-      const row = await DB.prepare(`
-        SELECT lat, lng FROM users WHERE id = ?
-      `).bind(userId).first();
-
-      if (!row) return json({ lat: null, lon: null });
+      const row = await DB.prepare(
+        "SELECT lat, lng FROM users WHERE id = ?"
+      ).bind(userId).first();
 
       return json({
-        lat: row.lat ?? null,
-        lon: row.lng ?? null
+        lat: row?.lat ?? null,
+        lon: row?.lng ?? null
       });
     } catch (err) {
       return json({ error: err.message }, 500);
@@ -51,7 +68,7 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // SAVE USER LOCATION (optional future use)
+  // SAVE USER LOCATION
   // ============================================================
   if (path === "/api/weather/location" && request.method === "POST") {
     try {
@@ -62,9 +79,9 @@ export async function handle(request, env) {
         return json({ error: "Missing user/lat/lon" }, 400);
       }
 
-      await DB.prepare(`
-        UPDATE users SET lat = ?, lng = ? WHERE id = ?
-      `).bind(lat, lon, user).run();
+      await DB.prepare(
+        "UPDATE users SET lat = ?, lng = ? WHERE id = ?"
+      ).bind(lat, lon, user).run();
 
       return json({ ok: true });
     } catch (err) {
@@ -73,14 +90,26 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // MAIN WEATHER FETCH
+  // MAIN WEATHER FETCH (GPS, manual, address)
   // ============================================================
   if (path === "/api/weather" && request.method === "GET") {
-    const lat = parseFloat(url.searchParams.get("lat"));
-    const lon = parseFloat(url.searchParams.get("lon"));
+    let lat = url.searchParams.get("lat");
+    let lon = url.searchParams.get("lon");
+    const address = url.searchParams.get("address");
+
+    // Address lookup
+    if (address) {
+      const coords = await geocode(address);
+      if (!coords) return json({ error: "Address not found" }, 404);
+      lat = coords.lat;
+      lon = coords.lon;
+    }
+
+    lat = parseFloat(lat);
+    lon = parseFloat(lon);
 
     if (isNaN(lat) || isNaN(lon)) {
-      return json({ error: "Missing lat/lon" }, 400);
+      return json({ error: "Missing lat/lon or address" }, 400);
     }
 
     const cacheKey = `${lat.toFixed(3)},${lon.toFixed(3)}`;
@@ -89,9 +118,9 @@ export async function handle(request, env) {
     // CACHE READ
     // ----------------------------------------------------------
     try {
-      const cached = await DB.prepare(`
-        SELECT data, ts FROM weather_cache WHERE key = ?
-      `).bind(cacheKey).first();
+      const cached = await DB.prepare(
+        "SELECT data, ts FROM weather_cache WHERE key = ?"
+      ).bind(cacheKey).first();
 
       if (cached) {
         const age = Date.now() - cached.ts;
@@ -118,31 +147,16 @@ export async function handle(request, env) {
       const res = await fetch(wxUrl);
       const text = await res.text();
 
-      try {
-        raw = JSON.parse(text);
-      } catch {
-        return json(
-          {
-            error: "Weather API returned non‑JSON",
-            raw: text.slice(0, 200)
-          },
-          502
-        );
-      }
+      raw = JSON.parse(text);
     } catch (err) {
-      return json(
-        {
-          error: "Weather API failed",
-          details: err.message
-        },
-        500
-      );
+      return json({ error: "Weather API failed", details: err.message }, 500);
     }
 
     // ----------------------------------------------------------
     // FORMAT WEATHER DATA
     // ----------------------------------------------------------
     const formatted = {
+      location: { lat, lon },
       current: {
         temperature: raw.current_weather.temperature,
         wind: raw.current_weather.windspeed,
@@ -168,12 +182,9 @@ export async function handle(request, env) {
     // CACHE WRITE
     // ----------------------------------------------------------
     try {
-      await DB.prepare(`
-        INSERT OR REPLACE INTO weather_cache (key, data, ts)
-        VALUES (?, ?, ?)
-      `)
-        .bind(cacheKey, JSON.stringify(formatted), Date.now())
-        .run();
+      await DB.prepare(
+        "INSERT OR REPLACE INTO weather_cache (key, data, ts) VALUES (?, ?, ?)"
+      ).bind(cacheKey, JSON.stringify(formatted), Date.now()).run();
     } catch (err) {
       console.warn("Cache write failed:", err.message);
     }
