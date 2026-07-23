@@ -77,6 +77,68 @@
       box-shadow: none !important;
       border: none !important;
     }
+
+    /* RADIO TABLE LAYOUT */
+    .radio-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .radio-panel {
+      background: rgba(0,0,0,0.7);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .radio-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .radio-list {
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .channel-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .channel-btn:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .member,
+    .nearby {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .add-btn {
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: none;
+      background: #ff9800;
+      color: #000;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
   </style>
 </head>
 
@@ -129,7 +191,7 @@
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
     </section>
 
-    <!-- RADIO MODULE -->
+    <!-- RADIO MODULE (TABLE + PRESENCE) -->
     <section class="rtg-radio-module">
       <div id="radio-widget" class="radio-widget">
         <div class="radio-header">
@@ -137,32 +199,40 @@
           <span id="radio-status" class="radio-status radio-status--disconnected">Disconnected</span>
         </div>
 
+        <!-- CONTROL ROW -->
         <div class="radio-body">
           <div class="radio-row">
-            <label for="radio-channel" class="radio-label">Channel</label>
-            <select id="radio-channel" class="radio-select">
-              <option value="1">Channel 1</option>
-              <option value="2">Channel 2</option>
-              <option value="3">Channel 3</option>
-              <option value="4">Channel 4</option>
-            </select>
+            <button id="createChannelBtn" class="radio-btn radio-btn--primary">➕ New Channel</button>
+            <button id="joinChannelBtn" class="radio-btn radio-btn--primary">Join Selected</button>
+            <button id="leaveChannelBtn" class="radio-btn radio-btn--ghost">Leave</button>
           </div>
 
-          <div class="radio-row">
-            <button id="radio-connect" class="radio-btn radio-btn--primary">Connect</button>
-            <button id="radio-disconnect" class="radio-btn radio-btn--ghost" disabled>Disconnect</button>
-          </div>
+          <!-- TABLE LAYOUT -->
+          <div class="radio-layout">
+            <!-- CHANNEL LIST -->
+            <div class="radio-panel">
+              <h3>Channels</h3>
+              <div id="channelList" class="radio-list">
+                <!-- Filled by radio.js -->
+              </div>
+            </div>
 
-          <div class="radio-row radio-row--ptt">
-            <button id="radio-ptt" class="radio-ptt-btn" disabled>Hold to Talk</button>
-          </div>
+            <!-- CURRENT MEMBERS -->
+            <div class="radio-panel">
+              <h3>Current Members</h3>
+              <div id="currentMembers" class="radio-list">
+                <!-- Filled by radio.js -->
+              </div>
+            </div>
 
-          <div class="radio-footer">
-            <span id="radio-channel-display">Channel: 1</span>
-            <div id="radio-log" class="radio-log"></div>
+            <!-- NEARBY USERS -->
+            <div class="radio-panel">
+              <h3>Nearby (≤ 1000 ft)</h3>
+              <div id="nearbyUsers" class="radio-list">
+                <!-- Filled by radio.js -->
+              </div>
+            </div>
           </div>
-
-          <div id="radio-peers" class="radio-peers"></div>
         </div>
       </div>
     </section>
@@ -241,7 +311,7 @@
 
   </main>
 
-  <!-- FIXED JS PATHS -->
+  <!-- JS -->
   <script src="/pages/assets/js/dashboard.js"></script>
   <script src="/pages/assets/js/radio.js"></script>
 
