@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER (USER-CENTRIC, DETAILED, FIXED)
+// REAL TREE GUY OS — WEATHER (FINAL CLEAN VERSION)
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api";
@@ -37,7 +37,7 @@ function codeToText(code) {
   return map[code] || "🌍 Unknown";
 }
 
-// API wrapper with full headers
+// API wrapper
 const API = {
   async get(path) {
     const r = await fetch(`${API_BASE}/weather${path}`, {
@@ -59,12 +59,10 @@ const API = {
 
 // DOM ELEMENTS
 const el = {
-  // header
   userLabel: document.getElementById("rtgUserLabel"),
   locationLabel: document.getElementById("rtgLocationLabel"),
   conditionLabel: document.getElementById("rtgConditionLabel"),
 
-  // controls
   useGPSBtn: document.getElementById("useGPS"),
   setManualBtn: document.getElementById("setManual"),
   locationStatus: document.getElementById("locationStatus"),
@@ -73,7 +71,6 @@ const el = {
   manualAddress: document.getElementById("manualAddress"),
   manualAddressBtn: document.getElementById("manualAddressBtn"),
 
-  // current
   currentTemp: document.getElementById("currentTemp"),
   currentWind: document.getElementById("currentWind"),
   currentGust: document.getElementById("currentGust"),
@@ -85,25 +82,25 @@ const el = {
   currentVisibility: document.getElementById("currentVisibility"),
   currentUV: document.getElementById("currentUV"),
 
-  // strips
   hourlyStrip: document.getElementById("hourlyStrip"),
   dailyStrip: document.getElementById("dailyStrip"),
 
-  // risk / hazard
-  stormTicker: document.getElementById("stormTicker"),
-  hazardTicker: document.getElementById("hazardTicker"),
   windSpeed: document.getElementById("windSpeed"),
   windGust: document.getElementById("windGust"),
   windDir: document.getElementById("windDir"),
   gustRatio: document.getElementById("gustRatio"),
+
   pressure: document.getElementById("pressure"),
   pressureTrend: document.getElementById("pressureTrend"),
+
   stormRisk: document.getElementById("stormRisk"),
   stormNotes: document.getElementById("stormNotes"),
+  stormTicker: document.getElementById("stormTicker"),
+
   hazardScore: document.getElementById("hazardScore"),
   hazardNotes: document.getElementById("hazardNotes"),
+  hazardTicker: document.getElementById("hazardTicker"),
 
-  // radar
   radarFrame: document.getElementById("rtgRadar")
 };
 
@@ -114,9 +111,7 @@ async function getLocation() {
     if (userLoc?.lat && userLoc?.lon) {
       return { lat: userLoc.lat, lon: userLoc.lon };
     }
-  } catch {
-    console.warn("Saved location missing, using GPS.");
-  }
+  } catch {}
 
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
@@ -127,80 +122,47 @@ async function getLocation() {
   });
 }
 
-// UPDATE HEADER (user + location + condition)
+// HEADER UPDATE
 function updateHeader(data) {
   const loc = data.location || {};
-  const current = data.current || {};
+  const cur = data.current || {};
 
-  if (el.userLabel) el.userLabel.textContent = rtgUserName;
-
-  if (el.locationLabel) {
-    el.locationLabel.textContent =
-      loc.name ||
-      (loc.lat != null && loc.lon != null
-        ? `${loc.lat.toFixed(3)}, ${loc.lon.toFixed(3)}`
-        : "Unknown location");
-  }
-
-  if (el.conditionLabel) {
-    el.conditionLabel.textContent = codeToText(current.code);
-  }
+  el.userLabel.textContent = rtgUserName;
+  el.locationLabel.textContent = loc.name || `${loc.lat}, ${loc.lon}`;
+  el.conditionLabel.textContent = codeToText(cur.code);
 }
 
-// RENDER CURRENT CONDITIONS
+// CURRENT CONDITIONS
 function renderCurrent(data) {
   const w = data.current;
 
-  el.currentTemp.textContent =
-    w.temperature != null ? `${w.temperature}°F` : "--°F";
-  el.currentWind.textContent = `Wind: ${
-    w.wind != null ? `${w.wind} mph` : "--"
-  }`;
-  el.currentGust.textContent = `Gusts: ${
-    w.gust != null ? `${w.gust} mph` : "--"
-  }`;
-  el.currentPressure.textContent = `Pressure: ${
-    w.pressure != null ? `${w.pressure} mb` : "--`
-  }`;
-  el.currentRain.textContent = `Rain: ${
-    w.rain != null ? `${w.rain} in` : "--`
-  }`;
+  el.currentTemp.textContent = `${w.temperature}°F`;
+  el.currentWind.textContent = `Wind: ${w.wind} mph`;
+  el.currentGust.textContent = `Gusts: ${w.gust} mph`;
+  el.currentPressure.textContent = `Pressure: ${w.pressure} mb`;
+  el.currentRain.textContent = `Rain: ${w.rain} in`;
+  el.currentHumidity.textContent = `Humidity: ${w.humidity}%`;
+  el.currentFeelsLike.textContent = `Feels Like: ${w.feels_like}°F`;
+  el.currentDewpoint.textContent = `Dewpoint: ${w.dewpoint}°F`;
 
-  el.currentHumidity.textContent = `Humidity: ${
-    w.humidity != null ? `${w.humidity}%` : "--"
-  }`;
-  el.currentFeelsLike.textContent = `Feels Like: ${
-    w.feels_like != null ? `${w.feels_like}°F` : "--"
-  }`;
-  el.currentDewpoint.textContent = `Dewpoint: ${
-    w.dewpoint != null ? `${w.dewpoint}°F` : "--"
-  }`;
+  const visMiles = w.visibility ? (w.visibility / 1609.34).toFixed(1) : "--";
+  el.currentVisibility.textContent = `Visibility: ${visMiles} mi`;
 
-  const visMiles =
-    w.visibility != null ? (w.visibility / 1609.34).toFixed(1) : null;
-  el.currentVisibility.textContent = `Visibility: ${
-    visMiles != null ? `${visMiles} mi` : "--"
-  }`;
-
-  el.currentUV.textContent = `UV Index: ${
-    w.uv_index != null ? w.uv_index : "--"
-  }`;
+  el.currentUV.textContent = `UV Index: ${w.uv_index}`;
 }
 
-// RENDER HOURLY FORECAST (start at current hour)
+// HOURLY FORECAST (correct current hour)
 function renderHourly(data) {
   el.hourlyStrip.innerHTML = "";
 
-  const hourly = data.hourly || [];
-  if (!hourly.length) return;
-
-  const now = new Date();
-  const currentHour = now.getHours();
+  const hourly = data.hourly;
+  const nowHour = new Date().getHours();
 
   let startIndex = hourly.findIndex(h => {
     const hour = parseInt(h.time.split(":")[0], 10);
-    return hour === currentHour;
+    return hour === nowHour;
   });
+
   if (startIndex < 0) startIndex = 0;
 
   const nextHours = hourly.slice(startIndex, startIndex + 12);
@@ -209,106 +171,83 @@ function renderHourly(data) {
     el.hourlyStrip.innerHTML += `
       <div class="hour-card">
         <div class="h-time">${h.time}</div>
-        <div class="h-temp">${h.temp != null ? `${h.temp}°` : "--"}</div>
+        <div class="h-temp">${h.temp}°</div>
         <div class="h-cond">${codeToText(h.code)}</div>
       </div>
     `;
   }
 }
 
-// RENDER DAILY FORECAST
+// DAILY FORECAST
 function renderDaily(data) {
   el.dailyStrip.innerHTML = "";
 
-  const daily = data.daily || [];
-  for (const d of daily) {
+  for (const d of data.daily) {
     el.dailyStrip.innerHTML += `
       <div class="day-card">
         <div class="d-day">${d.day}</div>
-        <div class="d-temp">${
-          d.hi != null ? `${d.hi}°` : "--"
-        } / ${d.lo != null ? `${d.lo}°` : "--"}</div>
+        <div class="d-temp">${d.hi}° / ${d.lo}°</div>
         <div class="d-cond">${codeToText(d.code)}</div>
       </div>
     `;
   }
 }
 
-// RENDER WIND / PRESSURE / RISK / HAZARD
+// INTELLIGENCE MODULES
 function renderIntelligence(data) {
-  const cur = data.current || {};
-  const hourly = data.hourly || [];
-  const storm = data.storm || {};
-  const hazard = data.hazard || {};
+  const cur = data.current;
+  const hourly = data.hourly;
+  const storm = data.storm;
+  const hazard = data.hazard;
 
-  // Wind Intelligence
-  if (el.windSpeed)
-    el.windSpeed.textContent =
-      cur.wind != null ? `${cur.wind} mph` : "--";
-  if (el.windGust)
-    el.windGust.textContent =
-      cur.gust != null ? `${cur.gust} mph` : "--";
+  // Wind
+  el.windSpeed.textContent = `${cur.wind} mph`;
+  el.windGust.textContent = `${cur.gust} mph`;
+  el.windDir.textContent = "--"; // worker does not provide direction
+  el.gustRatio.textContent =
+    cur.wind && cur.gust ? (cur.gust / cur.wind).toFixed(2) : "--";
 
-  // Direction not provided by worker yet → placeholder
-  if (el.windDir) el.windDir.textContent = "--";
-
-  if (el.gustRatio) {
-    if (cur.wind && cur.gust) {
-      el.gustRatio.textContent = (cur.gust / cur.wind).toFixed(2);
-    } else {
-      el.gustRatio.textContent = "--";
-    }
-  }
-
-  // Pressure + trend
-  if (el.pressure)
-    el.pressure.textContent =
-      cur.pressure != null ? `${cur.pressure} mb` : "--`;
+  // Pressure
+  el.pressure.textContent = `${cur.pressure} mb`;
 
   let trend = "--";
   if (hourly.length >= 4) {
     const p0 = hourly[0].pressure;
     const p3 = hourly[3].pressure;
-    if (p0 != null && p3 != null) {
+    if (p0 && p3) {
       trend = p3 > p0 ? "Rising" : p3 < p0 ? "Falling" : "Steady";
     }
   }
-  if (el.pressureTrend) el.pressureTrend.textContent = trend;
+  el.pressureTrend.textContent = trend;
 
   // Storm Risk
-  if (el.stormRisk) el.stormRisk.textContent = storm.level || "--";
-  if (el.stormNotes) el.stormNotes.textContent = storm.notes || "--";
+  el.stormRisk.textContent = storm.level;
+  el.stormNotes.textContent = storm.notes;
 
-  if (el.stormTicker) {
-    el.stormTicker.textContent =
-      storm.level === "Extreme"
-        ? "⛈ Extreme storm risk — high chance of damage."
-        : storm.level === "High"
-        ? "🌩 High storm risk — stay ready for emergency calls."
-        : storm.level === "Moderate"
-        ? "🌦 Moderate storm risk — monitor conditions."
-        : "🌤 Low storm risk — normal operations.";
-  }
+  el.stormTicker.textContent =
+    storm.level === "Extreme"
+      ? "Extreme storm risk — high chance of damage."
+      : storm.level === "High"
+      ? "High storm risk — stay ready for emergency calls."
+      : storm.level === "Moderate"
+      ? "Moderate storm risk — monitor conditions."
+      : "Low storm risk — normal operations.";
 
   // Tree Hazard
-  if (el.hazardScore)
-    el.hazardScore.textContent =
-      hazard.score != null ? hazard.score : "--";
-  if (el.hazardNotes) el.hazardNotes.textContent = hazard.notes || "--";
+  el.hazardScore.textContent = hazard.score;
+  el.hazardNotes.textContent = hazard.notes;
 
-  if (el.hazardTicker) {
-    el.hazardTicker.textContent =
-      hazard.level === "Critical"
-        ? "🌲⚠️ Critical tree hazard — expect significant failures."
-        : hazard.level === "Risk"
-        ? "🌲⚠️ Elevated tree hazard — limbs and uproots likely."
-        : hazard.level === "Watch"
-        ? "🌲 Watch — some trees may be stressed."
-        : "🌲 Stable — trees generally holding.";
-  }
+  el.hazardTicker.textContent =
+    hazard.level === "Critical"
+      ? "Critical tree hazard — expect significant failures."
+      : hazard.level === "Risk"
+      ? "Elevated tree hazard — limbs and uproots likely."
+      : hazard.level === "Watch"
+      ? "Tree stress possible — monitor conditions."
+      : "Trees stable — normal operations.";
 }
 
-// MAIN WEATHER LOADER (lat/lon)
+// MAIN WEATHER LOADER
 async function loadWeatherByLatLon(lat, lon) {
   el.locationStatus.textContent = "Loading weather…";
 
@@ -324,11 +263,10 @@ async function loadWeatherByLatLon(lat, lon) {
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
   el.radarFrame.src =
-    `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
-    `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
+    `https://www.rainviewer.com/map.html?loc=${lat},${lon},8&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
 }
 
-// LOAD BY ADDRESS (any place)
+// ADDRESS SEARCH
 async function loadWeatherByAddress(address) {
   el.locationStatus.textContent = `Looking up "${address}"…`;
 
@@ -341,12 +279,12 @@ async function loadWeatherByAddress(address) {
   renderIntelligence(data);
 
   const { lat, lon } = data.location;
+
   el.locationStatus.textContent =
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)} (${address})`;
 
   el.radarFrame.src =
-    `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
-    `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
+    `https://www.rainviewer.com/map.html?loc=${lat},${lon},8&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
 }
 
 // AUTO‑LOAD
@@ -358,14 +296,13 @@ async function initWeather() {
 initWeather();
 setInterval(initWeather, 5 * 60 * 1000);
 
-// BUTTON: USE GPS / saved location
-el.useGPSBtn?.addEventListener("click", async () => {
+// BUTTONS
+el.useGPSBtn.addEventListener("click", async () => {
   const { lat, lon } = await getLocation();
   loadWeatherByLatLon(lat, lon);
 });
 
-// BUTTON: MANUAL LAT/LON
-el.setManualBtn?.addEventListener("click", async () => {
+el.setManualBtn.addEventListener("click", async () => {
   const lat = parseFloat(el.manualLat.value);
   const lon = parseFloat(el.manualLon.value);
 
@@ -376,8 +313,7 @@ el.setManualBtn?.addEventListener("click", async () => {
   }
 });
 
-// BUTTON: ADDRESS SEARCH
-el.manualAddressBtn?.addEventListener("click", async () => {
+el.manualAddressBtn.addEventListener("click", async () => {
   const addr = el.manualAddress.value.trim();
   if (!addr) {
     el.locationStatus.textContent = "Enter a city or address.";
