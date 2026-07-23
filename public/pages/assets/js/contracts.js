@@ -1,51 +1,77 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS CENTER (FIXED FOR api.realtreeguy.com)
+// REAL TREE GUY OS — CONTRACTS CENTER (FINAL FIXED VERSION)
 // ============================================================
 
 // ALWAYS hit your Worker domain directly
 const API_BASE = "https://api.realtreeguy.com/api";
 
+// ============================================================
+// SAFE JSON WRAPPER — NEVER CRASHES
+// ============================================================
+async function safeJson(res, url) {
+  const text = await res.text();
+
+  // If Worker returned HTML, do NOT crash
+  if (!text || text.trim().startsWith("<")) {
+    console.error("❌ API returned HTML instead of JSON:", url);
+    return null;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("❌ JSON parse failed at:", url, err);
+    return null;
+  }
+}
+
+// ============================================================
+// API WRAPPER
+// ============================================================
 const API = {
   async get(path) {
     const url = `${API_BASE}${path}`;
-    const r = await fetch(url, { headers: { "Accept": "application/json" } });
-
-    const text = await r.text();
-
-    // If HTML is returned, force fail instead of JSON.parse blowing up
-    if (text.trim().startsWith("<")) {
-      console.error("GET returned HTML instead of JSON:", url);
-      throw new Error("Invalid JSON response");
+    try {
+      const res = await fetch(url, {
+        headers: { "Accept": "application/json" }
+      });
+      return await safeJson(res, url);
+    } catch (err) {
+      console.error("❌ GET failed:", url, err);
+      return null;
     }
-
-    return JSON.parse(text);
   },
 
   async post(path, body) {
     const url = `${API_BASE}${path}`;
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(body)
-    });
-
-    const text = await r.text();
-
-    if (text.trim().startsWith("<")) {
-      console.error("POST returned HTML instead of JSON:", url);
-      throw new Error("Invalid JSON response");
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+      return await safeJson(res, url);
+    } catch (err) {
+      console.error("❌ POST failed:", url, err);
+      return null;
     }
-
-    return JSON.parse(text);
   }
 };
 
+// ============================================================
+// STATE
+// ============================================================
 let userProfile = {};
 let templates = [];
 let clients = [];
 let attachedPhotos = [];
 
+// ============================================================
 // INIT
+// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   loadProfile();
   loadTemplates();
@@ -53,55 +79,66 @@ document.addEventListener("DOMContentLoaded", () => {
   wireEvents();
 });
 
+// ============================================================
 // LOAD USER PROFILE
+// ============================================================
 async function loadProfile() {
-  try {
-    userProfile = await API.get("/profile");
-
-    document.getElementById("userLogo").src =
-      userProfile.logo || "/assets/img/default-logo.png";
-
-    document.getElementById("treeGuyName").value =
-      userProfile.name || "";
-
-  } catch (e) {
-    console.error("Profile load error", e);
+  const data = await API.get("/profile");
+  if (!data) {
+    console.warn("⚠ Profile load failed — using fallback");
+    return;
   }
+
+  userProfile = data;
+
+  document.getElementById("userLogo").src =
+    userProfile.logo || "/assets/img/default-logo.png";
+
+  document.getElementById("treeGuyName").value =
+    userProfile.name || "";
 }
 
+// ============================================================
 // LOAD TEMPLATES
+// ============================================================
 async function loadTemplates() {
-  try {
-    templates = await API.get("/templates");
-
-    const select = document.getElementById("templateSelect");
-    select.innerHTML = `<option value="">Choose template...</option>` +
-      templates.map(t =>
-        `<option value="${t.id}">${t.type} – ${t.name}</option>`
-      ).join("");
-
-  } catch (e) {
-    console.error("Templates load error", e);
+  const data = await API.get("/templates");
+  if (!data) {
+    console.warn("⚠ Templates load failed — using empty list");
+    return;
   }
+
+  templates = data;
+
+  const select = document.getElementById("templateSelect");
+  select.innerHTML = `<option value="">Choose template...</option>` +
+    templates.map(t =>
+      `<option value="${t.id}">${t.type} – ${t.name}</option>`
+    ).join("");
 }
 
+// ============================================================
 // LOAD CLIENTS
+// ============================================================
 async function loadClients() {
-  try {
-    clients = await API.get("/clients");
-
-    const select = document.getElementById("clientSelect");
-    select.innerHTML = `<option value="">Select client...</option>` +
-      clients.map(c =>
-        `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
-      ).join("");
-
-  } catch (e) {
-    console.error("Clients load error", e);
+  const data = await API.get("/clients");
+  if (!data) {
+    console.warn("⚠ Clients load failed — using empty list");
+    return;
   }
+
+  clients = data;
+
+  const select = document.getElementById("clientSelect");
+  select.innerHTML = `<option value="">Select client...</option>` +
+    clients.map(c =>
+      `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
+    ).join("");
 }
 
+// ============================================================
 // EVENTS
+// ============================================================
 function wireEvents() {
   document.getElementById("templateSelect")
     .addEventListener("change", onTemplateChange);
@@ -134,7 +171,9 @@ function wireEvents() {
     .addEventListener("click", saveCurrentAsTemplate);
 }
 
+// ============================================================
 // TEMPLATE CHANGE
+// ============================================================
 function onTemplateChange(e) {
   const id = e.target.value;
   if (!id) return;
@@ -146,7 +185,9 @@ function onTemplateChange(e) {
   document.getElementById("extraTerms").value = t.body || "";
 }
 
+// ============================================================
 // CLIENT CHANGE
+// ============================================================
 function onClientChange(e) {
   const id = e.target.value;
   if (!id) return;
@@ -159,48 +200,52 @@ function onClientChange(e) {
   document.getElementById("clientPhone").value = c.phone || "";
 }
 
+// ============================================================
 // PHOTO UPLOAD
+// ============================================================
 async function onPhotoUpload(e) {
   const files = Array.from(e.target.files || []);
   if (!files.length) return;
 
   for (const file of files) {
     const uploaded = await uploadPhoto(file);
-    attachedPhotos.push(uploaded);
+    if (uploaded) attachedPhotos.push(uploaded);
   }
+
   renderPhotoList();
 }
 
-// Upload photo
 async function uploadPhoto(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const r = await fetch(`${API_BASE}/upload-photo`, {
-    method: "POST",
-    body: formData
-  });
+  const url = `${API_BASE}/upload-photo`;
 
-  const text = await r.text();
-  if (text.trim().startsWith("<")) {
-    throw new Error("Photo upload returned HTML");
+  try {
+    const res = await fetch(url, { method: "POST", body: formData });
+    return await safeJson(res, url);
+  } catch (err) {
+    console.error("❌ Photo upload failed:", err);
+    return null;
   }
-
-  return JSON.parse(text);
 }
 
 function renderPhotoList() {
   const list = document.getElementById("photoList");
+
   if (!attachedPhotos.length) {
     list.textContent = "No photos attached.";
     return;
   }
+
   list.innerHTML = attachedPhotos.map(p =>
     `<span>📷 ${p.name || "Photo"} (${p.id})</span>`
   ).join(" ");
 }
 
+// ============================================================
 // COLLECT FIELDS
+// ============================================================
 function collectFields() {
   return {
     treeGuyName: document.getElementById("treeGuyName").value,
@@ -219,7 +264,9 @@ function collectFields() {
   };
 }
 
+// ============================================================
 // PREVIEW
+// ============================================================
 function previewDoc(type) {
   const fields = collectFields();
 
@@ -257,7 +304,9 @@ function previewDoc(type) {
   document.getElementById("previewContent").innerHTML = html;
 }
 
+// ============================================================
 // SAVE CONTRACT
+// ============================================================
 async function saveDoc(type) {
   const fields = collectFields();
   const clientId = document.getElementById("clientSelect").value || null;
@@ -275,7 +324,9 @@ async function saveDoc(type) {
   alert(type + " saved!");
 }
 
+// ============================================================
 // EMAIL CONTRACT
+// ============================================================
 async function emailDoc(type) {
   const clientId = document.getElementById("clientSelect").value;
   const client = clients.find(c => String(c.id) === String(clientId));
@@ -297,7 +348,9 @@ async function emailDoc(type) {
   alert(type + " emailed to " + client.email + "!");
 }
 
+// ============================================================
 // ESCAPE HTML
+// ============================================================
 function escapeHtml(str = "") {
   return str
     .replace(/&/g, "&amp;")
@@ -305,7 +358,9 @@ function escapeHtml(str = "") {
     .replace(/>/g, "&gt;");
 }
 
+// ============================================================
 // CLIENT MODAL
+// ============================================================
 function openClientModal() {
   document.getElementById("clientModal").style.display = "flex";
 }
@@ -314,7 +369,9 @@ function closeClientModal() {
   document.getElementById("clientModal").style.display = "none";
 }
 
+// ============================================================
 // SAVE CLIENT
+// ============================================================
 async function saveClient() {
   const name = document.getElementById("modalClientName").value.trim();
   const email = document.getElementById("modalClientEmail").value.trim();
@@ -330,6 +387,11 @@ async function saveClient() {
     name, email, phone, address
   });
 
+  if (!saved) {
+    alert("Client save failed.");
+    return;
+  }
+
   clients.push(saved);
   closeClientModal();
   await loadClients();
@@ -339,7 +401,9 @@ async function saveClient() {
   onClientChange({ target: select });
 }
 
+// ============================================================
 // SAVE CURRENT AS TEMPLATE
+// ============================================================
 async function saveCurrentAsTemplate() {
   const fields = collectFields();
   const name = prompt("Template name:");
@@ -353,6 +417,11 @@ async function saveCurrentAsTemplate() {
   };
 
   const saved = await API.post("/templates", payload);
+  if (!saved) {
+    alert("Template save failed.");
+    return;
+  }
+
   templates.push(saved);
   await loadTemplates();
   alert("Template saved!");
