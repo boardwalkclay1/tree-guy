@@ -9,6 +9,32 @@ const rtgUserId = localStorage.getItem("rtgUserId");
 const rtgUserEmail = localStorage.getItem("rtgUserEmail");
 const rtgUserType = localStorage.getItem("rtgUserType");
 
+// WEATHER CODE → TEXT (REQUIRED)
+function codeToText(code) {
+  const map = {
+    0: "Clear",
+    1: "Mostly Clear",
+    2: "Partly Cloudy",
+    3: "Cloudy",
+    45: "Fog",
+    48: "Dense Fog",
+    51: "Light Drizzle",
+    53: "Drizzle",
+    55: "Heavy Drizzle",
+    61: "Light Rain",
+    63: "Rain",
+    65: "Heavy Rain",
+    71: "Light Snow",
+    73: "Snow",
+    75: "Heavy Snow",
+    80: "Rain Showers",
+    81: "Heavy Showers",
+    95: "Thunderstorms",
+    99: "Severe Thunderstorms"
+  };
+  return map[code] || "Unknown";
+}
+
 // API wrapper with full headers
 const API = {
   async get(path) {
@@ -51,7 +77,6 @@ const el = {
 
 // GET LOCATION (User → DB → GPS fallback)
 async function getLocation() {
-  // 1. Try saved location from Worker
   try {
     const userLoc = await API.get(`/location?user=${rtgUserId}`);
     if (userLoc?.lat && userLoc?.lon) {
@@ -61,7 +86,6 @@ async function getLocation() {
     console.warn("Saved location missing, using GPS.");
   }
 
-  // 2. GPS fallback
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
