@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
         "X-RTG-User": rtgUserId,
         "X-RTG-Email": rtgUserEmail,
-        "X-RTG-Type": rtgUserType,
-        "X-RTG-Name": rtgUserName
+        "X-RTG-Type": rtgUserType
+        // ❌ removed X-RTG-Name to avoid CORS block
       };
     },
 
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // RADIO HEARTBEAT (FINAL VERSION WITH USERNAME CONFIRMATION)
+  // RADIO HEARTBEAT (USERNAME IN BODY ONLY)
   // ============================================================
   async function radioHeartbeat() {
     const pos = await getUserLocation();
@@ -154,13 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
       user_id: rtgUserId,
       email: rtgUserEmail,
       type: rtgUserType,
-      name: rtgUserName,     // ⭐ Username included
+      name: rtgUserName,   // username stays in JSON body
       lat: pos.lat,
       lon: pos.lon,
       ts: Date.now()
     });
 
-    // Show confirmation in console
     if (res && res.ok) {
       console.log(`🔊 Heartbeat OK — ${rtgUserName} (${rtgUserId})`);
     } else {
@@ -170,5 +169,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   radioHeartbeat();
   setInterval(radioHeartbeat, 15000);
-
 });
