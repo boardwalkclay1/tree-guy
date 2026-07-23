@@ -5,6 +5,14 @@
 const API_BASE = "https://api.realtreeguy.com/api";
 
 // ============================================================
+// AUTH CONTEXT (MATCH DASHBOARD)
+// ============================================================
+const rtgUserId = localStorage.getItem("rtgUserId") || "dev";
+const rtgUserEmail = localStorage.getItem("rtgUserEmail") || "dev@local";
+const rtgUserType = localStorage.getItem("rtgUserType") || "tree";
+const rtgUserName = localStorage.getItem("rtgUserName") || "Tree Guy";
+
+// ============================================================
 // SAFE JSON WRAPPER
 // ============================================================
 async function safeJson(res, url) {
@@ -22,13 +30,23 @@ async function safeJson(res, url) {
 }
 
 // ============================================================
-// API WRAPPER
+// API WRAPPER (WITH AUTH HEADERS)
 // ============================================================
 const API = {
+  headers() {
+    return {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "X-RTG-User": rtgUserId,
+      "X-RTG-Email": rtgUserEmail,
+      "X-RTG-Type": rtgUserType
+    };
+  },
+
   async get(path) {
     const url = `${API_BASE}${path}`;
     try {
-      const res = await fetch(url, { headers: { "Accept": "application/json" } });
+      const res = await fetch(url, { headers: this.headers() });
       return await safeJson(res, url);
     } catch (err) {
       console.error("❌ GET failed:", url, err);
@@ -41,10 +59,7 @@ const API = {
     try {
       const res = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
+        headers: this.headers(),
         body: JSON.stringify(body)
       });
       return await safeJson(res, url);
@@ -61,7 +76,6 @@ const API = {
 let currentChannel = null;
 let presence = [];
 let nearby = [];
-let userId = localStorage.getItem("rtgUserId");
 
 // ============================================================
 // INIT
@@ -117,7 +131,7 @@ async function createChannel() {
 
   const saved = await API.post("/radio/channel", {
     name,
-    created_by: userId
+    created_by: rtgUserId
   });
 
   if (!saved) return alert("Failed to create channel.");
@@ -136,7 +150,7 @@ async function joinChannel() {
 
   const res = await API.post("/radio/join", {
     channel_id: currentChannel,
-    user_id: userId,
+    user_id: rtgUserId,
     lat: pos.lat,
     lon: pos.lon
   });
@@ -144,7 +158,7 @@ async function joinChannel() {
   if (!res) return alert("Join failed.");
   if (res.error) return alert(res.error);
 
-  alert("Connected — infinite distance mode enabled.");
+  alert(`Connected as ${rtgUserName}.`);
   updatePresence();
 }
 
@@ -156,7 +170,7 @@ async function leaveChannel() {
 
   await API.post("/radio/leave", {
     channel_id: currentChannel,
-    user_id: userId
+    user_id: rtgUserId
   });
 
   alert("Disconnected.");
