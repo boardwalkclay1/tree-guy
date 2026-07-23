@@ -1,0 +1,24 @@
+{
+  "id": "tmpl-groundsman-multiday",
+  "name": "Groundsman Multi-Day Contract",
+  "type": "groundsman_contract",
+  "role": "groundsman",
+  "scope": "Groundsman contract for multi-day jobs.",
+  "sections": [
+    {
+      "key": "work_scope",
+      "title": "Scope of Work",
+      "body": "Groundsman provides dragging, cleanup, chipper operation, and support for multi-day jobs."
+    }
+  ],
+  "fields": [
+    { "key": "daily_rate", "label": "Daily Rate", "type": "money" },
+    { "key": "max_days", "label": "Max Days", "type": "number" },
+    { "key": "pay_on", "label": "Pay When", "type": "enum", "options": ["Job complete", "Portion complete", "End of day"] }
+  ],
+  "calculation": {
+    "enable_split": true,
+    "enable_cc_fee": false,
+    "enable_deposit": false
+  }
+}
