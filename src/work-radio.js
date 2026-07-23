@@ -44,7 +44,7 @@ export async function handle(request, env) {
 
   // ============================================================
   // DISTANCE (feet)
-  // ============================================================
+// ============================================================
   function distanceFt(lat1, lon1, lat2, lon2) {
     const R = 6371000; // meters
     const toRad = x => (x * Math.PI) / 180;
@@ -73,7 +73,6 @@ export async function handle(request, env) {
       ORDER BY created_at DESC
     `).all();
 
-    // Count members
     for (const ch of rows.results) {
       const members = await DB.prepare(`
         SELECT COUNT(*) AS count
@@ -109,7 +108,6 @@ export async function handle(request, env) {
     const body = await request.json();
     const { channel_id, user_id, lat, lon } = body;
 
-    // Count active members
     const countRow = await DB.prepare(`
       SELECT COUNT(*) AS count
       FROM channel_members
@@ -120,7 +118,6 @@ export async function handle(request, env) {
       return json({ error: "Channel full (20 max)" }, 400);
     }
 
-    // Get existing members for proximity check
     const members = await DB.prepare(`
       SELECT user_id, last_lat, last_lon
       FROM channel_members
@@ -143,7 +140,6 @@ export async function handle(request, env) {
       return json({ error: "Must be within 1000 ft of a member to join" }, 400);
     }
 
-    // Add member
     const id = crypto.randomUUID();
 
     await DB.prepare(`
@@ -171,26 +167,26 @@ export async function handle(request, env) {
 
   // ============================================================
   // PRESENCE (members + nearby)
-  // ============================================================
+// ============================================================
   if (path === "/api/radio/presence" && request.method === "GET") {
     const channel_id = url.searchParams.get("channel_id");
     const lat = parseFloat(url.searchParams.get("lat"));
     const lon = parseFloat(url.searchParams.get("lon"));
 
-    // Active members
     const members = await DB.prepare(`
-      SELECT user_id, last_lat, last_lon, last_seen
-      FROM channel_members
-      WHERE channel_id = ? AND active = 1
+      SELECT cm.user_id, cm.last_lat, cm.last_lon, cm.last_seen, u.name
+      FROM channel_members cm
+      LEFT JOIN users u ON u.id = cm.user_id
+      WHERE cm.channel_id = ? AND cm.active = 1
     `).bind(channel_id).all();
 
     const memberList = members.results.map(m => ({
       user_id: m.user_id,
+      name: m.name || "Tree Guy",
       distance_ft: m.last_lat ? Math.round(distanceFt(lat, lon, m.last_lat, m.last_lon)) : null,
       online: Date.now() - m.last_seen < 15000
     }));
 
-    // Nearby users (not in channel)
     const nearby = await DB.prepare(`
       SELECT id, name, lat, lng
       FROM users
@@ -202,7 +198,7 @@ export async function handle(request, env) {
     const nearbyList = nearby.results
       .map(u => ({
         user_id: u.id,
-        name: u.name,
+        name: u.name || "Tree Guy",
         distance_ft: u.lat ? Math.round(distanceFt(lat, lon, u.lat, u.lng)) : null
       }))
       .filter(u => u.distance_ft !== null && u.distance_ft <= 1000);
@@ -215,7 +211,7 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // WEBSOCKET SIGNAL (unchanged)
+  // WEBSOCKET SIGNAL
   // ============================================================
   if (path === "/api/radio/signal" &&
       request.headers.get("Upgrade") === "websocket") {
