@@ -1,12 +1,17 @@
+/* ============================================================
+   REAL TREE GUY OS — CONTRACTS CENTER (UPDATED CSS)
+   ============================================================ */
+
 .rtg-contracts-body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #f5f5f5;
   background: url("/assets/img/backgrounds/rtg-contracts-back.jpg") no-repeat center center fixed;
   background-size: cover;
+  position: relative;
 }
 
-/* Overlay to keep text readable */
+/* Dark overlay for readability */
 .rtg-contracts-body::before {
   content: "";
   position: fixed;
@@ -16,61 +21,72 @@
   z-index: -1;
 }
 
+/* ============================================================
+   HEADER
+   ============================================================ */
 .rtg-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
-  background: rgba(0, 0, 0, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 20px;
+  background: rgba(0, 0, 0, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .rtg-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .rtg-logo {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   object-fit: cover;
 }
 
 .rtg-title-block h1 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
+  font-weight: 600;
 }
 
 .rtg-title-block p {
   margin: 2px 0 0;
   font-size: 0.85rem;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .back-link {
   color: #fff;
   text-decoration: none;
   font-size: 0.9rem;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 0.2s;
 }
 
-/* Top bar */
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
 .rtg-top-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 12px 20px;
+  gap: 18px;
+  padding: 14px 20px;
 }
 
 .rtg-top-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 220px;
+  gap: 6px;
+  min-width: 240px;
 }
 
 .rtg-top-group label {
@@ -80,49 +96,58 @@
 
 #clientSelect,
 #templateSelect {
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
+  font-size: 0.85rem;
 }
 
-/* Main layout */
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
 .rtg-main {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 16px;
+  gap: 18px;
   padding: 0 20px 20px;
 }
 
+/* ============================================================
+   PANELS
+   ============================================================ */
 .rtg-panel {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.72);
   border-radius: 12px;
-  padding: 12px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .rtg-panel-header h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
 }
 
 .rtg-panel-header p {
-  margin: 4px 0 10px;
+  margin: 4px 0 12px;
   font-size: 0.8rem;
   opacity: 0.85;
 }
 
-/* Form */
+/* ============================================================
+   FORM
+   ============================================================ */
 .rtg-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .rtg-form-row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -130,7 +155,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .rtg-field label {
@@ -140,10 +165,10 @@
 
 .rtg-field input,
 .rtg-field textarea {
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.65);
   color: #fff;
   font-size: 0.85rem;
 }
@@ -152,7 +177,9 @@
   resize: vertical;
 }
 
-/* Photos */
+/* ============================================================
+   PHOTO LIST
+   ============================================================ */
 .rtg-photo-list {
   margin-top: 6px;
   display: flex;
@@ -162,86 +189,113 @@
   opacity: 0.85;
 }
 
-/* Signature */
+/* ============================================================
+   SIGNATURE BLOCK
+   ============================================================ */
 .rtg-signature-block h3 {
-  margin: 10px 0 4px;
+  margin: 12px 0 6px;
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
-/* Buttons */
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 .rtg-btn-primary,
 .rtg-btn-secondary {
   border: none;
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   font-size: 0.85rem;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
 
 .rtg-btn-primary {
   background: #2ecc71;
   color: #000;
+  font-weight: 600;
+}
+
+.rtg-btn-primary:hover {
+  opacity: 0.85;
 }
 
 .rtg-btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
+}
+
+.rtg-btn-secondary:hover {
+  opacity: 0.85;
 }
 
 .rtg-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-/* Preview */
+/* ============================================================
+   PREVIEW PANEL
+   ============================================================ */
 .rtg-panel-preview {
-  max-height: calc(100vh - 140px);
-  overflow: auto;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
 }
 
 .rtg-preview {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   border-radius: 8px;
-  padding: 10px;
+  padding: 14px;
   font-size: 0.85rem;
+  line-height: 1.45;
 }
 
-/* Modal */
+/* ============================================================
+   MODAL
+   ============================================================ */
 .rtg-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  z-index: 20;
 }
 
 .rtg-modal {
   background: rgba(0, 0, 0, 0.9);
   border-radius: 10px;
-  padding: 14px;
-  width: 320px;
+  padding: 16px;
+  width: 340px;
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .rtg-modal h2 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .rtg-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-/* Responsive */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 900px) {
   .rtg-main {
     grid-template-columns: 1fr;
+  }
+
+  .rtg-panel-preview {
+    max-height: unset;
   }
 }
