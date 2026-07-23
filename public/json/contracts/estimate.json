@@ -1,0 +1,27 @@
+{
+  "id": "tmpl-proposal",
+  "name": "Tree Work Proposal",
+  "type": "proposal",
+  "role": "client",
+  "scope": "Non-binding estimate for tree work including pricing, scope, and optional services.",
+  "sections": [
+    {
+      "key": "proposal_scope",
+      "title": "Proposed Work",
+      "body": "This proposal outlines recommended tree work including removals, pruning, and cleanup."
+    },
+    {
+      "key": "pricing",
+      "title": "Pricing",
+      "body": "Prices listed are estimates and may change based on site conditions."
+    }
+  ],
+  "fields": [
+    { "key": "estimated_total", "label": "Estimated Total", "type": "money" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": false,
+    "enable_deposit": false
+  }
+}
