@@ -1,35 +1,51 @@
 /* ============================================
    REAL TREE GUY — WEATHER CENTER UI
-   Storm Ops Dashboard • Tactical Theme
+   Cinematic Storm Ops Dashboard • Tactical Theme
    ============================================ */
 
 body.rtg-weather {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-  background: #0d0f0d;
+  background: radial-gradient(circle at 50% 20%, #0f120f, #050505);
   color: #ffffff;
+  overflow-x: hidden;
+  animation: bgPulse 12s infinite alternate;
+}
+
+@keyframes bgPulse {
+  0% { background-color: #0d0f0d; }
+  100% { background-color: #0b0d0b; }
 }
 
 /* HEADER */
 .weather-header {
   text-align: center;
   padding: 30px 20px;
-  background: rgba(0, 0, 0, 0.75);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
   border-bottom: 2px solid #2e6b33;
+  box-shadow: 0 0 25px rgba(46,107,51,0.4);
 }
 
 .weather-header h1 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
   color: #caffca;
-  text-shadow: 0 0 12px #1f5f2b;
+  text-shadow: 0 0 18px #1f5f2b, 0 0 4px #2e6b33;
+  letter-spacing: 1px;
+  animation: titleGlow 3s infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% { text-shadow: 0 0 10px #1f5f2b; }
+  100% { text-shadow: 0 0 22px #2e6b33; }
 }
 
 .weather-header .sub {
   font-size: 1rem;
   color: #9ddf9d;
   margin-top: 4px;
+  opacity: 0.85;
 }
 
 .back-link {
@@ -38,6 +54,7 @@ body.rtg-weather {
   color: #ff8c42;
   font-weight: 700;
   text-decoration: none;
+  transition: 0.25s ease;
 }
 
 .back-link:hover {
@@ -59,15 +76,22 @@ body.rtg-weather {
 .module-card {
   background: rgba(0, 0, 0, 0.55);
   border: 2px solid #2e6b33;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 12px rgba(46, 107, 51, 0.4);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 0 18px rgba(46, 107, 51, 0.4);
+  backdrop-filter: blur(4px);
+  transition: 0.3s ease;
+}
+
+.module-card:hover {
+  box-shadow: 0 0 28px rgba(46, 107, 51, 0.6);
+  transform: translateY(-2px);
 }
 
 .module-card h2 {
   margin-top: 0;
   margin-bottom: 14px;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   color: #caffca;
   text-shadow: 0 0 8px #1f5f2b;
 }
@@ -86,6 +110,12 @@ body.rtg-weather {
   border: 2px solid #ff8c42;
   background: #000;
   color: #fff;
+  transition: 0.25s ease;
+}
+
+.location-row input:focus {
+  border-color: #ffb673;
+  box-shadow: 0 0 10px #ff8c42;
 }
 
 .rtg-btn.small {
@@ -102,6 +132,7 @@ body.rtg-weather {
 .rtg-btn.small:hover {
   background: #ff8c42;
   color: #000;
+  box-shadow: 0 0 12px #ff8c42;
 }
 
 /* CURRENT CONDITIONS */
@@ -112,15 +143,22 @@ body.rtg-weather {
 }
 
 .current-temp {
-  font-size: 3.4rem;
+  font-size: 3.6rem;
   font-weight: 900;
   color: #ff8c42;
-  text-shadow: 0 0 12px #ff8c42;
+  text-shadow: 0 0 18px #ff8c42;
+  animation: tempPulse 2.5s infinite alternate;
+}
+
+@keyframes tempPulse {
+  0% { text-shadow: 0 0 12px #ff8c42; }
+  100% { text-shadow: 0 0 22px #ffb673; }
 }
 
 .current-details p {
   margin: 4px 0;
   font-size: 1rem;
+  opacity: 0.9;
 }
 
 /* TICKERS */
@@ -130,11 +168,23 @@ body.rtg-weather {
   background: rgba(255, 140, 66, 0.15);
   border-left: 4px solid #ff8c42;
   font-weight: 700;
+  animation: tickerPulse 3s infinite alternate;
+}
+
+@keyframes tickerPulse {
+  0% { border-left-color: #ff8c42; }
+  100% { border-left-color: #ffb673; }
 }
 
 .ticker.hazard {
   background: rgba(255, 0, 0, 0.15);
   border-left-color: #ff4444;
+  animation: hazardPulse 1.2s infinite alternate;
+}
+
+@keyframes hazardPulse {
+  0% { border-left-color: #ff4444; }
+  100% { border-left-color: #ff0000; }
 }
 
 /* HOURLY STRIP */
@@ -145,13 +195,36 @@ body.rtg-weather {
   padding-bottom: 6px;
 }
 
-.hourly-strip::-webkit-scrollbar {
-  height: 6px;
+.hour-card {
+  min-width: 90px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid #2e6b33;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(46,107,51,0.3);
+  transition: 0.25s ease;
 }
 
-.hourly-strip::-webkit-scrollbar-thumb {
-  background: #2e6b33;
-  border-radius: 4px;
+.hour-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 18px rgba(46,107,51,0.6);
+}
+
+.h-time {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.h-temp {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ff8c42;
+}
+
+.h-cond {
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 
 /* DAILY STRIP */
@@ -161,15 +234,32 @@ body.rtg-weather {
   gap: 10px;
 }
 
-/* INFO GRID */
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px 14px;
+.day-card {
+  background: rgba(0,0,0,0.55);
+  border: 1px solid #2e6b33;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 0 10px rgba(46,107,51,0.3);
+  transition: 0.25s ease;
 }
 
-.info-grid div {
+.day-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 18px rgba(46,107,51,0.6);
+}
+
+.d-day {
   font-size: 1rem;
+  font-weight: 700;
+}
+
+.d-temp {
+  font-size: 1.2rem;
+  color: #ff8c42;
+}
+
+.d-cond {
+  opacity: 0.85;
 }
 
 /* RADAR */
@@ -178,7 +268,13 @@ body.rtg-weather {
   height: 420px;
   border: none;
   border-radius: 12px;
-  box-shadow: 0 0 12px rgba(46, 107, 51, 0.4);
+  box-shadow: 0 0 22px rgba(46, 107, 51, 0.5);
+  animation: radarGlow 4s infinite alternate;
+}
+
+@keyframes radarGlow {
+  0% { box-shadow: 0 0 18px rgba(46,107,51,0.4); }
+  100% { box-shadow: 0 0 28px rgba(46,107,51,0.7); }
 }
 
 /* RESPONSIVE */
