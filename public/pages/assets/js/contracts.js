@@ -1,25 +1,22 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS CENTER (FINAL VERSION)
+// REAL TREE GUY OS — CONTRACTS CENTER (FINAL VERSION WITH JSON TEMPLATES)
 // ============================================================
 
-// ALWAYS hit your Worker domain directly
 const API_BASE = "https://api.realtreeguy.com/api";
 
 // ============================================================
-// SAFE JSON WRAPPER — NEVER CRASHES
+// SAFE JSON WRAPPER
 // ============================================================
 async function safeJson(res, url) {
   const text = await res.text();
-
   if (!text || text.trim().startsWith("<")) {
     console.error("❌ API returned HTML instead of JSON:", url);
     return null;
   }
-
   try {
     return JSON.parse(text);
   } catch (err) {
-    console.error("❌ JSON parse failed at:", url, err);
+    console.error("❌ JSON parse failed:", url, err);
     return null;
   }
 }
@@ -62,7 +59,8 @@ const API = {
 // STATE
 // ============================================================
 let userProfile = {};
-let templates = [];
+let templates = [];          // API templates
+let contractFiles = [];      // JSON templates from /json/contracts
 let templateData = {};
 let clients = [];
 let attachedPhotos = [];
@@ -72,66 +70,44 @@ let attachedPhotos = [];
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   loadProfile();
-  loadTemplates();
+  loadApiTemplates();
+  loadJsonContractTemplates();   // ⭐ NEW
   loadClients();
   wireEvents();
 });
 
 // ============================================================
-// WIRE EVENTS
+// LOAD JSON CONTRACT TEMPLATES (from /json/contracts/*.json)
 // ============================================================
-function wireEvents() {
-  const templateSelect = document.getElementById("templateSelect");
-  const clientSelect = document.getElementById("clientSelect");
-  const photoUpload = document.getElementById("photoUpload");
-  const previewBtn = document.getElementById("previewBtn");
-  const saveBtn = document.getElementById("saveBtn");
-  const emailBtn = document.getElementById("emailBtn");
-  const newClientBtn = document.getElementById("newClientBtn");
-  const customTemplateBtn = document.getElementById("customTemplateBtn");
-  const saveClientBtn = document.getElementById("saveClientBtn");
-  const closeClientModalBtn = document.getElementById("closeClientModal");
+async function loadJsonContractTemplates() {
+  try {
+    const res = await fetch("/json/contracts/");
+    const text = await res.text();
 
-  templateSelect?.addEventListener("change", onTemplateChange);
-  clientSelect?.addEventListener("change", onClientChange);
-  photoUpload?.addEventListener("change", onPhotoUpload);
+    // Extract filenames from directory listing
+    const files = text.match(/href="([^"]+\.json)"/g)?.map(x =>
+      x.replace('href="', "").replace('"', "")
+    ) || [];
 
-  previewBtn?.addEventListener("click", () => previewDoc("Contract"));
-  saveBtn?.addEventListener("click", () => saveDoc("Contract"));
-  emailBtn?.addEventListener("click", () => emailDoc("Contract"));
+    contractFiles = files;
 
-  newClientBtn?.addEventListener("click", openClientModal);
-  customTemplateBtn?.addEventListener("click", saveCurrentAsTemplate);
+    const select = document.getElementById("templateSelect");
+    if (!select) return;
 
-  saveClientBtn?.addEventListener("click", saveClient);
-  closeClientModalBtn?.addEventListener("click", closeClientModal);
-}
+    // Add JSON templates to dropdown
+    select.innerHTML += files.map(f =>
+      `<option value="json:${f}">${f.replace(".json", "")}</option>`
+    ).join("");
 
-// ============================================================
-// LOAD USER PROFILE
-// ============================================================
-async function loadProfile() {
-  const data = await API.get("/profile");
-  if (!data) return;
-
-  userProfile = data;
-
-  const logoEl = document.getElementById("userLogo");
-  const nameEl = document.getElementById("treeGuyName");
-
-  if (logoEl) {
-    logoEl.src = userProfile.logo || "/assets/img/default-logo.png";
-  }
-
-  if (nameEl) {
-    nameEl.value = userProfile.name || "";
+  } catch (err) {
+    console.error("❌ Failed to load JSON contract templates:", err);
   }
 }
 
 // ============================================================
-// LOAD TEMPLATE LIST
+// LOAD API TEMPLATE LIST
 // ============================================================
-async function loadTemplates() {
+async function loadApiTemplates() {
   const list = await API.get("/templates");
   if (!list) return;
 
@@ -140,36 +116,58 @@ async function loadTemplates() {
   const select = document.getElementById("templateSelect");
   if (!select) return;
 
-  select.innerHTML = `<option value="">Choose template...</option>` +
+  select.innerHTML =
+    `<option value="">Choose template...</option>` +
     templates.map(t =>
-      `<option value="${t.id}">${t.name}</option>`
+      `<option value="api:${t.id}">${t.name}</option>`
     ).join("");
 }
 
 // ============================================================
-// LOAD SINGLE TEMPLATE JSON WHEN SELECTED
+// TEMPLATE CHANGE HANDLER
 // ============================================================
 async function onTemplateChange(e) {
-  const id = e.target.value;
-  if (!id) return;
+  const value = e.target.value;
 
-  const tmpl = await API.get(`/templates/${id}`);
-  if (!tmpl) {
-    console.error("❌ Failed to load template:", id);
+  if (!value) return;
+
+  // JSON template
+  if (value.startsWith("json:")) {
+    const file = value.replace("json:", "");
+    const tmpl = await fetch(`/json/contracts/${file}`).then(r => r.json());
+
+    templateData = tmpl;
+    applyTemplateToUI(tmpl);
     return;
   }
 
-  templateData = tmpl;
+  // API template
+  if (value.startsWith("api:")) {
+    const id = value.replace("api:", "");
+    const tmpl = await API.get(`/templates/${id}`);
 
+    templateData = tmpl;
+    applyTemplateToUI(tmpl);
+    return;
+  }
+}
+
+// ============================================================
+// APPLY TEMPLATE TO UI
+// ============================================================
+function applyTemplateToUI(tmpl) {
   const scopeEl = document.getElementById("scope");
   const extraTermsEl = document.getElementById("extraTerms");
 
-  if (scopeEl) scopeEl.value = tmpl.scope || "";
+  if (scopeEl) scopeEl.value = tmpl.scope || tmpl.body || "";
 
-  const paymentSection = tmpl.sections?.find(s => s.key === "payment_terms");
-  const bodyText = tmpl.body || paymentSection?.body || "";
-
-  if (extraTermsEl) extraTermsEl.value = bodyText;
+  if (extraTermsEl) {
+    extraTermsEl.value =
+      tmpl.extra_terms ||
+      tmpl.body ||
+      tmpl.sections?.find(s => s.key === "payment_terms")?.body ||
+      "";
+  }
 }
 
 // ============================================================
@@ -184,7 +182,8 @@ async function loadClients() {
   const select = document.getElementById("clientSelect");
   if (!select) return;
 
-  select.innerHTML = `<option value="">Select client...</option>` +
+  select.innerHTML =
+    `<option value="">Select client...</option>` +
     clients.map(c =>
       `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
     ).join("");
@@ -200,13 +199,9 @@ function onClientChange(e) {
   const c = clients.find(c => String(c.id) === String(id));
   if (!c) return;
 
-  const nameEl = document.getElementById("clientName");
-  const addrEl = document.getElementById("clientAddress");
-  const phoneEl = document.getElementById("clientPhone");
-
-  if (nameEl) nameEl.value = c.name || "";
-  if (addrEl) addrEl.value = c.address || "";
-  if (phoneEl) phoneEl.value = c.phone || "";
+  document.getElementById("clientName").value = c.name || "";
+  document.getElementById("clientAddress").value = c.address || "";
+  document.getElementById("clientPhone").value = c.phone || "";
 }
 
 // ============================================================
@@ -438,6 +433,6 @@ async function saveCurrentAsTemplate() {
   }
 
   templates.push(saved);
-  await loadTemplates();
+  await loadApiTemplates();
   alert("Template saved!");
 }
