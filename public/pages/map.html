@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 
-  <!-- YOUR CSS -->
-  <link rel="stylesheet" href="../../assets/css/map.css">
+  <!-- RTG MAP CSS -->
+  <link rel="stylesheet" href="/assets/css/map.css">
 </head>
 
 <body>
@@ -22,23 +22,27 @@
 
     <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
 
+    <!-- GPS STATUS -->
     <div id="locationStatus" class="status">Requesting location…</div>
 
+    <!-- FILTERS -->
     <label>Supply Filters</label>
     <div id="filterRow" class="pill-row">
-      <button class="pill" data-type="home_depot">Home Depot</button>
-      <button class="pill" data-type="lowes">Lowe's</button>
-      <button class="pill" data-type="ace">Ace Hardware</button>
-      <button class="pill" data-type="chainsaw">Chainsaw Shops</button>
-      <button class="pill" data-type="woodworking">Woodworking Stores</button>
-      <button class="pill" data-type="dump">Wood Dump Sites</button>
-      <button class="pill" data-type="sawmill">Sawmills</button>
-      <button class="pill" data-type="gas">Gas Stations</button>
+      <button class="pill" data-store-type="home_depot">Home Depot</button>
+      <button class="pill" data-store-type="lowes">Lowe's</button>
+      <button class="pill" data-store-type="ace">Ace Hardware</button>
+      <button class="pill" data-store-type="chainsaw">Chainsaw Shops</button>
+      <button class="pill" data-store-type="woodworking">Woodworking Stores</button>
+      <button class="pill" data-store-type="dump">Wood Dump Sites</button>
+      <button class="pill" data-store-type="sawmill">Sawmills</button>
+      <button class="pill" data-store-type="gas">Gas Stations</button>
     </div>
 
+    <!-- ADDRESS SEARCH -->
     <label>Search Any Address</label>
     <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
 
+    <!-- ACTIVE FILTER -->
     <div class="status">
       Filter: <span id="activeFilterLabel">None</span>
     </div>
@@ -46,13 +50,13 @@
 
   <!-- MAP ENGINE -->
   <div class="map-wrap">
-    <div id="map"></div>
+    <div id="rtgMap"></div>
   </div>
 
 </section>
 
-<!-- YOUR MAP ENGINE JS -->
-<script type="module" src="/pages/assets/js/map.js"></script>
+<!-- RTG MAP ENGINE JS -->
+<script type="module" src="/assets/js/map.js"></script>
 
 </body>
 </html>
