@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateClock, 1000);
 
   // ============================================================
-  // WEATHER (GPS ONLY — until weather worker is provided)
+  // WEATHER (GPS ONLY)
   // ============================================================
   async function getUserLocation() {
     return new Promise(resolve => {
@@ -143,18 +143,21 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // RADIO PRESENCE (Worker route exists)
+  // RADIO HEARTBEAT (NEW VERSION)
   // ============================================================
-  async function pingRadio() {
-    await API.post("/radio/presence", {
+  async function radioHeartbeat() {
+    const pos = await getUserLocation();
+
+    // Update user's last_seen + GPS in DB
+    await API.post("/radio/heartbeat", {
       user_id: rtgUserId,
-      email: rtgUserEmail,
-      type: rtgUserType,
+      lat: pos.lat,
+      lon: pos.lon,
       ts: Date.now()
     });
   }
 
-  pingRadio();
-  setInterval(pingRadio, 30 * 1000);
+  radioHeartbeat();
+  setInterval(radioHeartbeat, 15000); // every 15 seconds
 
 });
