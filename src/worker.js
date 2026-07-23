@@ -1,7 +1,3 @@
-// ============================================================
-// REAL TREE GUY — MAIN WORKER (FULL FIXED VERSION)
-// ============================================================
-
 import * as MapLogic from "./work-map.js";
 import * as CalendarLogic from "./work-calendar.js";
 import * as ContractLogic from "./work-contracts.js";
@@ -16,24 +12,25 @@ import rtgDashWork from "../public/rtg-online/tree-guy/src/workers/rtg-dash-work
 export const API_BASE = "/api";
 
 // ============================================================
-// GLOBAL CORS HEADERS — FIXED
+// GLOBAL CORS HEADERS
 // ============================================================
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers":
-    "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type, X-RTG-Name"
+    "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
 };
 
-// ============================================================
-// WRAPPERS
-// ============================================================
+// Wrap ANY response in CORS
 function wrap(response) {
   if (!response) {
-    return new Response("Worker returned null", { status: 500 });
+    return new Response("Worker returned empty response", {
+      status: 500,
+      headers: CORS
+    });
   }
 
-  // WebSocket passthrough
+  // WebSocket upgrade bypass
   if (response.status === 101 || response.webSocket) return response;
 
   const newHeaders = new Headers(response.headers);
@@ -45,6 +42,7 @@ function wrap(response) {
   });
 }
 
+// JSON helper
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -55,16 +53,13 @@ function json(body, status = 200) {
   });
 }
 
-// ============================================================
-// MAIN WORKER
-// ============================================================
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
     // ============================================================
-    // OPTIONS — REQUIRED FOR CORS
+    // CORS PRE-FLIGHT
     // ============================================================
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: CORS });
@@ -75,25 +70,28 @@ export default {
       // RTG ONLINE TREE GUY DASHBOARD
       // ============================================================
       if (path.startsWith(`${API_BASE}/rtg-online/tree-guy`)) {
-        return wrap(await rtgDashWork.fetch(request, env));
+        const res = await rtgDashWork.fetch(request, env);
+        return wrap(res);
       }
 
       // ============================================================
-      // MAP
+      // MAP ENGINE
       // ============================================================
       if (path.startsWith(`${API_BASE}/map`)) {
-        return wrap(await MapLogic.handle(request, env));
+        const res = await MapLogic.handle(request, env);
+        return wrap(res);
       }
 
       // ============================================================
-      // CALENDAR
+      // CALENDAR ENGINE
       // ============================================================
       if (path.startsWith(`${API_BASE}/calendar`)) {
-        return wrap(await CalendarLogic.handle(request, env));
+        const res = await CalendarLogic.handle(request, env);
+        return wrap(res);
       }
 
       // ============================================================
-      // CONTRACTS CENTER
+      // CONTRACTS CENTER (PROFILE / TEMPLATES / CLIENTS / DOCS / EMAIL / PHOTOS)
       // ============================================================
       if (
         path.startsWith(`${API_BASE}/profile`) ||
@@ -103,7 +101,8 @@ export default {
         path.startsWith(`${API_BASE}/documents`) ||
         path.startsWith(`${API_BASE}/email`)
       ) {
-        return wrap(await ContractLogic.handle(request, env));
+        const res = await ContractLogic.handle(request, env);
+        return wrap(res);
       }
 
       // ============================================================
@@ -116,44 +115,33 @@ export default {
       }
 
       // ============================================================
-      // WEATHER
+      // WEATHER CENTER (GPS, address search, full metrics)
       // ============================================================
       if (path.startsWith(`${API_BASE}/weather`)) {
-        return wrap(await WeatherLogic.handle(request, env));
+        const res = await WeatherLogic.handle(request, env);
+        return wrap(res);
       }
 
       // ============================================================
       // CUSTOMERS
       // ============================================================
       if (path.startsWith(`${API_BASE}/customers`)) {
-        return wrap(await CustomerLogic.handle(request, env));
+        const res = await CustomerLogic.handle(request, env);
+        return wrap(res);
       }
 
       // ============================================================
       // JOBS
       // ============================================================
       if (path.startsWith(`${API_BASE}/jobs`)) {
-        return wrap(await JobLogic.handle(request, env));
+        const res = await JobLogic.handle(request, env);
+        return wrap(res);
       }
 
       // ============================================================
-      // STATIC ASSETS — FIXED MIME HANDLING
+      // STATIC ASSETS (Pages, JS, CSS, Images)
       // ============================================================
       const assetRes = await env.ASSETS.fetch(request);
-
-      const ext = path.split(".").pop().toLowerCase();
-
-      // Fix JS MIME type (prevents HTML fallback errors)
-      if (ext === "js") {
-        return new Response(assetRes.body, {
-          status: assetRes.status,
-          headers: {
-            "Content-Type": "application/javascript",
-            ...CORS
-          }
-        });
-      }
-
       return wrap(assetRes);
 
     } catch (err) {
