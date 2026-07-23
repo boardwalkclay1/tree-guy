@@ -143,14 +143,15 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // RADIO HEARTBEAT (NEW VERSION)
+  // RADIO HEARTBEAT (FINAL FIXED VERSION)
   // ============================================================
   async function radioHeartbeat() {
     const pos = await getUserLocation();
 
-    // Update user's last_seen + GPS in DB
     await API.post("/radio/heartbeat", {
       user_id: rtgUserId,
+      email: rtgUserEmail,
+      type: rtgUserType,
       lat: pos.lat,
       lon: pos.lon,
       ts: Date.now()
@@ -158,6 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   radioHeartbeat();
-  setInterval(radioHeartbeat, 15000); // every 15 seconds
+  setInterval(radioHeartbeat, 15000);
 
 });
