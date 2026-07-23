@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS CENTER (FINAL FIXED VERSION)
+// REAL TREE GUY OS — CONTRACTS CENTER (FINAL VERSION)
 // ============================================================
 
 // ALWAYS hit your Worker domain directly
@@ -11,7 +11,6 @@ const API_BASE = "https://api.realtreeguy.com/api";
 async function safeJson(res, url) {
   const text = await res.text();
 
-  // If Worker returned HTML, do NOT crash
   if (!text || text.trim().startsWith("<")) {
     console.error("❌ API returned HTML instead of JSON:", url);
     return null;
@@ -32,9 +31,7 @@ const API = {
   async get(path) {
     const url = `${API_BASE}${path}`;
     try {
-      const res = await fetch(url, {
-        headers: { "Accept": "application/json" }
-      });
+      const res = await fetch(url, { headers: { "Accept": "application/json" } });
       return await safeJson(res, url);
     } catch (err) {
       console.error("❌ GET failed:", url, err);
@@ -65,7 +62,8 @@ const API = {
 // STATE
 // ============================================================
 let userProfile = {};
-let templates = [];
+let templates = [];     // list of template filenames
+let templateData = {};  // actual JSON loaded per template
 let clients = [];
 let attachedPhotos = [];
 
@@ -84,10 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ============================================================
 async function loadProfile() {
   const data = await API.get("/profile");
-  if (!data) {
-    console.warn("⚠ Profile load failed — using fallback");
-    return;
-  }
+  if (!data) return;
 
   userProfile = data;
 
@@ -99,22 +94,45 @@ async function loadProfile() {
 }
 
 // ============================================================
-// LOAD TEMPLATES
+// LOAD TEMPLATE LIST (filenames)
 // ============================================================
 async function loadTemplates() {
-  const data = await API.get("/templates");
-  if (!data) {
-    console.warn("⚠ Templates load failed — using empty list");
-    return;
-  }
+  const list = await API.get("/templates");
+  if (!list) return;
 
-  templates = data;
+  templates = list;
 
   const select = document.getElementById("templateSelect");
   select.innerHTML = `<option value="">Choose template...</option>` +
     templates.map(t =>
-      `<option value="${t.id}">${t.type} – ${t.name}</option>`
+      `<option value="${t.id}">${t.name}</option>`
     ).join("");
+}
+
+// ============================================================
+// LOAD SINGLE TEMPLATE JSON WHEN SELECTED
+// ============================================================
+async function onTemplateChange(e) {
+  const id = e.target.value;
+  if (!id) return;
+
+  // Load JSON file from Worker
+  const tmpl = await API.get(`/templates/${id}`);
+  if (!tmpl) {
+    console.error("❌ Failed to load template:", id);
+    return;
+  }
+
+  templateData = tmpl;
+
+  // Insert into UI
+  document.getElementById("scope").value = tmpl.scope || "";
+
+  // If template has sections, load payment terms or main body
+  const paymentSection = tmpl.sections?.find(s => s.key === "payment_terms");
+  const bodyText = tmpl.body || paymentSection?.body || "";
+
+  document.getElementById("extraTerms").value = bodyText;
 }
 
 // ============================================================
@@ -122,10 +140,7 @@ async function loadTemplates() {
 // ============================================================
 async function loadClients() {
   const data = await API.get("/clients");
-  if (!data) {
-    console.warn("⚠ Clients load failed — using empty list");
-    return;
-  }
+  if (!data) return;
 
   clients = data;
 
@@ -134,55 +149,6 @@ async function loadClients() {
     clients.map(c =>
       `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
     ).join("");
-}
-
-// ============================================================
-// EVENTS
-// ============================================================
-function wireEvents() {
-  document.getElementById("templateSelect")
-    .addEventListener("change", onTemplateChange);
-
-  document.getElementById("clientSelect")
-    .addEventListener("change", onClientChange);
-
-  document.getElementById("previewBtn")
-    .addEventListener("click", () => previewDoc("Contract"));
-
-  document.getElementById("saveBtn")
-    .addEventListener("click", () => saveDoc("Contract"));
-
-  document.getElementById("emailBtn")
-    .addEventListener("click", () => emailDoc("Contract"));
-
-  document.getElementById("photoUpload")
-    .addEventListener("change", onPhotoUpload);
-
-  document.getElementById("newClientBtn")
-    .addEventListener("click", openClientModal);
-
-  document.getElementById("closeClientModal")
-    .addEventListener("click", closeClientModal);
-
-  document.getElementById("saveClientBtn")
-    .addEventListener("click", saveClient);
-
-  document.getElementById("customTemplateBtn")
-    .addEventListener("click", saveCurrentAsTemplate);
-}
-
-// ============================================================
-// TEMPLATE CHANGE
-// ============================================================
-function onTemplateChange(e) {
-  const id = e.target.value;
-  if (!id) return;
-
-  const t = templates.find(t => String(t.id) === String(id));
-  if (!t) return;
-
-  document.getElementById("scope").value = t.scope || "";
-  document.getElementById("extraTerms").value = t.body || "";
 }
 
 // ============================================================
@@ -402,7 +368,7 @@ async function saveClient() {
 }
 
 // ============================================================
-// SAVE CURRENT AS TEMPLATE
+// SAVE CURRENT AS TEMPLATE (DB version)
 // ============================================================
 async function saveCurrentAsTemplate() {
   const fields = collectFields();
