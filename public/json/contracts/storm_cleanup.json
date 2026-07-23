@@ -1,0 +1,22 @@
+{
+  "id": "tmpl-storm-cleanup",
+  "name": "Storm Damage Cleanup",
+  "type": "client_contract",
+  "role": "client",
+  "scope": "Emergency storm cleanup including hazardous removals.",
+  "sections": [
+    {
+      "key": "emergency_terms",
+      "title": "Emergency Terms",
+      "body": "Contractor will perform emergency cleanup under hazardous conditions."
+    }
+  ],
+  "fields": [
+    { "key": "total_price", "label": "Total Price", "type": "money" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": true
+  }
+}
