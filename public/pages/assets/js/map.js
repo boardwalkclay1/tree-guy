@@ -2,115 +2,141 @@
 // REAL TREE GUY MAP ENGINE — MAPLIBRE + WORKER DATA
 // ============================================================
 
-let userLat = null;
-let userLng = null;
+const API_BASE = "https://api.realtreeguy.com/api/map";
+
+let map;
+let currentType = "home_depot";
 
 const locationStatus = document.getElementById("locationStatus");
 const filterRow = document.getElementById("filterRow");
 const activeFilterLabel = document.getElementById("activeFilterLabel");
 
 // ============================================================
-// API BASE — YOUR WORKER DOMAIN
+// INIT MAP
 // ============================================================
-const API_BASE = "https://api.realtreeguy.com/api/map";
+function initMap(center = [-84.3880, 33.7490]) { // Atlanta default
+  map = new maplibregl.Map({
+    container: "rtgMap",
+    style: "https://demotiles.maplibre.org/style.json",
+    center,
+    zoom: 11
+  });
 
-// ============================================================
-// GET REAL GPS
-// ============================================================
-async function getRealLocation() {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        userLat = pos.coords.latitude;
-        userLng = pos.coords.longitude;
+  map.addControl(new maplibregl.NavigationControl(), "top-right");
 
-        locationStatus.textContent =
-          `GPS Locked: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-
-        resolve();
-      },
-      err => {
-        locationStatus.textContent = "Location denied.";
-        reject(err);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0
-      }
-    );
+  map.on("load", () => {
+    console.log("MapLibre ready.");
+    loadStores(currentType);
   });
 }
 
 // ============================================================
-// INIT MAPLIBRE MAP
+// LOAD STORES FROM WORKER
 // ============================================================
-const map = new maplibregl.Map({
-  container: "map",
-  style: "https://tiles.openfreemap.org/styles/bright",
-  center: [-84.39, 33.78], // Atlanta
-  zoom: 12
-});
+async function loadStores(type) {
+  currentType = type;
+  if (activeFilterLabel) activeFilterLabel.textContent = `Filter: ${type}`;
 
-// Wait for map to load
-map.on("load", () => {
-  console.log("MapLibre ready.");
-});
+  try {
+    const res = await fetch(`${API_BASE}/stores?type=${encodeURIComponent(type)}`);
+    const data = await res.json();
+
+    if (!data || !data.features) {
+      console.error("Invalid stores GeoJSON", data);
+      return;
+    }
+
+    // Remove old source/layer if exists
+    if (map.getSource("rtg-stores")) {
+      map.removeLayer("rtg-stores-layer");
+      map.removeSource("rtg-stores");
+    }
+
+    map.addSource("rtg-stores", {
+      type: "geojson",
+      data
+    });
+
+    map.addLayer({
+      id: "rtg-stores-layer",
+      type: "circle",
+      source: "rtg-stores",
+      paint: {
+        "circle-radius": 6,
+        "circle-color": "#ff7f00",
+        "circle-stroke-width": 1,
+        "circle-stroke-color": "#000000"
+      }
+    });
+
+    map.on("click", "rtg-stores-layer", (e) => {
+      const feature = e.features[0];
+      const props = feature.properties || {};
+      const coords = feature.geometry.coordinates;
+
+      new maplibregl.Popup()
+        .setLngLat(coords)
+        .setHTML(`
+          <strong>${props.name || "Store"}</strong><br>
+          ${props.address || ""}<br>
+          <small>${props.type || ""}</small>
+        `)
+        .addTo(map);
+    });
+
+    map.on("mouseenter", "rtg-stores-layer", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "rtg-stores-layer", () => {
+      map.getCanvas().style.cursor = "";
+    });
+
+  } catch (err) {
+    console.error("Failed to load stores:", err);
+  }
+}
 
 // ============================================================
-// LOAD STORE DATA FROM WORKER
+// GEOLOCATION
 // ============================================================
-async function loadStores(filterType) {
-  const res = await fetch(`${API_BASE}/stores?type=${filterType}`);
-  const geojson = await res.json();
-
-  if (map.getSource("rtg-stores")) {
-    map.getSource("rtg-stores").setData(geojson);
+function initLocation() {
+  if (!navigator.geolocation) {
+    if (locationStatus) locationStatus.textContent = "Location not available.";
+    initMap();
     return;
   }
 
-  map.addSource("rtg-stores", {
-    type: "geojson",
-    data: geojson
-  });
-
-  map.addLayer({
-    id: "rtg-stores-layer",
-    type: "circle",
-    source: "rtg-stores",
-    paint: {
-      "circle-radius": 6,
-      "circle-color": [
-        "match",
-        ["get", "brand"],
-        "The Home Depot", "#ff6600",
-        "Lowe's", "#0066ff",
-        "Ace Hardware", "#00cc44",
-        "sawmill", "#aa5500",
-        "chainsaw", "#ff0000",
-        "wood dump", "#663300",
-        "#00ff88"
-      ]
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      if (locationStatus) locationStatus.textContent = "Location detected.";
+      initMap([longitude, latitude]);
+    },
+    () => {
+      if (locationStatus) locationStatus.textContent = "Using default location.";
+      initMap();
     }
-  });
+  );
 }
 
 // ============================================================
 // FILTER BUTTONS
 // ============================================================
-filterRow.addEventListener("click", async e => {
-  const btn = e.target.closest(".pill");
-  if (!btn) return;
+function bindFilters() {
+  if (!filterRow) return;
 
-  const type = btn.dataset.type;
-  activeFilterLabel.textContent = type;
-
-  await loadStores(type);
-});
+  filterRow.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-store-type]");
+    if (!btn) return;
+    const type = btn.dataset.storeType;
+    loadStores(type);
+  });
+}
 
 // ============================================================
-// INITIAL LOAD
+// INIT
 // ============================================================
-getRealLocation().then(() => {
-  loadStores("home_depot");
+document.addEventListener("DOMContentLoaded", () => {
+  initLocation();
+  bindFilters();
 });
