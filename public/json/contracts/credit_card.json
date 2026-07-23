@@ -1,0 +1,28 @@
+{
+  "id": "tmpl-cc-auth",
+  "name": "Credit Card Authorization",
+  "type": "payment_contract",
+  "role": "client",
+  "scope": "Authorization for credit card payment including fees and surcharges.",
+  "sections": [
+    {
+      "key": "authorization",
+      "title": "Authorization",
+      "body": "Client authorizes contractor to charge the credit card for services rendered."
+    },
+    {
+      "key": "fees",
+      "title": "Credit Card Fees",
+      "body": "A processing fee may apply depending on card type."
+    }
+  ],
+  "fields": [
+    { "key": "amount", "label": "Charge Amount", "type": "money" },
+    { "key": "cc_fee_percent", "label": "Fee Percent", "type": "number" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": false
+  }
+}
