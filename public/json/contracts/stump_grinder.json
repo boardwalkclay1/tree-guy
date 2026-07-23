@@ -1,0 +1,22 @@
+{
+  "id": "tmpl-stump-grinding",
+  "name": "Stump Grinding Contract",
+  "type": "client_contract",
+  "role": "client",
+  "scope": "Stump grinding and debris removal.",
+  "sections": [
+    {
+      "key": "work_scope",
+      "title": "Scope of Work",
+      "body": "Contractor will grind stump to specified depth and remove debris if selected."
+    }
+  ],
+  "fields": [
+    { "key": "price", "label": "Price", "type": "money" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": true
+  }
+}
