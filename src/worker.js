@@ -21,12 +21,8 @@ const CORS = {
     "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
 };
 
-// Wrap ANY HTTP response in CORS (NOT WebSockets)
 function wrap(response) {
-  // If WebSocket upgrade → DO NOT TOUCH IT
-  if (response.status === 101 || response.webSocket) {
-    return response;
-  }
+  if (response.status === 101 || response.webSocket) return response;
 
   const newHeaders = new Headers(response.headers);
   Object.entries(CORS).forEach(([k, v]) => newHeaders.set(k, v));
@@ -37,7 +33,6 @@ function wrap(response) {
   });
 }
 
-// Wrap JSON safely
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -53,18 +48,11 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // ============================================================
-    // CORS PRE-FLIGHT
-    // ============================================================
     if (request.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: CORS
-      });
+      return new Response(null, { status: 204, headers: CORS });
     }
 
     try {
-
       // ============================================================
       // RTG ONLINE TREE GUY DASHBOARD
       // ============================================================
@@ -90,9 +78,16 @@ export default {
       }
 
       // ============================================================
-      // CONTRACTS
+      // CONTRACTS CENTER (PROFILE / TEMPLATES / CLIENTS / DOCS / EMAIL / PHOTOS)
       // ============================================================
-      if (path.startsWith(`${API_BASE}/contracts`)) {
+      if (
+        path.startsWith(`${API_BASE}/profile`) ||
+        path.startsWith(`${API_BASE}/templates`) ||
+        path.startsWith(`${API_BASE}/clients`) ||
+        path.startsWith(`${API_BASE}/upload-photo`) ||
+        path.startsWith(`${API_BASE}/documents`) ||
+        path.startsWith(`${API_BASE}/email`)
+      ) {
         const res = await ContractLogic.handle(request, env);
         return wrap(res);
       }
@@ -102,17 +97,12 @@ export default {
       // ============================================================
       if (path.startsWith(`${API_BASE}/radio`)) {
         const res = await RadioLogic.handle(request, env);
-
-        // If WebSocket upgrade → return raw response
-        if (res.status === 101 || res.webSocket) {
-          return res;
-        }
-
+        if (res.status === 101 || res.webSocket) return res;
         return wrap(res);
       }
 
       // ============================================================
-      // WEATHER
+      // WEATHER (includes /api/weather and /api/weather/location)
       // ============================================================
       if (path.startsWith(`${API_BASE}/weather`)) {
         const res = await WeatherLogic.handle(request, env);
