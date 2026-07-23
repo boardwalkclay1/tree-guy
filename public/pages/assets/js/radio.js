@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — RADIO CENTER (FINAL VERSION)
+// REAL TREE GUY OS — RADIO CENTER (FINAL FIXED VERSION)
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api";
@@ -10,7 +10,7 @@ const API_BASE = "https://api.realtreeguy.com/api";
 async function safeJson(res, url) {
   const text = await res.text();
   if (!text || text.trim().startsWith("<")) {
-    console.error("❌ API returned HTML:", url);
+    console.error("❌ API returned HTML instead of JSON:", url);
     return null;
   }
   try {
@@ -69,21 +69,16 @@ let userId = localStorage.getItem("rtgUserId");
 document.addEventListener("DOMContentLoaded", () => {
   loadChannels();
   wireEvents();
-  setInterval(updatePresence, 3000); // live updates
+  setInterval(updatePresence, 3000);
 });
 
 // ============================================================
 // EVENTS
 // ============================================================
 function wireEvents() {
-  document.getElementById("joinChannelBtn")
-    ?.addEventListener("click", joinChannel);
-
-  document.getElementById("leaveChannelBtn")
-    ?.addEventListener("click", leaveChannel);
-
-  document.getElementById("createChannelBtn")
-    ?.addEventListener("click", createChannel);
+  document.getElementById("joinChannelBtn")?.addEventListener("click", joinChannel);
+  document.getElementById("leaveChannelBtn")?.addEventListener("click", leaveChannel);
+  document.getElementById("createChannelBtn")?.addEventListener("click", createChannel);
 }
 
 // ============================================================
@@ -94,9 +89,14 @@ async function loadChannels() {
   if (!data) return;
 
   const list = document.getElementById("channelList");
+  if (!list) {
+    console.error("❌ Missing #channelList in HTML");
+    return;
+  }
+
   list.innerHTML = data.map(ch =>
     `<button class="channel-btn" data-id="${ch.id}">
-       📡 ${ch.name} (${ch.members.length}/20)
+       📡 ${ch.name} (${ch.members}/20)
      </button>`
   ).join("");
 
@@ -126,7 +126,7 @@ async function createChannel() {
 }
 
 // ============================================================
-// JOIN CHANNEL (requires proximity ≤ 1000 ft)
+// JOIN CHANNEL
 // ============================================================
 async function joinChannel() {
   if (!currentChannel) return alert("Select a channel first.");
@@ -142,7 +142,6 @@ async function joinChannel() {
   });
 
   if (!res) return alert("Join failed.");
-
   if (res.error) return alert(res.error);
 
   alert("Connected — infinite distance mode enabled.");
@@ -182,13 +181,17 @@ async function getGPS() {
 }
 
 // ============================================================
-// UPDATE PRESENCE (members + nearby candidates)
+// UPDATE PRESENCE
 // ============================================================
 async function updatePresence() {
   if (!currentChannel) return;
 
   const pos = await getGPS();
-  const data = await API.get(`/radio/presence?channel_id=${currentChannel}&lat=${pos.lat}&lon=${pos.lon}`);
+  if (!pos) return;
+
+  const data = await API.get(
+    `/radio/presence?channel_id=${currentChannel}&lat=${pos.lat}&lon=${pos.lon}`
+  );
 
   if (!data) return;
 
@@ -204,6 +207,8 @@ async function updatePresence() {
 // ============================================================
 function renderPresence() {
   const box = document.getElementById("currentMembers");
+  if (!box) return;
+
   if (!presence.length) {
     box.innerHTML = "<p>No active members.</p>";
     return;
@@ -219,10 +224,12 @@ function renderPresence() {
 }
 
 // ============================================================
-// RENDER NEARBY USERS (≤ 1000 ft)
+// RENDER NEARBY USERS
 // ============================================================
 function renderNearby() {
   const box = document.getElementById("nearbyUsers");
+  if (!box) return;
+
   if (!nearby.length) {
     box.innerHTML = "<p>No nearby users.</p>";
     return;
