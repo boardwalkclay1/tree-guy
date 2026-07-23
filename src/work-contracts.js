@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS WORKER (FINAL UPDATED VERSION)
+// REAL TREE GUY OS — CONTRACTS WORKER (FULL JSON TEMPLATE SUPPORT)
 // ============================================================
 
 export async function handle(request, env) {
@@ -24,36 +24,25 @@ export async function handle(request, env) {
     });
 
   // ============================================================
-  // LIST ALL TEMPLATES
+  // LIST ALL JSON CONTRACT TEMPLATES (AUTO-SCAN DIRECTORY)
   // ============================================================
   if (path === "/api/templates" && request.method === "GET") {
     try {
-      const list = [
-        "change_order.json",
-        "client_contract.json",
-        "commercial_contract.json",
-        "credit_card.json",
-        "crew_split.json",
-        "deposit.json",
-        "estimate.json",
-        "groundy.json",
-        "hire_climb.json",
-        "multo_day_groundy.json",
-        "referral.json",
-        "self_climb.json",
-        "storm_cleanup.json",
-        "stump_grinder.json"
-      ];
+      const dir = await env.ASSETS.fetch("/json/contracts/");
+      const html = await dir.text();
+
+      const files = [...html.matchAll(/href="([^"]+\.json)"/g)]
+        .map(m => m[1]);
 
       return json(
-        list.map(name => ({
+        files.map(name => ({
           id: name.replace(".json", ""),
           file: name,
           name: name.replace(".json", "").replace(/_/g, " ")
         }))
       );
     } catch (err) {
-      return json({ error: err.message }, 500);
+      return json({ error: "Failed to list templates", details: err.message }, 500);
     }
   }
 
@@ -71,6 +60,39 @@ export async function handle(request, env) {
       return json(JSON.parse(text));
     } catch (err) {
       return json({ error: "Template not found", details: err.message }, 404);
+    }
+  }
+
+  // ============================================================
+  // SAVE / UPDATE TEMPLATE (WRITE TO KV STORAGE)
+  // ============================================================
+  if (path === "/api/templates" && request.method === "POST") {
+    try {
+      const body = await request.json();
+      const id = body.id || body.name.replace(/\s+/g, "_").toLowerCase();
+      const fileName = `${id}.json`;
+
+      await env.CONTRACTS.put(fileName, JSON.stringify(body));
+
+      return json({ ok: true, id, file: fileName });
+    } catch (err) {
+      return json({ error: "Template save failed", details: err.message }, 500);
+    }
+  }
+
+  // ============================================================
+  // DELETE TEMPLATE
+  // ============================================================
+  if (path.startsWith("/api/templates/") && request.method === "DELETE") {
+    try {
+      const id = path.split("/").pop();
+      const fileName = `${id}.json`;
+
+      await env.CONTRACTS.delete(fileName);
+
+      return json({ ok: true, deleted: fileName });
+    } catch (err) {
+      return json({ error: "Delete failed", details: err.message }, 500);
     }
   }
 
@@ -141,7 +163,7 @@ export async function handle(request, env) {
 
   // ============================================================
   // SAVE DOCUMENT (contract instance)
-// ============================================================
+  // ============================================================
   if (path === "/api/documents" && request.method === "POST") {
     const body = await request.json();
     const id = crypto.randomUUID();
