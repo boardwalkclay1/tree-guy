@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY — RADIO WORKER (FIXED)
+// REAL TREE GUY OS — RADIO WORKER (CHANNEL + PROXIMITY VERSION)
 // ============================================================
 
 function cors(json, status = 200) {
@@ -9,17 +9,18 @@ function cors(json, status = 200) {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
+      "Access-Control-Allow-Headers": "Content-Type, X-RTG-User"
     }
   });
 }
 
 export async function handle(request, env) {
+  const DB = env.DB;
   const url = new URL(request.url);
   const path = url.pathname;
 
   // ============================================================
-  // OPTIONS (CORS preflight)
+  // OPTIONS
   // ============================================================
   if (request.method === "OPTIONS") {
     return new Response(null, {
@@ -27,53 +28,194 @@ export async function handle(request, env) {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
+        "Access-Control-Allow-Headers": "Content-Type, X-RTG-User"
       }
     });
   }
 
-  // ============================================================
-  // RADIO PRESENCE
-  // ============================================================
-  if (path === "/api/radio/presence" && request.method === "POST") {
-    try {
-      const body = await request.json();
-
-      if (env.DB) {
-        await env.DB.prepare(
-          "INSERT INTO radio_presence (user_id, email, type, ts) VALUES (?, ?, ?, ?)"
-        )
-          .bind(body.user_id || null, body.email || null, body.type || null, Date.now())
-          .run();
+  const json = (data, status = 200) =>
+    new Response(JSON.stringify(data), {
+      status,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
       }
+    });
 
-      return cors({ ok: true });
-    } catch (err) {
-      return cors({ error: err.message }, 500);
-    }
+  // ============================================================
+  // DISTANCE (feet)
+  // ============================================================
+  function distanceFt(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // meters
+    const toRad = x => (x * Math.PI) / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const meters = R * c;
+    return meters * 3.28084; // ft
   }
 
   // ============================================================
-  // RADIO CONNECT → returns WebSocket URL
+  // GET CHANNEL LIST
   // ============================================================
-  if (path === "/api/radio/connect" && request.method === "POST") {
+  if (path === "/api/radio/channels" && request.method === "GET") {
+    const rows = await DB.prepare(`
+      SELECT id, name, created_by, created_at
+      FROM channels
+      ORDER BY created_at DESC
+    `).all();
+
+    // Count members
+    for (const ch of rows.results) {
+      const members = await DB.prepare(`
+        SELECT COUNT(*) AS count
+        FROM channel_members
+        WHERE channel_id = ? AND active = 1
+      `).bind(ch.id).first();
+
+      ch.members = members.count;
+    }
+
+    return json(rows.results);
+  }
+
+  // ============================================================
+  // CREATE CHANNEL
+  // ============================================================
+  if (path === "/api/radio/channel" && request.method === "POST") {
+    const body = await request.json();
+    const id = crypto.randomUUID();
+
+    await DB.prepare(`
+      INSERT INTO channels (id, name, created_by, created_at)
+      VALUES (?, ?, ?, ?)
+    `).bind(id, body.name, body.created_by, Date.now()).run();
+
+    return json({ id, name: body.name });
+  }
+
+  // ============================================================
+  // JOIN CHANNEL (proximity required)
+  // ============================================================
+  if (path === "/api/radio/join" && request.method === "POST") {
+    const body = await request.json();
+    const { channel_id, user_id, lat, lon } = body;
+
+    // Count active members
+    const countRow = await DB.prepare(`
+      SELECT COUNT(*) AS count
+      FROM channel_members
+      WHERE channel_id = ? AND active = 1
+    `).bind(channel_id).first();
+
+    if (countRow.count >= 20) {
+      return json({ error: "Channel full (20 max)" }, 400);
+    }
+
+    // Get existing members for proximity check
+    const members = await DB.prepare(`
+      SELECT user_id, last_lat, last_lon
+      FROM channel_members
+      WHERE channel_id = ? AND active = 1
+    `).bind(channel_id).all();
+
+    let inRange = false;
+
+    for (const m of members.results) {
+      if (m.last_lat && m.last_lon) {
+        const ft = distanceFt(lat, lon, m.last_lat, m.last_lon);
+        if (ft <= 1000) {
+          inRange = true;
+          break;
+        }
+      }
+    }
+
+    if (!inRange && members.results.length > 0) {
+      return json({ error: "Must be within 1000 ft of a member to join" }, 400);
+    }
+
+    // Add member
+    const id = crypto.randomUUID();
+
+    await DB.prepare(`
+      INSERT INTO channel_members (id, channel_id, user_id, joined_at, active, locked, last_lat, last_lon, last_seen)
+      VALUES (?, ?, ?, ?, 1, 1, ?, ?, ?)
+    `).bind(id, channel_id, user_id, Date.now(), lat, lon, Date.now()).run();
+
+    return json({ ok: true, id });
+  }
+
+  // ============================================================
+  // LEAVE CHANNEL
+  // ============================================================
+  if (path === "/api/radio/leave" && request.method === "POST") {
     const body = await request.json();
 
-    const id = body.id || `peer-${crypto.randomUUID()}`;
-    const name = body.name || "Operator";
-    const channel = body.channel || "1";
+    await DB.prepare(`
+      UPDATE channel_members
+      SET active = 0
+      WHERE channel_id = ? AND user_id = ?
+    `).bind(body.channel_id, body.user_id).run();
 
-    const wsUrl =
-      `wss://api.realtreeguy.com/api/radio/signal` +
-      `?channel=${encodeURIComponent(channel)}` +
-      `&id=${encodeURIComponent(id)}` +
-      `&name=${encodeURIComponent(name)}`;
-
-    return cors({ wsUrl });
+    return json({ ok: true });
   }
 
   // ============================================================
-  // RADIO SIGNAL (WebSocket)
+  // PRESENCE (members + nearby)
+  // ============================================================
+  if (path === "/api/radio/presence" && request.method === "GET") {
+    const channel_id = url.searchParams.get("channel_id");
+    const lat = parseFloat(url.searchParams.get("lat"));
+    const lon = parseFloat(url.searchParams.get("lon"));
+
+    // Active members
+    const members = await DB.prepare(`
+      SELECT user_id, last_lat, last_lon, last_seen
+      FROM channel_members
+      WHERE channel_id = ? AND active = 1
+    `).bind(channel_id).all();
+
+    const memberList = members.results.map(m => ({
+      user_id: m.user_id,
+      distance_ft: m.last_lat ? Math.round(distanceFt(lat, lon, m.last_lat, m.last_lon)) : null,
+      online: Date.now() - m.last_seen < 15000
+    }));
+
+    // Nearby users (not in channel)
+    const nearby = await DB.prepare(`
+      SELECT id, name, lat, lng
+      FROM users
+      WHERE id NOT IN (
+        SELECT user_id FROM channel_members WHERE channel_id = ? AND active = 1
+      )
+    `).bind(channel_id).all();
+
+    const nearbyList = nearby.results
+      .map(u => ({
+        user_id: u.id,
+        name: u.name,
+        distance_ft: u.lat ? Math.round(distanceFt(lat, lon, u.lat, u.lng)) : null
+      }))
+      .filter(u => u.distance_ft !== null && u.distance_ft <= 1000);
+
+    return json({
+      channel_id,
+      members: memberList,
+      in_range_candidates: nearbyList
+    });
+  }
+
+  // ============================================================
+  // WEBSOCKET SIGNAL (unchanged)
   // ============================================================
   if (path === "/api/radio/signal" &&
       request.headers.get("Upgrade") === "websocket") {
@@ -81,31 +223,15 @@ export async function handle(request, env) {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
 
-    const params = url.searchParams;
-    const channel = params.get("channel") || "1";
-    const id = params.get("id") || `peer-${crypto.randomUUID()}`;
-    const name = params.get("name") || "Operator";
-
     server.accept();
 
     server.addEventListener("message", event => {
-      let msg;
       try {
-        msg = JSON.parse(event.data);
-      } catch {
-        return;
-      }
-
-      msg.channel = msg.channel || channel;
-      msg.id = msg.id || id;
-      msg.name = msg.name || name;
-
-      server.send(JSON.stringify(msg));
+        const msg = JSON.parse(event.data);
+        server.send(JSON.stringify(msg));
+      } catch {}
     });
 
-    server.addEventListener("close", () => {});
-
-    // IMPORTANT: DO NOT ADD HEADERS HERE
     return new Response(null, {
       status: 101,
       webSocket: client
@@ -115,5 +241,5 @@ export async function handle(request, env) {
   // ============================================================
   // FALLBACK
   // ============================================================
-  return cors({ error: "Radio route not found" }, 404);
+  return json({ error: "Radio route not found" }, 404);
 }
