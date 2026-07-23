@@ -1,0 +1,29 @@
+{
+  "id": "tmpl-groundsman",
+  "name": "Groundsman Contract",
+  "type": "groundsman_contract",
+  "role": "groundsman",
+  "scope": "Contract for groundsman providing cleanup, dragging, chipper operation, and support.",
+  "sections": [
+    {
+      "key": "work_scope",
+      "title": "Scope of Work",
+      "body": "Groundsman provides dragging, cleanup, chipper operation, and job support."
+    },
+    {
+      "key": "payment_terms",
+      "title": "Payment Terms",
+      "body": "Groundsman is paid daily or per-job rate."
+    }
+  ],
+  "fields": [
+    { "key": "daily_rate", "label": "Daily Rate", "type": "money" },
+    { "key": "per_job_rate", "label": "Per Job Rate", "type": "money" },
+    { "key": "pay_on", "label": "Pay When", "type": "enum", "options": ["Job complete", "Portion complete", "End of day"] }
+  ],
+  "calculation": {
+    "enable_split": true,
+    "enable_cc_fee": false,
+    "enable_deposit": false
+  }
+}
