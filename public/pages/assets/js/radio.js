@@ -1,26 +1,22 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS CENTER (FINAL FIXED VERSION)
+// REAL TREE GUY OS — RADIO CENTER (FINAL VERSION)
 // ============================================================
 
-// ALWAYS hit your Worker domain directly
 const API_BASE = "https://api.realtreeguy.com/api";
 
 // ============================================================
-// SAFE JSON WRAPPER — NEVER CRASHES
+// SAFE JSON WRAPPER
 // ============================================================
 async function safeJson(res, url) {
   const text = await res.text();
-
-  // If Worker returned HTML, do NOT crash
   if (!text || text.trim().startsWith("<")) {
-    console.error("❌ API returned HTML instead of JSON:", url);
+    console.error("❌ API returned HTML:", url);
     return null;
   }
-
   try {
     return JSON.parse(text);
   } catch (err) {
-    console.error("❌ JSON parse failed at:", url, err);
+    console.error("❌ JSON parse failed:", url, err);
     return null;
   }
 }
@@ -32,9 +28,7 @@ const API = {
   async get(path) {
     const url = `${API_BASE}${path}`;
     try {
-      const res = await fetch(url, {
-        headers: { "Accept": "application/json" }
-      });
+      const res = await fetch(url, { headers: { "Accept": "application/json" } });
       return await safeJson(res, url);
     } catch (err) {
       console.error("❌ GET failed:", url, err);
@@ -64,365 +58,196 @@ const API = {
 // ============================================================
 // STATE
 // ============================================================
-let userProfile = {};
-let templates = [];
-let clients = [];
-let attachedPhotos = [];
+let currentChannel = null;
+let presence = [];
+let nearby = [];
+let userId = localStorage.getItem("rtgUserId");
 
 // ============================================================
 // INIT
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
-  loadProfile();
-  loadTemplates();
-  loadClients();
+  loadChannels();
   wireEvents();
+  setInterval(updatePresence, 3000); // live updates
 });
-
-// ============================================================
-// LOAD USER PROFILE
-// ============================================================
-async function loadProfile() {
-  const data = await API.get("/profile");
-  if (!data) {
-    console.warn("⚠ Profile load failed — using fallback");
-    return;
-  }
-
-  userProfile = data;
-
-  document.getElementById("userLogo").src =
-    userProfile.logo || "/assets/img/default-logo.png";
-
-  document.getElementById("treeGuyName").value =
-    userProfile.name || "";
-}
-
-// ============================================================
-// LOAD TEMPLATES
-// ============================================================
-async function loadTemplates() {
-  const data = await API.get("/templates");
-  if (!data) {
-    console.warn("⚠ Templates load failed — using empty list");
-    return;
-  }
-
-  templates = data;
-
-  const select = document.getElementById("templateSelect");
-  select.innerHTML = `<option value="">Choose template...</option>` +
-    templates.map(t =>
-      `<option value="${t.id}">${t.type} – ${t.name}</option>`
-    ).join("");
-}
-
-// ============================================================
-// LOAD CLIENTS
-// ============================================================
-async function loadClients() {
-  const data = await API.get("/clients");
-  if (!data) {
-    console.warn("⚠ Clients load failed — using empty list");
-    return;
-  }
-
-  clients = data;
-
-  const select = document.getElementById("clientSelect");
-  select.innerHTML = `<option value="">Select client...</option>` +
-    clients.map(c =>
-      `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
-    ).join("");
-}
 
 // ============================================================
 // EVENTS
 // ============================================================
 function wireEvents() {
-  document.getElementById("templateSelect")
-    .addEventListener("change", onTemplateChange);
+  document.getElementById("joinChannelBtn")
+    ?.addEventListener("click", joinChannel);
 
-  document.getElementById("clientSelect")
-    .addEventListener("change", onClientChange);
+  document.getElementById("leaveChannelBtn")
+    ?.addEventListener("click", leaveChannel);
 
-  document.getElementById("previewBtn")
-    .addEventListener("click", () => previewDoc("Contract"));
-
-  document.getElementById("saveBtn")
-    .addEventListener("click", () => saveDoc("Contract"));
-
-  document.getElementById("emailBtn")
-    .addEventListener("click", () => emailDoc("Contract"));
-
-  document.getElementById("photoUpload")
-    .addEventListener("change", onPhotoUpload);
-
-  document.getElementById("newClientBtn")
-    .addEventListener("click", openClientModal);
-
-  document.getElementById("closeClientModal")
-    .addEventListener("click", closeClientModal);
-
-  document.getElementById("saveClientBtn")
-    .addEventListener("click", saveClient);
-
-  document.getElementById("customTemplateBtn")
-    .addEventListener("click", saveCurrentAsTemplate);
+  document.getElementById("createChannelBtn")
+    ?.addEventListener("click", createChannel);
 }
 
 // ============================================================
-// TEMPLATE CHANGE
+// LOAD CHANNELS
 // ============================================================
-function onTemplateChange(e) {
-  const id = e.target.value;
-  if (!id) return;
+async function loadChannels() {
+  const data = await API.get("/radio/channels");
+  if (!data) return;
 
-  const t = templates.find(t => String(t.id) === String(id));
-  if (!t) return;
+  const list = document.getElementById("channelList");
+  list.innerHTML = data.map(ch =>
+    `<button class="channel-btn" data-id="${ch.id}">
+       📡 ${ch.name} (${ch.members.length}/20)
+     </button>`
+  ).join("");
 
-  document.getElementById("scope").value = t.scope || "";
-  document.getElementById("extraTerms").value = t.body || "";
-}
-
-// ============================================================
-// CLIENT CHANGE
-// ============================================================
-function onClientChange(e) {
-  const id = e.target.value;
-  if (!id) return;
-
-  const c = clients.find(c => String(c.id) === String(id));
-  if (!c) return;
-
-  document.getElementById("clientName").value = c.name || "";
-  document.getElementById("clientAddress").value = c.address || "";
-  document.getElementById("clientPhone").value = c.phone || "";
-}
-
-// ============================================================
-// PHOTO UPLOAD
-// ============================================================
-async function onPhotoUpload(e) {
-  const files = Array.from(e.target.files || []);
-  if (!files.length) return;
-
-  for (const file of files) {
-    const uploaded = await uploadPhoto(file);
-    if (uploaded) attachedPhotos.push(uploaded);
-  }
-
-  renderPhotoList();
-}
-
-async function uploadPhoto(file) {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const url = `${API_BASE}/upload-photo`;
-
-  try {
-    const res = await fetch(url, { method: "POST", body: formData });
-    return await safeJson(res, url);
-  } catch (err) {
-    console.error("❌ Photo upload failed:", err);
-    return null;
-  }
-}
-
-function renderPhotoList() {
-  const list = document.getElementById("photoList");
-
-  if (!attachedPhotos.length) {
-    list.textContent = "No photos attached.";
-    return;
-  }
-
-  list.innerHTML = attachedPhotos.map(p =>
-    `<span>📷 ${p.name || "Photo"} (${p.id})</span>`
-  ).join(" ");
-}
-
-// ============================================================
-// COLLECT FIELDS
-// ============================================================
-function collectFields() {
-  return {
-    treeGuyName: document.getElementById("treeGuyName").value,
-    clientName: document.getElementById("clientName").value,
-    clientAddress: document.getElementById("clientAddress").value,
-    clientPhone: document.getElementById("clientPhone").value,
-    scope: document.getElementById("scope").value,
-    totalPrice: document.getElementById("totalPrice").value,
-    deposit: document.getElementById("deposit").value,
-    paymentDueDate: document.getElementById("paymentDueDate").value,
-    jobDate: document.getElementById("jobDate").value,
-    extraTerms: document.getElementById("extraTerms").value,
-    clientSignature: document.getElementById("clientSignature").value,
-    treeGuySignature: document.getElementById("treeGuySignature").value,
-    clientAgreed: document.getElementById("clientAgreed").checked
-  };
-}
-
-// ============================================================
-// PREVIEW
-// ============================================================
-function previewDoc(type) {
-  const fields = collectFields();
-
-  const photosHtml = attachedPhotos.length
-    ? `<h3>Attached Photos</h3>
-       <ul>${attachedPhotos.map(p =>
-         `<li><a href="${p.url}" target="_blank">${p.name || p.id}</a></li>`
-       ).join("")}</ul>`
-    : "";
-
-  const html = `
-    <h2>${type}</h2>
-    <p><strong>Tree Guy / Company:</strong> ${fields.treeGuyName}</p>
-    <p><strong>Client:</strong> ${fields.clientName}</p>
-    <p><strong>Address:</strong> ${fields.clientAddress}</p>
-    <p><strong>Phone:</strong> ${fields.clientPhone}</p>
-    <hr>
-    <h3>Scope of Work</h3>
-    <p>${escapeHtml(fields.scope).replace(/\n/g, "<br>")}</p>
-    <h3>Payment</h3>
-    <p><strong>Total Price:</strong> $${fields.totalPrice || "0.00"}</p>
-    <p><strong>Deposit:</strong> $${fields.deposit || "0.00"}</p>
-    <p><strong>Payment Due Date:</strong> ${fields.paymentDueDate || "N/A"}</p>
-    <p><strong>Job Date:</strong> ${fields.jobDate || "N/A"}</p>
-    <h3>Extra Terms</h3>
-    <p>${escapeHtml(fields.extraTerms).replace(/\n/g, "<br>")}</p>
-    ${photosHtml}
-    <hr>
-    <h3>Signatures</h3>
-    <p><strong>Client Signature:</strong> ${fields.clientSignature}</p>
-    <p><strong>Tree Guy Signature:</strong> ${fields.treeGuySignature}</p>
-    <p><strong>Client Agreed:</strong> ${fields.clientAgreed ? "Yes" : "No"}</p>
-  `;
-
-  document.getElementById("previewContent").innerHTML = html;
-}
-
-// ============================================================
-// SAVE CONTRACT
-// ============================================================
-async function saveDoc(type) {
-  const fields = collectFields();
-  const clientId = document.getElementById("clientSelect").value || null;
-  const templateId = document.getElementById("templateSelect").value || null;
-
-  await API.post("/documents", {
-    type,
-    client_id: clientId,
-    template_id: templateId,
-    body: fields,
-    photos: attachedPhotos,
-    created_by: userProfile.id || null
+  list.querySelectorAll(".channel-btn").forEach(btn => {
+    btn.onclick = () => {
+      currentChannel = btn.dataset.id;
+      updatePresence();
+    };
   });
-
-  alert(type + " saved!");
 }
 
 // ============================================================
-// EMAIL CONTRACT
+// CREATE CHANNEL
 // ============================================================
-async function emailDoc(type) {
-  const clientId = document.getElementById("clientSelect").value;
-  const client = clients.find(c => String(c.id) === String(clientId));
-
-  if (!client || !client.email) {
-    alert("Client must have an email to send contract.");
-    return;
-  }
-
-  previewDoc(type);
-  const html = document.getElementById("previewContent").innerHTML;
-
-  await API.post("/email", {
-    to: client.email,
-    subject: type + " from Real Tree Guy OS",
-    body: html
-  });
-
-  alert(type + " emailed to " + client.email + "!");
-}
-
-// ============================================================
-// ESCAPE HTML
-// ============================================================
-function escapeHtml(str = "") {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-// ============================================================
-// CLIENT MODAL
-// ============================================================
-function openClientModal() {
-  document.getElementById("clientModal").style.display = "flex";
-}
-
-function closeClientModal() {
-  document.getElementById("clientModal").style.display = "none";
-}
-
-// ============================================================
-// SAVE CLIENT
-// ============================================================
-async function saveClient() {
-  const name = document.getElementById("modalClientName").value.trim();
-  const email = document.getElementById("modalClientEmail").value.trim();
-  const phone = document.getElementById("modalClientPhone").value.trim();
-  const address = document.getElementById("modalClientAddress").value.trim();
-
-  if (!name) {
-    alert("Client name is required.");
-    return;
-  }
-
-  const saved = await API.post("/clients", {
-    name, email, phone, address
-  });
-
-  if (!saved) {
-    alert("Client save failed.");
-    return;
-  }
-
-  clients.push(saved);
-  closeClientModal();
-  await loadClients();
-
-  const select = document.getElementById("clientSelect");
-  select.value = saved.id;
-  onClientChange({ target: select });
-}
-
-// ============================================================
-// SAVE CURRENT AS TEMPLATE
-// ============================================================
-async function saveCurrentAsTemplate() {
-  const fields = collectFields();
-  const name = prompt("Template name:");
+async function createChannel() {
+  const name = prompt("Channel name:");
   if (!name) return;
 
-  const payload = {
+  const saved = await API.post("/radio/channel", {
     name,
-    type: "Tree Work Contract",
-    scope: fields.scope,
-    body: fields.extraTerms
-  };
+    created_by: userId
+  });
 
-  const saved = await API.post("/templates", payload);
-  if (!saved) {
-    alert("Template save failed.");
+  if (!saved) return alert("Failed to create channel.");
+
+  loadChannels();
+}
+
+// ============================================================
+// JOIN CHANNEL (requires proximity ≤ 1000 ft)
+// ============================================================
+async function joinChannel() {
+  if (!currentChannel) return alert("Select a channel first.");
+
+  const pos = await getGPS();
+  if (!pos) return alert("GPS unavailable.");
+
+  const res = await API.post("/radio/join", {
+    channel_id: currentChannel,
+    user_id: userId,
+    lat: pos.lat,
+    lon: pos.lon
+  });
+
+  if (!res) return alert("Join failed.");
+
+  if (res.error) return alert(res.error);
+
+  alert("Connected — infinite distance mode enabled.");
+  updatePresence();
+}
+
+// ============================================================
+// LEAVE CHANNEL
+// ============================================================
+async function leaveChannel() {
+  if (!currentChannel) return;
+
+  await API.post("/radio/leave", {
+    channel_id: currentChannel,
+    user_id: userId
+  });
+
+  alert("Disconnected.");
+  currentChannel = null;
+  presence = [];
+  nearby = [];
+  renderPresence();
+  renderNearby();
+}
+
+// ============================================================
+// GET GPS
+// ============================================================
+async function getGPS() {
+  return new Promise(resolve => {
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+}
+
+// ============================================================
+// UPDATE PRESENCE (members + nearby candidates)
+// ============================================================
+async function updatePresence() {
+  if (!currentChannel) return;
+
+  const pos = await getGPS();
+  const data = await API.get(`/radio/presence?channel_id=${currentChannel}&lat=${pos.lat}&lon=${pos.lon}`);
+
+  if (!data) return;
+
+  presence = data.members || [];
+  nearby = data.in_range_candidates || [];
+
+  renderPresence();
+  renderNearby();
+}
+
+// ============================================================
+// RENDER CURRENT MEMBERS
+// ============================================================
+function renderPresence() {
+  const box = document.getElementById("currentMembers");
+  if (!presence.length) {
+    box.innerHTML = "<p>No active members.</p>";
     return;
   }
 
-  templates.push(saved);
-  await loadTemplates();
-  alert("Template saved!");
+  box.innerHTML = presence.map(m =>
+    `<div class="member">
+       <strong>${m.name}</strong>
+       <span>${m.distance_ft} ft</span>
+       <span>${m.online ? "🟢" : "⚪"}</span>
+     </div>`
+  ).join("");
+}
+
+// ============================================================
+// RENDER NEARBY USERS (≤ 1000 ft)
+// ============================================================
+function renderNearby() {
+  const box = document.getElementById("nearbyUsers");
+  if (!nearby.length) {
+    box.innerHTML = "<p>No nearby users.</p>";
+    return;
+  }
+
+  box.innerHTML = nearby.map(u =>
+    `<div class="nearby">
+       <strong>${u.name}</strong>
+       <span>${u.distance_ft} ft</span>
+       <button class="add-btn" data-id="${u.user_id}">Add</button>
+     </div>`
+  ).join("");
+
+  box.querySelectorAll(".add-btn").forEach(btn => {
+    btn.onclick = async () => {
+      const pos = await getGPS();
+      const res = await API.post("/radio/join", {
+        channel_id: currentChannel,
+        user_id: btn.dataset.id,
+        lat: pos.lat,
+        lon: pos.lon
+      });
+
+      if (!res || res.error) return alert(res?.error || "Join failed.");
+      updatePresence();
+    };
+  });
 }
