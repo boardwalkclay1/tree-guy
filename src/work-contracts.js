@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS WORKER (JSON TEMPLATE VERSION)
+// REAL TREE GUY OS — CONTRACTS WORKER (FINAL UPDATED VERSION)
 // ============================================================
 
 export async function handle(request, env) {
@@ -24,7 +24,7 @@ export async function handle(request, env) {
     });
 
   // ============================================================
-  // LIST ALL TEMPLATES (from /json/contracts/)
+  // LIST ALL TEMPLATES
   // ============================================================
   if (path === "/api/templates" && request.method === "GET") {
     try {
@@ -45,11 +45,13 @@ export async function handle(request, env) {
         "stump_grinder.json"
       ];
 
-      return json(list.map(name => ({
-        id: name.replace(".json", ""),
-        file: name,
-        name: name.replace(".json", "").replace(/_/g, " ")
-      })));
+      return json(
+        list.map(name => ({
+          id: name.replace(".json", ""),
+          file: name,
+          name: name.replace(".json", "").replace(/_/g, " ")
+        }))
+      );
     } catch (err) {
       return json({ error: err.message }, 500);
     }
@@ -78,7 +80,9 @@ export async function handle(request, env) {
   if (path === "/api/clients") {
     if (request.method === "GET") {
       const rows = await DB.prepare(`
-        SELECT id, name, phone, email, address FROM clients ORDER BY name ASC
+        SELECT id, name, phone, email, address
+        FROM clients
+        ORDER BY name ASC
       `).all();
       return json(rows.results || []);
     }
@@ -137,7 +141,7 @@ export async function handle(request, env) {
 
   // ============================================================
   // SAVE DOCUMENT (contract instance)
-  // ============================================================
+// ============================================================
   if (path === "/api/documents" && request.method === "POST") {
     const body = await request.json();
     const id = crypto.randomUUID();
@@ -161,7 +165,7 @@ export async function handle(request, env) {
 
   // ============================================================
   // EMAIL SEND (stub)
-  // ============================================================
+// ============================================================
   if (path === "/api/email" && request.method === "POST") {
     const body = await request.json();
     return json({ ok: true, sent_to: body.to });
