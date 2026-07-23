@@ -5,7 +5,10 @@
   <title>Weather – Real Tree Guy OS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- CINEMATIC WEATHER CSS -->
   <link rel="stylesheet" href="/assets/css/weather.css">
+
+  <!-- WEATHER ENGINE -->
   <script type="module" src="/assets/js/weather.js" defer></script>
 
   <style>
@@ -20,25 +23,38 @@
 
 <body class="rtg-weather">
 
+  <!-- HEADER -->
   <header class="weather-header">
     <h1>🌪️ Real Tree Guy Weather Center</h1>
     <p class="sub">Storm Chaser Mode • Live Ops Dashboard</p>
+
+    <div class="user-info">
+      <strong id="rtgUserLabel">User</strong> • 
+      <span id="rtgLocationLabel">Locating…</span>
+      <br>
+      <span id="rtgConditionLabel">--</span>
+    </div>
+
     <a class="back-link" href="/pages/dashboard.html">← Back to Dashboard</a>
   </header>
 
   <main class="weather-shell">
 
-    <!-- LOCATION -->
+    <!-- LOCATION CONTROLS -->
     <section class="module-card location-card">
-      <h2>📍 Location</h2>
+      <h2>📍 Location Controls</h2>
 
       <div class="location-row">
         <button id="useGPS" class="rtg-btn small">Use My GPS</button>
 
         <input id="manualLat" type="number" step="0.0001" placeholder="Lat">
         <input id="manualLon" type="number" step="0.0001" placeholder="Lon">
-
         <button id="setManual" class="rtg-btn small">Set</button>
+      </div>
+
+      <div class="location-row" style="margin-top:10px;">
+        <input id="manualAddress" type="text" placeholder="Search any US city or address" style="flex:1;">
+        <button id="manualAddressBtn" class="rtg-btn small">Search</button>
       </div>
 
       <p id="locationStatus">Waiting for location…</p>
@@ -56,6 +72,11 @@
           <p id="currentGust">Gusts: --</p>
           <p id="currentPressure">Pressure: --</p>
           <p id="currentRain">Rain: --</p>
+          <p id="currentHumidity">Humidity: --</p>
+          <p id="currentFeelsLike">Feels Like: --</p>
+          <p id="currentDewpoint">Dewpoint: --</p>
+          <p id="currentVisibility">Visibility: --</p>
+          <p id="currentUV">UV Index: --</p>
         </div>
       </div>
 
@@ -75,7 +96,7 @@
       <div id="dailyStrip" class="daily-strip"></div>
     </section>
 
-    <!-- WIND -->
+    <!-- WIND INTELLIGENCE -->
     <section class="module-card">
       <h2>💨 Wind Intelligence</h2>
       <div class="info-grid">
