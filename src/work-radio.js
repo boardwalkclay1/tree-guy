@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — RADIO WORKER (CHANNEL + PROXIMITY VERSION)
+// REAL TREE GUY OS — RADIO WORKER (CHANNEL + PROXIMITY + HEARTBEAT)
 // ============================================================
 
 function cors(json, status = 200) {
@@ -44,9 +44,9 @@ export async function handle(request, env) {
 
   // ============================================================
   // DISTANCE (feet)
-// ============================================================
+  // ============================================================
   function distanceFt(lat1, lon1, lat2, lon2) {
-    const R = 6371000; // meters
+    const R = 6371000;
     const toRad = x => (x * Math.PI) / 180;
 
     const dLat = toRad(lat2 - lat1);
@@ -60,7 +60,7 @@ export async function handle(request, env) {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const meters = R * c;
-    return meters * 3.28084; // ft
+    return meters * 3.28084;
   }
 
   // ============================================================
@@ -103,7 +103,7 @@ export async function handle(request, env) {
 
   // ============================================================
   // JOIN CHANNEL (proximity required)
-  // ============================================================
+// ============================================================
   if (path === "/api/radio/join" && request.method === "POST") {
     const body = await request.json();
     const { channel_id, user_id, lat, lon } = body;
@@ -208,6 +208,33 @@ export async function handle(request, env) {
       members: memberList,
       in_range_candidates: nearbyList
     });
+  }
+
+  // ============================================================
+  // HEARTBEAT — GPS + last_seen
+  // ============================================================
+  if (path === "/api/radio/heartbeat" && request.method === "POST") {
+    const body = await request.json();
+
+    await DB.prepare(`
+      INSERT INTO radio_heartbeat (user_id, email, type, lat, lon, last_seen)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(user_id) DO UPDATE SET
+        email = excluded.email,
+        type = excluded.type,
+        lat = excluded.lat,
+        lon = excluded.lon,
+        last_seen = excluded.last_seen
+    `).bind(
+      body.user_id,
+      body.email,
+      body.type,
+      body.lat,
+      body.lon,
+      Date.now()
+    ).run();
+
+    return json({ ok: true });
   }
 
   // ============================================================
