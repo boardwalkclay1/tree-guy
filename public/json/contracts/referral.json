@@ -1,0 +1,22 @@
+{
+  "id": "tmpl-referral",
+  "name": "Referral Contract",
+  "type": "referral_contract",
+  "role": "treeguy",
+  "scope": "Agreement for referral fees between tree workers.",
+  "sections": [
+    {
+      "key": "referral_terms",
+      "title": "Referral Terms",
+      "body": "Referrer receives a percentage of job revenue for providing the lead."
+    }
+  ],
+  "fields": [
+    { "key": "percent", "label": "Referral Percent", "type": "number" }
+  ],
+  "calculation": {
+    "enable_split": true,
+    "enable_cc_fee": false,
+    "enable_deposit": false
+  }
+}
