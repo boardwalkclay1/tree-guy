@@ -1,0 +1,22 @@
+{
+  "id": "tmpl-deposit",
+  "name": "Deposit Agreement",
+  "type": "payment_contract",
+  "role": "client",
+  "scope": "Agreement for deposit payment before job begins.",
+  "sections": [
+    {
+      "key": "deposit_terms",
+      "title": "Deposit Terms",
+      "body": "Client agrees to pay deposit before job scheduling."
+    }
+  ],
+  "fields": [
+    { "key": "deposit_amount", "label": "Deposit Amount", "type": "money" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": true
+  }
+}
