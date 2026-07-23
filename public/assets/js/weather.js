@@ -1,19 +1,33 @@
 // ============================================================
-// REAL TREE GUY OS — WEATHER (FIXED FOR USER‑SPECIFIC LOCATION)
+// REAL TREE GUY OS — WEATHER (FINAL, ACCURATE USER LOCATION)
 // ============================================================
 
-// All weather API calls go through your Worker at:
-// /api/weather
+const API_BASE = "https://api.realtreeguy.com/api";
+
+// Logged‑in user identity
+const rtgUserId = localStorage.getItem("rtgUserId");
+const rtgUserEmail = localStorage.getItem("rtgUserEmail");
+const rtgUserType = localStorage.getItem("rtgUserType");
+
+// API wrapper with full headers
 const API = {
   async get(path) {
-    const r = await fetch(`/api/weather${path}`);
-    if (!r.ok) throw new Error("Weather API error");
-    return r.json();
+    const r = await fetch(`${API_BASE}/weather${path}`, {
+      headers: {
+        "Accept": "application/json",
+        "X-RTG-User": rtgUserId,
+        "X-RTG-Email": rtgUserEmail,
+        "X-RTG-Type": rtgUserType
+      }
+    });
+
+    const text = await r.text();
+    if (text.trim().startsWith("<")) {
+      throw new Error("Weather API returned HTML");
+    }
+    return JSON.parse(text);
   }
 };
-
-// Logged‑in user ID (from dashboard.js)
-const rtgUserId = localStorage.getItem("rtgUserId");
 
 // DOM ELEMENTS
 const el = {
@@ -35,16 +49,16 @@ const el = {
   radarFrame: document.getElementById("rtgRadar")
 };
 
-// GET LOCATION (User → GPS fallback)
+// GET LOCATION (User → DB → GPS fallback)
 async function getLocation() {
-  // 1. Try user profile location from Worker
+  // 1. Try saved location from Worker
   try {
     const userLoc = await API.get(`/location?user=${rtgUserId}`);
     if (userLoc?.lat && userLoc?.lon) {
       return { lat: userLoc.lat, lon: userLoc.lon };
     }
-  } catch (e) {
-    console.warn("User location not found, falling back to GPS.");
+  } catch (err) {
+    console.warn("Saved location missing, using GPS.");
   }
 
   // 2. GPS fallback
@@ -111,7 +125,7 @@ async function loadWeather(lat, lon) {
   el.locationStatus.textContent =
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
-  // FULL COUNTRY RADAR (RainViewer)
+  // RADAR
   el.radarFrame.src =
     `https://www.rainviewer.com/map.html?loc=${lat},${lon},8` +
     `&o=1&c=1&lm=1&layer=radar&sm=1&sn=1`;
