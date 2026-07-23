@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rtgUserId = localStorage.getItem("rtgUserId") || "dev";
   const rtgUserEmail = localStorage.getItem("rtgUserEmail") || "dev@local";
   const rtgUserType = localStorage.getItem("rtgUserType") || "tree";
+  const rtgUserName = localStorage.getItem("rtgUserName") || "Tree Guy";
 
   // ============================================================
   // FIXED: API BASE → YOUR WORKER DOMAIN
@@ -25,7 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
         "X-RTG-User": rtgUserId,
         "X-RTG-Email": rtgUserEmail,
-        "X-RTG-Type": rtgUserType
+        "X-RTG-Type": rtgUserType,
+        "X-RTG-Name": rtgUserName
       };
     },
 
@@ -143,19 +145,27 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // RADIO HEARTBEAT (FINAL FIXED VERSION)
+  // RADIO HEARTBEAT (FINAL VERSION WITH USERNAME CONFIRMATION)
   // ============================================================
   async function radioHeartbeat() {
     const pos = await getUserLocation();
 
-    await API.post("/radio/heartbeat", {
+    const res = await API.post("/radio/heartbeat", {
       user_id: rtgUserId,
       email: rtgUserEmail,
       type: rtgUserType,
+      name: rtgUserName,     // ⭐ Username included
       lat: pos.lat,
       lon: pos.lon,
       ts: Date.now()
     });
+
+    // Show confirmation in console
+    if (res && res.ok) {
+      console.log(`🔊 Heartbeat OK — ${rtgUserName} (${rtgUserId})`);
+    } else {
+      console.warn("⚠ Heartbeat failed:", res);
+    }
   }
 
   radioHeartbeat();
