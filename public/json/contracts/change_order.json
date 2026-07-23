@@ -1,0 +1,22 @@
+{
+  "id": "tmpl-change-order",
+  "name": "Change Order",
+  "type": "change_order",
+  "role": "client",
+  "scope": "Additional work added to an existing job.",
+  "sections": [
+    {
+      "key": "added_work",
+      "title": "Added Work",
+      "body": "This change order adds additional tree work to the original contract."
+    }
+  ],
+  "fields": [
+    { "key": "additional_cost", "label": "Additional Cost", "type": "money" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": false
+  }
+}
