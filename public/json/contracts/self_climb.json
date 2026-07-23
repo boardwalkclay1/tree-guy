@@ -1,0 +1,34 @@
+{
+  "id": "tmpl-climber-self",
+  "name": "Climber Contract (Self)",
+  "type": "climber_contract",
+  "role": "climber",
+  "scope": "Contract for climber providing rope access, rigging, and canopy work.",
+  "sections": [
+    {
+      "key": "work_scope",
+      "title": "Scope of Work",
+      "body": "Climber provides rope access, rigging, canopy movement, and safe work positioning."
+    },
+    {
+      "key": "insurance",
+      "title": "Insurance",
+      "body": "Climber carries personal liability insurance unless otherwise stated."
+    },
+    {
+      "key": "payment_terms",
+      "title": "Payment Terms",
+      "body": "Climber is paid based on daily rate or per-job rate."
+    }
+  ],
+  "fields": [
+    { "key": "daily_rate", "label": "Daily Rate", "type": "money" },
+    { "key": "per_job_rate", "label": "Per Job Rate", "type": "money" },
+    { "key": "max_days", "label": "Max Days", "type": "number" }
+  ],
+  "calculation": {
+    "enable_split": true,
+    "enable_cc_fee": false,
+    "enable_deposit": false
+  }
+}
