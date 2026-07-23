@@ -1,0 +1,39 @@
+{
+  "id": "tmpl-commercial-treework",
+  "name": "Commercial Tree Work Contract",
+  "type": "client_contract",
+  "role": "client",
+  "scope": "Tree services for commercial properties, HOAs, municipalities, and corporate clients.",
+  "sections": [
+    {
+      "key": "work_scope",
+      "title": "Scope of Work",
+      "body": "Contractor will perform tree work as described in the attached commercial scope, including removals, pruning, debris cleanup, and stump grinding."
+    },
+    {
+      "key": "insurance",
+      "title": "Insurance Requirements",
+      "body": "Contractor maintains liability insurance and workers compensation. Certificates available upon request."
+    },
+    {
+      "key": "payment_terms",
+      "title": "Payment Terms",
+      "body": "Net 30 unless otherwise agreed. Late fees may apply."
+    },
+    {
+      "key": "site_rules",
+      "title": "Site Rules",
+      "body": "Contractor will follow all site safety rules, parking restrictions, and HOA guidelines."
+    }
+  ],
+  "fields": [
+    { "key": "total_price", "label": "Total Price", "type": "money" },
+    { "key": "deposit", "label": "Deposit Amount", "type": "money" },
+    { "key": "job_date", "label": "Job Date", "type": "date" }
+  ],
+  "calculation": {
+    "enable_split": false,
+    "enable_cc_fee": true,
+    "enable_deposit": true
+  }
+}
