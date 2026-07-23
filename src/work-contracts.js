@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS WORKER (FULL JSON TEMPLATE SUPPORT)
+// REAL TREE GUY OS — CONTRACTS WORKER (FIXED JSON TEMPLATE SUPPORT)
 // ============================================================
 
 export async function handle(request, env) {
@@ -24,18 +24,29 @@ export async function handle(request, env) {
     });
 
   // ============================================================
-  // LIST ALL JSON CONTRACT TEMPLATES (AUTO-SCAN DIRECTORY)
+  // LIST ALL JSON CONTRACT TEMPLATES (HARD-CODED, NO DIR SCAN)
   // ============================================================
   if (path === "/api/templates" && request.method === "GET") {
     try {
-      const dir = await env.ASSETS.fetch("/json/contracts/");
-      const html = await dir.text();
-
-      const files = [...html.matchAll(/href="([^"]+\.json)"/g)]
-        .map(m => m[1]);
+      const list = [
+        "change_order.json",
+        "client_contract.json",
+        "commercial_contract.json",
+        "credit_card.json",
+        "crew_split.json",
+        "deposit.json",
+        "estimate.json",
+        "groundy.json",
+        "hire_climb.json",
+        "multi_day_groundy.json",
+        "referral.json",
+        "self_climb.json",
+        "storm_cleanup.json",
+        "stump_grinder.json"
+      ];
 
       return json(
-        files.map(name => ({
+        list.map(name => ({
           id: name.replace(".json", ""),
           file: name,
           name: name.replace(".json", "").replace(/_/g, " ")
@@ -64,15 +75,17 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // SAVE / UPDATE TEMPLATE (WRITE TO KV STORAGE)
-  // ============================================================
+  // SAVE / UPDATE TEMPLATE (KV STORAGE OPTIONAL)
+// ============================================================
   if (path === "/api/templates" && request.method === "POST") {
     try {
       const body = await request.json();
       const id = body.id || body.name.replace(/\s+/g, "_").toLowerCase();
       const fileName = `${id}.json`;
 
-      await env.CONTRACTS.put(fileName, JSON.stringify(body));
+      if (env.CONTRACTS) {
+        await env.CONTRACTS.put(fileName, JSON.stringify(body));
+      }
 
       return json({ ok: true, id, file: fileName });
     } catch (err) {
@@ -81,14 +94,16 @@ export async function handle(request, env) {
   }
 
   // ============================================================
-  // DELETE TEMPLATE
-  // ============================================================
+  // DELETE TEMPLATE (KV ONLY)
+// ============================================================
   if (path.startsWith("/api/templates/") && request.method === "DELETE") {
     try {
       const id = path.split("/").pop();
       const fileName = `${id}.json`;
 
-      await env.CONTRACTS.delete(fileName);
+      if (env.CONTRACTS) {
+        await env.CONTRACTS.delete(fileName);
+      }
 
       return json({ ok: true, deleted: fileName });
     } catch (err) {
