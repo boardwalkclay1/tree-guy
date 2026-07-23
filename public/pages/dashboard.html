@@ -29,7 +29,7 @@
       z-index: -1;
     }
 
-    /* SIDE MENU — HIDDEN BY DEFAULT */
+    /* SIDE MENU */
     #rtgMenu {
       position: fixed;
       top: 0;
@@ -42,17 +42,13 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
-
-      /* Hidden state */
       transform: translateX(-260px);
       opacity: 0;
       pointer-events: none;
-
       transition: transform 0.25s ease, opacity 0.25s ease;
       z-index: 9999;
     }
 
-    /* Visible state */
     #rtgMenu.open {
       transform: translateX(0);
       opacity: 1;
@@ -67,7 +63,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* RTG ONLINE IMAGE TILE — NO BOX, NO TEXT */
+    /* RTG ONLINE IMAGE TILE */
     .rtg-online-img {
       width: 100%;
       height: 100%;
@@ -238,7 +234,6 @@
       <a href="/pages/map.html" class="rtg-card">🗺️<span>Map</span></a>
       <a href="/pages/shop.html" class="rtg-card">🛒<span>Shop</span></a>
 
-      <!-- RTG ONLINE IMAGE — NO BOX, NO TEXT, DOUBLE SIZE -->
       <a href="/rtg-online/tree-guy/pages/rtg-online-dashboard.html" class="rtg-card rtg-card--xl rtg-card--rtgonline">
         <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-online-img">
       </a>
@@ -246,11 +241,11 @@
 
   </main>
 
-  <script src="/pages/assets/js/dashboard.js"></script>
-  <script src="/pages/assets/js/radio.js"></script>
+  <!-- FIXED JS PATHS -->
+  <script src="/assets/js/dashboard.js"></script>
+  <script src="/assets/js/radio.js"></script>
 
   <script>
-    // Toggle menu on logo click
     document.getElementById("rtgLogo").addEventListener("click", () => {
       document.getElementById("rtgMenu").classList.toggle("open");
     });
