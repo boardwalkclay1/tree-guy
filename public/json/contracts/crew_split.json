@@ -1,0 +1,22 @@
+{
+  "id": "tmpl-crew-split",
+  "name": "Crew Split Contract",
+  "type": "crew_contract",
+  "role": "treeguy",
+  "scope": "Contract for splitting job revenue among crew members.",
+  "sections": [
+    {
+      "key": "split_rules",
+      "title": "Split Rules",
+      "body": "Crew members agree to split job revenue based on assigned percentages."
+    }
+  ],
+  "fields": [
+    { "key": "total", "label": "Total Job Revenue", "type": "money" }
+  ],
+  "calculation": {
+    "enable_split": true,
+    "enable_cc_fee": false,
+    "enable_deposit": false
+  }
+}
