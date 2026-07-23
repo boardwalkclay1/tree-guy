@@ -62,8 +62,8 @@ const API = {
 // STATE
 // ============================================================
 let userProfile = {};
-let templates = [];     // list of template filenames
-let templateData = {};  // actual JSON loaded per template
+let templates = [];
+let templateData = {};
 let clients = [];
 let attachedPhotos = [];
 
@@ -78,6 +78,36 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================================================
+// WIRE EVENTS
+// ============================================================
+function wireEvents() {
+  const templateSelect = document.getElementById("templateSelect");
+  const clientSelect = document.getElementById("clientSelect");
+  const photoUpload = document.getElementById("photoUpload");
+  const previewBtn = document.getElementById("previewBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const emailBtn = document.getElementById("emailBtn");
+  const newClientBtn = document.getElementById("newClientBtn");
+  const customTemplateBtn = document.getElementById("customTemplateBtn");
+  const saveClientBtn = document.getElementById("saveClientBtn");
+  const closeClientModalBtn = document.getElementById("closeClientModal");
+
+  templateSelect?.addEventListener("change", onTemplateChange);
+  clientSelect?.addEventListener("change", onClientChange);
+  photoUpload?.addEventListener("change", onPhotoUpload);
+
+  previewBtn?.addEventListener("click", () => previewDoc("Contract"));
+  saveBtn?.addEventListener("click", () => saveDoc("Contract"));
+  emailBtn?.addEventListener("click", () => emailDoc("Contract"));
+
+  newClientBtn?.addEventListener("click", openClientModal);
+  customTemplateBtn?.addEventListener("click", saveCurrentAsTemplate);
+
+  saveClientBtn?.addEventListener("click", saveClient);
+  closeClientModalBtn?.addEventListener("click", closeClientModal);
+}
+
+// ============================================================
 // LOAD USER PROFILE
 // ============================================================
 async function loadProfile() {
@@ -86,15 +116,20 @@ async function loadProfile() {
 
   userProfile = data;
 
-  document.getElementById("userLogo").src =
-    userProfile.logo || "/assets/img/default-logo.png";
+  const logoEl = document.getElementById("userLogo");
+  const nameEl = document.getElementById("treeGuyName");
 
-  document.getElementById("treeGuyName").value =
-    userProfile.name || "";
+  if (logoEl) {
+    logoEl.src = userProfile.logo || "/assets/img/default-logo.png";
+  }
+
+  if (nameEl) {
+    nameEl.value = userProfile.name || "";
+  }
 }
 
 // ============================================================
-// LOAD TEMPLATE LIST (filenames)
+// LOAD TEMPLATE LIST
 // ============================================================
 async function loadTemplates() {
   const list = await API.get("/templates");
@@ -103,6 +138,8 @@ async function loadTemplates() {
   templates = list;
 
   const select = document.getElementById("templateSelect");
+  if (!select) return;
+
   select.innerHTML = `<option value="">Choose template...</option>` +
     templates.map(t =>
       `<option value="${t.id}">${t.name}</option>`
@@ -116,7 +153,6 @@ async function onTemplateChange(e) {
   const id = e.target.value;
   if (!id) return;
 
-  // Load JSON file from Worker
   const tmpl = await API.get(`/templates/${id}`);
   if (!tmpl) {
     console.error("❌ Failed to load template:", id);
@@ -125,14 +161,15 @@ async function onTemplateChange(e) {
 
   templateData = tmpl;
 
-  // Insert into UI
-  document.getElementById("scope").value = tmpl.scope || "";
+  const scopeEl = document.getElementById("scope");
+  const extraTermsEl = document.getElementById("extraTerms");
 
-  // If template has sections, load payment terms or main body
+  if (scopeEl) scopeEl.value = tmpl.scope || "";
+
   const paymentSection = tmpl.sections?.find(s => s.key === "payment_terms");
   const bodyText = tmpl.body || paymentSection?.body || "";
 
-  document.getElementById("extraTerms").value = bodyText;
+  if (extraTermsEl) extraTermsEl.value = bodyText;
 }
 
 // ============================================================
@@ -145,6 +182,8 @@ async function loadClients() {
   clients = data;
 
   const select = document.getElementById("clientSelect");
+  if (!select) return;
+
   select.innerHTML = `<option value="">Select client...</option>` +
     clients.map(c =>
       `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
@@ -161,9 +200,13 @@ function onClientChange(e) {
   const c = clients.find(c => String(c.id) === String(id));
   if (!c) return;
 
-  document.getElementById("clientName").value = c.name || "";
-  document.getElementById("clientAddress").value = c.address || "";
-  document.getElementById("clientPhone").value = c.phone || "";
+  const nameEl = document.getElementById("clientName");
+  const addrEl = document.getElementById("clientAddress");
+  const phoneEl = document.getElementById("clientPhone");
+
+  if (nameEl) nameEl.value = c.name || "";
+  if (addrEl) addrEl.value = c.address || "";
+  if (phoneEl) phoneEl.value = c.phone || "";
 }
 
 // ============================================================
@@ -198,6 +241,7 @@ async function uploadPhoto(file) {
 
 function renderPhotoList() {
   const list = document.getElementById("photoList");
+  if (!list) return;
 
   if (!attachedPhotos.length) {
     list.textContent = "No photos attached.";
@@ -214,19 +258,19 @@ function renderPhotoList() {
 // ============================================================
 function collectFields() {
   return {
-    treeGuyName: document.getElementById("treeGuyName").value,
-    clientName: document.getElementById("clientName").value,
-    clientAddress: document.getElementById("clientAddress").value,
-    clientPhone: document.getElementById("clientPhone").value,
-    scope: document.getElementById("scope").value,
-    totalPrice: document.getElementById("totalPrice").value,
-    deposit: document.getElementById("deposit").value,
-    paymentDueDate: document.getElementById("paymentDueDate").value,
-    jobDate: document.getElementById("jobDate").value,
-    extraTerms: document.getElementById("extraTerms").value,
-    clientSignature: document.getElementById("clientSignature").value,
-    treeGuySignature: document.getElementById("treeGuySignature").value,
-    clientAgreed: document.getElementById("clientAgreed").checked
+    treeGuyName: document.getElementById("treeGuyName")?.value || "",
+    clientName: document.getElementById("clientName")?.value || "",
+    clientAddress: document.getElementById("clientAddress")?.value || "",
+    clientPhone: document.getElementById("clientPhone")?.value || "",
+    scope: document.getElementById("scope")?.value || "",
+    totalPrice: document.getElementById("totalPrice")?.value || "",
+    deposit: document.getElementById("deposit")?.value || "",
+    paymentDueDate: document.getElementById("paymentDueDate")?.value || "",
+    jobDate: document.getElementById("jobDate")?.value || "",
+    extraTerms: document.getElementById("extraTerms")?.value || "",
+    clientSignature: document.getElementById("clientSignature")?.value || "",
+    treeGuySignature: document.getElementById("treeGuySignature")?.value || "",
+    clientAgreed: document.getElementById("clientAgreed")?.checked || false
   };
 }
 
@@ -245,10 +289,10 @@ function previewDoc(type) {
 
   const html = `
     <h2>${type}</h2>
-    <p><strong>Tree Guy / Company:</strong> ${fields.treeGuyName}</p>
-    <p><strong>Client:</strong> ${fields.clientName}</p>
-    <p><strong>Address:</strong> ${fields.clientAddress}</p>
-    <p><strong>Phone:</strong> ${fields.clientPhone}</p>
+    <p><strong>Tree Guy / Company:</strong> ${escapeHtml(fields.treeGuyName)}</p>
+    <p><strong>Client:</strong> ${escapeHtml(fields.clientName)}</p>
+    <p><strong>Address:</strong> ${escapeHtml(fields.clientAddress)}</p>
+    <p><strong>Phone:</strong> ${escapeHtml(fields.clientPhone)}</p>
     <hr>
     <h3>Scope of Work</h3>
     <p>${escapeHtml(fields.scope).replace(/\n/g, "<br>")}</p>
@@ -262,12 +306,13 @@ function previewDoc(type) {
     ${photosHtml}
     <hr>
     <h3>Signatures</h3>
-    <p><strong>Client Signature:</strong> ${fields.clientSignature}</p>
-    <p><strong>Tree Guy Signature:</strong> ${fields.treeGuySignature}</p>
+    <p><strong>Client Signature:</strong> ${escapeHtml(fields.clientSignature)}</p>
+    <p><strong>Tree Guy Signature:</strong> ${escapeHtml(fields.treeGuySignature)}</p>
     <p><strong>Client Agreed:</strong> ${fields.clientAgreed ? "Yes" : "No"}</p>
   `;
 
-  document.getElementById("previewContent").innerHTML = html;
+  const previewEl = document.getElementById("previewContent");
+  if (previewEl) previewEl.innerHTML = html;
 }
 
 // ============================================================
@@ -275,8 +320,8 @@ function previewDoc(type) {
 // ============================================================
 async function saveDoc(type) {
   const fields = collectFields();
-  const clientId = document.getElementById("clientSelect").value || null;
-  const templateId = document.getElementById("templateSelect").value || null;
+  const clientId = document.getElementById("clientSelect")?.value || null;
+  const templateId = document.getElementById("templateSelect")?.value || null;
 
   await API.post("/documents", {
     type,
@@ -294,7 +339,7 @@ async function saveDoc(type) {
 // EMAIL CONTRACT
 // ============================================================
 async function emailDoc(type) {
-  const clientId = document.getElementById("clientSelect").value;
+  const clientId = document.getElementById("clientSelect")?.value;
   const client = clients.find(c => String(c.id) === String(clientId));
 
   if (!client || !client.email) {
@@ -303,7 +348,7 @@ async function emailDoc(type) {
   }
 
   previewDoc(type);
-  const html = document.getElementById("previewContent").innerHTML;
+  const html = document.getElementById("previewContent")?.innerHTML || "";
 
   await API.post("/email", {
     to: client.email,
@@ -328,21 +373,23 @@ function escapeHtml(str = "") {
 // CLIENT MODAL
 // ============================================================
 function openClientModal() {
-  document.getElementById("clientModal").style.display = "flex";
+  const modal = document.getElementById("clientModal");
+  if (modal) modal.style.display = "flex";
 }
 
 function closeClientModal() {
-  document.getElementById("clientModal").style.display = "none";
+  const modal = document.getElementById("clientModal");
+  if (modal) modal.style.display = "none";
 }
 
 // ============================================================
 // SAVE CLIENT
 // ============================================================
 async function saveClient() {
-  const name = document.getElementById("modalClientName").value.trim();
-  const email = document.getElementById("modalClientEmail").value.trim();
-  const phone = document.getElementById("modalClientPhone").value.trim();
-  const address = document.getElementById("modalClientAddress").value.trim();
+  const name = document.getElementById("modalClientName")?.value.trim() || "";
+  const email = document.getElementById("modalClientEmail")?.value.trim() || "";
+  const phone = document.getElementById("modalClientPhone")?.value.trim() || "";
+  const address = document.getElementById("modalClientAddress")?.value.trim() || "";
 
   if (!name) {
     alert("Client name is required.");
@@ -363,12 +410,14 @@ async function saveClient() {
   await loadClients();
 
   const select = document.getElementById("clientSelect");
-  select.value = saved.id;
-  onClientChange({ target: select });
+  if (select) {
+    select.value = saved.id;
+    onClientChange({ target: select });
+  }
 }
 
 // ============================================================
-// SAVE CURRENT AS TEMPLATE (DB version)
+// SAVE CURRENT AS TEMPLATE
 // ============================================================
 async function saveCurrentAsTemplate() {
   const fields = collectFields();
