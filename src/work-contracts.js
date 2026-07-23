@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS WORKER (FULL ROUTES)
+// REAL TREE GUY OS — CONTRACTS WORKER (JSON TEMPLATE VERSION)
 // ============================================================
 
 export async function handle(request, env) {
@@ -10,52 +10,65 @@ export async function handle(request, env) {
   const CORS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, X-RTG-User, X-RTG-Email, X-RTG-Type"
+    "Access-Control-Allow-Headers": "Content-Type"
   };
 
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS });
   }
 
-  // ============================================================
-  // PROFILE
-  // ============================================================
-  if (path === "/api/profile") {
-    const row = await DB.prepare(`
-      SELECT id, name, logo FROM profile LIMIT 1
-    `).first();
-
-    return new Response(JSON.stringify(row || {}), {
+  const json = (data, status = 200) =>
+    new Response(JSON.stringify(data), {
+      status,
       headers: { "Content-Type": "application/json", ...CORS }
     });
+
+  // ============================================================
+  // LIST ALL TEMPLATES (from /json/contracts/)
+  // ============================================================
+  if (path === "/api/templates" && request.method === "GET") {
+    try {
+      const list = [
+        "change_order.json",
+        "client_contract.json",
+        "commercial_contract.json",
+        "credit_card.json",
+        "crew_split.json",
+        "deposit.json",
+        "estimate.json",
+        "groundy.json",
+        "hire_climb.json",
+        "multo_day_groundy.json",
+        "referral.json",
+        "self_climb.json",
+        "storm_cleanup.json",
+        "stump_grinder.json"
+      ];
+
+      return json(list.map(name => ({
+        id: name.replace(".json", ""),
+        file: name,
+        name: name.replace(".json", "").replace(/_/g, " ")
+      })));
+    } catch (err) {
+      return json({ error: err.message }, 500);
+    }
   }
 
   // ============================================================
-  // TEMPLATES
+  // GET SINGLE TEMPLATE FILE
   // ============================================================
-  if (path === "/api/templates") {
-    if (request.method === "GET") {
-      const rows = await DB.prepare(`
-        SELECT id, name, type, scope, body FROM templates
-      `).all();
+  if (path.startsWith("/api/templates/") && request.method === "GET") {
+    try {
+      const id = path.split("/").pop();
+      const fileName = `${id}.json`;
 
-      return new Response(JSON.stringify(rows.results || []), {
-        headers: { "Content-Type": "application/json", ...CORS }
-      });
-    }
+      const file = await env.ASSETS.fetch(`/json/contracts/${fileName}`);
+      const text = await file.text();
 
-    if (request.method === "POST") {
-      const body = await request.json();
-
-      const id = crypto.randomUUID();
-      await DB.prepare(`
-        INSERT INTO templates (id, name, type, scope, body)
-        VALUES (?, ?, ?, ?, ?)
-      `).bind(id, body.name, body.type, body.scope, body.body).run();
-
-      return new Response(JSON.stringify({ id, ...body }), {
-        headers: { "Content-Type": "application/json", ...CORS }
-      });
+      return json(JSON.parse(text));
+    } catch (err) {
+      return json({ error: "Template not found", details: err.message }, 404);
     }
   }
 
@@ -65,12 +78,9 @@ export async function handle(request, env) {
   if (path === "/api/clients") {
     if (request.method === "GET") {
       const rows = await DB.prepare(`
-        SELECT id, name, phone, email, address FROM clients
+        SELECT id, name, phone, email, address FROM clients ORDER BY name ASC
       `).all();
-
-      return new Response(JSON.stringify(rows.results || []), {
-        headers: { "Content-Type": "application/json", ...CORS }
-      });
+      return json(rows.results || []);
     }
 
     if (request.method === "POST") {
@@ -82,44 +92,59 @@ export async function handle(request, env) {
         VALUES (?, ?, ?, ?, ?)
       `).bind(id, body.name, body.phone, body.email, body.address).run();
 
-      return new Response(JSON.stringify({ id, ...body }), {
-        headers: { "Content-Type": "application/json", ...CORS }
-      });
+      return json({ id, ...body });
     }
   }
 
   // ============================================================
-  // PHOTO UPLOAD (base64 store)
+  // PHOTO UPLOAD
   // ============================================================
-  if (path === "/api/upload-photo") {
+  if (path === "/api/upload-photo" && request.method === "POST") {
     const form = await request.formData();
     const file = form.get("file");
 
     const id = crypto.randomUUID();
-    const base64 = await file.arrayBuffer();
+    const buf = await file.arrayBuffer();
 
     await DB.prepare(`
       INSERT INTO photos (id, name, data)
       VALUES (?, ?, ?)
-    `).bind(id, file.name, base64).run();
+    `).bind(id, file.name, buf).run();
 
-    return new Response(JSON.stringify({
+    return json({
       id,
       name: file.name,
       url: `/api/photo?id=${id}`
-    }), { headers: { "Content-Type": "application/json", ...CORS } });
+    });
   }
 
   // ============================================================
-  // DOCUMENT SAVE
+  // PHOTO FETCH
+  // ============================================================
+  if (path === "/api/photo" && request.method === "GET") {
+    const id = url.searchParams.get("id");
+
+    const row = await DB.prepare(`
+      SELECT name, data FROM photos WHERE id = ?
+    `).bind(id).first();
+
+    if (!row) return json({ error: "Not found" }, 404);
+
+    return new Response(row.data, {
+      headers: { "Content-Type": "image/jpeg", ...CORS }
+    });
+  }
+
+  // ============================================================
+  // SAVE DOCUMENT (contract instance)
   // ============================================================
   if (path === "/api/documents" && request.method === "POST") {
     const body = await request.json();
     const id = crypto.randomUUID();
 
     await DB.prepare(`
-      INSERT INTO documents (id, type, client_id, template_id, body, photos, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO documents (id, type, client_id, template_id, body, photos, created_by, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       id,
       body.type,
@@ -127,12 +152,11 @@ export async function handle(request, env) {
       body.template_id,
       JSON.stringify(body.body),
       JSON.stringify(body.photos),
-      body.created_by
+      body.created_by,
+      Date.now()
     ).run();
 
-    return new Response(JSON.stringify({ id }), {
-      headers: { "Content-Type": "application/json", ...CORS }
-    });
+    return json({ id });
   }
 
   // ============================================================
@@ -140,15 +164,11 @@ export async function handle(request, env) {
   // ============================================================
   if (path === "/api/email" && request.method === "POST") {
     const body = await request.json();
-
-    // You can integrate SendGrid later
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: { "Content-Type": "application/json", ...CORS }
-    });
+    return json({ ok: true, sent_to: body.to });
   }
 
-  return new Response(JSON.stringify({ error: "Route not found" }), {
-    status: 404,
-    headers: { "Content-Type": "application/json", ...CORS }
-  });
+  // ============================================================
+  // FALLBACK
+  // ============================================================
+  return json({ error: "Route not found" }, 404);
 }
