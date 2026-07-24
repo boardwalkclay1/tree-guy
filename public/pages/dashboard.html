@@ -5,24 +5,9 @@
   <title>REAL TREE GUY – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ============================================================
-       REAL TREE GUY — FAVICON + SOCIAL PREVIEW (GLOBAL STANDARD)
-  =============================================================== -->
   <link rel="icon" type="image/png" href="/assets/img/logos/rtg-favicon.png">
   <link rel="apple-touch-icon" href="/assets/img/logos/rtg-favicon.png">
 
-  <meta property="og:title" content="REAL TREE GUY OPS CENTER">
-  <meta property="og:description" content="Tree Work OS • Crew Radio • Contracts • Customers • Weather • Map • Field Command">
-  <meta property="og:image" content="/assets/img/social/rtg-preview.jpg">
-  <meta property="og:url" content="https://realtreeguy.com">
-  <meta property="og:type" content="website">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="REAL TREE GUY OPS CENTER">
-  <meta name="twitter:description" content="Tree Work OS • Crew Radio • Contracts • Customers • Weather • Map • Field Command">
-  <meta name="twitter:image" content="/assets/img/social/rtg-preview.jpg">
-
-  <!-- CSS -->
   <link rel="stylesheet" href="/assets/css/dashboard.css">
   <link rel="stylesheet" href="/assets/css/radio.css">
 
@@ -80,12 +65,57 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* USERNAME DISPLAY */
-    #rtgUserDisplay {
-      font-size: 0.9rem;
+    /* NEW TOP BAR LAYOUT */
+    .rtg-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+    }
+
+    .rtg-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rtg-user-block {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
       color: #fff;
-      opacity: 0.85;
-      margin-left: 12px;
+    }
+
+    .rtg-user-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .rtg-user-sub {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .rtg-topbar-center {
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .rtg-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    #rtgTempDisplay {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fff;
     }
   </style>
 </head>
@@ -108,27 +138,31 @@
   <!-- BACKGROUND -->
   <div id="rtgBackground"></div>
 
-  <!-- TOP BAR -->
+  <!-- TOP BAR (NEW) -->
   <div class="rtg-topbar">
+
+    <!-- LEFT: Logo + User -->
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
-      <div class="rtg-topbar-title">
-        <div class="rtg-topbar-main">REAL TREE GUY OPS CENTER</div>
-        <div class="rtg-topbar-sub">Field Command • Tree Work OS</div>
+
+      <div class="rtg-user-block">
+        <div id="rtgUserName" class="rtg-user-name">Loading…</div>
+        <div class="rtg-user-sub">Command Center</div>
       </div>
-
-      <!-- USERNAME DISPLAY -->
-      <div id="rtgUserDisplay">User: Loading…</div>
     </div>
 
+    <!-- CENTER: Clock -->
     <div class="rtg-topbar-center">
-      <div id="rtgClock" class="rtg-clock">--:--:--</div>
+      <div id="rtgClock">--:--:--</div>
     </div>
 
+    <!-- RIGHT: Weather + Temp + Map -->
     <div class="rtg-topbar-right">
       <a href="/pages/weather.html" class="rtg-topbar-link">🌤️</a>
+      <span id="rtgTempDisplay">--°F</span>
       <a href="/pages/map.html" class="rtg-topbar-link">🗺️</a>
     </div>
+
   </div>
 
   <main class="rtg-main">
@@ -142,7 +176,7 @@
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
     </section>
 
-    <!-- RADIO MODULE -->
+    <!-- RADIO MODULE (FULLY UPDATED FOR radio.js) -->
     <section class="rtg-radio-module">
       <div id="radio-widget" class="radio-widget">
         <div class="radio-header">
@@ -151,19 +185,20 @@
         </div>
 
         <div class="radio-body">
+
+          <!-- REQUIRED BY radio.js -->
           <div class="radio-row">
-            <label for="radio-channel" class="radio-label">Channel</label>
-            <select id="radio-channel" class="radio-select">
-              <option value="1">Channel 1</option>
-              <option value="2">Channel 2</option>
-              <option value="3">Channel 3</option>
-              <option value="4">Channel 4</option>
-            </select>
+            <label class="radio-label">Channels</label>
+            <div id="channelList" class="radio-channel-list"></div>
           </div>
 
           <div class="radio-row">
-            <button id="radio-connect" class="radio-btn radio-btn--primary">Connect</button>
-            <button id="radio-disconnect" class="radio-btn radio-btn--ghost" disabled>Disconnect</button>
+            <button id="createChannelBtn" class="radio-btn radio-btn--ghost">➕ New Channel</button>
+          </div>
+
+          <div class="radio-row">
+            <button id="joinChannelBtn" class="radio-btn radio-btn--primary">Join Selected</button>
+            <button id="leaveChannelBtn" class="radio-btn radio-btn--ghost">Leave Channel</button>
           </div>
 
           <div class="radio-row radio-row--ptt">
@@ -175,7 +210,17 @@
             <div id="radio-log" class="radio-log"></div>
           </div>
 
-          <div id="radio-peers" class="radio-peers"></div>
+          <!-- REQUIRED BY radio.js -->
+          <div class="radio-row">
+            <h3>Current Members</h3>
+            <div id="currentMembers" class="radio-members"></div>
+          </div>
+
+          <div class="radio-row">
+            <h3>Nearby Users</h3>
+            <div id="nearbyUsers" class="radio-nearby"></div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -261,8 +306,9 @@
   <script>
     // Username display
     const name = localStorage.getItem("rtgUserName") || "Tree Guy";
-    document.getElementById("rtgUserDisplay").textContent = `User: ${name}`;
+    document.getElementById("rtgUserName").textContent = name;
 
+    // Toggle menu
     document.getElementById("rtgLogo").addEventListener("click", () => {
       document.getElementById("rtgMenu").classList.toggle("open");
     });
