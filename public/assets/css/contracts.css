@@ -1,23 +1,35 @@
 /* ============================================================
-   REAL TREE GUY OS — CONTRACTS CENTER (UPDATED CSS)
+   REAL TREE GUY OS — CONTRACTS CENTER (SUPER STYLED VERSION)
    ============================================================ */
 
+:root {
+  --rtg-orange: #ff7f11;
+  --rtg-green: #2ecc71;
+  --rtg-dark: rgba(0, 0, 0, 0.75);
+  --rtg-glass: rgba(255, 255, 255, 0.08);
+  --rtg-border: rgba(255, 255, 255, 0.15);
+  --rtg-text: #f5f5f5;
+  --rtg-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+   BODY + BACKGROUND
+   ============================================================ */
 .rtg-contracts-body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #f5f5f5;
-  background: url("/assets/img/backgrounds/rtg-contracts-back.jpg") no-repeat center center fixed;
-  background-size: cover;
+  color: var(--rtg-text);
+  background: url("/assets/img/backgrounds/rtg-contracts-back.jpg") center/cover fixed;
   position: relative;
+  min-height: 100vh;
 }
 
-/* Dark overlay for readability */
 .rtg-contracts-body::before {
   content: "";
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  pointer-events: none;
+  backdrop-filter: blur(4px);
   z-index: -1;
 }
 
@@ -28,48 +40,53 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
-  background: rgba(0, 0, 0, 0.75);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 22px;
+  background: var(--rtg-dark);
+  border-bottom: 1px solid var(--rtg-border);
+  box-shadow: var(--rtg-shadow);
 }
 
 .rtg-header-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .rtg-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
   object-fit: cover;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
 }
 
 .rtg-title-block h1 {
   margin: 0;
-  font-size: 1.35rem;
-  font-weight: 600;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--rtg-orange);
+  text-shadow: 0 0 8px rgba(255, 127, 17, 0.4);
 }
 
 .rtg-title-block p {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   font-size: 0.85rem;
   opacity: 0.85;
 }
 
 .back-link {
-  color: #fff;
+  color: var(--rtg-text);
   text-decoration: none;
   font-size: 0.9rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.12);
-  transition: background 0.2s;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--rtg-glass);
+  border: 1px solid var(--rtg-border);
+  transition: 0.25s;
 }
 
 .back-link:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 /* ============================================================
@@ -78,15 +95,15 @@
 .rtg-top-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
-  padding: 14px 20px;
+  gap: 20px;
+  padding: 16px 22px;
 }
 
 .rtg-top-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 240px;
+  min-width: 260px;
 }
 
 .rtg-top-group label {
@@ -96,12 +113,18 @@
 
 #clientSelect,
 #templateSelect {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font-size: 0.85rem;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--rtg-border);
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--rtg-text);
+  font-size: 0.9rem;
+  transition: 0.25s;
+}
+
+#clientSelect:hover,
+#templateSelect:hover {
+  background: rgba(0, 0, 0, 0.7);
 }
 
 /* ============================================================
@@ -109,30 +132,38 @@
    ============================================================ */
 .rtg-main {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 18px;
-  padding: 0 20px 20px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 22px;
+  padding: 0 22px 22px;
 }
 
 /* ============================================================
-   PANELS
+   PANELS (Glass + Glow)
    ============================================================ */
 .rtg-panel {
-  background: rgba(0, 0, 0, 0.72);
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 14px;
+  padding: 18px;
+  border: 1px solid var(--rtg-border);
+  box-shadow: var(--rtg-shadow);
+  backdrop-filter: blur(6px);
+  transition: 0.3s;
+}
+
+.rtg-panel:hover {
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .rtg-panel-header h2 {
   margin: 0;
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--rtg-orange);
 }
 
 .rtg-panel-header p {
-  margin: 4px 0 12px;
-  font-size: 0.8rem;
+  margin: 4px 0 14px;
+  font-size: 0.85rem;
   opacity: 0.85;
 }
 
@@ -142,12 +173,12 @@
 .rtg-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .rtg-form-row {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -165,12 +196,20 @@
 
 .rtg-field input,
 .rtg-field textarea {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(0, 0, 0, 0.65);
-  color: #fff;
-  font-size: 0.85rem;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--rtg-border);
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--rtg-text);
+  font-size: 0.9rem;
+  transition: 0.25s;
+}
+
+.rtg-field input:focus,
+.rtg-field textarea:focus {
+  outline: none;
+  border-color: var(--rtg-orange);
+  box-shadow: 0 0 8px rgba(255, 127, 17, 0.4);
 }
 
 .rtg-field textarea {
@@ -184,73 +223,86 @@
   margin-top: 6px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  font-size: 0.75rem;
-  opacity: 0.85;
+  gap: 8px;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.rtg-photo-list span {
+  background: var(--rtg-glass);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--rtg-border);
 }
 
 /* ============================================================
    SIGNATURE BLOCK
    ============================================================ */
 .rtg-signature-block h3 {
-  margin: 12px 0 6px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  margin: 14px 0 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--rtg-orange);
 }
 
 /* ============================================================
-   BUTTONS
+   BUTTONS (Neon Glow)
    ============================================================ */
 .rtg-btn-primary,
 .rtg-btn-secondary {
   border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 0.85rem;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: 0.25s;
 }
 
 .rtg-btn-primary {
-  background: #2ecc71;
+  background: var(--rtg-orange);
   color: #000;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(255, 127, 17, 0.45);
 }
 
 .rtg-btn-primary:hover {
-  opacity: 0.85;
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(255, 127, 17, 0.6);
 }
 
 .rtg-btn-secondary {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  background: var(--rtg-glass);
+  color: var(--rtg-text);
+  border: 1px solid var(--rtg-border);
 }
 
 .rtg-btn-secondary:hover {
-  opacity: 0.85;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .rtg-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 /* ============================================================
    PREVIEW PANEL
    ============================================================ */
 .rtg-panel-preview {
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 160px);
   overflow-y: auto;
 }
 
 .rtg-preview {
-  background: rgba(0, 0, 0, 0.65);
-  border-radius: 8px;
-  padding: 14px;
-  font-size: 0.85rem;
-  line-height: 1.45;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid var(--rtg-border);
+  box-shadow: var(--rtg-shadow);
 }
 
 /* ============================================================
@@ -264,27 +316,30 @@
   align-items: center;
   justify-content: center;
   z-index: 20;
+  backdrop-filter: blur(4px);
 }
 
 .rtg-modal {
-  background: rgba(0, 0, 0, 0.9);
-  border-radius: 10px;
-  padding: 16px;
-  width: 340px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 12px;
+  padding: 18px;
+  width: 360px;
+  border: 1px solid var(--rtg-border);
+  box-shadow: var(--rtg-shadow);
 }
 
 .rtg-modal h2 {
-  margin: 0 0 10px;
-  font-size: 1rem;
-  font-weight: 600;
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--rtg-orange);
 }
 
 .rtg-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 /* ============================================================
