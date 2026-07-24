@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS WORKER (FIXED JSON TEMPLATE SUPPORT)
+// REAL TREE GUY OS — CONTRACTS WORKER (FIXED JSON TEMPLATE SUPPORT + PROFILE)
 // ============================================================
 
 export async function handle(request, env) {
@@ -22,6 +22,14 @@ export async function handle(request, env) {
       status,
       headers: { "Content-Type": "application/json", ...CORS }
     });
+
+  // ============================================================
+  // PROFILE (used by contracts.js loadProfile)
+// ============================================================
+  if (path === "/api/profile" && request.method === "GET") {
+    const row = await DB.prepare(`SELECT * FROM profile LIMIT 1`).first();
+    return json(row || {});
+  }
 
   // ============================================================
   // LIST ALL JSON CONTRACT TEMPLATES (HARD-CODED, NO DIR SCAN)
