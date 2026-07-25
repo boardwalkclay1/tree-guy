@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RTG Online – Settings</title>
+  <link rel="stylesheet" href="/pages/assets/css/client.css">
+</head>
+<body class="client-body" data-page="settings">
+
+  <!-- TOP BAR -->
+  <header class="client-topbar">
+    <div class="client-topbar-left">
+      <img src="/assets/img/rtg-logo.jpg" class="client-logo" alt="RTG">
+      <div>
+        <div class="client-top-title">RTG Online Client</div>
+        <div class="client-top-sub" id="clientTopName">Loading…</div>
+      </div>
+    </div>
+    <div class="client-topbar-right">
+      <a href="/pages/client/dashboard.html">Dashboard</a>
+      <a href="/pages/client/post-job.html">Post Job</a>
+      <a href="/pages/client/jobs.html">Jobs</a>
+      <a href="/pages/client/messages.html">Messages</a>
+      <a href="/pages/client/settings.html">Settings</a>
+    </div>
+  </header>
+
+  <main class="client-main">
+    <section class="client-card">
+      <div class="client-card-header">
+        <h2>Profile Settings</h2>
+        <span>Update your contact info</span>
+      </div>
+
+      <form class="client-form" id="settingsForm">
+        <div class="client-field">
+          <label for="settingsName">Name</label>
+          <input id="settingsName" name="name">
+        </div>
+        <div class="client-field">
+          <label for="settingsEmail">Email</label>
+          <input id="settingsEmail" name="email">
+        </div>
+        <div class="client-field">
+          <label for="settingsPhone">Phone</label>
+          <input id="settingsPhone" name="phone">
+        </div>
+        <div class="client-field">
+          <label for="settingsAddress">Address</label>
+          <input id="settingsAddress" name="address">
+        </div>
+        <div class="client-btn-row">
+          <button type="submit" class="client-btn client-btn-primary">Save</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="/pages/assets/js/client.js"></script>
+</body>
+</html>
