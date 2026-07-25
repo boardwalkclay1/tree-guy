@@ -1,0 +1,277 @@
+/* ============================================================
+   RTG Online — Client Portal CSS
+   Clean • Simple • Mobile‑Safe
+============================================================ */
+
+:root {
+  --bg: #050b10;
+  --card: #0c141c;
+  --accent: #ff7f11;
+  --accent-soft: rgba(255, 127, 17, 0.18);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #f5f5f5;
+  --muted: #a7b0bc;
+  --danger: #ff4b4b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.client-body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #101b28 0, #050b10 55%, #020509 100%);
+  color: var(--text);
+}
+
+/* TOP BAR */
+
+.client-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.client-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.client-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.client-top-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.client-top-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.client-topbar-right a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-left: 10px;
+}
+
+/* MAIN */
+
+.client-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 18px 16px 40px;
+}
+
+/* CARDS */
+
+.client-card {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.client-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.client-card-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.client-card-header span {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* GRID */
+
+.client-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.client-grid-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 16px 10px;
+  transition: 0.2s;
+}
+
+.client-grid-link span.icon {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.client-grid-link span.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.client-grid-link:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-soft);
+}
+
+/* FORMS */
+
+.client-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.client-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.client-field label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.client-field input,
+.client-field textarea,
+.client-field select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #050b10;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.client-field textarea {
+  resize: vertical;
+}
+
+/* BUTTONS */
+
+.client-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.client-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.client-btn-primary {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+.client-btn-primary:hover {
+  box-shadow: 0 0 12px var(--accent-soft);
+}
+
+.client-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.client-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.client-btn-danger {
+  background: var(--danger);
+  color: #000;
+}
+
+/* LISTS */
+
+.job-card {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: #080f16;
+}
+
+.job-card h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.job-card p {
+  margin: 2px 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* MESSAGES */
+
+.msg {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #080f16;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+.msg strong {
+  color: var(--accent);
+}
+
+/* NOTIFICATIONS */
+
+.notif {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #080f16;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+/* LOGIN */
+
+.client-login-wrapper {
+  max-width: 420px;
+  margin: 60px auto;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 640px) {
+  .client-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
