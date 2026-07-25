@@ -21,92 +21,102 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- BACKGROUND + LAYOUT -->
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: url("/public/assets/img/rtg-logo.jpg") center center / cover no-repeat fixed;
-      color: #f5f5f5;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    aside {
-      width: 240px;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      border-right: 1px solid rgba(255,255,255,0.1);
-    }
-
-    aside a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 1rem;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      display: block;
-    }
-
-    main {
-      flex: 1;
-      padding: 30px;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(4px);
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .overview-grid {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .overview-card {
-      background: rgba(255,255,255,0.08);
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.15);
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-  </style>
+  <!-- GLOBAL CLIENT CSS -->
+  <link rel="stylesheet" href="/pages/assets/css/client.css">
 </head>
 
-<body>
+<body class="client-body" data-page="dashboard">
 
-  <!-- SIDEBAR -->
-  <aside>
-    <a href="dashboard.html">Overview</a>
-    <a href="post-job.html">Post Job</a>
-    <a href="jobs.html">My Jobs</a>
-    <a href="messages.html">Messages</a>
-    <a href="contracts.html">Contracts</a>
-    <a href="billing.html">Billing</a>
-    <a href="settings.html">Settings</a>
-  </aside>
-
-  <!-- MAIN -->
-  <main>
-    <h1>Client Overview</h1>
-
-    <div class="overview-grid">
-      <div class="overview-card">Open Jobs</div>
-      <div class="overview-card">Active Tree Guys</div>
-      <div class="overview-card">Pending Contracts</div>
+  <!-- ============================================================
+       TOP BAR (Unified)
+  ============================================================ -->
+  <header class="client-topbar">
+    <div class="client-topbar-left">
+      <img src="/public/assets/img/rtg-logo.jpg" class="client-logo" alt="RTG">
+      <div>
+        <div class="client-top-title">RTG Online Client</div>
+        <div class="client-top-sub" id="clientTopName">Loading…</div>
+      </div>
     </div>
+
+    <div class="client-topbar-right">
+      <a href="/pages/client/dashboard.html">Dashboard</a>
+      <a href="/pages/client/post-job.html">Post Job</a>
+      <a href="/pages/client/jobs.html">Jobs</a>
+      <a href="/pages/client/messages.html">Messages</a>
+      <a href="/pages/client/contracts.html">Contracts</a>
+      <a href="/pages/client/billing.html">Billing</a>
+      <a href="/pages/client/settings.html">Settings</a>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <main class="client-main">
+
+    <!-- QUICK ACTIONS -->
+    <section class="client-card">
+      <div class="client-card-header">
+        <h2>Quick Actions</h2>
+        <span>Post jobs, view jobs, check messages</span>
+      </div>
+
+      <div class="client-grid">
+        <a href="/pages/client/post-job.html" class="client-grid-link">
+          <span class="icon">📤</span>
+          <span class="label">Post a Job ($10)</span>
+        </a>
+
+        <a href="/pages/client/jobs.html" class="client-grid-link">
+          <span class="icon">📋</span>
+          <span class="label">My Jobs</span>
+        </a>
+
+        <a href="/pages/client/messages.html" class="client-grid-link">
+          <span class="icon">💬</span>
+          <span class="label">Messages</span>
+        </a>
+
+        <a href="/pages/client/contracts.html" class="client-grid-link">
+          <span class="icon">📄</span>
+          <span class="label">Contracts</span>
+        </a>
+
+        <a href="/pages/client/billing.html" class="client-grid-link">
+          <span class="icon">💳</span>
+          <span class="label">Billing</span>
+        </a>
+
+        <a href="/pages/client/settings.html" class="client-grid-link">
+          <span class="icon">⚙️</span>
+          <span class="label">Settings</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- RECENT JOBS -->
+    <section class="client-card">
+      <div class="client-card-header">
+        <h2>Recent Jobs</h2>
+        <span>Your latest posted jobs</span>
+      </div>
+      <div id="dashboardJobs"></div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="client-card">
+      <div class="client-card-header">
+        <h2>Notifications</h2>
+        <span>Updates from tree guys</span>
+      </div>
+      <div id="notifBox"></div>
+    </section>
+
   </main>
+
+  <!-- GLOBAL CLIENT JS -->
+  <script type="module" src="/rtg-online/client/js/client.js"></script>
 
 </body>
 </html>
