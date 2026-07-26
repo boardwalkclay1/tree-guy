@@ -1,4 +1,9 @@
 import * as MessageLogic from "./rtg-work-message.js";
+import * as ClientLogic from "./work-client.js";
+import * as RadioLogic from "./work-rtg-radio.js";
+
+// REAL DASH API BASE
+const API_BASE = "/api/rtg-online/tree-guy";
 
 export default {
   async fetch(request, env) {
@@ -14,30 +19,34 @@ export default {
         }
       });
 
-    // ============================================================
     // CORS
-    // ============================================================
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type"
+          "Access-Control-Allow-Headers": "Content-Type, x-client-id"
         }
       });
     }
 
-    // ============================================================
-    // RTG ONLINE — MESSAGING ROUTES
-    // ============================================================
+    // CLIENT WORKER
+    if (path.startsWith("/client")) {
+      return ClientLogic.default.fetch(request, env);
+    }
+
+    // RADIO WORKER
+    if (path.startsWith("/rtg/api/radio")) {
+      return RadioLogic.default.fetch(request, env);
+    }
+
+    // MESSAGE WORKER
     if (path.startsWith("/rtg/api/messages")) {
       return MessageLogic.handle(request, env);
     }
 
-    // ============================================================
     // DASHBOARD LOAD
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/dashboard" && request.method === "GET") {
+    if (path === `${API_BASE}/dashboard` && request.method === "GET") {
       const treeGuyId = url.searchParams.get("id");
 
       const user = await env.DB.prepare(`
@@ -134,10 +143,8 @@ export default {
       });
     }
 
-    // ============================================================
     // PROFILE UPDATE
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/profile" && request.method === "POST") {
+    if (path === `${API_BASE}/profile` && request.method === "POST") {
       const body = await request.json();
       const { id, name, tree_role, city, state, avatar_url, bio } = body;
 
@@ -150,10 +157,8 @@ export default {
       return json({ ok: true });
     }
 
-    // ============================================================
     // CREATE POST
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/post" && request.method === "POST") {
+    if (path === `${API_BASE}/post` && request.method === "POST") {
       const body = await request.json();
       const { id, content, media_url, type } = body;
 
@@ -165,10 +170,8 @@ export default {
       return json({ ok: true });
     }
 
-    // ============================================================
     // LIKE POST
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/like" && request.method === "POST") {
+    if (path === `${API_BASE}/like` && request.method === "POST") {
       const body = await request.json();
       const { id, post_id } = body;
 
@@ -180,10 +183,8 @@ export default {
       return json({ ok: true });
     }
 
-    // ============================================================
     // COMMENT POST
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/comment" && request.method === "POST") {
+    if (path === `${API_BASE}/comment` && request.method === "POST") {
       const body = await request.json();
       const { id, post_id, text } = body;
 
@@ -195,10 +196,8 @@ export default {
       return json({ ok: true });
     }
 
-    // ============================================================
     // ADD SKILL
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/skill" && request.method === "POST") {
+    if (path === `${API_BASE}/skill` && request.method === "POST") {
       const body = await request.json();
       const { id, name, level } = body;
 
@@ -210,10 +209,8 @@ export default {
       return json({ ok: true });
     }
 
-    // ============================================================
     // ADD EQUIPMENT
-    // ============================================================
-    if (path === "/api/rtg-online/tree-guy/equipment" && request.method === "POST") {
+    if (path === `${API_BASE}/equipment` && request.method === "POST") {
       const body = await request.json();
       const { id, name, years } = body;
 
@@ -225,9 +222,6 @@ export default {
       return json({ ok: true });
     }
 
-    // ============================================================
-    // FALLBACK
-    // ============================================================
     return json({ error: "Not Found" }, 404);
   }
 };
