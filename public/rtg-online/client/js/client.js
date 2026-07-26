@@ -1,12 +1,15 @@
 // ============================================================
-// RTG Online — Client Unified JS (Final Version)
+// RTG Online — Client Unified JS (Updated for Global Messaging)
 // ============================================================
 
-// ✅ Switched base path to full Worker endpoint
-const API = "https://api.realtreeguy.com/client"; // Worker base path
+// CLIENT WORKER BASE
+const API = "https://api.realtreeguy.com/client";
+
+// GLOBAL MESSAGING WORKER BASE
+const MSG_API = "/rtg/api/messages";
 
 // ============================================================
-// API WRAPPER
+// API WRAPPERS
 // ============================================================
 
 async function api(path, method = "GET", body = null) {
@@ -20,6 +23,20 @@ async function api(path, method = "GET", body = null) {
   });
 
   return res.json();
+}
+
+async function msgGet(path) {
+  const r = await fetch(MSG_API + path);
+  return r.json();
+}
+
+async function msgPost(path, body) {
+  const r = await fetch(MSG_API + path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  return r.json();
 }
 
 // ============================================================
@@ -52,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     case "messages":
       loadClientName();
-      initMessages();
+      initClientMessagingPage();
       break;
 
     case "contracts":
@@ -98,7 +115,7 @@ function initLogin() {
 }
 
 // ============================================================
-// LOAD CLIENT NAME (TOP BAR)
+// LOAD CLIENT NAME
 // ============================================================
 
 async function loadClientName() {
@@ -187,51 +204,23 @@ async function loadDashboardJobs() {
 }
 
 // ============================================================
-// MESSAGES
+// MESSAGES (NEW GLOBAL SYSTEM)
 // ============================================================
 
-function initMessages() {
+async function initClientMessagingPage() {
   const params = new URLSearchParams(window.location.search);
   const jobId = params.get("id");
 
-  if (!jobId) {
-    document.getElementById("messageBox").innerHTML =
-      "<p>Select a job from the Jobs page to view messages.</p>";
-    return;
-  }
+  const clientId = localStorage.getItem("client_id");
 
-  loadMessages(jobId);
+  // Get allowed tree guys (max 5)
+  const allowed = await api(`/job/${jobId}/allowed-tree-guys`);
 
-  const form = document.getElementById("messageForm");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Check payment status
+  const billing = await api(`/billing/status`);
 
-    const text = document.getElementById("messageText").value;
-    await sendMessage(jobId, text);
-    document.getElementById("messageText").value = "";
-  });
-}
-
-async function loadMessages(jobId) {
-  const msgs = await api(`/job/${jobId}/messages`);
-  const box = document.getElementById("messageBox");
-  box.innerHTML = "";
-
-  msgs.forEach(m => {
-    const div = document.createElement("div");
-    div.className = "msg";
-    div.innerHTML = `<strong>${m.from_user}:</strong> ${m.message}`;
-    box.appendChild(div);
-  });
-}
-
-async function sendMessage(jobId, text) {
-  await api(`/job/${jobId}/message`, "POST", {
-    message: text,
-    to_user: "tree-guy"
-  });
-
-  loadMessages(jobId);
+  // Initialize client messaging engine
+  initClientMessaging(clientId, jobId, billing.paid, allowed.treeGuys);
 }
 
 // ============================================================
