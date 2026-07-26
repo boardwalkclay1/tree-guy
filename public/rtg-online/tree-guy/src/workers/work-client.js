@@ -1,3 +1,41 @@
+// ============================================================
+// RTG Online — Client Worker (Final Version)
+// ============================================================
+
+const PEPPER = "RTG_CLIENT_PEPPER_v1"; // internal-only
+const enc = new TextEncoder();
+
+// ============================================================
+// PASSWORD HASH (PBKDF2 + static salt + pepper)
+// ============================================================
+
+async function hashPassword(password) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password + PEPPER),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      hash: "SHA-256",
+      salt: enc.encode("rtg-static-salt"),
+      iterations: 150000
+    },
+    key,
+    256
+  );
+
+  return btoa(String.fromCharCode(...new Uint8Array(bits)));
+}
+
+// ============================================================
+// WORKER
+// ============================================================
+
 export default {
   async fetch(request, env) {
     const DB = env.DB;
@@ -11,34 +49,50 @@ export default {
         headers: { "Content-Type": "application/json" }
       });
 
-    // Extract client ID from header (or session token later)
     const clientId = request.headers.get("x-client-id");
 
     // ============================================================
-    // CLIENT LOGIN
+    // LOGIN (email + password)
     // ============================================================
     if (path === "/client/login" && method === "POST") {
       const body = await request.json();
+
       const user = await DB.prepare(`
         SELECT * FROM client_users WHERE email = ?
       `).bind(body.email).first();
 
-      if (!user) return json({ error: "User not found" }, 404);
+      if (!user) return json({ error: "Invalid email or password" }, 401);
+
+      const hash = await hashPassword(body.password);
+
+      if (hash !== user.password_hash) {
+        return json({ error: "Invalid email or password" }, 401);
+      }
 
       return json({ ok: true, user });
     }
 
     // ============================================================
-    // CLIENT REGISTER
+    // REGISTER (store hashed password)
     // ============================================================
     if (path === "/client/register" && method === "POST") {
       const body = await request.json();
       const id = crypto.randomUUID();
 
+      const hash = await hashPassword(body.password);
+
       await DB.prepare(`
-        INSERT INTO client_users (id, name, email, phone, address, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `).bind(id, body.name, body.email, body.phone, body.address, Date.now()).run();
+        INSERT INTO client_users (id, name, email, phone, address, password_hash, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        id,
+        body.name,
+        body.email,
+        body.phone,
+        body.address,
+        hash,
+        Date.now()
+      ).run();
 
       return json({ ok: true, id });
     }
@@ -52,6 +106,27 @@ export default {
       `).bind(clientId).first();
 
       return json(user || {});
+    }
+
+    // ============================================================
+    // UPDATE PROFILE (settings)
+    // ============================================================
+    if (path === "/client/settings/profile" && method === "POST") {
+      const body = await request.json();
+
+      await DB.prepare(`
+        UPDATE client_users
+        SET name = ?, email = ?, phone = ?, address = ?
+        WHERE id = ?
+      `).bind(
+        body.name,
+        body.email,
+        body.phone,
+        body.address,
+        clientId
+      ).run();
+
+      return json({ ok: true });
     }
 
     // ============================================================
@@ -109,7 +184,7 @@ export default {
     }
 
     // ============================================================
-    // SEND MESSAGE (client ↔ tree guy)
+    // SEND MESSAGE
     // ============================================================
     if (path.startsWith("/client/job/") && path.endsWith("/message") && method === "POST") {
       const jobId = path.split("/")[3];
@@ -132,7 +207,7 @@ export default {
     }
 
     // ============================================================
-    // GET MESSAGES FOR JOB
+    // GET MESSAGES
     // ============================================================
     if (path.startsWith("/client/job/") && path.endsWith("/messages") && method === "GET") {
       const jobId = path.split("/")[3];
@@ -146,23 +221,27 @@ export default {
     }
 
     // ============================================================
-    // TREE GUY ACCEPTS JOB
+    // CONTRACTS
     // ============================================================
-    if (path.startsWith("/client/job/") && path.endsWith("/accept") && method === "POST") {
-      const jobId = path.split("/")[3];
-      const body = await request.json();
-      const id = crypto.randomUUID();
+    if (path === "/client/contracts" && method === "GET") {
+      const rows = await DB.prepare(`
+        SELECT * FROM client_contracts WHERE client_id = ?
+        ORDER BY created_at DESC
+      `).bind(clientId).all();
 
-      await DB.prepare(`
-        INSERT INTO job_acceptance (id, job_id, tree_guy_id, accepted_at)
-        VALUES (?, ?, ?, ?)
-      `).bind(id, jobId, body.tree_guy_id, Date.now()).run();
+      return json(rows.results || []);
+    }
 
-      await DB.prepare(`
-        UPDATE client_jobs SET status = 'accepted' WHERE id = ?
-      `).bind(jobId).run();
+    // ============================================================
+    // BILLING HISTORY
+    // ============================================================
+    if (path === "/client/billing" && method === "GET") {
+      const rows = await DB.prepare(`
+        SELECT * FROM client_billing WHERE client_id = ?
+        ORDER BY created_at DESC
+      `).bind(clientId).all();
 
-      return json({ ok: true });
+      return json(rows.results || []);
     }
 
     // ============================================================
@@ -177,6 +256,9 @@ export default {
       return json(rows.results || []);
     }
 
+    // ============================================================
+    // ROUTE NOT FOUND
+    // ============================================================
     return json({ error: "Route not found" }, 404);
   }
 };
