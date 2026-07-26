@@ -1,8 +1,12 @@
 // ============================================================
-// RTG Online — Client Unified JS
+// RTG Online — Client Unified JS (Final Version)
 // ============================================================
 
-const API = "https://api.realtreeguy.com/client";
+const API = "/client"; // Worker base path
+
+// ============================================================
+// API WRAPPER
+// ============================================================
 
 async function api(path, method = "GET", body = null) {
   const res = await fetch(API + path, {
@@ -13,64 +17,130 @@ async function api(path, method = "GET", body = null) {
     },
     body: body ? JSON.stringify(body) : null
   });
+
   return res.json();
 }
+
+// ============================================================
+// PAGE ROUTER
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  const page = document.body.dataset.page;
+
+  switch (page) {
+    case "login":
+      initLogin();
+      break;
+
+    case "dashboard":
+      loadClientName();
+      loadDashboardJobs();
+      loadNotifications();
+      break;
+
+    case "post-job":
+      loadClientName();
+      initPostJob();
+      break;
+
+    case "jobs":
+      loadClientName();
+      loadJobs();
+      break;
+
+    case "messages":
+      loadClientName();
+      initMessages();
+      break;
+
+    case "contracts":
+      loadClientName();
+      loadContracts();
+      break;
+
+    case "billing":
+      loadClientName();
+      loadBilling();
+      break;
+
+    case "settings":
+      loadClientName();
+      loadSettings();
+      break;
+  }
+});
 
 // ============================================================
 // LOGIN
 // ============================================================
 
-export async function login(email) {
-  const data = await api("/login", "POST", { email });
+function initLogin() {
+  const form = document.getElementById("loginForm");
 
-  if (data.error) {
-    alert("Login failed");
-    return;
-  }
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  localStorage.setItem("client_id", data.user.id);
-  window.location.href = "/pages/client/dashboard.html";
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const data = await api("/login", "POST", { email, password });
+
+    if (!data.ok) {
+      alert("Invalid email or password");
+      return;
+    }
+
+    localStorage.setItem("client_id", data.user.id);
+    window.location.href = "/pages/client/dashboard.html";
+  });
 }
 
 // ============================================================
-// LOAD PROFILE
+// LOAD CLIENT NAME (TOP BAR)
 // ============================================================
 
-export async function loadProfile() {
+async function loadClientName() {
   const profile = await api("/me");
-  document.getElementById("clientName").textContent = profile.name;
+  const el = document.getElementById("clientTopName");
+  if (el) el.textContent = profile.name || "Client";
 }
 
 // ============================================================
 // POST JOB
 // ============================================================
 
-export async function postJob(form) {
-  const body = {
-    title: form.title.value,
-    description: form.description.value,
-    budget: form.budget.value,
-    flexible_budget: form.flexible.checked,
-    best_days: form.best_days.value.split(","),
-    best_time: form.best_time.value,
-    address: form.address.value,
-    photos: [] // add upload later
-  };
+function initPostJob() {
+  const form = document.getElementById("postJobForm");
 
-  const data = await api("/job", "POST", body);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  if (data.ok) {
-    window.location.href = "/pages/client/jobs.html";
-  }
+    const body = {
+      title: form.title.value,
+      description: form.description.value,
+      budget: form.budget.value,
+      flexible_budget: form.flexible.checked,
+      best_days: form.best_days.value.split(",").map(d => d.trim()),
+      best_time: form.best_time.value,
+      address: form.address.value,
+      photos: []
+    };
+
+    const data = await api("/job", "POST", body);
+
+    if (data.ok) {
+      window.location.href = "/pages/client/jobs.html";
+    }
+  });
 }
 
 // ============================================================
 // LOAD JOB LIST
 // ============================================================
 
-export async function loadJobs() {
+async function loadJobs() {
   const jobs = await api("/jobs");
-
   const list = document.getElementById("jobList");
   list.innerHTML = "";
 
@@ -82,27 +152,67 @@ export async function loadJobs() {
       <p>${job.description}</p>
       <p><strong>Budget:</strong> $${job.budget}</p>
       <p><strong>Status:</strong> ${job.status}</p>
-      <button onclick="viewJob('${job.id}')">View</button>
+      <button class="client-btn client-btn-primary" onclick="viewJob('${job.id}')">View</button>
     `;
     list.appendChild(div);
   });
 }
 
+function viewJob(id) {
+  window.location.href = `/pages/client/job-view.html?id=${id}`;
+}
+
 // ============================================================
-// VIEW JOB
+// DASHBOARD JOBS
 // ============================================================
 
-export async function viewJob(id) {
-  window.location.href = `/pages/client/job-view.html?id=${id}`;
+async function loadDashboardJobs() {
+  const jobs = await api("/jobs");
+  const box = document.getElementById("dashboardJobs");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  jobs.slice(0, 5).forEach(job => {
+    const div = document.createElement("div");
+    div.className = "job-card";
+    div.innerHTML = `
+      <h3>${job.title}</h3>
+      <p>${job.description}</p>
+      <p><strong>Status:</strong> ${job.status}</p>
+    `;
+    box.appendChild(div);
+  });
 }
 
 // ============================================================
 // MESSAGES
 // ============================================================
 
-export async function loadMessages(jobId) {
-  const msgs = await api(`/job/${jobId}/messages`);
+function initMessages() {
+  const params = new URLSearchParams(window.location.search);
+  const jobId = params.get("id");
 
+  if (!jobId) {
+    document.getElementById("messageBox").innerHTML =
+      "<p>Select a job from the Jobs page to view messages.</p>";
+    return;
+  }
+
+  loadMessages(jobId);
+
+  const form = document.getElementById("messageForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const text = document.getElementById("messageText").value;
+    await sendMessage(jobId, text);
+    document.getElementById("messageText").value = "";
+  });
+}
+
+async function loadMessages(jobId) {
+  const msgs = await api(`/job/${jobId}/messages`);
   const box = document.getElementById("messageBox");
   box.innerHTML = "";
 
@@ -114,10 +224,10 @@ export async function loadMessages(jobId) {
   });
 }
 
-export async function sendMessage(jobId, text, toUser) {
+async function sendMessage(jobId, text) {
   await api(`/job/${jobId}/message`, "POST", {
     message: text,
-    to_user: toUser
+    to_user: "tree-guy"
   });
 
   loadMessages(jobId);
@@ -127,10 +237,11 @@ export async function sendMessage(jobId, text, toUser) {
 // NOTIFICATIONS
 // ============================================================
 
-export async function loadNotifications() {
+async function loadNotifications() {
   const notes = await api("/notifications");
-
   const box = document.getElementById("notifBox");
+  if (!box) return;
+
   box.innerHTML = "";
 
   notes.forEach(n => {
@@ -138,8 +249,90 @@ export async function loadNotifications() {
     div.className = "notif";
     div.innerHTML = `
       <p>${n.message}</p>
-      ${n.link ? `<a href="${n.link}">Open</a>` : ""}
+      ${n.link ? `<a href="${n.link}" class="client-btn client-btn-secondary">Open</a>` : ""}
     `;
     box.appendChild(div);
+  });
+}
+
+// ============================================================
+// CONTRACTS
+// ============================================================
+
+async function loadContracts() {
+  const list = document.getElementById("contractList");
+  if (!list) return;
+
+  const contracts = await api("/contracts");
+
+  list.innerHTML = "";
+
+  contracts.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "job-card";
+    div.innerHTML = `
+      <h3>Contract for Job #${c.job_id}</h3>
+      <p>${c.contract_type || "Tree Work Contract"}</p>
+      <button class="client-btn client-btn-primary" onclick="openContract('${c.id}')">Open</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function openContract(id) {
+  window.location.href = `/pages/client/contract-view.html?id=${id}`;
+}
+
+// ============================================================
+// BILLING
+// ============================================================
+
+async function loadBilling() {
+  const box = document.getElementById("billingHistory");
+  if (!box) return;
+
+  const bills = await api("/billing");
+
+  box.innerHTML = "";
+
+  bills.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "job-card";
+    div.innerHTML = `
+      <h3>${b.type}</h3>
+      <p><strong>Amount:</strong> $${b.amount}</p>
+      <p><strong>Date:</strong> ${new Date(b.created_at).toLocaleDateString()}</p>
+    `;
+    box.appendChild(div);
+  });
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+
+async function loadSettings() {
+  const profile = await api("/me");
+
+  // Fill profile fields
+  document.getElementById("settingsName").value = profile.name || "";
+  document.getElementById("settingsEmail").value = profile.email || "";
+  document.getElementById("settingsPhone").value = profile.phone || "";
+  document.getElementById("settingsAddress").value = profile.address || "";
+
+  // Save profile
+  document.getElementById("settingsProfileForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const body = {
+      name: settingsName.value,
+      email: settingsEmail.value,
+      phone: settingsPhone.value,
+      address: settingsAddress.value
+    };
+
+    const res = await api("/settings/profile", "POST", body);
+
+    if (res.ok) alert("Profile updated");
   });
 }
