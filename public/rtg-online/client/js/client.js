@@ -2,7 +2,8 @@
 // RTG Online — Client Unified JS (Final Version)
 // ============================================================
 
-const API = "/client"; // Worker base path
+// ✅ Switched base path to full Worker endpoint
+const API = "https://api.realtreeguy.com/client"; // Worker base path
 
 // ============================================================
 // API WRAPPER
@@ -314,13 +315,11 @@ async function loadBilling() {
 async function loadSettings() {
   const profile = await api("/me");
 
-  // Fill profile fields
   document.getElementById("settingsName").value = profile.name || "";
   document.getElementById("settingsEmail").value = profile.email || "";
   document.getElementById("settingsPhone").value = profile.phone || "";
   document.getElementById("settingsAddress").value = profile.address || "";
 
-  // Save profile
   document.getElementById("settingsProfileForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
