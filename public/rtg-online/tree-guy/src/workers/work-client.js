@@ -1,12 +1,12 @@
 // ============================================================
-// RTG Online — Client Worker (Final Version)
+// RTG Online — Client Worker (Messaging-Ready Version)
 // ============================================================
 
-const PEPPER = "RTG_CLIENT_PEPPER_v1"; // internal-only
+const PEPPER = "RTG_CLIENT_PEPPER_v1";
 const enc = new TextEncoder();
 
 // ============================================================
-// PASSWORD HASH (PBKDF2 + static salt + pepper)
+// PASSWORD HASH
 // ============================================================
 
 async function hashPassword(password) {
@@ -52,7 +52,7 @@ export default {
     const clientId = request.headers.get("x-client-id");
 
     // ============================================================
-    // LOGIN (email + password)
+    // LOGIN
     // ============================================================
     if (path === "/client/login" && method === "POST") {
       const body = await request.json();
@@ -73,12 +73,11 @@ export default {
     }
 
     // ============================================================
-    // REGISTER (store hashed password)
+    // REGISTER
     // ============================================================
     if (path === "/client/register" && method === "POST") {
       const body = await request.json();
       const id = crypto.randomUUID();
-
       const hash = await hashPassword(body.password);
 
       await DB.prepare(`
@@ -109,7 +108,7 @@ export default {
     }
 
     // ============================================================
-    // UPDATE PROFILE (settings)
+    // UPDATE PROFILE
     // ============================================================
     if (path === "/client/settings/profile" && method === "POST") {
       const body = await request.json();
@@ -159,7 +158,7 @@ export default {
     }
 
     // ============================================================
-    // GET ALL JOBS FOR CLIENT
+    // GET ALL JOBS
     // ============================================================
     if (path === "/client/jobs" && method === "GET") {
       const rows = await DB.prepare(`
@@ -184,40 +183,30 @@ export default {
     }
 
     // ============================================================
-    // SEND MESSAGE
+    // GET ALLOWED TREE GUYS (limit 5)
     // ============================================================
-    if (path.startsWith("/client/job/") && path.endsWith("/message") && method === "POST") {
-      const jobId = path.split("/")[3];
-      const body = await request.json();
-      const id = crypto.randomUUID();
-
-      await DB.prepare(`
-        INSERT INTO job_messages (id, job_id, from_user, to_user, message, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `).bind(
-        id,
-        jobId,
-        clientId,
-        body.to_user,
-        body.message,
-        Date.now()
-      ).run();
-
-      return json({ ok: true, id });
-    }
-
-    // ============================================================
-    // GET MESSAGES
-    // ============================================================
-    if (path.startsWith("/client/job/") && path.endsWith("/messages") && method === "GET") {
+    if (path.startsWith("/client/job/") && path.endsWith("/allowed-tree-guys")) {
       const jobId = path.split("/")[3];
 
       const rows = await DB.prepare(`
-        SELECT * FROM job_messages WHERE job_id = ?
-        ORDER BY created_at ASC
+        SELECT tg_id AS id, name, avatar_url
+        FROM job_treeguy_links
+        WHERE job_id = ?
+        LIMIT 5
       `).bind(jobId).all();
 
-      return json(rows.results || []);
+      return json({ treeGuys: rows.results || [] });
+    }
+
+    // ============================================================
+    // BILLING STATUS (paid or not)
+    // ============================================================
+    if (path === "/client/billing/status" && method === "GET") {
+      const row = await DB.prepare(`
+        SELECT paid FROM client_billing_status WHERE client_id = ?
+      `).bind(clientId).first();
+
+      return json({ paid: row?.paid === 1 });
     }
 
     // ============================================================
