@@ -2,170 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RTG Online — Tree Guy Dashboard</title>
+  <title>RTG Online — Tree Guy Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Favicon -->
   <link rel="icon" href="/assets/img/logos/rtg-online-logo.jpg" type="image/jpeg">
 
   <!-- Social Preview -->
-  <meta property="og:title" content="RTG Online — Tree Guy Dashboard">
-  <meta property="og:description" content="Online hub for tree guys — clients, radio, weather, radar, settings, ads, squads.">
-  <meta property="og:image" content="/public/assets/img/logos/rtg-online-logo.jpg">
-  <meta property="og:type" content="website">
+  <meta property="og:title" content="RTG Online — Tree Guy Hub">
+  <meta property="og:description" content="Online hub for tree guys — clients, radio, weather, radar, squads.">
+  <meta property="og:image" content="/assets/img/logos/rtg-online-logo.jpg">
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="RTG Online — Tree Guy Dashboard">
-  <meta name="twitter:image" content="/public/assets/img/logos/rtg-online-logo.jpg">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Main Dashboard CSS -->
-  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-dashboard.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-online.css">
 </head>
-<body>
+
+<body class="rtg-online-body">
 
   <!-- BACKGROUND -->
-  <div id="rtgBackground"></div>
+  <div id="rtgOnlineBackground"></div>
 
   <!-- TOP BAR -->
-  <div class="rtg-topbar">
-    <div class="rtg-topbar-left">
-      <img src="/public/assets/img/logos/rtg-online-logo.jpg" class="rtg-logo">
-      <div class="rtg-topbar-title">
-        <div class="rtg-topbar-main">RTG ONLINE — TREE GUY HUB</div>
-        <div class="rtg-topbar-sub">Clients • Radio • Weather • Radar • Squads</div>
+  <div class="rtg-online-topbar">
+    <div class="rtg-online-left">
+      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-online-logo" id="rtgOnlineLogo">
+      <div class="rtg-online-title">
+        <div class="rtg-online-main">RTG ONLINE — TREE GUY HUB</div>
+        <div class="rtg-online-sub">Clients • Radio • Weather • Radar • Squads</div>
       </div>
     </div>
   </div>
 
   <!-- MAIN -->
-  <div class="rtg-main">
+  <div class="rtg-online-main">
 
-    <!-- QUICK ACTIONS (BASE NAV FOR DEEP PAGES) -->
-    <div class="rtg-quick-actions">
-      <button class="rtg-qa-btn" id="qaClients">Clients</button>
-      <button class="rtg-qa-btn" id="qaRadio">Radio</button>
-      <button class="rtg-qa-btn" id="qaWeather">Weather & Radar</button>
-      <button class="rtg-qa-btn" id="qaSettings">Settings</button>
-      <button class="rtg-qa-btn" id="qaAds">Pay for Ads</button>
-      <button class="rtg-qa-btn" id="qaProfile">Profile Page</button>
-      <button class="rtg-qa-btn" id="qaGlobalFeed">Global Lumberjack Feed</button>
-    </div>
+    <!-- FEATURE DROP CONTAINER -->
+    <div id="rtgFeatureDrop" class="rtg-feature-drop">
 
-    <!-- GAUGE ROW (HIGH-LEVEL STATUS) -->
-    <div class="rtg-gauge-row">
-      <div class="rtg-gauge-card">
-        <h3>Active Clients</h3>
-        <div id="dashClientsCount"></div>
-      </div>
-      <div class="rtg-gauge-card">
-        <h3>Online Tree Guys</h3>
-        <div id="dashOnlineGuys"></div>
-      </div>
-      <div class="rtg-gauge-card">
-        <h3>Active Radio Channels</h3>
-        <div id="dashRadioChannels"></div>
-      </div>
-    </div>
-
-    <!-- WIDGET: TIME + WEATHER + RADAR -->
-    <div class="rtg-widget">
-      <h2>Time & Weather</h2>
-      <div class="rtg-dashboard-card">
-        <div id="rtgClock"></div>
-        <div id="dashWxTemp"></div>
-        <div id="dashWxCond"></div>
-        <div id="dashWxWind"></div>
-        <div id="dashWxGust"></div>
+      <!-- QUICK ACTIONS -->
+      <div class="rtg-online-quick">
+        <button class="rtg-online-btn" data-open="clients">Clients</button>
+        <button class="rtg-online-btn" data-open="radio">Radio</button>
+        <button class="rtg-online-btn" data-open="weather">Weather & Radar</button>
+        <button class="rtg-online-btn" data-open="settings">Settings</button>
+        <button class="rtg-online-btn" data-open="ads">Pay for Ads</button>
+        <button class="rtg-online-btn" data-open="profile">Profile Page</button>
+        <button class="rtg-online-btn" data-open="feed">Global Lumberjack Feed</button>
       </div>
 
-      <div class="rtg-dashboard-card">
-        <h3>Radar</h3>
-        <div id="dashRadarPreview"></div>
-        <button id="dashRadarExpand">Expand Radar</button>
+      <!-- GAUGES -->
+      <div class="rtg-online-gauges">
+        <div class="rtg-online-gauge-card">
+          <h3>Active Clients</h3>
+          <div id="onlineClientsCount"></div>
+        </div>
+        <div class="rtg-online-gauge-card">
+          <h3>Online Tree Guys</h3>
+          <div id="onlineGuysCount"></div>
+        </div>
+        <div class="rtg-online-gauge-card">
+          <h3>Active Radio Channels</h3>
+          <div id="onlineRadioChannels"></div>
+        </div>
       </div>
-    </div>
 
-    <!-- WIDGET: CLIENTS QUICK VIEW (LINKS TO FULL CLIENT PAGE) -->
-    <div class="rtg-widget">
-      <h2>Clients Overview</h2>
-      <div class="rtg-dashboard-card" id="dashClientsQuick">
-        <!-- small list / summary -->
-      </div>
-      <button id="dashClientsOpen">Open Clients Page</button>
-    </div>
-
-    <!-- WIDGET: RADIO (BASE CONTROLS, FULL SYSTEM ON RADIO PAGE) -->
-    <div class="rtg-widget">
-      <h2>Jobsite Radio</h2>
-      <div class="rtg-dashboard-card">
-        <div id="radio-status" class="radio-status radio-status--disconnected">Disconnected</div>
-
-        <div class="radio-controls">
-          <label>
-            Channel
-            <select id="radio-channel">
-              <option value="1">Channel 1</option>
-              <option value="2">Channel 2</option>
-              <option value="3">Channel 3</option>
-            </select>
-          </label>
-
-          <button id="radio-connect">Connect</button>
-          <button id="radio-disconnect" disabled>Disconnect</button>
-          <button id="radio-ptt" disabled>Hold to Talk</button>
+      <!-- WEATHER -->
+      <div class="rtg-online-widget">
+        <h2>Time & Weather</h2>
+        <div class="rtg-online-card">
+          <div id="onlineClock"></div>
+          <div id="onlineWxTemp"></div>
+          <div id="onlineWxCond"></div>
+          <div id="onlineWxWind"></div>
+          <div id="onlineWxGust"></div>
         </div>
 
-        <div id="radio-channel-display"></div>
-        <div id="radio-log" class="radio-log"></div>
-        <div id="radio-peers" class="radio-peers"></div>
+        <div class="rtg-online-card">
+          <h3>Radar</h3>
+          <div id="onlineRadarPreview"></div>
+          <button id="onlineRadarExpand">Expand Radar</button>
+        </div>
       </div>
 
-      <button id="dashRadioOpen">Open Full Radio Page</button>
-    </div>
-
-    <!-- WIDGET: LUMBERJACK FRIENDS (SCROLLABLE, ACTIONS ONLY) -->
-    <div class="rtg-widget">
-      <h2>Lumberjack Friends</h2>
-      <div class="rtg-dashboard-card">
-        <div id="dashFriendsList"></div>
+      <!-- CLIENTS -->
+      <div class="rtg-online-widget">
+        <h2>Clients Overview</h2>
+        <div class="rtg-online-card" id="onlineClientsQuick"></div>
+        <button id="onlineClientsOpen">Open Clients Page</button>
       </div>
-      <button id="dashFriendsOpen">Open Friends & Squads Page</button>
-    </div>
 
-    <!-- WIDGET: ADS / CLIENT VISIBILITY -->
-    <div class="rtg-widget">
-      <h2>Client Visibility & Ads</h2>
-      <div class="rtg-dashboard-card">
-        <p>Pay to display your page to clients browsing RTG Online.</p>
-        <button id="dashAdsPurchase">Purchase Ad Slot</button>
-        <button id="dashAdsManage">Manage Ads</button>
+      <!-- RADIO -->
+      <div class="rtg-online-widget">
+        <h2>Jobsite Radio</h2>
+        <div class="rtg-online-card">
+          <div id="onlineRadioStatus" class="radio-status radio-status--disconnected">Disconnected</div>
+          <button id="onlineRadioOpen">Open Full Radio Page</button>
+        </div>
       </div>
-    </div>
 
-    <!-- WIDGET: PROFILE / GLOBAL FEED ENTRY POINTS (NO EDITING HERE) -->
-    <div class="rtg-widget">
-      <h2>Profile & Global Feed</h2>
-      <div class="rtg-dashboard-card">
-        <p>This dashboard is what other tree guys see.</p>
-        <button id="dashProfileOpen">Edit Profile Page</button>
-        <button id="dashGlobalFeedOpen">Open Global Lumberjack Feed</button>
+      <!-- FRIENDS -->
+      <div class="rtg-online-widget">
+        <h2>Lumberjack Friends</h2>
+        <div class="rtg-online-card" id="onlineFriendsList"></div>
+        <button id="onlineFriendsOpen">Open Friends & Squads Page</button>
       </div>
-    </div>
 
-    <!-- WIDGET: SETTINGS -->
-    <div class="rtg-widget">
-      <h2>Settings</h2>
-      <div class="rtg-dashboard-card" id="dashSettingsQuick">
-        <!-- quick toggles / summary -->
+      <!-- ADS -->
+      <div class="rtg-online-widget">
+        <h2>Client Visibility & Ads</h2>
+        <div class="rtg-online-card">
+          <p>Pay to display your page to clients browsing RTG Online.</p>
+          <button id="onlineAdsPurchase">Purchase Ad Slot</button>
+          <button id="onlineAdsManage">Manage Ads</button>
+        </div>
       </div>
-      <button id="dashSettingsOpen">Open Full Settings Page</button>
-    </div>
 
+      <!-- PROFILE -->
+      <div class="rtg-online-widget">
+        <h2>Profile & Global Feed</h2>
+        <div class="rtg-online-card">
+          <p>This dashboard is what other tree guys see.</p>
+          <button id="onlineProfileOpen">Edit Profile Page</button>
+          <button id="onlineFeedOpen">Open Global Lumberjack Feed</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- JS: main dash + radio + weather -->
-  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
-  <script src="/rtg-online/tree-guy/js/radio.js"></script>
+  <!-- JS -->
+  <script src="/rtg-online/tree-guy/js/rtg-online.js"></script>
 </body>
 </html>
