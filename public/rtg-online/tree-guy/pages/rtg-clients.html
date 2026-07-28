@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RTG Online – Clients</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-online-hybrid.css">
+</head>
+<body class="rtg-hybrid-body">
+
+  <div class="rtg-hybrid-topbar">
+    <div class="rtg-hybrid-left">
+      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-hybrid-logo">
+      <div>
+        <div class="rtg-hybrid-main">RTG ONLINE — CLIENTS</div>
+        <div class="rtg-hybrid-sub">Your active and past clients</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="rtg-hybrid-main">
+    <section class="rtg-hybrid-card">
+      <header class="rtg-hybrid-card-header">
+        <h2>Client List</h2>
+        <span>Loaded from RTG Online dashboard API</span>
+      </header>
+      <div id="tgMapList" class="rtg-hybrid-list">
+        <!-- filled by rtg-dash.js: renderMapList(customers) -->
+      </div>
+    </section>
+  </main>
+
+  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
+</body>
+</html>
