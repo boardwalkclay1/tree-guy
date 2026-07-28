@@ -48,7 +48,7 @@ body {
 }
 
 .rtg-logo {
-  width: 48px;               /* FIXED SIZE */
+  width: 48px;
   height: 48px;
   border-radius: 8px;
   object-fit: cover;
@@ -61,7 +61,7 @@ body {
 ============================================================ */
 .rtg-main {
   padding: 96px 16px 40px;
-  max-width: 1100px;         /* FIXED WIDTH */
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -76,7 +76,7 @@ body {
 }
 
 .rtg-qa-btn {
-  flex: 1 1 160px;           /* FIXED WIDTH */
+  flex: 1 1 160px;
   padding: 14px 0;
   border-radius: 12px;
   border: 2px solid #ff8c42;
@@ -98,7 +98,7 @@ body {
 ============================================================ */
 .rtg-gauge-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* FIXED */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 18px;
   margin-bottom: 24px;
 }
@@ -131,36 +131,37 @@ body {
 }
 
 /* ============================================================
-   EMOJI + WORD NAV GRID — FIXED SIZING
+   GRID — FIXED SIZING + PERFECT XL TILE
 ============================================================ */
 .rtg-grid {
   margin: 24px auto 20px;
   width: 100%;
   max-width: 900px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* FIXED */
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 18px;
 }
 
+/* Standard Card */
 .rtg-card {
-  padding: 20px 0 14px;
   background: rgba(0,0,0,0.75);
   border: 2px solid #ff8c42;
   border-radius: 12px;
+  padding: 22px 10px;
   text-decoration: none;
   color: #fff;
-  font-size: 1.8rem;         /* FIXED EMOJI SIZE */
+  font-size: 2rem;
   text-align: center;
-  transition: 0.2s ease;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-height: 120px;         /* FIXED HEIGHT */
+  justify-content: center;
+  gap: 10px;
+  min-height: 140px;
+  transition: 0.2s ease;
 }
 
 .rtg-card span {
-  font-size: 0.95rem;        /* FIXED TEXT SIZE */
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: #ffcc99;
@@ -171,29 +172,27 @@ body {
   transform: translateY(-4px);
 }
 
-/* ============================================================
-   RTG ONLINE — FIXED XL CARD
-============================================================ */
+/* XL CARD — FIXED, PERFECT 2×2 TILE */
 .rtg-card--xl {
   grid-column: span 2;
-  padding: 28px 0 20px;
-  font-size: 2.2rem;
-  min-height: 140px;         /* FIXED HEIGHT */
+  grid-row: span 2;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.rtg-card--orange {
-  background: linear-gradient(135deg, #ff7b00, #ff9f3f);
-  border-color: #ff7b00;
-  color: #fff;
+.rtg-card--rtgonline {
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid #ff8c42;
 }
 
-.rtg-card--orange span {
-  color: #fff;
-}
-
-.rtg-card--orange:hover {
-  background: linear-gradient(135deg, #ffa64d, #ff7b00);
-  transform: scale(1.03);
+.rtg-online-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ============================================================
@@ -208,12 +207,12 @@ body {
 
   .rtg-card {
     font-size: 1.6rem;
-    min-height: 110px;
+    min-height: 120px;
   }
 
   .rtg-card--xl {
-    grid-column: span 1;     /* FIXED MOBILE */
-    font-size: 1.9rem;
-    min-height: 120px;
+    grid-column: span 1;
+    grid-row: span 1;
+    min-height: 140px;
   }
 }
