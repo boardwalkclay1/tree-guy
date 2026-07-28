@@ -5,13 +5,33 @@
   <title>RTG Online – Tree Guy Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/public/assets/img/rtg-logo.jpg">
+  <link rel="apple-touch-icon" href="/assets/img/rtg-logo.jpg">
+
+  <!-- Social Preview -->
+  <meta property="og:title" content="RTG Online – Tree Guy Profile">
+  <meta property="og:description" content="Your RTG Online profile — avatar, bio, skills, equipment, and crew visibility.">
+  <meta property="og:image" content="/assets/img/rtg-logo.jpg">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RTG Online – Tree Guy Profile">
+  <meta name="twitter:image" content="/assets/img/rtg-logo.jpg">
+
+  <!-- Hybrid Theme CSS -->
   <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-online.css">
 </head>
+
 <body class="rtg-hybrid-body">
 
+  <!-- FULL BACKGROUND -->
+  <div id="rtgHybridBackground"></div>
+
+  <!-- TOP BAR -->
   <div class="rtg-hybrid-topbar">
     <div class="rtg-hybrid-left">
-      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-hybrid-logo">
+      <img src="/public/assets/img/rtg-logo.jpg" class="rtg-hybrid-logo">
       <div>
         <div class="rtg-hybrid-main">TREE GUY PROFILE</div>
         <div class="rtg-hybrid-sub">Avatar • Bio • Role • Location</div>
@@ -19,14 +39,17 @@
     </div>
   </div>
 
+  <!-- MAIN -->
   <main class="rtg-hybrid-main">
+
+    <!-- PROFILE CARD -->
     <section class="rtg-hybrid-card">
       <header class="rtg-hybrid-card-header">
         <h2>Profile</h2>
       </header>
 
       <div class="rtg-hybrid-profile-header">
-        <img id="tgAvatar" class="rtg-hybrid-avatar" src="/assets/img/logos/rtg-online-logo.jpg">
+        <img id="tgAvatar" class="rtg-hybrid-avatar" src="/public/assets/img/rtg-logo.jpg">
         <div>
           <div id="tgName" class="rtg-hybrid-name">Tree Guy</div>
           <div id="tgRole" class="rtg-hybrid-role"></div>
@@ -45,31 +68,39 @@
       </form>
     </section>
 
+    <!-- SKILLS -->
     <section class="rtg-hybrid-card">
       <header class="rtg-hybrid-card-header">
         <h2>Skills</h2>
       </header>
+
       <form id="tgSkillForm" class="rtg-hybrid-form">
         <input id="tgSkillName" placeholder="Skill (Rigging, Crane work, etc.)">
         <input id="tgSkillLevel" placeholder="Level (Beginner, Pro, etc.)">
         <button type="submit">Add Skill</button>
       </form>
+
       <ul id="tgSkills" class="rtg-hybrid-list"></ul>
     </section>
 
+    <!-- EQUIPMENT -->
     <section class="rtg-hybrid-card">
       <header class="rtg-hybrid-card-header">
         <h2>Equipment</h2>
       </header>
+
       <form id="tgEquipmentForm" class="rtg-hybrid-form">
         <input id="tgEquipmentName" placeholder="Equipment (Bucket truck, crane, etc.)">
         <input id="tgEquipmentYears" type="number" placeholder="Years using">
         <button type="submit">Add Equipment</button>
       </form>
+
       <ul id="tgEquipment" class="rtg-hybrid-list"></ul>
     </section>
+
   </main>
 
+  <!-- JS -->
   <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
 </body>
 </html>
