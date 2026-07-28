@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RTG Online – Global Lumberjack Feed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-online-hybrid.css">
+</head>
+<body class="rtg-hybrid-body">
+
+  <div class="rtg-hybrid-topbar">
+    <div class="rtg-hybrid-left">
+      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-hybrid-logo">
+      <div>
+        <div class="rtg-hybrid-main">GLOBAL LUMBERJACK FEED</div>
+        <div class="rtg-hybrid-sub">Posts, photos, jobs, crews</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="rtg-hybrid-main">
+    <section class="rtg-hybrid-card">
+      <header class="rtg-hybrid-card-header">
+        <h2>Your Feed</h2>
+        <span>Backed by rtg-dash.js social wiring</span>
+      </header>
+
+      <form id="tgPostForm" class="rtg-hybrid-form">
+        <textarea id="tgPostContent" placeholder="Share a job, hazard, or crew update..."></textarea>
+        <input id="tgPostMediaUrl" placeholder="Optional image URL">
+        <select id="tgPostType">
+          <option value="post">Post</option>
+          <option value="job">Job</option>
+          <option value="hazard">Hazard</option>
+        </select>
+        <button type="submit">Post</button>
+      </form>
+
+      <div id="tgFeed" class="rtg-hybrid-feed">
+        <!-- renderFeed(posts) -->
+      </div>
+    </section>
+  </main>
+
+  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
+</body>
+</html>
