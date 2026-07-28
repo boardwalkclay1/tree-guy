@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RTG Online – Tree Guy Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-online-hybrid.css">
+</head>
+<body class="rtg-hybrid-body">
+
+  <div class="rtg-hybrid-topbar">
+    <div class="rtg-hybrid-left">
+      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-hybrid-logo">
+      <div>
+        <div class="rtg-hybrid-main">TREE GUY PROFILE</div>
+        <div class="rtg-hybrid-sub">Avatar • Bio • Role • Location</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="rtg-hybrid-main">
+    <section class="rtg-hybrid-card">
+      <header class="rtg-hybrid-card-header">
+        <h2>Profile</h2>
+      </header>
+
+      <div class="rtg-hybrid-profile-header">
+        <img id="tgAvatar" class="rtg-hybrid-avatar" src="/assets/img/logos/rtg-online-logo.jpg">
+        <div>
+          <div id="tgName" class="rtg-hybrid-name">Tree Guy</div>
+          <div id="tgRole" class="rtg-hybrid-role"></div>
+          <div id="tgLocation" class="rtg-hybrid-location"></div>
+        </div>
+      </div>
+
+      <form id="tgProfileForm" class="rtg-hybrid-form">
+        <input id="tgProfileName" placeholder="Name">
+        <input id="tgProfileRole" placeholder="Role (Climber, Operator, etc.)">
+        <input id="tgProfileCity" placeholder="City">
+        <input id="tgProfileState" placeholder="State">
+        <input id="tgProfileAvatar" placeholder="Avatar URL">
+        <textarea id="tgProfileBio" placeholder="Short bio"></textarea>
+        <button type="submit">Save Profile</button>
+      </form>
+    </section>
+
+    <section class="rtg-hybrid-card">
+      <header class="rtg-hybrid-card-header">
+        <h2>Skills</h2>
+      </header>
+      <form id="tgSkillForm" class="rtg-hybrid-form">
+        <input id="tgSkillName" placeholder="Skill (Rigging, Crane work, etc.)">
+        <input id="tgSkillLevel" placeholder="Level (Beginner, Pro, etc.)">
+        <button type="submit">Add Skill</button>
+      </form>
+      <ul id="tgSkills" class="rtg-hybrid-list"></ul>
+    </section>
+
+    <section class="rtg-hybrid-card">
+      <header class="rtg-hybrid-card-header">
+        <h2>Equipment</h2>
+      </header>
+      <form id="tgEquipmentForm" class="rtg-hybrid-form">
+        <input id="tgEquipmentName" placeholder="Equipment (Bucket truck, crane, etc.)">
+        <input id="tgEquipmentYears" type="number" placeholder="Years using">
+        <button type="submit">Add Equipment</button>
+      </form>
+      <ul id="tgEquipment" class="rtg-hybrid-list"></ul>
+    </section>
+  </main>
+
+  <script src="/rtg-online/tree-guy/js/rtg-dash.js"></script>
+</body>
+</html>
