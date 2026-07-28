@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RTG Online – Messages</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/rtg-online/tree-guy/css/rtg-online-hybrid.css">
+</head>
+<body class="rtg-hybrid-body">
+
+  <div class="rtg-hybrid-topbar">
+    <div class="rtg-hybrid-left">
+      <img src="/assets/img/logos/rtg-online-logo.jpg" class="rtg-hybrid-logo">
+      <div>
+        <div class="rtg-hybrid-main">RTG ONLINE — MESSAGES</div>
+        <div class="rtg-hybrid-sub">Clients • Lumberjacks • Squads</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="rtg-hybrid-main rtg-hybrid-messages-layout">
+    <aside id="messagesSidebar" class="rtg-hybrid-sidebar">
+      <!-- filled by global messaging JS (categories: clients, lumberjacks, squads) -->
+    </aside>
+
+    <section class="rtg-hybrid-card rtg-hybrid-thread">
+      <div id="messagesView">
+        <!-- thread header + bubbles + input (renderThread) -->
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/rtg-online/tree-guy/js/messages.js"></script>
+</body>
+</html>
