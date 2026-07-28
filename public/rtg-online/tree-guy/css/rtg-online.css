@@ -1,0 +1,90 @@
+/* HYBRID DARK + ORANGE BASE */
+
+.rtg-hybrid-body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: #050505;
+  color: #fff;
+}
+
+.rtg-hybrid-topbar {
+  padding: 12px 18px;
+  background: rgba(0,0,0,0.9);
+  border-bottom: 2px solid #ff7b00;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rtg-hybrid-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.rtg-hybrid-main {
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.rtg-hybrid-card {
+  background: rgba(0,0,0,0.8);
+  border-radius: 12px;
+  border: 1px solid #ff7b00;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.rtg-hybrid-card-header h2 {
+  margin: 0 0 4px;
+}
+
+.rtg-hybrid-list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rtg-hybrid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.rtg-hybrid-form input,
+.rtg-hybrid-form textarea,
+.rtg-hybrid-form select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #111;
+  color: #fff;
+}
+
+.rtg-hybrid-form button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #ff7b00;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Messages layout */
+.rtg-hybrid-messages-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+}
+
+.rtg-hybrid-sidebar {
+  background: rgba(0,0,0,0.85);
+  border-radius: 12px;
+  border: 1px solid #444;
+  padding: 12px;
+}
