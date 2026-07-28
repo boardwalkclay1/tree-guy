@@ -1,274 +1,96 @@
 /* ============================================================
-   RTG ONLINE — TREE GUY DASHBOARD
-   Matches offline ops center • Same background image
+   RTG ONLINE — ORANGE THEME
 ============================================================ */
 
-/* BASE / BACKGROUND */
-body {
+.rtg-online-body {
   margin: 0;
   padding: 0;
   font-family: system-ui, sans-serif;
+  background: #0a0a0a;
   color: #fff;
   overflow-x: hidden;
-  background: #000;
 }
 
-/* Background image shifted down 1 inch (96px) */
-#rtgBackground {
+/* Background */
+#rtgOnlineBackground {
   position: fixed;
-  top: 96px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 96px);
-  background: url("/assets/img/backgrounds/rtg-dash-back.jpg") center top / cover no-repeat;
-  background-attachment: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #ff7b00 0, #0a0a0a 60%, #000 100%);
   z-index: -1;
 }
 
-/* TOP BAR (matches offline style) */
-.rtg-topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 72px;
+/* Top Bar */
+.rtg-online-topbar {
+  padding: 14px 20px;
+  background: rgba(0,0,0,0.85);
+  border-bottom: 2px solid #ff7b00;
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  background: rgba(0,0,0,0.9);
-  border-bottom: 2px solid #2e6b33;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-  z-index: 1000;
+  gap: 16px;
 }
 
-.rtg-topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.rtg-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+.rtg-online-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
   object-fit: cover;
-  border: 2px solid #2e6b33;
+  animation: glowLogo 2s infinite alternate;
 }
 
-.rtg-topbar-title .rtg-topbar-main {
-  font-weight: 700;
-  font-size: 1rem;
+@keyframes glowLogo {
+  from { box-shadow: 0 0 10px #ff7b00; }
+  to   { box-shadow: 0 0 22px #ffa64d; }
 }
 
-.rtg-topbar-title .rtg-topbar-sub {
-  font-size: 0.85rem;
-  opacity: 0.8;
+/* Main */
+.rtg-online-main {
+  padding: 30px 20px;
 }
 
-/* MAIN LAYOUT */
-.tg-main {
-  padding: 96px 16px 40px; /* aligns with background shift */
-  max-width: 1200px;
-  margin: 0 auto;
+/* Feature Drop Animation */
+.rtg-feature-drop > * {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: featureDrop 0.6s forwards;
 }
 
-/* HEADER PROFILE PANEL */
-.tg-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  background: rgba(0,0,0,0.75);
-  border-radius: 14px;
-  padding: 18px;
-  border: 2px solid #2e6b33;
-  box-shadow: 0 0 20px rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
+.rtg-feature-drop > *:nth-child(1) { animation-delay: 0.1s; }
+.rtg-feature-drop > *:nth-child(2) { animation-delay: 0.2s; }
+.rtg-feature-drop > *:nth-child(3) { animation-delay: 0.3s; }
+.rtg-feature-drop > *:nth-child(4) { animation-delay: 0.4s; }
+.rtg-feature-drop > *:nth-child(5) { animation-delay: 0.5s; }
+.rtg-feature-drop > *:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes featureDrop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.tg-avatar {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #00ff88;
-}
-
-.tg-header-info h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
-}
-
-.tg-header-info p {
-  font-size: 0.95rem;
-  opacity: 0.9;
-}
-
-/* GRID: LEFT / CENTER / RIGHT */
-.tg-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 1.6fr 1.1fr;
-  gap: 18px;
-}
-
-/* GLASS CARD BASE */
-.glass-card {
-  background: rgba(0,0,0,0.78);
-  border-radius: 14px;
-  padding: 16px;
-  border: 2px solid #2e6b33;
-  box-shadow: 0 0 18px rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
-}
-
-/* LEFT PANEL */
-.tg-left h2,
-.tg-center h2,
-.tg-right h2 {
+/* Buttons */
+.rtg-online-btn {
+  background: #ff7b00;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
   font-size: 1.1rem;
-  margin-bottom: 10px;
-}
-
-/* MAP + CLIENTS LIST */
-#tgMapList .map-item {
-  background: rgba(0,0,0,0.6);
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 10px;
-  border-left: 4px solid #00ff88;
-}
-
-/* CENTER: FEED */
-.tg-feed {
-  max-height: 60vh;
-  overflow-y: auto;
-  padding-right: 6px;
-  margin-bottom: 16px;
-}
-
-.feed-item {
-  background: rgba(0,0,0,0.65);
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.5);
-}
-
-.feed-header {
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.feed-content {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.feed-media img {
-  width: 100%;
-  border-radius: 8px;
-  margin-top: 8px;
-}
-
-/* POST FORM */
-#tgPostForm {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-#tgPostForm textarea,
-#tgPostForm input,
-#tgPostForm select {
-  padding: 8px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-}
-
-#tgPostForm button {
-  background: #00ff88;
-  border: none;
-  padding: 9px;
-  border-radius: 20px;
+  font-weight: bold;
   cursor: pointer;
-  font-weight: 700;
-  color: #000;
+  color: #fff;
+  transition: 0.2s;
 }
 
-/* RIGHT: MESSAGES, FRIENDs, PROFILE, SKILLS, EQUIPMENT */
-#tgMessages .msg-item,
-#tgFriends .friend-item {
-  background: rgba(0,0,0,0.65);
-  padding: 8px;
-  margin-bottom: 8px;
-  border-radius: 10px;
+.rtg-online-btn:hover {
+  background: #ffa64d;
+  transform: scale(1.05);
 }
 
-#tgProfileForm,
-#tgSkillForm,
-#tgEquipmentForm {
+/* Cards */
+.rtg-online-card {
+  background: rgba(0,0,0,0.75);
+  border: 2px solid #ff7b00;
+  border-radius: 12px;
+  padding: 16px;
   margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-#tgProfileForm input,
-#tgProfileForm textarea,
-#tgSkillForm input,
-#tgEquipmentForm input {
-  padding: 8px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-}
-
-#tgProfileForm button,
-#tgSkillForm button,
-#tgEquipmentForm button {
-  background: #00ff88;
-  border: none;
-  padding: 9px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 700;
-  color: #000;
-}
-
-#tgSkills li,
-#tgEquipment li {
-  background: rgba(0,0,0,0.65);
-  padding: 8px;
-  margin-bottom: 6px;
-  border-radius: 10px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .tg-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tg-feed {
-    max-height: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .rtg-topbar {
-    height: 64px;
-    padding: 0 12px;
-  }
-
-  .rtg-logo {
-    width: 42px;
-    height: 42px;
-  }
-
-  .tg-main {
-    padding: 80px 10px 30px;
-  }
 }
