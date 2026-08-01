@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Real Tree Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/assets/img/rtg-logo.jpg">
+
+  <!-- Social Preview -->
+  <meta property="og:title" content="Real Tree Guy – Supply Finder Map">
+  <meta property="og:description" content="Find Home Depot, Lowe’s, Ace, chainsaw shops, dump sites, sawmills, gas stations and more.">
+  <meta property="og:image" content="/assets/img/rtg-logo.jpg">
+  <meta property="og:type" content="website">
 
   <!-- MAPLIBRE -->
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
@@ -14,49 +24,52 @@
 
 <body>
 
-<section class="shell">
+  <!-- FULL BACKGROUND -->
+  <div id="rtgMapBackground"></div>
 
-  <!-- LEFT PANEL -->
-  <div class="left-panel">
-    <h2>Supply Finder</h2>
+  <section class="shell">
 
-    <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <h2>Supply Finder</h2>
 
-    <!-- GPS STATUS -->
-    <div id="locationStatus" class="status">Requesting location…</div>
+      <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
 
-    <!-- FILTERS -->
-    <label>Supply Filters</label>
-    <div id="filterRow" class="pill-row">
-      <button class="pill" data-store-type="home_depot">Home Depot</button>
-      <button class="pill" data-store-type="lowes">Lowe's</button>
-      <button class="pill" data-store-type="ace">Ace Hardware</button>
-      <button class="pill" data-store-type="chainsaw">Chainsaw Shops</button>
-      <button class="pill" data-store-type="woodworking">Woodworking Stores</button>
-      <button class="pill" data-store-type="dump">Wood Dump Sites</button>
-      <button class="pill" data-store-type="sawmill">Sawmills</button>
-      <button class="pill" data-store-type="gas">Gas Stations</button>
+      <!-- GPS STATUS -->
+      <div id="locationStatus" class="status">Requesting location…</div>
+
+      <!-- FILTERS ABOVE MAP -->
+      <label>Supply Filters</label>
+      <div id="filterRow" class="pill-row">
+        <button class="pill" data-store-type="home_depot">Home Depot</button>
+        <button class="pill" data-store-type="lowes">Lowe's</button>
+        <button class="pill" data-store-type="ace">Ace Hardware</button>
+        <button class="pill" data-store-type="chainsaw">Chainsaw Shops</button>
+        <button class="pill" data-store-type="woodworking">Woodworking Stores</button>
+        <button class="pill" data-store-type="dump">Wood Dump Sites</button>
+        <button class="pill" data-store-type="sawmill">Sawmills</button>
+        <button class="pill" data-store-type="gas">Gas Stations</button>
+      </div>
+
+      <!-- ADDRESS SEARCH -->
+      <label>Search Any Address</label>
+      <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
+
+      <!-- ACTIVE FILTER -->
+      <div class="status">
+        Filter: <span id="activeFilterLabel">None</span>
+      </div>
     </div>
 
-    <!-- ADDRESS SEARCH -->
-    <label>Search Any Address</label>
-    <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
-
-    <!-- ACTIVE FILTER -->
-    <div class="status">
-      Filter: <span id="activeFilterLabel">None</span>
+    <!-- MAP BELOW FILTERS -->
+    <div class="map-wrap">
+      <div id="rtgMap"></div>
     </div>
-  </div>
 
-  <!-- MAP ENGINE -->
-  <div class="map-wrap">
-    <div id="rtgMap"></div>
-  </div>
+  </section>
 
-</section>
-
-<!-- RTG MAP ENGINE JS -->
-<script type="module" src="/pages/assets/js/map.js"></script>
+  <!-- RTG MAP ENGINE JS -->
+  <script type="module" src="/pages/assets/js/map.js"></script>
 
 </body>
 </html>
