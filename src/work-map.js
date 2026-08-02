@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY — GLOBAL MAP WORKER (FINAL VERSION)
+// REAL TREE GUY — GLOBAL MAP WORKER (FINAL FIXED VERSION)
 // ============================================================
 
 function cors(json, status = 200) {
@@ -16,22 +16,21 @@ function cors(json, status = 200) {
 
 const OVERPASS = "https://overpass-api.de/api/interpreter";
 
-// Build global Overpass query using user GPS
 function buildQuery(type, lat, lng, radius) {
   switch (type) {
     case "home_depot":
       return `[out:json][timeout:25];
-        node["brand"="The Home Depot"](around:${radius},${lat},${lng});
+        node["name"~"Home Depot"](around:${radius},${lat},${lng});
         out;`;
 
     case "lowes":
       return `[out:json][timeout:25];
-        node["brand"="Lowe's"](around:${radius},${lat},${lng});
+        node["name"~"Lowe"](around:${radius},${lat},${lng});
         out;`;
 
     case "ace":
       return `[out:json][timeout:25];
-        node["brand"="Ace Hardware"](around:${radius},${lat},${lng});
+        node["name"~"Ace Hardware"](around:${radius},${lat},${lng});
         out;`;
 
     case "chainsaw":
@@ -66,7 +65,6 @@ function buildQuery(type, lat, lng, radius) {
   }
 }
 
-// Convert Overpass → GeoJSON
 function toGeoJSON(json, type) {
   const features = (json.elements || [])
     .filter(e => e.type === "node" && e.lat && e.lon)
@@ -80,7 +78,6 @@ function toGeoJSON(json, type) {
         type,
         name: e.tags?.name || "",
         address: e.tags?.["addr:full"] || "",
-        brand: e.tags?.brand || "",
         raw: e.tags || {},
         price_regular: null,
         price_ultra: null,
@@ -98,7 +95,6 @@ export async function handle(request) {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  // CORS
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -110,9 +106,6 @@ export async function handle(request) {
     });
   }
 
-  // ============================================================
-  // GLOBAL SUPPLY FINDER
-  // ============================================================
   if (path === "/api/map/stores") {
     const type = url.searchParams.get("type") || "home_depot";
     const lat = url.searchParams.get("lat") || "33.7490";
