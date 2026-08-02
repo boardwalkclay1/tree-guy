@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY MAP ENGINE — MAPLIBRE + WORKER DATA (FULL UPGRADE)
+// REAL TREE GUY MAP ENGINE — FIXED VERSION
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api/map";
@@ -10,6 +10,8 @@ let currentType = "home_depot";
 const locationStatus = document.getElementById("locationStatus");
 const filterRow = document.getElementById("filterRow");
 const activeFilterLabel = document.getElementById("activeFilterLabel");
+
+let userCoords = null; // store user location until map loads
 
 // ============================================================
 // INIT MAP
@@ -26,15 +28,21 @@ function initMap(center = [-84.3880, 33.7490]) {
 
   map.on("load", () => {
     console.log("MapLibre ready.");
+
+    // Add user marker ONLY after style is loaded
+    if (userCoords) {
+      addUserLocationMarker(userCoords.lng, userCoords.lat);
+    }
+
     loadStores(currentType);
   });
 }
 
 // ============================================================
-// USER LOCATION MARKER
+// USER LOCATION MARKER — SAFE (only after map load)
 // ============================================================
 function addUserLocationMarker(lng, lat) {
-  if (!map) return;
+  if (!map || !map.isStyleLoaded()) return;
 
   if (map.getSource("rtg-user")) {
     map.removeLayer("rtg-user-layer");
@@ -95,7 +103,6 @@ async function loadStores(type) {
       data
     });
 
-    // Color logic per type
     const colorMap = {
       home_depot: "#ff6600",
       lowes: "#0066ff",
@@ -119,7 +126,6 @@ async function loadStores(type) {
       }
     });
 
-    // POPUP
     map.on("click", "rtg-stores-layer", (e) => {
       const feature = e.features[0];
       const props = feature.properties || {};
@@ -131,7 +137,6 @@ async function loadStores(type) {
         <small>${props.type || ""}</small>
       `;
 
-      // GAS PRICE POPUP
       if (props.type === "gas") {
         html += `
           <br><br>
@@ -147,14 +152,6 @@ async function loadStores(type) {
         .addTo(map);
     });
 
-    map.on("mouseenter", "rtg-stores-layer", () => {
-      map.getCanvas().style.cursor = "pointer";
-    });
-    map.on("mouseleave", "rtg-stores-layer", () => {
-      map.getCanvas().style.cursor = "";
-    });
-
-    // GAS PRICE ANALYSIS
     if (type === "gas") {
       highlightCheapestGas(data);
     }
@@ -165,7 +162,7 @@ async function loadStores(type) {
 }
 
 // ============================================================
-// FIND CHEAPEST GAS STATION
+// CHEAPEST GAS
 // ============================================================
 function highlightCheapestGas(geojson) {
   if (!geojson || !geojson.features || !geojson.features.length) return;
@@ -186,7 +183,6 @@ function highlightCheapestGas(geojson) {
 
   const coords = cheapestFeature.geometry.coordinates;
 
-  // Remove old cheapest marker
   if (map.getSource("rtg-cheapest-gas")) {
     map.removeLayer("rtg-cheapest-gas-layer");
     map.removeSource("rtg-cheapest-gas");
@@ -216,11 +212,11 @@ function highlightCheapestGas(geojson) {
 }
 
 // ============================================================
-// GEOLOCATION
+// GEOLOCATION — FIXED
 // ============================================================
 function initLocation() {
   if (!navigator.geolocation) {
-    if (locationStatus) locationStatus.textContent = "Location not available.";
+    locationStatus.textContent = "Location not available.";
     initMap();
     return;
   }
@@ -228,12 +224,15 @@ function initLocation() {
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const { latitude, longitude } = pos.coords;
-      if (locationStatus) locationStatus.textContent = "Location detected.";
+
+      userCoords = { lng: longitude, lat: latitude };
+
+      locationStatus.textContent = "Location detected.";
+
       initMap([longitude, latitude]);
-      addUserLocationMarker(longitude, latitude);
     },
     () => {
-      if (locationStatus) locationStatus.textContent = "Using default location.";
+      locationStatus.textContent = "Using default location.";
       initMap();
     }
   );
