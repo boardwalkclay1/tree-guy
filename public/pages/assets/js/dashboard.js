@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "X-RTG-User": rtgUserId,
         "X-RTG-Email": rtgUserEmail,
         "X-RTG-Type": rtgUserType
-        // ❌ removed X-RTG-Name to avoid CORS block
       };
     },
 
@@ -154,16 +153,30 @@ document.addEventListener("DOMContentLoaded", () => {
       user_id: rtgUserId,
       email: rtgUserEmail,
       type: rtgUserType,
-      name: rtgUserName,   // username stays in JSON body
+      name: rtgUserName,
       lat: pos.lat,
       lon: pos.lon,
       ts: Date.now()
     });
 
+    // ============================================================
+    // NEW: RADIO STATUS SYNC
+    // ============================================================
+    const statusEl = document.getElementById("radio-status");
+    const pttBtn = document.getElementById("radio-ptt");
+
     if (res && res.ok) {
-      console.log(`🔊 Heartbeat OK — ${rtgUserName} (${rtgUserId})`);
+      statusEl.textContent = "Connected";
+      statusEl.classList.remove("radio-status--disconnected");
+      statusEl.classList.add("radio-status--connected");
+
+      pttBtn.disabled = false;
     } else {
-      console.warn("⚠ Heartbeat failed:", res);
+      statusEl.textContent = "Disconnected";
+      statusEl.classList.remove("radio-status--connected");
+      statusEl.classList.add("radio-status--disconnected");
+
+      pttBtn.disabled = true;
     }
   }
 
