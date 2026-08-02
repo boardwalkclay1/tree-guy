@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — RADIO CENTER (FINAL FIXED VERSION)
+// REAL TREE GUY OS — RADIO CENTER (CLEAN + ORGANIZED VERSION)
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api";
@@ -195,7 +195,7 @@ async function getGPS() {
 }
 
 // ============================================================
-// UPDATE PRESENCE
+// UPDATE PRESENCE (NEARBY + ACTIVE)
 // ============================================================
 async function updatePresence() {
   if (!currentChannel) return;
@@ -238,7 +238,7 @@ function renderPresence() {
 }
 
 // ============================================================
-// RENDER NEARBY USERS
+// RENDER NEARBY USERS (PROXIMITY)
 // ============================================================
 function renderNearby() {
   const box = document.getElementById("nearbyUsers");
@@ -253,7 +253,7 @@ function renderNearby() {
     `<div class="nearby">
        <strong>${u.name}</strong>
        <span>${u.distance_ft} ft</span>
-       <button class="add-btn" data-id="${u.user_id}">Add</button>
+       <button class="add-btn" data-id="${u.user_id}">Connect</button>
      </div>`
   ).join("");
 
