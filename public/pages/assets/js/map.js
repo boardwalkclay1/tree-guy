@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY MAP ENGINE — GLOBAL + FIXED
+// REAL TREE GUY MAP ENGINE — CLEAN GLOBAL VERSION
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api/map";
@@ -76,11 +76,11 @@ function addUserLocationMarker(lng, lat) {
 }
 
 // ============================================================
-// LOAD STORES — GLOBAL (GPS + RADIUS)
+// LOAD STORES — GLOBAL
 // ============================================================
 async function loadStores(type) {
   currentType = type;
-  activeFilterLabel.textContent = `Filter: ${type}`;
+  activeFilterLabel.textContent = type;
 
   const center = map.getCenter();
   const lat = center.lat;
@@ -143,78 +143,15 @@ async function loadStores(type) {
         <small>${props.type || ""}</small>
       `;
 
-      if (props.type === "gas") {
-        html += `
-          <br><br>
-          Regular: ${props.price_regular ?? "—"}<br>
-          Ultra (89): ${props.price_ultra ?? "—"}<br>
-          Diesel: ${props.price_diesel ?? "—"}
-        `;
-      }
-
       new maplibregl.Popup()
         .setLngLat(coords)
         .setHTML(html)
         .addTo(map);
     });
 
-    if (type === "gas") {
-      highlightCheapestGas(data);
-    }
-
   } catch (err) {
     console.error("Failed to load stores:", err);
   }
-}
-
-// ============================================================
-// CHEAPEST GAS
-// ============================================================
-function highlightCheapestGas(geojson) {
-  if (!geojson || !geojson.features || !geojson.features.length) return;
-
-  let cheapestFeature = null;
-  let cheapestPrice = Infinity;
-
-  for (const f of geojson.features) {
-    const p = f.properties || {};
-    const price = Number(p.price_regular);
-    if (!isNaN(price) && price < cheapestPrice) {
-      cheapestPrice = price;
-      cheapestFeature = f;
-    }
-  }
-
-  if (!cheapestFeature) return;
-
-  const coords = cheapestFeature.geometry.coordinates;
-
-  if (map.getSource("rtg-cheapest-gas")) {
-    map.removeLayer("rtg-cheapest-gas-layer");
-    map.removeSource("rtg-cheapest-gas");
-  }
-
-  map.addSource("rtg-cheapest-gas", {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: [cheapestFeature]
-    }
-  });
-
-  map.addLayer({
-    id: "rtg-cheapest-gas-layer",
-    type: "circle",
-    source: "rtg-cheapest-gas",
-    paint: {
-      "circle-radius": 10,
-      "circle-color": "#00ff99",
-      "circle-stroke-width": 2,
-      "circle-stroke-color": "#000000"
-    }
-  });
-
-  map.flyTo({ center: coords, zoom: 13 });
 }
 
 // ============================================================
