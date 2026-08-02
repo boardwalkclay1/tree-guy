@@ -1,6 +1,6 @@
 /* ============================================================
-   REAL TREE GUY OS — MAP MODULE (FULL REBUILD)
-   Clean • Cinematic • Fixed Map Height • RTG Logo Background
+   REAL TREE GUY OS — MAP MODULE (FINAL REBUILD)
+   Cinematic • Mobile-Safe • Layer-Ready • RTG Background
 ============================================================ */
 
 /* ============================================================
@@ -12,7 +12,6 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   color: #e8ffe8;
 
-  /* FULL RTG LOGO BACKGROUND */
   background: #0d0f0d url("/public/assets/img/rtg-logo.jpg")
     center center / cover no-repeat;
   background-attachment: fixed;
@@ -22,26 +21,26 @@ body {
 }
 
 /* ============================================================
-   MAIN LAYOUT
+   MAIN LAYOUT — MAP MAX SIZE
 ============================================================ */
 .shell {
   display: flex;
   gap: 20px;
   padding: 20px;
-  height: 100vh; /* FULL HEIGHT LAYOUT */
+  height: 100vh; /* Map fills entire height */
   box-sizing: border-box;
 }
 
-/* PHONE LAYOUT */
 @media (max-width: 900px) {
   .shell {
     flex-direction: column;
     height: auto;
+    padding: 12px;
   }
 }
 
 /* ============================================================
-   LEFT PANEL
+   LEFT PANEL — Filters + Search + Status
 ============================================================ */
 .left-panel {
   width: 320px;
@@ -50,12 +49,20 @@ body {
   border-radius: 14px;
   padding: 20px;
   box-shadow: 0 0 18px rgba(0,0,0,0.5);
+  overflow-y: auto;
+  max-height: 100%;
 }
 
 @media (max-width: 900px) {
   .left-panel {
     width: 100%;
+    max-height: none;
   }
+}
+
+.left-panel h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .status {
@@ -65,13 +72,13 @@ body {
 }
 
 /* ============================================================
-   FILTER BUTTONS
+   FILTER BUTTONS — Above Map
 ============================================================ */
 .pill-row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 15px;
+  margin: 12px 0 18px;
 }
 
 .pill {
@@ -91,7 +98,7 @@ body {
 }
 
 /* ============================================================
-   MAP CONTAINER — FIXED & CORRECT
+   MAP CONTAINER — Full Height, Perfect Fit
 ============================================================ */
 .map-wrap {
   flex: 1;
@@ -102,12 +109,12 @@ body {
   overflow: hidden;
   box-shadow: 0 0 18px rgba(0,0,0,0.5);
 
-  height: 100%; /* FULL HEIGHT OF SHELL */
+  height: 100%; /* Map fills entire right side */
 }
 
 @media (max-width: 900px) {
   .map-wrap {
-    height: 70vh; /* MOBILE HEIGHT */
+    height: 75vh; /* Mobile map height */
   }
 }
 
@@ -116,11 +123,11 @@ body {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 100%; /* THIS FIXES THE MAP */
+  height: 100%;
 }
 
 /* ============================================================
-   BUTTONS
+   BUTTONS (Optional future UI)
 ============================================================ */
 .btn-primary,
 .btn-ghost {
@@ -148,7 +155,7 @@ body {
 }
 
 /* ============================================================
-   FOOTER
+   FOOTER (Optional)
 ============================================================ */
 .map-footer {
   padding: 10px;
