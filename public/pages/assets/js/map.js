@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY MAP ENGINE — FIXED VERSION
+// REAL TREE GUY MAP ENGINE — GLOBAL + FIXED
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api/map";
@@ -11,7 +11,7 @@ const locationStatus = document.getElementById("locationStatus");
 const filterRow = document.getElementById("filterRow");
 const activeFilterLabel = document.getElementById("activeFilterLabel");
 
-let userCoords = null; // store user location until map loads
+let userCoords = null;
 
 // ============================================================
 // INIT MAP
@@ -29,7 +29,6 @@ function initMap(center = [-84.3880, 33.7490]) {
   map.on("load", () => {
     console.log("MapLibre ready.");
 
-    // Add user marker ONLY after style is loaded
     if (userCoords) {
       addUserLocationMarker(userCoords.lng, userCoords.lat);
     }
@@ -39,7 +38,7 @@ function initMap(center = [-84.3880, 33.7490]) {
 }
 
 // ============================================================
-// USER LOCATION MARKER — SAFE (only after map load)
+// USER LOCATION MARKER
 // ============================================================
 function addUserLocationMarker(lng, lat) {
   if (!map || !map.isStyleLoaded()) return;
@@ -77,14 +76,22 @@ function addUserLocationMarker(lng, lat) {
 }
 
 // ============================================================
-// LOAD STORES FROM WORKER
+// LOAD STORES — GLOBAL (GPS + RADIUS)
 // ============================================================
 async function loadStores(type) {
   currentType = type;
-  if (activeFilterLabel) activeFilterLabel.textContent = `Filter: ${type}`;
+  activeFilterLabel.textContent = `Filter: ${type}`;
+
+  const center = map.getCenter();
+  const lat = center.lat;
+  const lng = center.lng;
+  const radius = 50000; // 50km
 
   try {
-    const res = await fetch(`${API_BASE}/stores?type=${encodeURIComponent(type)}`);
+    const res = await fetch(
+      `${API_BASE}/stores?type=${encodeURIComponent(type)}&lat=${lat}&lng=${lng}&radius=${radius}`
+    );
+
     const data = await res.json();
 
     if (!data || !data.features) {
@@ -92,7 +99,6 @@ async function loadStores(type) {
       return;
     }
 
-    // Remove old store layer
     if (map.getSource("rtg-stores")) {
       map.removeLayer("rtg-stores-layer");
       map.removeSource("rtg-stores");
@@ -140,9 +146,9 @@ async function loadStores(type) {
       if (props.type === "gas") {
         html += `
           <br><br>
-          Regular: $${props.price_regular?.toFixed(2) || "—"}<br>
-          Ultra (89): $${props.price_ultra?.toFixed(2) || "—"}<br>
-          Diesel: $${props.price_diesel?.toFixed(2) || "—"}
+          Regular: ${props.price_regular ?? "—"}<br>
+          Ultra (89): ${props.price_ultra ?? "—"}<br>
+          Diesel: ${props.price_diesel ?? "—"}
         `;
       }
 
@@ -212,7 +218,7 @@ function highlightCheapestGas(geojson) {
 }
 
 // ============================================================
-// GEOLOCATION — FIXED
+// GEOLOCATION
 // ============================================================
 function initLocation() {
   if (!navigator.geolocation) {
@@ -242,8 +248,6 @@ function initLocation() {
 // FILTER BUTTONS
 // ============================================================
 function bindFilters() {
-  if (!filterRow) return;
-
   filterRow.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-store-type]");
     if (!btn) return;
