@@ -1,24 +1,45 @@
 // ============================================================
-// REAL TREE GUY OS — DASHBOARD CORE (Worker APIs Only)
+// REAL TREE GUY OS — DASHBOARD CORE (FINAL FIXED VERSION)
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
-  // AUTH CONTEXT → SENT TO WORKER AS HEADERS
+  // AUTH CONTEXT
   // ============================================================
   const rtgUserId = localStorage.getItem("rtgUserId") || "dev";
   const rtgUserEmail = localStorage.getItem("rtgUserEmail") || "dev@local";
   const rtgUserType = localStorage.getItem("rtgUserType") || "tree";
   const rtgUserName = localStorage.getItem("rtgUserName") || "Tree Guy";
 
+  // Update UI name
+  const nameEl = document.getElementById("rtgUserName");
+  if (nameEl) nameEl.textContent = rtgUserName;
+
   // ============================================================
-  // FIXED: API BASE → YOUR WORKER DOMAIN
+  // FIXED API BASE
   // ============================================================
   const API_BASE = "https://api.realtreeguy.com/api";
 
   // ============================================================
-  // SAFE MODE API WRAPPER — ALWAYS RETURNS JSON OR NULL
+  // SAFE JSON WRAPPER
+  // ============================================================
+  async function safeJson(res, url) {
+    const text = await res.text();
+    if (!text || text.trim().startsWith("<")) {
+      console.warn("❌ API returned HTML instead of JSON:", url);
+      return null;
+    }
+    try {
+      return JSON.parse(text);
+    } catch (err) {
+      console.warn("❌ JSON parse failed:", url, err);
+      return null;
+    }
+  }
+
+  // ============================================================
+  // API WRAPPER
   // ============================================================
   const API = {
     headers() {
@@ -31,41 +52,27 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     async post(path, body) {
+      const url = `${API_BASE}${path}`;
       try {
-        const res = await fetch(`${API_BASE}${path}`, {
+        const res = await fetch(url, {
           method: "POST",
           headers: this.headers(),
           body: JSON.stringify(body)
         });
-
-        const text = await res.text();
-        try {
-          return JSON.parse(text);
-        } catch {
-          console.warn("POST returned non‑JSON at", path, text.slice(0, 120));
-          return null;
-        }
+        return await safeJson(res, url);
       } catch (err) {
-        console.error("POST failed:", path, err);
+        console.error("❌ POST failed:", url, err);
         return null;
       }
     },
 
     async get(path) {
+      const url = `${API_BASE}${path}`;
       try {
-        const res = await fetch(`${API_BASE}${path}`, {
-          headers: this.headers()
-        });
-
-        const text = await res.text();
-        try {
-          return JSON.parse(text);
-        } catch {
-          console.warn("GET returned non‑JSON at", path, text.slice(0, 120));
-          return null;
-        }
+        const res = await fetch(url, { headers: this.headers() });
+        return await safeJson(res, url);
       } catch (err) {
-        console.error("GET failed:", path, err);
+        console.error("❌ GET failed:", url, err);
         return null;
       }
     }
@@ -115,14 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch(url);
       const data = await res.json();
 
-      const today = {
-        temperature: data.current_weather.temperature,
-        code: data.current_weather.weathercode,
-        wind: data.current_weather.windspeed,
-        gust: data.current_weather.windspeed
-      };
+      const cw = data.current_weather || {};
 
-      updateWeatherUI(today);
+      updateWeatherUI({
+        temperature: cw.temperature ?? "--",
+        code: cw.weathercode ?? "--",
+        wind: cw.windspeed ?? "--",
+        gust: cw.windspeed ?? "--"
+      });
+
     } catch (err) {
       console.error("Weather fetch failed:", err);
     }
@@ -134,17 +142,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const windEl = document.getElementById("dashWxWind");
     const gustEl = document.getElementById("dashWxGust");
 
-    tempEl.textContent = `${today.temperature}°F`;
-    condEl.textContent = `Code ${today.code}`;
-    windEl.textContent = `Wind: ${today.wind} mph`;
-    gustEl.textContent = `Gusts: ${today.gust} mph`;
+    if (tempEl) tempEl.textContent = `${today.temperature}°F`;
+    if (condEl) condEl.textContent = `Code ${today.code}`;
+    if (windEl) windEl.textContent = `Wind: ${today.wind} mph`;
+    if (gustEl) gustEl.textContent = `Gusts: ${today.gust} mph`;
   }
 
   loadWeather();
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // RADIO HEARTBEAT (USERNAME IN BODY ONLY)
+  // RADIO HEARTBEAT (FIXED)
   // ============================================================
   async function radioHeartbeat() {
     const pos = await getUserLocation();
@@ -159,11 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ts: Date.now()
     });
 
-    // ============================================================
-    // NEW: RADIO STATUS SYNC
-    // ============================================================
     const statusEl = document.getElementById("radio-status");
     const pttBtn = document.getElementById("radio-ptt");
+    const logEl = document.getElementById("radio-log");
+
+    if (!statusEl || !pttBtn) return;
 
     if (res && res.ok) {
       statusEl.textContent = "Connected";
@@ -171,15 +179,25 @@ document.addEventListener("DOMContentLoaded", () => {
       statusEl.classList.add("radio-status--connected");
 
       pttBtn.disabled = false;
+
+      if (logEl) {
+        logEl.innerHTML = `<div class="log-entry">Heartbeat OK @ ${new Date().toLocaleTimeString()}</div>`;
+      }
+
     } else {
       statusEl.textContent = "Disconnected";
       statusEl.classList.remove("radio-status--connected");
       statusEl.classList.add("radio-status--disconnected");
 
       pttBtn.disabled = true;
+
+      if (logEl) {
+        logEl.innerHTML = `<div class="log-entry">Heartbeat FAIL @ ${new Date().toLocaleTimeString()}</div>`;
+      }
     }
   }
 
   radioHeartbeat();
   setInterval(radioHeartbeat, 15000);
+
 });
