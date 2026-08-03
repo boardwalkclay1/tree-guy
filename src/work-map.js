@@ -1,6 +1,8 @@
 // ============================================================
-// REAL TREE GUY — GLOBAL MAP WORKER (FINAL FIXED VERSION)
+// REAL TREE GUY MAP WORKER — GLOBAL STORES (FINAL)
 // ============================================================
+
+const OVERPASS = "https://overpass-api.de/api/interpreter";
 
 function cors(json, status = 200) {
   return new Response(JSON.stringify(json), {
@@ -13,8 +15,6 @@ function cors(json, status = 200) {
     }
   });
 }
-
-const OVERPASS = "https://overpass-api.de/api/interpreter";
 
 function buildQuery(type, lat, lng, radius) {
   switch (type) {
@@ -78,10 +78,7 @@ function toGeoJSON(json, type) {
         type,
         name: e.tags?.name || "",
         address: e.tags?.["addr:full"] || "",
-        raw: e.tags || {},
-        price_regular: null,
-        price_ultra: null,
-        price_diesel: null
+        raw: e.tags || {}
       }
     }));
 
@@ -95,6 +92,7 @@ export async function handle(request) {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // CORS preflight
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -106,7 +104,10 @@ export async function handle(request) {
     });
   }
 
-  if (path === "/api/map/stores") {
+  // ============================================================
+  // STORES ENDPOINT
+  // ============================================================
+  if (path === "/api/map/stores" && request.method === "GET") {
     const type = url.searchParams.get("type") || "home_depot";
     const lat = url.searchParams.get("lat") || "33.7490";
     const lng = url.searchParams.get("lng") || "-84.3880";
@@ -126,11 +127,13 @@ export async function handle(request) {
 
       const json = await res.json();
       return cors(toGeoJSON(json, type));
-
     } catch (err) {
       return cors({ error: "Overpass error", details: err.message }, 500);
     }
   }
 
+  // ============================================================
+  // FALLBACK
+  // ============================================================
   return cors({ error: "Route not found" }, 404);
 }
