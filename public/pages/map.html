@@ -2,44 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Real Tree Map</title>
+  <title>Real Tree Guy – Field Ops Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/jpeg" href="/assets/img/rtg-logo.jpg">
-
-  <!-- Social Preview -->
-  <meta property="og:title" content="Real Tree Guy – Supply Finder Map">
-  <meta property="og:description" content="Find Home Depot, Lowe’s, Ace, chainsaw shops, dump sites, sawmills, gas stations and more.">
-  <meta property="og:image" content="/assets/img/rtg-logo.jpg">
-  <meta property="og:type" content="website">
 
   <!-- MAPLIBRE -->
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 
-  <!-- RTG MAP CSS -->
+  <!-- RTG CSS -->
   <link rel="stylesheet" href="/assets/css/map.css">
 </head>
 
 <body>
 
-  <!-- FULL BACKGROUND -->
-  <div id="rtgMapBackground"></div>
+  <!-- TOP BAR -->
+  <header class="rtg-topbar">
+    <div class="rtg-logo">
+      <img src="/assets/img/rtg-logo.jpg" alt="RTG Logo">
+      <span>Real Tree Guy OS</span>
+    </div>
 
-  <section class="shell">
+    <nav class="rtg-menu">
+      <a href="/pages/dashboard.html">Dashboard</a>
+      <a href="/pages/radio.html">Radio</a>
+      <a href="/pages/map.html" class="active">Map</a>
+      <a href="/pages/jobs.html">Jobs</a>
+      <a href="/pages/settings.html">Settings</a>
+    </nav>
+  </header>
 
-    <!-- LEFT PANEL -->
-    <div class="left-panel">
-      <h2>Supply Finder</h2>
+  <!-- FILTERS + CONTROLS -->
+  <section class="rtg-controls">
 
-      <a href="/pages/dashboard.html" class="back-btn">← Back to Dashboard</a>
-
-      <!-- GPS STATUS -->
-      <div id="locationStatus" class="status">Requesting location…</div>
-
-      <!-- FILTERS ABOVE MAP -->
-      <label>Supply Filters</label>
+    <!-- SUPPLY FILTERS -->
+    <div class="filter-section">
+      <h3>Supply Filters</h3>
       <div id="filterRow" class="pill-row">
         <button class="pill" data-store-type="home_depot">Home Depot</button>
         <button class="pill" data-store-type="lowes">Lowe's</button>
@@ -50,25 +47,78 @@
         <button class="pill" data-store-type="sawmill">Sawmills</button>
         <button class="pill" data-store-type="gas">Gas Stations</button>
       </div>
+    </div>
 
-      <!-- ADDRESS SEARCH -->
-      <label>Search Any Address</label>
-      <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
-
-      <!-- ACTIVE FILTER -->
-      <div class="status">
-        Filter: <span id="activeFilterLabel">None</span>
+    <!-- JOB FILTERS -->
+    <div class="filter-section">
+      <h3>Job Filters</h3>
+      <div id="jobFilterRow" class="pill-row">
+        <button class="pill" data-job-filter="lead">Leads</button>
+        <button class="pill" data-job-filter="scheduled">Scheduled</button>
+        <button class="pill" data-job-filter="completed">Completed</button>
+        <button class="pill" data-job-filter="return">Return Later</button>
+        <button class="pill" data-job-filter="storm">Storm Damage</button>
+        <button class="pill" data-job-filter="powerout">Power Out</button>
       </div>
     </div>
 
-    <!-- MAP BELOW FILTERS -->
-    <div class="map-wrap">
-      <div id="rtgMap"></div>
+    <!-- ADDRESS SEARCH -->
+    <div class="search-section">
+      <label>Search Address</label>
+      <input id="clientAddress" placeholder="123 Oak St, Atlanta, GA">
+      <button id="searchAddressBtn">Search</button>
     </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+      <button id="markCurrentBtn">Mark Current Location</button>
+      <button id="saveJobBtn">Save Job Here</button>
+      <button id="toggleRadarBtn">Toggle Radar</button>
+      <button id="shareLocationBtn">Share Location</button>
+    </div>
+
+    <!-- GPS STATUS -->
+    <div id="locationStatus" class="status">Requesting location…</div>
 
   </section>
 
-  <!-- RTG MAP ENGINE JS (GLOBAL VERSION) -->
+  <!-- JOB LIST -->
+  <section class="rtg-joblist">
+    <h3>Saved Jobs</h3>
+    <div id="jobList"></div>
+  </section>
+
+  <!-- MAP -->
+  <section class="map-wrap">
+    <div id="rtgMap"></div>
+  </section>
+
+  <!-- JOB FORM MODAL -->
+  <div id="jobModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Save Job</h3>
+
+      <label>Job Type</label>
+      <select id="jobType">
+        <option value="lead">Lead</option>
+        <option value="scheduled">Scheduled</option>
+        <option value="completed">Completed</option>
+        <option value="return">Return Later</option>
+        <option value="storm">Storm Damage</option>
+        <option value="powerout">Power Out</option>
+      </select>
+
+      <label>Notes</label>
+      <textarea id="jobNotes" placeholder="Notes about this job..."></textarea>
+
+      <div class="modal-actions">
+        <button id="saveJobConfirmBtn">Save</button>
+        <button id="closeJobModalBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
   <script type="module" src="/pages/assets/js/map.js"></script>
 
 </body>
