@@ -1,20 +1,19 @@
 // ============================================================
-// REAL TREE GUY MAP ENGINE — CLEAN GLOBAL VERSION (FINAL)
+// REAL TREE GUY MAP ENGINE — CLEAN GLOBAL VERSION (FIXED)
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api/map";
 
 let map;
-let currentType = "home_depot";
+let currentType = null;   // ❌ FIXED: no default store type
+let userCoords = null;
 
 const locationStatus = document.getElementById("locationStatus");
 const filterRow = document.getElementById("filterRow");
 const activeFilterLabel = document.getElementById("activeFilterLabel");
 
-let userCoords = null;
-
 // ============================================================
-// INIT MAP
+// INIT MAP (NO STORE LOADING)
 // ============================================================
 function initMap(center = [-84.3880, 33.7490]) {
   map = new maplibregl.Map({
@@ -45,11 +44,12 @@ function initMap(center = [-84.3880, 33.7490]) {
   map.on("load", () => {
     console.log("MapLibre ready.");
 
+    // ONLY show user marker — DO NOT load stores
     if (userCoords) {
       addUserLocationMarker(userCoords.lng, userCoords.lat);
     }
 
-    loadStores(currentType);
+    console.log("Map loaded. Waiting for filter press...");
   });
 }
 
@@ -92,7 +92,7 @@ function addUserLocationMarker(lng, lat) {
 }
 
 // ============================================================
-// LOAD STORES — GLOBAL
+// LOAD STORES — ONLY WHEN FILTER IS PRESSED
 // ============================================================
 async function loadStores(type) {
   currentType = type;
@@ -198,13 +198,17 @@ function initLocation() {
 }
 
 // ============================================================
-// FILTER BUTTONS
+// FILTER BUTTONS — ONLY LOAD STORES WHEN CLICKED
 // ============================================================
 function bindFilters() {
   filterRow.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-store-type]");
     if (!btn) return;
+
     const type = btn.dataset.storeType;
+
+    console.log("Filter pressed:", type);
+
     loadStores(type);
   });
 }
