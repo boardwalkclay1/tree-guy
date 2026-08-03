@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY MAP ENGINE — CLEAN GLOBAL VERSION
+// REAL TREE GUY MAP ENGINE — CLEAN GLOBAL VERSION (FINAL)
 // ============================================================
 
 const API_BASE = "https://api.realtreeguy.com/api/map";
@@ -19,7 +19,23 @@ let userCoords = null;
 function initMap(center = [-84.3880, 33.7490]) {
   map = new maplibregl.Map({
     container: "rtgMap",
-    style: "https://demotiles.maplibre.org/style.json",
+    style: {
+      version: 8,
+      sources: {
+        osm: {
+          type: "raster",
+          tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+          tileSize: 256
+        }
+      },
+      layers: [
+        {
+          id: "osm",
+          type: "raster",
+          source: "osm"
+        }
+      ]
+    },
     center,
     zoom: 11
   });
