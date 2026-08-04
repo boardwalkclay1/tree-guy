@@ -12,7 +12,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
   color: #e8ffe8;
 
-  background: #0d0f0d url("/public/assets/img/rtg-logo.jpg")
+  background: #0d0f0d url("/assets/img/backgrounds/rtg-dash-back.jpg")
     center center / cover no-repeat;
   background-attachment: fixed;
 
@@ -44,11 +44,11 @@ body {
 ============================================================ */
 .left-panel {
   width: 320px;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0,0,0,0.65);
   border: 2px solid #2e6b33;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 0 18px rgba(0,0,0,0.5);
+  box-shadow: 0 0 18px rgba(0,0,0,0.7);
   overflow-y: auto;
   max-height: 100%;
 }
@@ -103,11 +103,11 @@ body {
 .map-wrap {
   flex: 1;
   position: relative;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.45);
   border: 2px solid #2e6b33;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 0 18px rgba(0,0,0,0.5);
+  box-shadow: 0 0 18px rgba(0,0,0,0.7);
 
   height: 100%; /* Map fills entire right side */
 }
@@ -127,7 +127,7 @@ body {
 }
 
 /* ============================================================
-   BUTTONS (Optional future UI)
+   BUTTONS
 ============================================================ */
 .btn-primary,
 .btn-ghost {
@@ -162,4 +162,5 @@ body {
   text-align: center;
   background: rgba(0,0,0,0.4);
   border-top: 2px solid #2e6b33;
+  border-radius: 0 0 14px 14px;
 }
