@@ -1,8 +1,9 @@
 // ============================================================
-// Real Tree Guy OS — Calendar Module (IndexedDB Version)
+// REAL TREE GUY OS — Calendar Module (IndexedDB + Notifications)
 // ============================================================
 
 import { initDB, save, getAll, remove } from "/assets/js/db.js";
+import { rtgNotify } from "/assets/js/notify.js";   // ⭐ NEW: Global notifications
 
 await initDB();
 
@@ -70,6 +71,17 @@ document.getElementById("saveEvent").onclick = async () => {
 
   await save("calendar", eventObj);
 
+  // ⭐ NEW: Notification
+  rtgNotify(
+    "Calendar Event Added",
+    `${eventObj.title} scheduled for ${eventObj.date}`,
+    {
+      type: "success",
+      scope: "user",
+      data: eventObj
+    }
+  );
+
   closeModal();
   render();
 };
@@ -134,6 +146,18 @@ async function render() {
       pill.onclick = async (e) => {
         e.stopPropagation(); // prevent opening modal
         await remove("calendar", ev.id);
+
+        // ⭐ NEW: Notification
+        rtgNotify(
+          "Calendar Event Removed",
+          `${ev.title} removed from ${ev.date}`,
+          {
+            type: "warning",
+            scope: "user",
+            data: ev
+          }
+        );
+
         render();
       };
 
