@@ -1,6 +1,8 @@
 // ============================================================
-// REAL TREE GUY OS — CONTRACTS CENTER (FINAL VERSION USING /api/templates JSON)
+// REAL TREE GUY OS — CONTRACTS CENTER (FINAL VERSION + NOTIFICATIONS)
 // ============================================================
+
+import { rtgNotify } from "/assets/js/notify.js";
 
 const API_BASE = "https://api.realtreeguy.com/api";
 
@@ -11,12 +13,22 @@ async function safeJson(res, url) {
   const text = await res.text();
   if (!text || text.trim().startsWith("<")) {
     console.error("❌ API returned HTML instead of JSON:", url);
+    rtgNotify("API Error", "Server returned HTML instead of JSON.", {
+      type: "danger",
+      scope: "user",
+      data: { url }
+    });
     return null;
   }
   try {
     return JSON.parse(text);
   } catch (err) {
     console.error("❌ JSON parse failed:", url, err);
+    rtgNotify("JSON Parse Error", "Failed to parse API response.", {
+      type: "danger",
+      scope: "user",
+      data: { url }
+    });
     return null;
   }
 }
@@ -32,6 +44,11 @@ const API = {
       return await safeJson(res, url);
     } catch (err) {
       console.error("❌ GET failed:", url, err);
+      rtgNotify("Network Error", "GET request failed.", {
+        type: "danger",
+        scope: "user",
+        data: { url }
+      });
       return null;
     }
   },
@@ -50,6 +67,11 @@ const API = {
       return await safeJson(res, url);
     } catch (err) {
       console.error("❌ POST failed:", url, err);
+      rtgNotify("Network Error", "POST request failed.", {
+        type: "danger",
+        scope: "user",
+        data: { url }
+      });
       return null;
     }
   }
@@ -59,8 +81,8 @@ const API = {
 // STATE
 // ============================================================
 let userProfile = {};
-let templates = [];      // /api/templates JSON contracts
-let templateData = {};   // currently loaded template JSON
+let templates = [];
+let templateData = {};
 let clients = [];
 let attachedPhotos = [];
 
@@ -80,7 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadProfile() {
   const data = await API.get("/profile");
   if (!data) {
-    console.warn("⚠ No profile found.");
+    rtgNotify("Profile Missing", "No user profile found.", {
+      type: "warning",
+      scope: "user"
+    });
     return;
   }
 
@@ -89,22 +114,25 @@ async function loadProfile() {
   const logoEl = document.getElementById("userLogo");
   const nameEl = document.getElementById("treeGuyName");
 
-  if (logoEl) {
-    logoEl.src = userProfile.logo || "/assets/img/default-logo.png";
-  }
+  if (logoEl) logoEl.src = userProfile.logo || "/assets/img/default-logo.png";
+  if (nameEl) nameEl.value = userProfile.name || "";
 
-  if (nameEl) {
-    nameEl.value = userProfile.name || "";
-  }
+  rtgNotify("Profile Loaded", "Your profile has been loaded.", {
+    type: "success",
+    scope: "user"
+  });
 }
 
 // ============================================================
-// LOAD TEMPLATE LIST FROM /api/templates
+// LOAD TEMPLATE LIST
 // ============================================================
 async function loadTemplates() {
   const list = await API.get("/templates");
   if (!Array.isArray(list)) {
-    console.error("❌ /api/templates did not return an array:", list);
+    rtgNotify("Template Error", "Failed to load templates.", {
+      type: "danger",
+      scope: "user"
+    });
     return;
   }
 
@@ -115,13 +143,16 @@ async function loadTemplates() {
 
   select.innerHTML =
     `<option value="">Choose template...</option>` +
-    templates.map(t =>
-      `<option value="${t.id}">${t.name}</option>`
-    ).join("");
+    templates.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+
+  rtgNotify("Templates Loaded", "Contract templates updated.", {
+    type: "info",
+    scope: "user"
+  });
 }
 
 // ============================================================
-// TEMPLATE CHANGE HANDLER
+// TEMPLATE CHANGE
 // ============================================================
 async function onTemplateChange(e) {
   const id = e.target.value;
@@ -129,22 +160,31 @@ async function onTemplateChange(e) {
 
   const tmpl = await API.get(`/templates/${id}`);
   if (!tmpl) {
-    console.error("❌ Failed to load template:", id);
+    rtgNotify("Template Load Failed", "Could not load selected template.", {
+      type: "danger",
+      scope: "user",
+      data: { id }
+    });
     return;
   }
 
   templateData = tmpl;
   applyTemplateToUI(tmpl);
+
+  rtgNotify("Template Applied", `Loaded template: ${tmpl.name}`, {
+    type: "success",
+    scope: "user",
+    data: tmpl
+  });
 }
 
 // ============================================================
-// APPLY TEMPLATE TO UI (inject JSON into fields)
+// APPLY TEMPLATE TO UI
 // ============================================================
 function applyTemplateToUI(tmpl) {
   const scopeEl = document.getElementById("scope");
   const extraTermsEl = document.getElementById("extraTerms");
 
-  // Most of your JSON contracts will have body/scope/sections
   if (scopeEl) {
     scopeEl.value =
       tmpl.scope ||
@@ -179,6 +219,11 @@ async function loadClients() {
     clients.map(c =>
       `<option value="${c.id}">${c.name} – ${c.phone || ""}</option>`
     ).join("");
+
+  rtgNotify("Clients Loaded", "Client list updated.", {
+    type: "info",
+    scope: "user"
+  });
 }
 
 // ============================================================
@@ -205,7 +250,19 @@ async function onPhotoUpload(e) {
 
   for (const file of files) {
     const uploaded = await uploadPhoto(file);
-    if (uploaded) attachedPhotos.push(uploaded);
+    if (uploaded) {
+      attachedPhotos.push(uploaded);
+      rtgNotify("Photo Uploaded", `${file.name} uploaded successfully.`, {
+        type: "success",
+        scope: "user",
+        data: uploaded
+      });
+    } else {
+      rtgNotify("Photo Upload Failed", `${file.name} could not be uploaded.`, {
+        type: "danger",
+        scope: "user"
+      });
+    }
   }
 
   renderPhotoList();
@@ -241,7 +298,7 @@ function renderPhotoList() {
 }
 
 // ============================================================
-// COLLECT FIELDS (including e-sign)
+// COLLECT FIELDS
 // ============================================================
 function collectFields() {
   return {
@@ -262,7 +319,7 @@ function collectFields() {
 }
 
 // ============================================================
-// PREVIEW (HTML contract preview)
+// PREVIEW DOCUMENT
 // ============================================================
 function previewDoc(type) {
   const fields = collectFields();
@@ -315,7 +372,7 @@ async function saveDoc(type) {
     return;
   }
 
-  await API.post("/documents", {
+  const saved = await API.post("/documents", {
     type,
     client_id: clientId,
     template_id: templateId,
@@ -324,11 +381,25 @@ async function saveDoc(type) {
     created_by: userProfile.id || null
   });
 
+  if (!saved) {
+    rtgNotify("Save Failed", "Contract could not be saved.", {
+      type: "danger",
+      scope: "user"
+    });
+    return;
+  }
+
+  rtgNotify("Contract Saved", `${type} saved successfully.`, {
+    type: "success",
+    scope: "user",
+    data: saved
+  });
+
   alert(type + " saved!");
 }
 
 // ============================================================
-// EMAIL CONTRACT (uses preview HTML)
+// EMAIL CONTRACT
 // ============================================================
 async function emailDoc(type) {
   const clientId = document.getElementById("clientSelect")?.value;
@@ -348,10 +419,24 @@ async function emailDoc(type) {
   previewDoc(type);
   const html = document.getElementById("previewContent")?.innerHTML || "";
 
-  await API.post("/email", {
+  const sent = await API.post("/email", {
     to: client.email,
     subject: type + " from Real Tree Guy OS",
     body: html
+  });
+
+  if (!sent) {
+    rtgNotify("Email Failed", "Contract email could not be sent.", {
+      type: "danger",
+      scope: "user"
+    });
+    return;
+  }
+
+  rtgNotify("Contract Emailed", `${type} emailed to ${client.email}`, {
+    type: "success",
+    scope: "user",
+    data: sent
   });
 
   alert(type + " emailed to " + client.email + "!");
@@ -399,7 +484,10 @@ async function saveClient() {
   });
 
   if (!saved) {
-    alert("Client save failed.");
+    rtgNotify("Client Save Failed", "Could not save new client.", {
+      type: "danger",
+      scope: "user"
+    });
     return;
   }
 
@@ -412,10 +500,16 @@ async function saveClient() {
     select.value = saved.id;
     onClientChange({ target: select });
   }
+
+  rtgNotify("Client Added", `${saved.name} added to client list.`, {
+    type: "success",
+    scope: "user",
+    data: saved
+  });
 }
 
 // ============================================================
-// SAVE CURRENT AS TEMPLATE (to /api/templates)
+// SAVE CURRENT AS TEMPLATE
 // ============================================================
 async function saveCurrentAsTemplate() {
   const fields = collectFields();
@@ -431,12 +525,22 @@ async function saveCurrentAsTemplate() {
 
   const saved = await API.post("/templates", payload);
   if (!saved) {
-    alert("Template save failed.");
+    rtgNotify("Template Save Failed", "Could not save template.", {
+      type: "danger",
+      scope: "user"
+    });
     return;
   }
 
   templates.push(saved);
   await loadTemplates();
+
+  rtgNotify("Template Saved", `${name} saved successfully.`, {
+    type: "success",
+    scope: "user",
+    data: saved
+  });
+
   alert("Template saved!");
 }
 
