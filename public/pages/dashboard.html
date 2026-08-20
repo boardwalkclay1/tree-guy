@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>REAL TREE GUY – Dashboard</title>
+  <title>REAL TREE GUY — Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ICONS -->
@@ -11,121 +11,18 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="/assets/css/dashboard.css">
-  <link rel="stylesheet" href="/assets/css/radio.css">
 
-  <style>
-    /* LOGO */
-    #rtgLogo {
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      cursor: pointer !important;
-    }
-
-    /* BACKGROUND */
-    #rtgBackground {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url("/assets/img/backgrounds/rtg-dash-back.jpg") center center / cover no-repeat;
-      z-index: -1;
-    }
-
-    /* SIDE MENU */
-    #rtgMenu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 260px;
-      height: 100vh;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      transform: translateX(-260px);
-      opacity: 0;
-      pointer-events: none;
-      transition: transform 0.25s ease, opacity 0.25s ease;
-      z-index: 9999;
-    }
-
-    #rtgMenu.open {
-      transform: translateX(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    #rtgMenu a {
-      color: white;
-      font-size: 1.2rem;
-      text-decoration: none;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    /* TOP BAR */
-    .rtg-topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 20px;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(6px);
-    }
-
-    .rtg-topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .rtg-user-block {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.1;
-      color: #fff;
-    }
-
-    .rtg-user-name {
-      font-size: 1.3rem;
-      font-weight: bold;
-    }
-
-    .rtg-user-sub {
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-
-    .rtg-topbar-center {
-      color: #fff;
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-
-    .rtg-topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      color: #fff;
-      font-size: 1.1rem;
-    }
-
-    #rtgTempDisplay {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #fff;
-    }
-  </style>
+  <!-- NOTIFICATIONS -->
+  <script type="module" src="/assets/js/notify.js"></script>
 </head>
 
 <body class="rtg-dashboard">
 
+  <!-- BACKGROUND -->
+  <div id="rtgBackground"></div>
+
   <!-- SIDE MENU -->
-  <div id="rtgMenu">
+  <nav id="rtgMenu">
     <a href="/pages/profile.html">👤 Profile</a>
     <a href="/pages/customers.html">📁 Customers</a>
     <a href="/pages/contracts.html">📄 Contracts</a>
@@ -135,18 +32,15 @@
     <a href="/pages/calendar.html">📅 Calendar</a>
     <a href="/pages/shop.html">🛒 Shop</a>
     <a href="/pages/rtg-online.html">🟧 RTG Online</a>
-  </div>
-
-  <!-- BACKGROUND -->
-  <div id="rtgBackground"></div>
+  </nav>
 
   <!-- TOP BAR -->
-  <div class="rtg-topbar">
+  <header class="rtg-topbar">
     <div class="rtg-topbar-left">
       <img src="/assets/img/rtg-logo.jpg" id="rtgLogo" class="rtg-logo">
       <div class="rtg-user-block">
         <div id="rtgUserName" class="rtg-user-name">Loading…</div>
-        <div class="rtg-user-sub">Command Center</div>
+        <div id="rtgUserSub" class="rtg-user-sub">Command Center</div>
       </div>
     </div>
 
@@ -158,9 +52,13 @@
       <a href="/pages/weather.html" class="rtg-topbar-link">🌤️</a>
       <span id="rtgTempDisplay">--°F</span>
       <a href="/pages/map.html" class="rtg-topbar-link">🗺️</a>
-    </div>
-  </div>
 
+      <!-- Notification Badge -->
+      <div id="rtgNotifyBadge" class="rtg-notify-badge"></div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
   <main class="rtg-main">
 
     <!-- QUICK ACTIONS -->
@@ -170,61 +68,6 @@
       <button class="rtg-qa-btn" onclick="location.href='/pages/calendar.html'">📅 Schedule</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/weather.html'">🌪️ Weather</button>
       <button class="rtg-qa-btn" onclick="location.href='/pages/map.html'">🗺️ Map</button>
-    </section>
-
-    <!-- RADIO MODULE -->
-    <section class="rtg-radio-module">
-      <div id="radio-widget" class="radio-widget">
-        <div class="radio-header">
-          <span class="radio-title">Crew Radio</span>
-          <span id="radio-status" class="radio-status radio-status--disconnected">Disconnected</span>
-        </div>
-
-        <div class="radio-body">
-
-          <div class="radio-row">
-            <label class="radio-label">Channels</label>
-            <div id="channelList" class="radio-channel-list"></div>
-          </div>
-
-          <div class="radio-row">
-            <button id="createChannelBtn" class="radio-btn radio-btn--ghost">➕ New Channel</button>
-          </div>
-
-          <div class="radio-row">
-            <button id="joinChannelBtn" class="radio-btn radio-btn--primary">Join Selected</button>
-            <button id="leaveChannelBtn" class="radio-btn radio-btn--ghost">Leave Channel</button>
-          </div>
-
-          <div class="radio-row radio-row--ptt">
-            <button id="radio-ptt" class="radio-ptt-btn" disabled>🎤 Hold to Talk</button>
-          </div>
-
-          <div class="radio-footer">
-            <span id="radio-channel-display">Channel: None</span>
-            <div id="radio-log" class="radio-log"></div>
-          </div>
-
-          <div class="radio-row">
-            <h3>Current Members</h3>
-            <div id="currentMembers" class="radio-members"></div>
-          </div>
-
-          <div class="radio-row">
-            <h3>Nearby Users</h3>
-            <div id="nearbyUsers" class="radio-nearby"></div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- NOTIFICATIONS -->
-    <section class="rtg-notifications">
-      <h2 class="notif-title">🔔 Notifications</h2>
-      <div id="rtgNotifList" class="notif-list">
-        <p class="notif-empty">No notifications.</p>
-      </div>
     </section>
 
     <!-- GAUGES -->
@@ -275,6 +118,15 @@
       </div>
     </section>
 
+    <!-- NOTIFICATIONS -->
+    <section class="rtg-widget">
+      <h2 class="notif-title">🔔 Notifications</h2>
+      <div id="rtgNotifyList" class="notif-list">
+        <p class="notif-empty">No notifications.</p>
+      </div>
+      <button id="rtgNotifyClear" class="rtg-clear-btn">Clear All</button>
+    </section>
+
     <!-- GRID -->
     <section class="rtg-grid">
       <a href="/pages/profile.html" class="rtg-card">👤<span>Profile</span></a>
@@ -295,15 +147,31 @@
 
   <!-- JS -->
   <script src="/pages/assets/js/dashboard.js"></script>
-  <script src="/pages/assets/js/radio.js"></script>
 
   <script>
+    // USER INFO
     const name = localStorage.getItem("rtgUserName") || "Tree Guy";
-    document.getElementById("rtgUserName").textContent = name;
+    const email = localStorage.getItem("rtgUserEmail") || "unknown";
+    const type = localStorage.getItem("rtgUserType") || "tree";
 
+    document.getElementById("rtgUserName").textContent = name;
+    document.getElementById("rtgUserSub").textContent = `${type.toUpperCase()} • ${email}`;
+
+    // SIDE MENU
     document.getElementById("rtgLogo").addEventListener("click", () => {
       document.getElementById("rtgMenu").classList.toggle("open");
     });
+
+    // CLOCK
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const s = String(now.getSeconds()).padStart(2, "0");
+      document.getElementById("rtgClock").textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
   </script>
 
 </body>
