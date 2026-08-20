@@ -56,6 +56,49 @@ body {
   border: 2px solid #2e6b33;
 }
 
+#rtgClock {
+  color: #ff8800;
+  text-shadow: 0 0 8px #ff6600, 0 0 16px #ff3300;
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+
+/* ============================================================
+   SIDE MENU
+============================================================ */
+#rtgMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  transform: translateX(-260px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  z-index: 9999;
+}
+
+#rtgMenu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#rtgMenu a {
+  color: white;
+  font-size: 1.2rem;
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
 /* ============================================================
    MAIN LAYOUT
 ============================================================ */
@@ -131,6 +174,42 @@ body {
 }
 
 /* ============================================================
+   NOTIFICATIONS
+============================================================ */
+.notif-title {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.notif-list {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #2e6b33;
+  border-radius: 10px;
+  padding: 12px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.rtg-notify-badge {
+  background: #ff8c42;
+  color: #000;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.rtg-clear-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #ff8c42;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ============================================================
    GRID — FIXED SIZING + PERFECT XL TILE
 ============================================================ */
 .rtg-grid {
@@ -142,7 +221,6 @@ body {
   gap: 18px;
 }
 
-/* Standard Card */
 .rtg-card {
   background: rgba(0,0,0,0.75);
   border: 2px solid #ff8c42;
@@ -172,7 +250,6 @@ body {
   transform: translateY(-4px);
 }
 
-/* XL CARD — FIXED, PERFECT 2×2 TILE */
 .rtg-card--xl {
   grid-column: span 2;
   grid-row: span 2;
