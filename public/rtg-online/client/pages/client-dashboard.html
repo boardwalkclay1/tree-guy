@@ -6,7 +6,7 @@
 
   <!-- SOCIAL PREVIEW -->
   <meta property="og:title" content="RTG Online – Client Dashboard">
-  <meta property="og:description" content="Manage your tree job listings, messages, contracts, billing, and settings.">
+  <meta property="og:description" content="Manage your tree jobs, messages, contracts, billing, and settings.">
   <meta property="og:image" content="/assets/img/rtg-logo.jpg">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rtg.realtreeguy.com/client/dashboard">
@@ -62,35 +62,37 @@
       </div>
 
       <div class="client-grid">
-        <a href="/pages/client/post-job.html" class="client-grid-link">
+
+        <a href="/rtg-online/client/pages/client-post.html" class="client-grid-link">
           <span class="icon">📤</span>
-          <span class="label">Post a Job ($10)</span>
+          <span class="label">Post a Job</span>
         </a>
 
-        <a href="/pages/client/jobs.html" class="client-grid-link">
+        <a href="/rtg-online/client/pages/client-jobs.html" class="client-grid-link">
           <span class="icon">📋</span>
           <span class="label">My Jobs</span>
         </a>
 
-        <a href="/pages/client/messages.html" class="client-grid-link">
+        <a href="/rtg-online/client/pages/client-messages.html" class="client-grid-link">
           <span class="icon">💬</span>
           <span class="label">Messages</span>
         </a>
 
-        <a href="/pages/client/contracts.html" class="client-grid-link">
+        <a href="/rtg-online/client/pages/client-contracts.html" class="client-grid-link">
           <span class="icon">📄</span>
           <span class="label">Contracts</span>
         </a>
 
-        <a href="/pages/client/billing.html" class="client-grid-link">
+        <a href="/rtg-online/client/pages/client-billing.html" class="client-grid-link">
           <span class="icon">💳</span>
           <span class="label">Billing</span>
         </a>
 
-        <a href="/pages/client/settings.html" class="client-grid-link">
+        <a href="/rtg-online/client/pages/client-settings.html" class="client-grid-link">
           <span class="icon">⚙️</span>
           <span class="label">Settings</span>
         </a>
+
       </div>
     </section>
 
@@ -100,7 +102,7 @@
         <h2>Recent Jobs</h2>
         <span>Your latest posted jobs</span>
       </div>
-      <div id="dashboardJobs"></div>
+      <div id="dashboardJobs" class="client-job-list"></div>
     </section>
 
     <!-- NOTIFICATIONS -->
@@ -109,7 +111,7 @@
         <h2>Notifications</h2>
         <span>Updates from tree guys</span>
       </div>
-      <div id="notifBox"></div>
+      <div id="notifBox" class="client-notif-list"></div>
     </section>
 
   </main>
