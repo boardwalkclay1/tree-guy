@@ -1,5 +1,5 @@
 // ============================================================
-// RTG Online — Client Unified JS (Updated for Global Messaging)
+// RTG Online — Client Unified JS (Worker-Based, Cleaned Up)
 // ============================================================
 
 // CLIENT WORKER BASE
@@ -22,12 +22,20 @@ async function api(path, method = "GET", body = null) {
     body: body ? JSON.stringify(body) : null
   });
 
-  return res.json();
+  try {
+    return await res.json();
+  } catch {
+    return { ok: false };
+  }
 }
 
 async function msgGet(path) {
   const r = await fetch(MSG_API + path);
-  return r.json();
+  try {
+    return await r.json();
+  } catch {
+    return [];
+  }
 }
 
 async function msgPost(path, body) {
@@ -36,7 +44,11 @@ async function msgPost(path, body) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-  return r.json();
+  try {
+    return await r.json();
+  } catch {
+    return { ok: false };
+  }
 }
 
 // ============================================================
@@ -95,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initLogin() {
   const form = document.getElementById("loginForm");
+  if (!form) return;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -104,13 +117,16 @@ function initLogin() {
 
     const data = await api("/login", "POST", { email, password });
 
-    if (!data.ok) {
+    if (!data || !data.ok || !data.user) {
       alert("Invalid email or password");
       return;
     }
 
     localStorage.setItem("client_id", data.user.id);
-    window.location.href = "/pages/client/dashboard.html";
+    localStorage.setItem("client_name", data.user.name || "Client");
+
+    // RTG Online client dashboard path
+    window.location.href = "/rtg-online/client/pages/client-dashboard.html";
   });
 }
 
@@ -119,9 +135,11 @@ function initLogin() {
 // ============================================================
 
 async function loadClientName() {
-  const profile = await api("/me");
   const el = document.getElementById("clientTopName");
-  if (el) el.textContent = profile.name || "Client";
+  if (!el) return;
+
+  const profile = await api("/me");
+  el.textContent = (profile && profile.name) ? profile.name : (localStorage.getItem("client_name") || "Client");
 }
 
 // ============================================================
@@ -130,6 +148,7 @@ async function loadClientName() {
 
 function initPostJob() {
   const form = document.getElementById("postJobForm");
+  if (!form) return;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -139,16 +158,20 @@ function initPostJob() {
       description: form.description.value,
       budget: form.budget.value,
       flexible_budget: form.flexible.checked,
-      best_days: form.best_days.value.split(",").map(d => d.trim()),
+      best_days: form.best_days.value
+        ? form.best_days.value.split(",").map(d => d.trim())
+        : [],
       best_time: form.best_time.value,
       address: form.address.value,
-      photos: []
+      photos: [] // hook in later
     };
 
     const data = await api("/job", "POST", body);
 
-    if (data.ok) {
-      window.location.href = "/pages/client/jobs.html";
+    if (data && data.ok) {
+      window.location.href = "/rtg-online/client/pages/client-jobs.html";
+    } else {
+      alert("Failed to post job.");
     }
   });
 }
@@ -158,8 +181,15 @@ function initPostJob() {
 // ============================================================
 
 async function loadJobs() {
-  const jobs = await api("/jobs");
   const list = document.getElementById("jobList");
+  if (!list) return;
+
+  const jobs = await api("/jobs");
+  if (!Array.isArray(jobs)) {
+    list.innerHTML = "<p>No jobs found.</p>";
+    return;
+  }
+
   list.innerHTML = "";
 
   jobs.forEach(job => {
@@ -167,9 +197,9 @@ async function loadJobs() {
     div.className = "job-card";
     div.innerHTML = `
       <h3>${job.title}</h3>
-      <p>${job.description}</p>
-      <p><strong>Budget:</strong> $${job.budget}</p>
-      <p><strong>Status:</strong> ${job.status}</p>
+      <p>${job.description || ""}</p>
+      <p><strong>Budget:</strong> $${job.budget || "0"}</p>
+      <p><strong>Status:</strong> ${job.status || "unknown"}</p>
       <button class="client-btn client-btn-primary" onclick="viewJob('${job.id}')">View</button>
     `;
     list.appendChild(div);
@@ -177,7 +207,7 @@ async function loadJobs() {
 }
 
 function viewJob(id) {
-  window.location.href = `/pages/client/job-view.html?id=${id}`;
+  window.location.href = `/rtg-online/client/pages/client-job-view.html?id=${id}`;
 }
 
 // ============================================================
@@ -185,9 +215,14 @@ function viewJob(id) {
 // ============================================================
 
 async function loadDashboardJobs() {
-  const jobs = await api("/jobs");
   const box = document.getElementById("dashboardJobs");
   if (!box) return;
+
+  const jobs = await api("/jobs");
+  if (!Array.isArray(jobs) || !jobs.length) {
+    box.innerHTML = "<p>No jobs yet.</p>";
+    return;
+  }
 
   box.innerHTML = "";
 
@@ -196,31 +231,34 @@ async function loadDashboardJobs() {
     div.className = "job-card";
     div.innerHTML = `
       <h3>${job.title}</h3>
-      <p>${job.description}</p>
-      <p><strong>Status:</strong> ${job.status}</p>
+      <p>${job.description || ""}</p>
+      <p><strong>Status:</strong> ${job.status || "unknown"}</p>
     `;
     box.appendChild(div);
   });
 }
 
 // ============================================================
-// MESSAGES (NEW GLOBAL SYSTEM)
+// MESSAGES (GLOBAL SYSTEM)
 // ============================================================
 
 async function initClientMessagingPage() {
   const params = new URLSearchParams(window.location.search);
   const jobId = params.get("id");
-
   const clientId = localStorage.getItem("client_id");
 
-  // Get allowed tree guys (max 5)
-  const allowed = await api(`/job/${jobId}/allowed-tree-guys`);
+  if (!jobId || !clientId) return;
 
-  // Check payment status
+  const allowed = await api(`/job/${jobId}/allowed-tree-guys`);
   const billing = await api(`/billing/status`);
 
-  // Initialize client messaging engine
-  initClientMessaging(clientId, jobId, billing.paid, allowed.treeGuys);
+  const treeGuys = (allowed && allowed.treeGuys) ? allowed.treeGuys : [];
+  const paid = billing && billing.paid;
+
+  // This assumes you have a global messaging initializer elsewhere
+  if (typeof initClientMessaging === "function") {
+    initClientMessaging(clientId, jobId, paid, treeGuys);
+  }
 }
 
 // ============================================================
@@ -228,9 +266,14 @@ async function initClientMessagingPage() {
 // ============================================================
 
 async function loadNotifications() {
-  const notes = await api("/notifications");
   const box = document.getElementById("notifBox");
   if (!box) return;
+
+  const notes = await api("/notifications");
+  if (!Array.isArray(notes) || !notes.length) {
+    box.innerHTML = "<p>No notifications.</p>";
+    return;
+  }
 
   box.innerHTML = "";
 
@@ -254,6 +297,10 @@ async function loadContracts() {
   if (!list) return;
 
   const contracts = await api("/contracts");
+  if (!Array.isArray(contracts) || !contracts.length) {
+    list.innerHTML = "<p>No contracts yet.</p>";
+    return;
+  }
 
   list.innerHTML = "";
 
@@ -270,7 +317,7 @@ async function loadContracts() {
 }
 
 function openContract(id) {
-  window.location.href = `/pages/client/contract-view.html?id=${id}`;
+  window.location.href = `/rtg-online/client/pages/client-contract-view.html?id=${id}`;
 }
 
 // ============================================================
@@ -282,6 +329,10 @@ async function loadBilling() {
   if (!box) return;
 
   const bills = await api("/billing");
+  if (!Array.isArray(bills) || !bills.length) {
+    box.innerHTML = "<p>No billing history.</p>";
+    return;
+  }
 
   box.innerHTML = "";
 
@@ -290,8 +341,8 @@ async function loadBilling() {
     div.className = "job-card";
     div.innerHTML = `
       <h3>${b.type}</h3>
-      <p><strong>Amount:</strong> $${b.amount}</p>
-      <p><strong>Date:</strong> ${new Date(b.created_at).toLocaleDateString()}</p>
+      <p><strong>Amount:</strong> $${b.amount || "0"}</p>
+      <p><strong>Date:</strong> ${b.created_at ? new Date(b.created_at).toLocaleDateString() : "N/A"}</p>
     `;
     box.appendChild(div);
   });
@@ -303,24 +354,39 @@ async function loadBilling() {
 
 async function loadSettings() {
   const profile = await api("/me");
+  if (!profile) return;
 
-  document.getElementById("settingsName").value = profile.name || "";
-  document.getElementById("settingsEmail").value = profile.email || "";
-  document.getElementById("settingsPhone").value = profile.phone || "";
-  document.getElementById("settingsAddress").value = profile.address || "";
+  const nameEl = document.getElementById("settingsName");
+  const emailEl = document.getElementById("settingsEmail");
+  const phoneEl = document.getElementById("settingsPhone");
+  const addrEl = document.getElementById("settingsAddress");
+  const form = document.getElementById("settingsProfileForm");
 
-  document.getElementById("settingsProfileForm").addEventListener("submit", async (e) => {
+  if (!form) return;
+
+  if (nameEl) nameEl.value = profile.name || "";
+  if (emailEl) emailEl.value = profile.email || "";
+  if (phoneEl) phoneEl.value = profile.phone || "";
+  if (addrEl) addrEl.value = profile.address || "";
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const body = {
-      name: settingsName.value,
-      email: settingsEmail.value,
-      phone: settingsPhone.value,
-      address: settingsAddress.value
+      name: nameEl ? nameEl.value : "",
+      email: emailEl ? emailEl.value : "",
+      phone: phoneEl ? phoneEl.value : "",
+      address: addrEl ? addrEl.value : ""
     };
 
     const res = await api("/settings/profile", "POST", body);
 
-    if (res.ok) alert("Profile updated");
+    if (res && res.ok) {
+      alert("Profile updated");
+      localStorage.setItem("client_name", body.name || "Client");
+      loadClientName();
+    } else {
+      alert("Failed to update profile.");
+    }
   });
 }
