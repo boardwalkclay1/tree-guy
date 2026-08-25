@@ -1,6 +1,6 @@
 /* ============================================================
    REAL TREE GUY OS — DASHBOARD (FULL REBUILD)
-   Clean • Cinematic • Balanced • No Overflow
+   Clean • Cinematic • Stable • No Flicker
 ============================================================ */
 
 /* ============================================================
@@ -18,7 +18,15 @@ body {
 #rtgBackground {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top, #1f5f2b 0, #061b06 55%, #020a02 100%);
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.55),
+      rgba(0,0,0,0.85)
+    ),
+    url("/assets/img/backgrounds/rtg-dash-back.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
   z-index: -1;
 }
@@ -152,6 +160,56 @@ body {
   border: 2px solid #2e6b33;
   padding: 16px;
   box-shadow: 0 0 16px rgba(0,0,0,0.6);
+}
+
+/* ============================================================
+   WIND GAUGE
+============================================================ */
+.arc-gauge {
+  position: relative;
+  width: 140px;
+  height: 70px;
+  border-radius: 140px 140px 0 0;
+  background: rgba(0,0,0,0.4);
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.arc-gauge-inner {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #2e6b33, #ff8c42);
+  opacity: 0.25;
+}
+
+.arc-needle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  height: 70px;
+  background: #ff8c42;
+  transform-origin: bottom center;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease-out;
+}
+
+/* ============================================================
+   TREE HAZARD GAUGE
+============================================================ */
+.bar-gauge {
+  width: 100%;
+  height: 18px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bar-gauge-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #2e6b33, #ff8c42);
+  transition: width 0.4s ease-out;
 }
 
 /* ============================================================
