@@ -1,5 +1,5 @@
 // ============================================================
-// REAL TREE GUY OS — DASHBOARD CORE (FINAL FIXED VERSION)
+// REAL TREE GUY OS — DASHBOARD CORE (STABLE VERSION)
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const rtgUserType = localStorage.getItem("rtgUserType") || "tree";
   const rtgUserName = localStorage.getItem("rtgUserName") || "Tree Guy";
 
-  // Update UI name
   const nameEl = document.getElementById("rtgUserName");
   if (nameEl) nameEl.textContent = rtgUserName;
 
@@ -81,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.warn("SAFE MODE ENABLED — Dashboard using Worker APIs ONLY.");
 
   // ============================================================
-  // CLOCK
+  // CLOCK (NO FLICKER)
   // ============================================================
   const clockEl = document.getElementById("rtgClock");
 
@@ -131,6 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
         gust: cw.windspeed ?? "--"
       });
 
+      updateWindHazard(cw.windspeed);
+      updateTreeHazard(cw.weathercode);
+
     } catch (err) {
       console.error("Weather fetch failed:", err);
     }
@@ -152,7 +154,46 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(loadWeather, 5 * 60 * 1000);
 
   // ============================================================
-  // RADIO HEARTBEAT (FIXED)
+  // WIND HAZARD GAUGE
+  // ============================================================
+  function updateWindHazard(windSpeed) {
+    const needle = document.getElementById("windNeedle");
+    const readout = document.getElementById("windSpeedReadout");
+
+    if (!needle || !readout) return;
+
+    const speed = Number(windSpeed) || 0;
+
+    // Convert wind speed to angle (0–180 degrees)
+    const angle = Math.min(speed * 3, 180);
+
+    needle.style.transform = `rotate(${angle}deg)`;
+    readout.textContent = `${speed} mph`;
+  }
+
+  // ============================================================
+  // TREE HAZARD GAUGE
+  // ============================================================
+  function updateTreeHazard(weatherCode) {
+    const bar = document.getElementById("hazardBar");
+    const readout = document.getElementById("hazardScoreReadout");
+
+    if (!bar || !readout) return;
+
+    // Simple hazard score based on weather code
+    let score = 10;
+
+    if (weatherCode >= 50) score = 40;   // rain
+    if (weatherCode >= 60) score = 60;   // heavy rain
+    if (weatherCode >= 70) score = 80;   // snow
+    if (weatherCode >= 90) score = 100;  // storms
+
+    bar.style.width = `${score}%`;
+    readout.textContent = `Score: ${score}`;
+  }
+
+  // ============================================================
+  // RADIO HEARTBEAT
   // ============================================================
   async function radioHeartbeat() {
     const pos = await getUserLocation();
