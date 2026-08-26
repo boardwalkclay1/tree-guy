@@ -1,5 +1,5 @@
 // ============================================================
-// RTG Online — Client Worker (Messaging-Ready Version)
+// RTG Online — Client Worker (Messaging-Ready + CORS FIXED)
 // ============================================================
 
 const PEPPER = "RTG_CLIENT_PEPPER_v1";
@@ -10,7 +10,7 @@ const enc = new TextEncoder();
 // ============================================================
 
 async function hashPassword(password) {
-  const key = await crypto.subtle.importKey(
+  const key = await crypto.subtle.importImportKey(
     "raw",
     enc.encode(password + PEPPER),
     { name: "PBKDF2" },
@@ -43,10 +43,35 @@ export default {
     const path = url.pathname;
     const method = request.method;
 
+    // ============================================================
+    // CORS PRE-FLIGHT
+    // ============================================================
+    if (method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers":
+            "Content-Type, x-client-id, X-RTG-User, X-RTG-Email, X-RTG-Type",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Max-Age": "86400"
+        }
+      });
+    }
+
+    // ============================================================
+    // JSON RESPONSE WRAPPER (CORS SAFE)
+    // ============================================================
     const json = (data, status = 200) =>
       new Response(JSON.stringify(data), {
         status,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers":
+            "Content-Type, x-client-id, X-RTG-User, X-RTG-Email, X-RTG-Type",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+        }
       });
 
     const clientId = request.headers.get("x-client-id");
@@ -199,7 +224,7 @@ export default {
     }
 
     // ============================================================
-    // BILLING STATUS (paid or not)
+    // BILLING STATUS
     // ============================================================
     if (path === "/client/billing/status" && method === "GET") {
       const row = await DB.prepare(`
