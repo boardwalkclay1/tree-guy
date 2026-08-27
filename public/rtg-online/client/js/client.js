@@ -1,5 +1,5 @@
 // ============================================================
-// RTG Online — Client Unified JS (Worker-Based, Cleaned Up)
+// RTG Online — Client Unified JS (Worker-Based, Corrected)
 // ============================================================
 
 // CLIENT WORKER BASE
@@ -125,7 +125,6 @@ function initLogin() {
     localStorage.setItem("client_id", data.user.id);
     localStorage.setItem("client_name", data.user.name || "Client");
 
-    // RTG Online client dashboard path
     window.location.href = "/rtg-online/client/pages/client-dashboard.html";
   });
 }
@@ -139,7 +138,10 @@ async function loadClientName() {
   if (!el) return;
 
   const profile = await api("/me");
-  el.textContent = (profile && profile.name) ? profile.name : (localStorage.getItem("client_name") || "Client");
+  el.textContent =
+    (profile && profile.name)
+      ? profile.name
+      : (localStorage.getItem("client_name") || "Client");
 }
 
 // ============================================================
@@ -163,7 +165,7 @@ function initPostJob() {
         : [],
       best_time: form.best_time.value,
       address: form.address.value,
-      photos: [] // hook in later
+      photos: []
     };
 
     const data = await api("/job", "POST", body);
@@ -239,7 +241,7 @@ async function loadDashboardJobs() {
 }
 
 // ============================================================
-// MESSAGES (GLOBAL SYSTEM)
+// MESSAGES
 // ============================================================
 
 async function initClientMessagingPage() {
@@ -255,7 +257,6 @@ async function initClientMessagingPage() {
   const treeGuys = (allowed && allowed.treeGuys) ? allowed.treeGuys : [];
   const paid = billing && billing.paid;
 
-  // This assumes you have a global messaging initializer elsewhere
   if (typeof initClientMessaging === "function") {
     initClientMessaging(clientId, jobId, paid, treeGuys);
   }
