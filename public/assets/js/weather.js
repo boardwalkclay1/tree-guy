@@ -2,12 +2,10 @@
 // REAL TREE GUY OS — WEATHER (FINAL CLEAN VERSION)
 // ============================================================
 
-const API_BASE = "https://api.realtreeguy.com/api";
+const API_BASE = "/api";
 
 // Logged‑in user identity
-const rtgUserId = localStorage.getItem("rtgUserId");
 const rtgUserEmail = localStorage.getItem("rtgUserEmail");
-const rtgUserType = localStorage.getItem("rtgUserType");
 const rtgUserName =
   localStorage.getItem("rtgUserName") || rtgUserEmail || "Tree Guy";
 
@@ -41,19 +39,11 @@ function codeToText(code) {
 const API = {
   async get(path) {
     const r = await fetch(`${API_BASE}/weather${path}`, {
-      headers: {
-        Accept: "application/json",
-        "X-RTG-User": rtgUserId,
-        "X-RTG-Email": rtgUserEmail,
-        "X-RTG-Type": rtgUserType
-      }
+      headers: { Accept: "application/json" }
     });
-
-    const text = await r.text();
-    if (text.trim().startsWith("<")) {
-      throw new Error("Weather API returned HTML");
-    }
-    return JSON.parse(text);
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "Weather request failed");
+    return data;
   }
 };
 
@@ -93,30 +83,16 @@ const el = {
   pressure: document.getElementById("pressure"),
   pressureTrend: document.getElementById("pressureTrend"),
 
-  stormRisk: document.getElementById("stormRisk"),
-  stormNotes: document.getElementById("stormNotes"),
-  stormTicker: document.getElementById("stormTicker"),
-
-  hazardScore: document.getElementById("hazardScore"),
-  hazardNotes: document.getElementById("hazardNotes"),
-  hazardTicker: document.getElementById("hazardTicker"),
-
   radarFrame: document.getElementById("rtgRadar")
 };
 
-// GET LOCATION (User → DB → GPS fallback)
+// GET LOCATION
 async function getLocation() {
-  try {
-    const userLoc = await API.get(`/location?user=${rtgUserId}`);
-    if (userLoc?.lat && userLoc?.lon) {
-      return { lat: userLoc.lat, lon: userLoc.lon };
-    }
-  } catch {}
-
-  return new Promise(resolve => {
+  if (!navigator.geolocation) throw new Error("GPS is not available. Enter a location instead.");
+  return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      () => resolve({ lat: 34.0, lon: -84.0 }),
+      () => reject(new Error("Could not access GPS. Enter a location instead.")),
       { enableHighAccuracy: true, timeout: 8000 }
     );
   });
@@ -135,42 +111,31 @@ function updateHeader(data) {
 // CURRENT CONDITIONS
 function renderCurrent(data) {
   const w = data.current;
+  const value = (v, unit) => v == null ? "--" : `${v}${unit}`;
 
-  el.currentTemp.textContent = `${w.temperature}°F`;
-  el.currentWind.textContent = `Wind: ${w.wind} mph`;
-  el.currentGust.textContent = `Gusts: ${w.gust} mph`;
-  el.currentPressure.textContent = `Pressure: ${w.pressure} mb`;
-  el.currentRain.textContent = `Rain: ${w.rain} in`;
-  el.currentHumidity.textContent = `Humidity: ${w.humidity}%`;
-  el.currentFeelsLike.textContent = `Feels Like: ${w.feels_like}°F`;
-  el.currentDewpoint.textContent = `Dewpoint: ${w.dewpoint}°F`;
+  el.currentTemp.textContent = value(w.temperature, "°F");
+  el.currentWind.textContent = `Wind: ${value(w.wind, " mph")}`;
+  el.currentGust.textContent = `Gusts: ${value(w.gust, " mph")}`;
+  el.currentPressure.textContent = `Pressure: ${value(w.pressure, " mb")}`;
+  el.currentRain.textContent = `Rain: ${value(w.rain, " in")}`;
+  el.currentHumidity.textContent = `Humidity: ${value(w.humidity, "%")}`;
+  el.currentFeelsLike.textContent = `Feels Like: ${value(w.feels_like, "°F")}`;
+  el.currentDewpoint.textContent = `Dewpoint: ${value(w.dewpoint, "°F")}`;
 
-  const visMiles = w.visibility ? (w.visibility / 1609.34).toFixed(1) : "--";
+  const visMiles = w.visibility != null ? (w.visibility / 1609.34).toFixed(1) : "--";
   el.currentVisibility.textContent = `Visibility: ${visMiles} mi`;
 
-  el.currentUV.textContent = `UV Index: ${w.uv_index}`;
+  el.currentUV.textContent = `UV Index: ${w.uv_index ?? "--"}`;
 }
 
 // HOURLY FORECAST (correct current hour)
 function renderHourly(data) {
   el.hourlyStrip.innerHTML = "";
 
-  const hourly = data.hourly;
-  const nowHour = new Date().getHours();
-
-  let startIndex = hourly.findIndex(h => {
-    const hour = parseInt(h.time.split(":")[0], 10);
-    return hour === nowHour;
-  });
-
-  if (startIndex < 0) startIndex = 0;
-
-  const nextHours = hourly.slice(startIndex, startIndex + 12);
-
-  for (const h of nextHours) {
+  for (const h of data.hourly) {
     el.hourlyStrip.innerHTML += `
       <div class="hour-card">
-        <div class="h-time">${h.time}</div>
+        <div class="h-time">${h.time.split("T")[1]}</div>
         <div class="h-temp">${h.temp}°</div>
         <div class="h-cond">${codeToText(h.code)}</div>
       </div>
@@ -197,57 +162,31 @@ function renderDaily(data) {
 function renderIntelligence(data) {
   const cur = data.current;
   const hourly = data.hourly;
-  const storm = data.storm;
-  const hazard = data.hazard;
 
   // Wind
-  el.windSpeed.textContent = `${cur.wind} mph`;
-  el.windGust.textContent = `${cur.gust} mph`;
-  el.windDir.textContent = "--"; // worker does not provide direction
+  el.windSpeed.textContent = cur.wind == null ? "--" : `${cur.wind} mph`;
+  el.windGust.textContent = cur.gust == null ? "--" : `${cur.gust} mph`;
+  el.windDir.textContent = cur.direction == null ? "--" : `${cur.direction}°`;
   el.gustRatio.textContent =
     cur.wind && cur.gust ? (cur.gust / cur.wind).toFixed(2) : "--";
 
   // Pressure
-  el.pressure.textContent = `${cur.pressure} mb`;
+  el.pressure.textContent = cur.pressure == null ? "--" : `${cur.pressure} mb`;
 
   let trend = "--";
   if (hourly.length >= 4) {
     const p0 = hourly[0].pressure;
     const p3 = hourly[3].pressure;
-    if (p0 && p3) {
+    if (p0 != null && p3 != null) {
       trend = p3 > p0 ? "Rising" : p3 < p0 ? "Falling" : "Steady";
     }
   }
   el.pressureTrend.textContent = trend;
 
-  // Storm Risk
-  el.stormRisk.textContent = storm.level;
-  el.stormNotes.textContent = storm.notes;
-
-  el.stormTicker.textContent =
-    storm.level === "Extreme"
-      ? "Extreme storm risk — high chance of damage."
-      : storm.level === "High"
-      ? "High storm risk — stay ready for emergency calls."
-      : storm.level === "Moderate"
-      ? "Moderate storm risk — monitor conditions."
-      : "Low storm risk — normal operations.";
-
-  // Tree Hazard
-  el.hazardScore.textContent = hazard.score;
-  el.hazardNotes.textContent = hazard.notes;
-
-  el.hazardTicker.textContent =
-    hazard.level === "Critical"
-      ? "Critical tree hazard — expect significant failures."
-      : hazard.level === "Risk"
-      ? "Elevated tree hazard — limbs and uproots likely."
-      : hazard.level === "Watch"
-      ? "Tree stress possible — monitor conditions."
-      : "Trees stable — normal operations.";
 }
 
 // MAIN WEATHER LOADER
+let selectedLocation;
 async function loadWeatherByLatLon(lat, lon) {
   el.locationStatus.textContent = "Loading weather…";
 
@@ -258,6 +197,7 @@ async function loadWeatherByLatLon(lat, lon) {
   renderHourly(data);
   renderDaily(data);
   renderIntelligence(data);
+  selectedLocation = { lat, lon };
 
   el.locationStatus.textContent =
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
@@ -279,6 +219,7 @@ async function loadWeatherByAddress(address) {
   renderIntelligence(data);
 
   const { lat, lon } = data.location;
+  selectedLocation = { lat, lon };
 
   el.locationStatus.textContent =
     `Weather updated for ${lat.toFixed(3)}, ${lon.toFixed(3)} (${address})`;
@@ -289,8 +230,13 @@ async function loadWeatherByAddress(address) {
 
 // AUTO‑LOAD
 async function initWeather() {
-  const { lat, lon } = await getLocation();
-  await loadWeatherByLatLon(lat, lon);
+  try {
+    const { lat, lon } = selectedLocation || await getLocation();
+    await loadWeatherByLatLon(lat, lon);
+  } catch (error) {
+    console.error("Weather load failed:", error);
+    el.locationStatus.textContent = error.message || "Could not load weather.";
+  }
 }
 
 initWeather();
@@ -298,16 +244,27 @@ setInterval(initWeather, 5 * 60 * 1000);
 
 // BUTTONS
 el.useGPSBtn.addEventListener("click", async () => {
-  const { lat, lon } = await getLocation();
-  loadWeatherByLatLon(lat, lon);
+  try {
+    const { lat, lon } = await getLocation();
+    await loadWeatherByLatLon(lat, lon);
+  } catch (error) {
+    console.error("GPS weather failed:", error);
+    el.locationStatus.textContent = error.message || "Could not load weather.";
+  }
 });
 
 el.setManualBtn.addEventListener("click", async () => {
   const lat = parseFloat(el.manualLat.value);
   const lon = parseFloat(el.manualLon.value);
 
-  if (!isNaN(lat) && !isNaN(lon)) {
-    loadWeatherByLatLon(lat, lon);
+  if (Number.isFinite(lat) && lat >= -90 && lat <= 90 &&
+      Number.isFinite(lon) && lon >= -180 && lon <= 180) {
+    try {
+      await loadWeatherByLatLon(lat, lon);
+    } catch (error) {
+      console.error("Weather load failed:", error);
+      el.locationStatus.textContent = error.message || "Could not load weather.";
+    }
   } else {
     el.locationStatus.textContent = "Invalid coordinates.";
   }
@@ -321,7 +278,8 @@ el.manualAddressBtn.addEventListener("click", async () => {
   }
   try {
     await loadWeatherByAddress(addr);
-  } catch {
-    el.locationStatus.textContent = "Could not load weather for that address.";
+  } catch (error) {
+    console.error("Address weather failed:", error);
+    el.locationStatus.textContent = error.message || "Could not load weather for that address.";
   }
 });
