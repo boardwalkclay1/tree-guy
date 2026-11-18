@@ -108,11 +108,8 @@
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <h2>Menu</h2>
-    <a href="/pages/login.html">Login</a>
-    <a href="/pages/signup-tree.html">Tree Guy Sign Up</a>
-    <a href="/pages/signup-client.html">Client Sign Up</a>
+    <a href="/pages/portal.html">Login or Sign Up</a>
     <a href="/pages/why.html">Why Real Tree Guy?</a>
-    <a href="/pages/support.html">Support</a>
   </nav>
 
   <!-- HERO -->
@@ -126,11 +123,11 @@
     </p>
 
     <!-- DIRECT ENTRY TO OS (SAFE MODE) -->
-    <a class="rtg-btn" href="/pages/dashboard.html">
+    <a class="rtg-btn" href="/pages/portal.html">
       Enter Real Tree Guy OS
     </a>
 
-    <a class="rtg-btn login-small" href="/pages/login.html">
+    <a class="rtg-btn login-small" href="/pages/portal.html">
       Login
     </a>
   </header>
@@ -139,20 +136,15 @@
   <section class="rtg-features">
     <h2>What’s Inside the OS</h2>
     <ul>
-      <li>✔ Contracts & Estimates</li>
-      <li>✔ Calendar & Job Scheduling</li>
-      <li>✔ Tree Measurement Tools</li>
-      <li>✔ Flyers, Cards & Door Hangers</li>
-      <li>✔ Customer & Job Management</li>
-      <li>✔ Real‑Time Crew Radio</li>
-      <li>✔ Printful Store + PayPal Checkout</li>
-      <li>✔ Offline‑First, Works Anywhere</li>
+      <li>Customer contacts</li>
+      <li>Tree-service requests and private messages</li>
+      <li>Weather forecasts</li>
     </ul>
   </section>
 
   <!-- BOTTOM LINKS -->
   <div class="rtg-bottom-links">
-    <a class="rtg-bottom-btn" href="/pages/login.html">Already have an account?</a>
+    <a class="rtg-bottom-btn" href="/pages/portal.html">Already have an account?</a>
     <a class="rtg-bottom-btn" href="/pages/why.html">Why Real Tree Guy?</a>
   </div>
 
@@ -175,13 +167,6 @@
       }
     });
 
-    // AUTO‑REDIRECT IF ALREADY UNLOCKED
-    const unlocked = localStorage.getItem("rtg_unlocked");
-    const token = localStorage.getItem("rtgToken");
-
-    if (unlocked === "true" || token) {
-      window.location.href = "/pages/dashboard.html";
-    }
   </script>
 
 </body>

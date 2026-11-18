@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Real Tree Guy Portal</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+  <script type="module" src="/assets/js/portal.js"></script>
+</head>
+<body>
+  <header>
+    <a href="/">Real Tree Guy</a>
+    <nav><a href="/pages/weather.html">Weather</a> <button id="logout" hidden>Sign out</button></nav>
+  </header>
+  <main>
+    <p id="status" role="status" aria-live="polite"></p>
+    <section id="auth" hidden>
+      <h1>Welcome to Real Tree Guy</h1>
+      <p>Existing browser-only accounts cannot be migrated. Create a new account to use the portal.</p>
+      <div class="grid">
+        <form id="loginForm" class="card">
+          <h2>Sign in</h2>
+          <label>Email <input name="email" type="email" autocomplete="email" required></label>
+          <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+          <button>Sign in</button>
+        </form>
+        <form id="registerForm" class="card">
+          <h2>Create account</h2>
+          <label>Name <input name="name" maxlength="100" autocomplete="name" required></label>
+          <label>Email <input name="email" type="email" maxlength="254" autocomplete="email" required></label>
+          <label>Password <input name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required></label>
+          <label>I am a
+            <select name="role"><option value="tree">Tree professional</option><option value="client">Customer</option></select>
+          </label>
+          <p>Use a unique password of at least 12 characters. Password recovery and email verification are not yet available.</p>
+          <button>Create account</button>
+        </form>
+      </div>
+    </section>
+    <section id="app" hidden>
+      <h1 id="greeting"></h1>
+      <nav class="tabs">
+        <button data-section="leads">Service requests</button>
+        <button data-section="contacts" id="contactsTab">Contacts</button>
+        <button data-section="messages">Messages</button>
+      </nav>
+      <section id="leads" class="panel">
+        <h2>Service requests</h2>
+        <form id="leadForm" class="card" hidden>
+          <h3>Post a request</h3>
+          <p>Posting costs $10. Square payment setup is not complete, so posting is currently unavailable. Tree professionals can see posted requests. Do not include your phone number, email, or street address here; share details privately.</p>
+          <label>Title <input name="title" maxlength="120" required></label>
+          <label>City <input name="city" maxlength="100" required></label>
+          <label>State <input name="state" maxlength="100" required></label>
+          <label>Work needed <textarea name="description" maxlength="3000" required></textarea></label>
+          <button>Post request</button>
+        </form>
+        <form id="leadSearchForm" hidden>
+          <label>Search by city, state, or keyword <input id="leadSearch" type="search" maxlength="100"></label>
+          <button>Search</button>
+        </form>
+        <div id="leadsList"></div>
+      </section>
+      <section id="contacts" class="panel" hidden>
+        <h2>My contacts</h2>
+        <form id="contactForm" class="card">
+          <label>Name <input name="name" maxlength="100" required></label>
+          <label>Phone <input name="phone" type="tel" maxlength="40"></label>
+          <label>Email <input name="email" type="email" maxlength="254"></label>
+          <label>Address <input name="address" maxlength="300"></label>
+          <label>Notes <textarea name="notes" maxlength="2000"></textarea></label>
+          <button id="saveContact">Save contact</button>
+          <button id="cancelEdit" type="button" hidden>Cancel edit</button>
+        </form>
+        <div id="contactsList"></div>
+      </section>
+      <section id="messages" class="panel" hidden>
+        <h2>Messages</h2>
+        <p>Messages stay inside this portal; no email or text notification is sent.</p>
+        <button id="refreshMessages">Refresh conversations</button>
+        <div id="threadsList"></div>
+        <div id="conversation" class="card" hidden>
+          <h3 id="conversationTitle"></h3>
+          <div id="messageList" aria-live="polite"></div>
+          <form id="messageForm">
+            <label>Message <textarea name="body" maxlength="4000" required></textarea></label>
+            <button>Send message</button>
+          </form>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
