@@ -77,7 +77,7 @@ export async function loadJobThread(jobId) {
 
   listEl.innerHTML = `<p>Loading…</p>`;
 
-  try:
+  try {
     // Worker: GET /api/messages/:job_id
     const messages = await API.get(`/api/messages/${encodeURIComponent(jobId)}`);
 
